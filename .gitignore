@@ -1,0 +1,8 @@
+.idea/
+node_modules/
+app/
+core/client/lib/
+core/client/build/
+uploads/
+temp/
+.DS_Store

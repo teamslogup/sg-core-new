@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:ng="http://angularjs.org" class="ng-app:app" lang="<%= params.language %>">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1"/>
+    <base href="/">
+    <title>Sample App</title>
+
+    <link rel="stylesheet" href="/lib/bootswatch-dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/lib/angular-motion/dist/angular-motion.css" />
+
+    <!--[if lt IE 9]>
+    <script>
+        document.createElement('ng-include');
+        document.createElement('ng-pluralize');
+        document.createElement('ng-view');
+    </script>
+    <![endif]-->
+
+    <script type="text/javascript">
+        window.meta = <%- JSON.stringify(params.meta || {}) %>;
+        window.session = <%- JSON.stringify(params.session|| {}) %>;
+        window.oauth = <%- JSON.stringify(params.oauth || {}) %>;
+    </script>
+
+    <style>
+        .svg {
+            width: 100px;
+            transition: all .2s linear;
+            margin: 10px;
+        }
+        .svg:hover {
+            width: 120px;
+            fill: #1f61a8
+        }
+        body {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body data-ng-controller="mainCtrl">
+
+<svg-image class="svg" src="assets/images/logo.svg"></svg-image>
+
+<div ui-view="header"></div>
+<div ui-view="contents"></div>
+<div ui-view="footer"></div>
+
+<!--[if lt IE 9]>
+
+<![endif]-->
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.19/angular.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script type="text/javascript" src="//cdn.ckeditor.com/4.5.3/standard/ckeditor.js"></script>
+
+<script src="build/js/core-lib.js"></script>
+
+<script src="build/js/core-modules.js"></script>
+
+<script type="text/javascript" src="pages/sample/core.sample.module.js"></script>
+<script type="text/javascript" src="pages/sample/config/core.sample.config.js"></script>
+<script type="text/javascript" src="pages/sample/config/core.sample.route.js"></script>
+<script type="text/javascript" src="pages/sample/controllers/core.sample.main.controller.js"></script>
+
+</body>
+</html>
