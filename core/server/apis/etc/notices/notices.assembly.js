@@ -76,7 +76,7 @@ var api = {
                 resettable: [],
                 explains : {
                     searchItem: '검색할 내용',
-                    option: '검색할 항목 ' + STD.notice.enumFields.join(", "),
+                    option: '검색할 항목 ' + STD.notice.enumSeFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
                     country: '국가 필터 ' + STD.notice.enumCountries.join(", "),

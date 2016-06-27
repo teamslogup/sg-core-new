@@ -72,7 +72,7 @@ var standards = {
         "enumOrders": ["orderCreate", "orderUpdate"],
         "orderCreate": "orderCreate",
         "orderUpdate": "orderUpdate",
-        "enumFields": ["nick", "gender", "email", "phoneNum", "birth", "name"],
+        "enumSearchFields": ["nick", "gender", "email", "phoneNum", "birth", "name"],
         "nick": "nick",
         "gender": "gender",
         "email": "email",

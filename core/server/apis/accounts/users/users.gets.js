@@ -7,16 +7,17 @@ gets.validate = function () {
         var USER = req.meta.std.user;
 
         if (req.query.searchItem === undefined) req.query.searchItem = '';
-        if (req.query.option === undefined) req.query.option = '';
+        if (req.query.field === undefined) req.query.field = '';
         if (req.query.last === undefined) req.query.last = new Date();
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
-        if (req.query.order === undefined) req.query.order = USER.orderCreate;
-        if (req.query.sorted === undefined) req.query.sorted = USER.DESC;
+        if (req.query.orderBy === undefined) req.query.orderBy = USER.orderCreate;
+        if (req.query.sorted === undefined) req.query.sorted = COMMON.DESC;
 
         req.check('last', '400_18').isDate();
+        req.check('field', '400_28').isEnum(USER.enumSearchFields);
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
-        req.check('order', '400_28').isEnum(USER.enumOrders);
-        req.check('sorted', '400_28').isEnum(USER.enumSorted);
+        req.check('orderBy', '400_28').isEnum(USER.enumOrders);
+        req.check('sorted', '400_28').isEnum(COMMON.enumSortTypes);
 
         req.utils.common.checkError(req, res, next);
         next();
@@ -25,13 +26,12 @@ gets.validate = function () {
 
 gets.getUsers = function () {
     return function (req, res, next) {
-        //req.models.User.findAllData()
         req.models.User.findUsersByOption(
             req.query.searchItem,
-            req.query.option,
+            req.query.field,
             req.query.last,
             req.query.size,
-            req.query.order,
+            req.query.orderBy,
             req.query.sorted,
             function (status, data) {
                 if (status == 200) {
