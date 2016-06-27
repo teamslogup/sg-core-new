@@ -31,20 +31,29 @@ module.exports = {
             'type': Sequelize.BOOLEAN,
             'allowNull': false,
             'defaultValue': true
+        },
+        'createdAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'updatedAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         }
     },
     options: {
+        'timestamps': false,
         'charset': 'utf8',
-        'indexes': [{
-            unique: true,
-            fields: ['id']
-        }],
         'paranoid': true,
+        'hooks': {
+            'beforeCreate': mixin.options.hooks.microCreatedAt,
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt
+        },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'createImages': function(array, callback) {
                 var loadedImage = null;
-                sequelize.models.Image.bulkCreate(array).then(function (data) {
+                sequelize.models.Image.bulkCreate(array, {individualHooks: true}).then(function (data) {
                     loadedImage = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (loadedImage) {
@@ -71,8 +80,46 @@ module.exports = {
                     callback(status, data);
                 });
             },
-            'findImagesByIds': function (idArray, callback) {
-                sequelize.models.Image.findAllDataForQuery({ where: { id: idArray } }, function (status, data) {
+            'findImagesByOption': function (authorId, last, size, orderBy, sort, callback) {
+                var where = {};
+                
+                if (authorId) {
+                    where.authorId = authorId;
+                }
+                
+                var query = {
+                    'limit': parseInt(size),
+                    'where': where
+                };
+                
+                if (orderBy == STD.image.orderUpdate) {
+                    where.updatedAt = {
+                        '$lt': last
+                    };
+                    query.order = [['updatedAt', sort]];
+                } else {
+                    where.createdAt = {
+                        'lt': last
+                    };
+                    query.order = [['createdAt', sort]];
+                }
+                
+                sequelize.models.Image.findAllDataForQuery(query, callback);
+            },
+            'findImagesByIds': function (idArray, user, callback) {
+                var where = {
+                    id: idArray
+                };
+                
+                if (user) {
+                    if (user.role < STD.user.roleAdmin) {
+                        where.authorId = user.id;
+                    }
+                } else {
+                    return callback(403);
+                }
+                
+                sequelize.models.Image.findAllDataForQuery({ where: where }, function (status, data) {
                     callback(status, data);
                 });
             },
