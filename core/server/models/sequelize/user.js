@@ -125,10 +125,9 @@ module.exports = {
         'paranoid': true, // deletedAt 추가. delete안함.
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
-            'beforeUpdate': mixin.options.hooks.microCreatedAt,
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt,
             'beforeBulkUpdate': mixin.options.hooks.bulkUpdatedAt,
-            // 'afterUpdate': mixin.options.hooks.microUpdatedAt,
-            'afterDestroy': mixin.options.hooks.microDeletedAt
+            'beforeDestroy': mixin.options.hooks.microDeletedAt
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             /**

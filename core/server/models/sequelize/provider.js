@@ -36,7 +36,9 @@ module.exports = {
         'salt': {
             'type': Sequelize.STRING,
             'allowNull': false
-        }
+        },
+        'expiredAt': Sequelize.BIGINT,
+        'allowNull': false
     }, options: {
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
@@ -54,17 +56,30 @@ module.exports = {
             }
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            checkFacebookToken: function(secret, callback) {
-                var request = require('facebook');
+            checkAndRefreshFacebookToken: function(userId, secret, callback) {
+                var request = require('request');
                 var rootUri = 'https://graph.facebook.com/me?access_token=';
                 var option = {
                     method: 'GET',
                     uri: rootUri + secret
                 };
                 request(option, function (error, response, body) {
-                    console.log(error, response,  body);
                     if (response.statusCode == 200) {
-                        callback(200);
+                        body = JSON.parse(body);
+                        if (body.id == userId) {
+                            sequelize.models.Provider.updateDataByKey('uid', userId, {
+                                uid: userId,
+                                token: secret
+                            }, function(status, data) {
+                                if (status == 404 || status == 204) {
+                                    callback(200);
+                                } else {
+                                    callback(status, data);
+                                }
+                            });
+                        } else {
+                            callback(403);
+                        }
                     } else {
                         callback(403);
                     }

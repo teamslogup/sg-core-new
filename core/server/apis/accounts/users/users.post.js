@@ -92,7 +92,7 @@ post.checkSocialProvider = function () {
         var USER = req.meta.std.user;
         if (req.body.type == USER.signUpTypeSocial) {
             if (req.body.provider == USER.providerFacebook) {
-                req.models.Provider.checkFacebookToken(req.body.secret, function(status, data) {
+                req.models.Provider.checkAndRefreshFacebookToken(req.body.uid, req.body.secret, function(status, data) {
                     if (status == 200) {
                         next();
                     } else {
