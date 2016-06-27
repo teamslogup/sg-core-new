@@ -342,7 +342,7 @@ module.exports = {
              * @param {Object} size - 찾을 유저 수
              * @param {responseCallback} callback - 응답콜백
              */
-            'findUsersByOption': function (searchItem, option, last, size, order, sorted, callback) {
+            'findUsersByOption': function (searchItem, field, last, size, order, sort, callback) {
                 var where = {};
 
                 var query = {
@@ -350,22 +350,32 @@ module.exports = {
                     'where': where
                 };
 
-                if (option) {
-                    query.where[option] = {
-                        '$like': "%" + searchItem + "%"
+                if (field && searchItem) {
+                    query.where[field] = {
+                        '$like': '%' + searchItem + '%'
                     };
+                } else if (searchItem) {
+                    if (STD.user.enumSearchFields.length > 0) query.where.$or = [];
+                    for (var i=0; i<STD.user.enumSearchFields.length; i++) {
+                        var body = {};
+                        body[STD.user.enumSearchFields[i]] = {
+                            '$like': '%' + searchItem + '%'
+                        };
+                        query.where.$or.push(body);
+                    }
                 }
+
 
                 if (order == STD.user.orderUpdate) {
                     query.where.updatedAt = {
                         '$lt': last
                     };
-                    query.order = [['updatedAt', sorted]];
+                    query.order = [['updatedAt', sort]];
                 } else {
                     query.where.createdAt = {
                         '$lt': last
                     };
-                    query.order = [['createdAt', sorted]];
+                    query.order = [['createdAt', sort]];
                 }
 
                 query.include = [{

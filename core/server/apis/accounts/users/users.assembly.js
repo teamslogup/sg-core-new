@@ -59,16 +59,16 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'option', 'last', 'size', 'order', 'sorted'],
+                acceptable: ['searchItem', 'field', 'last', 'size', 'orderBy', 'sort'],
                 essential: [],
                 resettable: [],
                 explains: {
                     searchItem: '검색할 내용',
-                    option: '검색할 항목',
+                    field: '검색할 필드' + STD.user.enumSearchFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    order: '정렬 옵션',
-                    sorted: '정렬 순서'
+                    orderBy: '정렬 기준 필드' + STD.user.enumOrders.join(", "),
+                    sort: '정렬 순서' + STD.common.enumSortTypes.join(", ")
                 },
                 title: '유저 리스트 얻기',
                 state: 'staging'
