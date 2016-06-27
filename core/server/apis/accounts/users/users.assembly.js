@@ -59,7 +59,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'field', 'last', 'size', 'orderBy', 'sorted'],
+                acceptable: ['searchItem', 'field', 'last', 'size', 'orderBy', 'sort'],
                 essential: [],
                 resettable: [],
                 explains: {
@@ -68,7 +68,7 @@ var api = {
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
                     orderBy: '정렬 기준 필드' + STD.user.enumOrders.join(", "),
-                    sorted: '정렬 순서' + STD.common.enumSortTypes.join(", ")
+                    sort: '정렬 순서' + STD.common.enumSortTypes.join(", ")
                 },
                 title: '유저 리스트 얻기',
                 state: 'staging'

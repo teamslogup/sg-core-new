@@ -11,13 +11,13 @@ gets.validate = function () {
         if (req.query.last === undefined) req.query.last = new Date();
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
         if (req.query.orderBy === undefined) req.query.orderBy = USER.orderCreate;
-        if (req.query.sorted === undefined) req.query.sorted = COMMON.DESC;
+        if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
 
         req.check('last', '400_18').isDate();
         req.check('field', '400_28').isEnum(USER.enumSearchFields);
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
         req.check('orderBy', '400_28').isEnum(USER.enumOrders);
-        req.check('sorted', '400_28').isEnum(COMMON.enumSortTypes);
+        req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
 
         req.utils.common.checkError(req, res, next);
         next();
@@ -32,7 +32,7 @@ gets.getUsers = function () {
             req.query.last,
             req.query.size,
             req.query.orderBy,
-            req.query.sorted,
+            req.query.sort,
             function (status, data) {
                 if (status == 200) {
                     req.users = data;
