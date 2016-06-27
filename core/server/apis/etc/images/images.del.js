@@ -10,7 +10,7 @@ del.getImages = function() {
         for (var i=0; i<req.body.imageIds.length; i++) {
             req.idArray.push(parseInt(req.body.imageIds[i]));
         }
-        req.models.Image.findImagesByIds(req.idArray, function (status, data) {
+        req.models.Image.findImagesByIds(req.idArray, req.user, function (status, data) {
             if (status == 200) {
                 req.images = data;
                 next();
@@ -26,17 +26,11 @@ del.checkSession = function() {
         if (req.user.role >= req.meta.std.user.roleAdmin) {
             next();
         } else {
-            var check = true;
-            for (var i=0; i<req.images.length; i++) {
-                if (req.user.id != req.images[i].authorId) {
-                    check = false;
-                }
+            if (req.idArray.length == req.images.length) {
+                next();
             }
-            if (check) next();
             else {
-                return res.hjson(req, next, 400, {
-                    code: '403'
-                });
+                return res.hjson(req, next, 403);
             }
         }
     };

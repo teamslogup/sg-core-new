@@ -106,8 +106,20 @@ module.exports = {
                 
                 sequelize.models.Image.findAllDataForQuery(query, callback);
             },
-            'findImagesByIds': function (idArray, callback) {
-                sequelize.models.Image.findAllDataForQuery({ where: { id: idArray } }, function (status, data) {
+            'findImagesByIds': function (idArray, user, callback) {
+                var where = {
+                    id: idArray
+                };
+                
+                if (user) {
+                    if (user.role < STD.user.roleAdmin) {
+                        where.authorId = user.id;
+                    }
+                } else {
+                    return callback(403);
+                }
+                
+                sequelize.models.Image.findAllDataForQuery({ where: where }, function (status, data) {
                     callback(status, data);
                 });
             },
