@@ -159,6 +159,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(post.checkSocialProvider());
                 apiCreator.add(post.createUser());
                 apiCreator.add(post.sendEmailAuth());
                 apiCreator.add(post.supplement());

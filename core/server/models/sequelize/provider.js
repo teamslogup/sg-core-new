@@ -53,7 +53,24 @@ module.exports = {
                 return this;
             }
         }),
-        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {}),
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            checkFacebookToken: function(secret, callback) {
+                var request = require('facebook');
+                var rootUri = 'https://graph.facebook.com/me?access_token=';
+                var option = {
+                    method: 'GET',
+                    uri: rootUri + secret
+                };
+                request(option, function (error, response, body) {
+                    console.log(error, response,  body);
+                    if (response.statusCode == 200) {
+                        callback(200);
+                    } else {
+                        callback(403);
+                    }
+                });
+            }
+        }),
         'hooks': {
             beforeValidate: function (provider, options) {
                 provider.tokenEncryption();

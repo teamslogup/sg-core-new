@@ -4,6 +4,7 @@ var post = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var path = require('path');
+var request = require('request');
 
 post.validate = function () {
     return function (req, res, next) {
@@ -66,7 +67,7 @@ post.validate = function () {
             var enumLanguage = req.coreUtils.common.getLanguageEnum(req);
             req.check('language', '400_3').isEnum(enumLanguage);
         }
-        
+
         if (req.body.agreedEmail !== undefined) {
             req.check('agreedEmail', '400_20').isBoolean();
             req.sanitize('agreedEmail').toBoolean();
@@ -86,9 +87,30 @@ post.validate = function () {
     };
 };
 
+post.checkSocialProvider = function () {
+    return function (req, res, next) {
+        var USER = req.meta.std.user;
+        if (req.body.type == USER.signUpTypeSocial) {
+            if (req.body.provider == USER.providerFacebook) {
+                req.models.Provider.checkFacebookToken(req.body.secret, function(status, data) {
+                    if (status == 200) {
+                        next();
+                    } else {
+                        res.hjson(req, next, status);
+                    }
+                });
+            } else {
+                next();
+            }
+        } else {
+            next();
+        }
+    };
+};
+
 post.createUser = function () {
     return function (req, res, next) {
-        
+
         var birth = null;
         if (req.body.birthYear !== undefined && req.body.birthMonth !== undefined && req.body.birthDay !== undefined) {
             birth = req.utils.common.makeBirthString(req.body.birthYear, req.body.birthMonth, req.body.birthDay);
