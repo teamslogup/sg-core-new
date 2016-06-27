@@ -23,15 +23,11 @@ del.getImages = function() {
 
 del.checkSession = function() {
     return function(req, res, next) {
-        if (req.user.role >= req.meta.std.user.roleAdmin) {
+        if (req.idArray.length == req.images.length) {
             next();
-        } else {
-            if (req.idArray.length == req.images.length) {
-                next();
-            }
-            else {
-                return res.hjson(req, next, 403);
-            }
+        }
+        else {
+            return res.hjson(req, next, 403);
         }
     };
 };
