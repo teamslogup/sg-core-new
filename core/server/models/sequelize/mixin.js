@@ -406,7 +406,31 @@ var mixin = {
                     }
                 });
             },
-            
+            /**
+             * 아이디를 통해서 데이터 없데이트
+             * @param key - 임의의 find에 필요한 키
+             * @param field - 임의의 find에 필요한 값
+             * @param update
+             * @param callback - 성공시 204
+             */
+            'updateDataByKey': function (key, field, update, callback) {
+                var isSuccess = false;
+                var updateOptions = {
+                    where: {}
+                };
+                updateOptions.where[key] = field;
+                this.update(update, updateOptions).then(function (data) {
+                    if (data && data[0]) {
+                        isSuccess = true;
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (isSuccess) {
+                        callback(204);
+                    } else {
+                        callback(404);
+                    }
+                });
+            },
 
             /**
              * 아이디를 통해서 데이터 제거
@@ -476,34 +500,24 @@ var mixin = {
             'microCreatedAt': function (instance, options, fn) {
                 instance.set("createdAt", MICRO.now());
                 instance.set("updatedAt", MICRO.now());
-
                 return fn(null, instance);
             },
             /**
              * Bulk 데이터 수정시 beforeUpdate 호출을 위한 속성 변경
              */
             'bulkUpdatedAt': function (options) {
-
                 options.individualHooks = true;
-
             },
             /**
              * 데이터 수정시 updatedAtMicro 변경 (microseconds)
              */
             'microUpdatedAt': function (instance, options, fn) {
-
-                if (!instance._changed.updatedAt) {
-                    instance.updateAttributes({updatedAt: MICRO.now()});
-                }
-
+                instance.set("updatedAt", MICRO.now());
                 return fn(null, instance);
             },
             'microDeletedAt': function (instance, options, fn) {
-
-                if (!instance._changed.deletedAt) {
-                    instance.updateAttributes({deletedAt: MICRO.now()});
-                }
-                
+                console.log('microDeletedAt');
+                instance.set("deletedAt", MICRO.now());
                 return fn(null, instance);
             }
         }
