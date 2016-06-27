@@ -137,6 +137,11 @@ var standards = {
         "enumVisible": ["all", "visibleBoard", "invisibleBaord"],
         "enumAnony": ["all", "anonymous", "notAnonymous"],
     },
+    "image": {
+        "enumOrders": ["orderCreate", "orderUpdate"],
+        "orderCreate": "orderCreate",
+        "orderUpdate": "orderUpdate"
+    },
     "magic": {
         "reset": ":RESET:",
         "default": ":DEFAULT:",

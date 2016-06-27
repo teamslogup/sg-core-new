@@ -71,6 +71,32 @@ module.exports = {
                     callback(status, data);
                 });
             },
+            'findImagesByOption': function (authorId, last, size, orderBy, sort, callback) {
+                var where = {};
+                
+                if (authorId) {
+                    where.authorId = authorId;
+                }
+                
+                var query = {
+                    'limit': parseInt(size),
+                    'where': where
+                };
+                
+                if (orderBy == STD.image.orderUpdate) {
+                    query.where.updatedAt = {
+                        '$lt': last
+                    };
+                    query.order = [['updatedAt', sort]];
+                } else {
+                    query.where.createdAt = {
+                        'lt': last
+                    };
+                    query.order = [['createdAt', sort]];
+                }
+                
+                sequelize.models.Image.findAllDataForQuery(query, callback);
+            },
             'findImagesByIds': function (idArray, callback) {
                 sequelize.models.Image.findAllDataForQuery({ where: { id: idArray } }, function (status, data) {
                     callback(status, data);
