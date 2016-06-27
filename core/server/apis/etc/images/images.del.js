@@ -3,33 +3,43 @@ var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var path = require('path');
 
-del.checkSession = function() {
+del.getImages = function() {
     return function(req, res, next) {
         req.idArray = [];
         req.utils.common.toArray(req.body, 'imageIds');
         for (var i=0; i<req.body.imageIds.length; i++) {
             req.idArray.push(parseInt(req.body.imageIds[i]));
         }
-        var check = true;
         req.models.Image.findImagesByIds(req.idArray, function (status, data) {
             if (status == 200) {
                 req.images = data;
-                for (var i=0; i<data.length; i++) {
-                    if (req.user.id != data[i].authorId) {
-                        check = false;
-                    }
-                }
-                if (check) next();
-                else {
-                    return res.hjson(req, next, 400, {
-                        code: '403'
-                    });
-                }
+                next();
             } else {
                 res.hjson(req, next, status, data);
             }
         });
     }
+};
+
+del.checkSession = function() {
+    return function(req, res, next) {
+        if (req.user.role >= req.meta.std.user.roleAdmin) {
+            next();
+        } else {
+            var check = true;
+            for (var i=0; i<req.images.length; i++) {
+                if (req.user.id != req.images[i].authorId) {
+                    check = false;
+                }
+            }
+            if (check) next();
+            else {
+                return res.hjson(req, next, 400, {
+                    code: '403'
+                });
+            }
+        }
+    };
 };
 
 del.validate = function(){

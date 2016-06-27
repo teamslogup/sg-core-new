@@ -224,6 +224,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(del.getImages());
                 apiCreator.add(del.checkSession());
                 apiCreator.add(del.validate());
                 if (!STD.flag.isUseS3Bucket) {
