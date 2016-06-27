@@ -31,20 +31,29 @@ module.exports = {
             'type': Sequelize.BOOLEAN,
             'allowNull': false,
             'defaultValue': true
+        },
+        'createdAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'updatedAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         }
     },
     options: {
+        'timestamps': false,
         'charset': 'utf8',
-        'indexes': [{
-            unique: true,
-            fields: ['id']
-        }],
         'paranoid': true,
+        'hooks': {
+            'beforeCreate': mixin.options.hooks.microCreatedAt,
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt
+        },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'createImages': function(array, callback) {
                 var loadedImage = null;
-                sequelize.models.Image.bulkCreate(array).then(function (data) {
+                sequelize.models.Image.bulkCreate(array, {individualHooks: true}).then(function (data) {
                     loadedImage = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (loadedImage) {

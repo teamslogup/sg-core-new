@@ -6,31 +6,29 @@ var path = require('path');
 del.checkSession = function() {
     return function(req, res, next) {
         req.idArray = [];
-        for (var i=0; i<req.body.image.length; i++) {
-            req.idArray.push(req.body.image["id" + i]);
+        req.utils.common.toArray(req.body, 'imageIds');
+        for (var i=0; i<req.body.imageIds.length; i++) {
+            req.idArray.push(parseInt(req.body.imageIds[i]));
         }
-        if (req.user.role >= req.meta.std.user.roleAdmin) { // check admin session
-            next();
-        } else {
-            var check = true;
-            req.models.Image.findImagesByIds(req.idArray, function (status, data) {
-                if (status == 200) {
-                    for (var i=0; i<data.length; i++) {
-                        if (req.user.id != data[i].authorId) {
-                            check = false;
-                        }
+        var check = true;
+        req.models.Image.findImagesByIds(req.idArray, function (status, data) {
+            if (status == 200) {
+                req.images = data;
+                for (var i=0; i<data.length; i++) {
+                    if (req.user.id != data[i].authorId) {
+                        check = false;
                     }
-                    if (check) next();
-                    else {
-                        return res.hjson(req, next, 400, {
-                            code: '403'
-                        });
-                    }
-                } else {
-                    res.hjson(req, next, status, data);
                 }
-            });
-        }
+                if (check) next();
+                else {
+                    return res.hjson(req, next, 400, {
+                        code: '403'
+                    });
+                }
+            } else {
+                res.hjson(req, next, status, data);
+            }
+        });
     }
 };
 
@@ -41,14 +39,14 @@ del.validate = function(){
 
         req.files = [];
 
-        for (var j=0; j<req.body.image.length; j++) {
+        for (var j=0; j<req.images.length; j++) {
             for (var i=0; i<FILE.enumPrefixes.length; i++) {
                 req.files.push({
-                    path: filePath + FILE.enumPrefixes[i] + req.body.image["name" + j]
+                    path: filePath + FILE.enumPrefixes[i] + req.images[j].name
                 });
             }
             req.files.push({
-                path: filePath + req.body.image["name" + j]
+                path: filePath + req.images[j].name
             });
         }
 

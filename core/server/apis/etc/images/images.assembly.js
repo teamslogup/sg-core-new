@@ -31,6 +31,9 @@ var api = {
                 explains : {
                     'id': '데이터를 얻을 리소스의 id'
                 },
+                response: {
+
+                },
                 param: 'id',
                 title: '단일 얻기',
                 state: 'development'
@@ -71,6 +74,9 @@ var api = {
                     orderBy: '정렬 옵션' + IMAGE.enumOrders.join(", "),
                     sort: '정렬 순서' + COMMON.enumSortTypes.join(", ")
                 },
+                response: {
+
+                },
                 role: STD.user.roleAdmin,
                 title: '이미지 리스트 얻기',
                 state: 'development'
@@ -110,6 +116,9 @@ var api = {
                     'offsetY': 'y 위치',
                     'width': '너비',
                     'height': '높이'
+                },
+                response: {
+                    
                 },
                 title: '이미지 업로드',
                 file: 'file',
@@ -158,6 +167,9 @@ var api = {
                 explains: {
                     'authorized': '인증/비인증'
                 },
+                response: {
+
+                },
                 role: STD.user.roleAdmin,
                 title: '이미지 인증/비인증 수정',
                 param: 'id',
@@ -189,12 +201,15 @@ var api = {
     delete : function(isOnlyParams) {
         return function(req, res, next) {
             var params = {
-                acceptable: ['folder', 'image'],
-                essential: ['folder', 'image'],
+                acceptable: ['folder', 'imageIds'],
+                essential: ['folder', 'imageIds'],
                 resettable: [],
                 explains : {
                     'folder': '지울 이미지 폴더',
-                    'image': '지울 이미지 정보'
+                    'imageIds': '지울 이미지 아이디 ex) 1,2'
+                },
+                response: {
+
                 },
                 title: '파일 제거',
                 state: 'development'
