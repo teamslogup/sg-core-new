@@ -355,6 +355,7 @@ module.exports = {
                         '$like': '%' + searchItem + '%'
                     };
                 } else if (searchItem) {
+                    if (STD.user.enumSearchFields.length > 0) query.where.$or = [];
                     for (var i=0; i<STD.user.enumSearchFields.length; i++) {
                         var body = {};
                         body[STD.user.enumSearchFields[i]] = {

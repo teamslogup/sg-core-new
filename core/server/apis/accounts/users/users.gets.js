@@ -1,6 +1,7 @@
 var gets = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
+var MICRO = require('microtime');
 gets.validate = function () {
     return function (req, res, next) {
         var COMMON = req.meta.std.common;
@@ -8,12 +9,12 @@ gets.validate = function () {
 
         if (req.query.searchItem === undefined) req.query.searchItem = '';
         if (req.query.field === undefined) req.query.field = '';
-        if (req.query.last === undefined) req.query.last = new Date();
+        if (req.query.last === undefined) req.query.last = MICRO.now();
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
         if (req.query.orderBy === undefined) req.query.orderBy = USER.orderCreate;
         if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
 
-        req.check('last', '400_18').isDate();
+        req.check('last', '400_18').isInt();
         req.check('field', '400_28').isEnum(USER.enumSearchFields);
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
         req.check('orderBy', '400_28').isEnum(USER.enumOrders);
