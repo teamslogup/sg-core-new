@@ -33,7 +33,7 @@ var api = {
                 },
                 param: 'id',
                 title: '단일 얻기',
-                state: 'staging'
+                state: 'development'
             };
 
             if (!isOnlyParams) {
@@ -71,6 +71,7 @@ var api = {
                     orderBy: '정렬 옵션' + IMAGE.enumOrders.join(", "),
                     sort: '정렬 순서' + COMMON.enumSortTypes.join(", ")
                 },
+                role: STD.user.roleAdmin,
                 title: '이미지 리스트 얻기',
                 state: 'development'
             };
@@ -113,7 +114,7 @@ var api = {
                 title: '이미지 업로드',
                 file: 'file',
                 files_cnt: 5,
-                state: 'staging'
+                state: 'development'
             };
 
             if (!isOnlyParams) {
@@ -157,6 +158,7 @@ var api = {
                 explains: {
                     'authorized': '인증/비인증'
                 },
+                role: STD.user.roleAdmin,
                 title: '이미지 인증/비인증 수정',
                 param: 'id',
                 state: 'development'
@@ -195,7 +197,7 @@ var api = {
                     'image': '지울 이미지 정보'
                 },
                 title: '파일 제거',
-                state: 'staging'
+                state: 'development'
             };
 
             if (!isOnlyParams) {

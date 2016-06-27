@@ -84,12 +84,12 @@ module.exports = {
                 };
                 
                 if (orderBy == STD.image.orderUpdate) {
-                    query.where.updatedAt = {
+                    where.updatedAt = {
                         '$lt': last
                     };
                     query.order = [['updatedAt', sort]];
                 } else {
-                    query.where.createdAt = {
+                    where.createdAt = {
                         'lt': last
                     };
                     query.order = [['createdAt', sort]];
