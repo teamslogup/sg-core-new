@@ -70,17 +70,17 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'option', 'last', 'size', 'country', 'type', 'sort'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'country', 'type', 'sort'],
                 essential: [],
                 resettable: [],
                 explains: {
                     searchItem: '검색할 내용',
-                    option: '검색할 항목 ' + STD.notice.enumFields.join(", "),
+                    searchField: '검색할 항목 ' + STD.notice.enumFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
                     country: '국가 필터 ' + STD.notice.enumCountries.join(", ") + ', 없으면 전체',
                     type: '유형 필터 ' + STD.notice.enumNoticeTypes.join(", "),
-                    sort: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
+                    sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", ")
                 },
                 response: [{
                     title: "공지사항 제목",

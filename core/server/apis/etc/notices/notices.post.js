@@ -14,8 +14,8 @@ post.validate = function () {
             req.check('country', '400_3').isEnum(enumData);
         }
         
-        if(req.body.startDate !== undefined) req.check('startDate', '400_18').isDate();
-        if(req.body.endDate !== undefined) req.check('endDate', '400_18').isDate();
+        if(req.body.startDate !== undefined) req.check('startDate', '400_18').isMicroTimestamp();
+        if(req.body.endDate !== undefined) req.check('endDate', '400_18').isMicroTimestamp();
         if(req.body.imageId !== undefined) req.check('imageId', '400_12').isInt();
         
         req.utils.common.checkError(req, res, next);

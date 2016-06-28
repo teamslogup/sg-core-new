@@ -33,18 +33,18 @@ module.exports = {
             'allowNull': false
         },
         'startDate': {
-            'type': Sequelize.DATE,
+            'type': Sequelize.BIGINT,
             'allowNull': true
         },
         'endDate': {
-            'type': Sequelize.DATE,
+            'type': Sequelize.BIGINT,
             'allowNull': true
         },
         'imageId': {
             'reference': 'Image',
             'referenceKey': 'id',
             'as': 'eventImage',
-            'allowNull': false
+            'allowNull': true
         }
     },
     options: {
@@ -57,7 +57,7 @@ module.exports = {
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllNotices': function (searchItem, option, last, size, country, type, sort, callback) {
+            'findAllNotices': function (searchItem, searchField, last, size, country, type, sort, callback) {
 
                 var where = {};
 
@@ -69,8 +69,8 @@ module.exports = {
                     'where': where
                 };
 
-                if (searchItem && option) {
-                    query.where[option] = {
+                if (searchItem && searchField) {
+                    query.where[searchField] = {
                         '$like': "%" + searchItem + "%"
                     };
                 } else if (searchItem) {

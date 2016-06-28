@@ -7,13 +7,13 @@ put.validate = function () {
         var NOTICE = req.meta.std.notice;
         if (req.body.title !== undefined) req.check('title', '400_8').len(NOTICE.minTitleLength, NOTICE.maxTitleLength);
         if (req.body.body !== undefined) req.check('body', '400_8').len(NOTICE.minBodyLength, NOTICE.maxBodyLength);
-        if (req.body.type !== undefined) req.check('type', '400_8').isEnum(NOTICE.enumNoticeTypes);
+        if (req.body.type !== undefined) req.check('type', '400_28').isEnum(NOTICE.enumNoticeTypes);
         if (req.body.country !== undefined) {
             req.check('country', '400_3').isEnum(req.coreUtils.common.getCountryEnum(req));
         }
 
-        if (req.body.startDate !== undefined) req.check('startDate', '400_18').isDate();
-        if (req.body.endDate !== undefined) req.check('endDate', '400_18').isDate();
+        if (req.body.startDate !== undefined) req.check('startDate', '400_18').isMicroTimestamp();
+        if (req.body.endDate !== undefined) req.check('endDate', '400_18').isMicroTimestamp();
         if (req.body.imageId !== undefined) req.check('imageId', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
