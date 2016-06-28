@@ -5,18 +5,23 @@ var logger = new Logger(__filename);
 put.validate = function () {
     return function (req, res, next) {
         var NOTICE = req.meta.std.notice;
-        req.check('title', '400_8').len(NOTICE.minTitleLength, NOTICE.maxTitleLength);
-        req.check('body', '400_8').len(NOTICE.minBodyLength, NOTICE.maxBodyLength);
-        req.check('type', '400_8').len(NOTICE.minBodyLength, NOTICE.maxBodyLength);
+        if (req.body.title !== undefined) req.check('title', '400_8').len(NOTICE.minTitleLength, NOTICE.maxTitleLength);
+        if (req.body.body !== undefined) req.check('body', '400_8').len(NOTICE.minBodyLength, NOTICE.maxBodyLength);
+        if (req.body.type !== undefined) req.check('type', '400_8').isEnum(NOTICE.enumNoticeTypes);
         if (req.body.country !== undefined) {
             req.check('country', '400_3').isEnum(req.coreUtils.common.getCountryEnum(req));
         }
+
+        if (req.body.startDate !== undefined) req.check('startDate', '400_18').isDate();
+        if (req.body.endDate !== undefined) req.check('endDate', '400_18').isDate();
+        if (req.body.imageId !== undefined) req.check('imageId', '400_12').isInt();
+
         req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
-put.updateReport = function () {
+put.update = function () {
     return function (req, res, next) {
         var update = req.body;
         req.models.Notice.updateDataById(req.params.id, update, function (status, data) {

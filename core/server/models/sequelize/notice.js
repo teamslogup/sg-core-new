@@ -11,6 +11,7 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var NOTICE = STD.notice;
 
 module.exports = {
     fields: {
@@ -30,6 +31,20 @@ module.exports = {
             'type': Sequelize.ENUM,
             'values': STD.notice.enumNoticeTypes,
             'allowNull': false
+        },
+        'startDate': {
+            'type': Sequelize.DATE,
+            'allowNull': true
+        },
+        'endDate': {
+            'type': Sequelize.DATE,
+            'allowNull': true
+        },
+        'imageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'as': 'eventImage',
+            'allowNull': false
         }
     },
     options: {
@@ -42,29 +57,38 @@ module.exports = {
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllNotices': function (searchItem, option, last, size, country, type, sorted, callback) {
-                
+            'findAllNotices': function (searchItem, option, last, size, country, type, sort, callback) {
+
                 var where = {};
-                
-                if(country) where.country = country;
-                if(type) where.type = type;
+
+                if (country) where.country = country;
+                if (type) where.type = type;
 
                 var query = {
                     'limit': parseInt(size),
                     'where': where
                 };
 
-                if (option) {
+                if (searchItem && option) {
                     query.where[option] = {
                         '$like': "%" + searchItem + "%"
                     };
+                } else if (searchItem) {
+                    if (NOTICE.enumFields.length > 0) query.where.$or = [];
+                    for (var i = 0; i < NOTICE.enumFields.length; i++) {
+                        var body = {};
+                        body[NOTICE.enumFields[i]] = {
+                            '$like': '%' + searchItem + '%'
+                        };
+                        query.where.$or.push(body);
+                    }
                 }
 
                 query.where.createdAt = {
                     '$lt': last
                 };
-                
-                if(sorted) query.order = [['createdAt', sorted]];
+
+                if (sort) query.order = [['createdAt', sort]];
 
                 sequelize.models.Notice.findAllDataForQuery(query, callback);
             }
