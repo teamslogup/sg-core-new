@@ -11,6 +11,7 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var NOTICE = STD.notice;
 
 module.exports = {
     fields: {
@@ -30,6 +31,32 @@ module.exports = {
             'type': Sequelize.ENUM,
             'values': STD.notice.enumNoticeTypes,
             'allowNull': false
+        },
+        'startDate': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'endDate': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'thumbnailImageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'as': 'thumbnailImage',
+            'allowNull': true
+        },
+        'bigImageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'as': 'bigImage',
+            'allowNull': true
+        },
+        'smallImageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'as': 'smallImage',
+            'allowNull': true
         }
     },
     options: {
@@ -42,29 +69,49 @@ module.exports = {
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllNotices': function (searchItem, option, last, size, country, type, sorted, callback) {
-                
+            'findAllNotices': function (searchItem, searchField, last, size, country, type, sort, callback) {
+
                 var where = {};
-                
-                if(country) where.country = country;
-                if(type) where.type = type;
+
+                if (country) where.country = country;
+                if (type) where.type = type;
+
+                if (searchItem && searchField) {
+                    where[searchField] = {
+                        '$like': "%" + searchItem + "%"
+                    };
+                } else if (searchItem) {
+                    if (NOTICE.enumFields.length > 0) where.$or = [];
+                    for (var i = 0; i < NOTICE.enumFields.length; i++) {
+                        var body = {};
+                        body[NOTICE.enumFields[i]] = {
+                            '$like': '%' + searchItem + '%'
+                        };
+                        where.$or.push(body);
+                    }
+                }
+
+                where.createdAt = {
+                    '$lt': last
+                };
+
+                if (!sort) sort = STD.common.DESC;
 
                 var query = {
                     'limit': parseInt(size),
-                    'where': where
+                    'where': where,
+                    'order': [['createdAt', sort]],
+                    'include': [{
+                        'model': sequelize.models.Image,
+                        'as': 'thumbnailImage'
+                    },{
+                        'model': sequelize.models.Image,
+                        'as': 'bigImage'
+                    },{
+                        'model': sequelize.models.Image,
+                        'as': 'smallImage'
+                    }]
                 };
-
-                if (option) {
-                    query.where[option] = {
-                        '$like': "%" + searchItem + "%"
-                    };
-                }
-
-                query.where.createdAt = {
-                    '$lt': last
-                };
-                
-                if(sorted) query.order = [['createdAt', sorted]];
 
                 sequelize.models.Notice.findAllDataForQuery(query, callback);
             }

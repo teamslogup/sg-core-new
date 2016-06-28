@@ -29,6 +29,19 @@ var api = {
                     'id': '데이터를 얻을 리소스의 id'
                 },
                 param: 'id',
+                response: {
+                    title: "공지사항 제목",
+                    body: "공지사항 내용",
+                    country: "KR",
+                    type: "normal",
+                    startDate: "2016-03-23",
+                    endDate: "2016-03-26",
+                    imageId: 1,
+                    id: 1,
+                    createAt: "2016-03-22",
+                    updateAt: "2016-03-22",
+                    deletedAt: null
+                },
                 title: '단일 공지 얻기',
                 state: 'staging'
             };
@@ -46,7 +59,7 @@ var api = {
                 apiCreator.add(get.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
@@ -56,34 +69,51 @@ var api = {
     gets: function (isOnlyParams) {
         return function (req, res, next) {
 
-            // var params = {
-            //     acceptable: ['last', 'size', 'type', 'country', ],
-            //     essential: [],
-            //     resettable: [],
-            //     explains: {
-            //         'last': '마지막 데이터',
-            //         'size': '몇개 로드할지에 대한 사이즈',
-            //         'type': '공지타입(없으면 전체) ' + STD.notice.enumNoticeTypes.join(", "),
-            //         'country': '공지를 필터할 국가, 없으면 전체'
-            //     },
-            //     title: '공지리스트얻기',
-            //     state: 'staging'
-            // };
-
             var params = {
-                acceptable: ['searchItem', 'option', 'last', 'size', 'country', 'type', 'sorted'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'country', 'type', 'sort'],
                 essential: [],
                 resettable: [],
-                explains : {
+                explains: {
                     searchItem: '검색할 내용',
-                    option: '검색할 항목 ' + STD.notice.enumFields.join(", "),
+                    searchField: '검색할 항목 ' + STD.notice.enumFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    country: '국가 필터 ' + STD.notice.enumCountries.join(", "),
+                    country: '국가 필터, 없으면 전체',
                     type: '유형 필터 ' + STD.notice.enumNoticeTypes.join(", "),
-                    sorted: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
+                    sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", ")
                 },
-                title: '신고리스트얻기',
+                response: [{
+                    "title": "공지사항 제목",
+                    "body": "공지사항 내용",
+                    "country": "KR",
+                    "type": "normal",
+                    "startDate": "2016-03-23",
+                    "endDate": "2016-03-26",
+                    "id": 1,
+                    "createAt": "2016-03-22",
+                    "updateAt": "2016-03-22",
+                    "deletedAt": null,
+                    "thumbnailImage": {
+                        "authorId": 1,
+                        "folder": "common",
+                        "name": "upload_d8ea10c9b81d797a198a4f4d3ba32bd6.png",
+                        "authorized": true,
+                        "createdAt": "2016-06-27T07:23:17.000Z",
+                        "updatedAt": "2016-06-27T07:23:17.000Z",
+                        "id": 1
+                    },
+                    "bigImage": {
+                        "authorId": 1,
+                        "folder": "common",
+                        "name": "upload_83a28c7bdbfc1a08ff645dbea60748e6.png",
+                        "authorized": true,
+                        "createdAt": "2016-06-27T07:29:39.000Z",
+                        "updatedAt": "2016-06-27T07:29:39.000Z",
+                        "id": 2
+                    },
+                    "smallImage": null
+                }],
+                title: '공지리스트얻기',
                 state: 'staging'
             };
 
@@ -100,7 +130,7 @@ var api = {
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
@@ -111,16 +141,25 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['title', 'body', 'country', 'type'],
-                essential: ['title', 'body', 'type'],
+                acceptable: ['title', 'body', 'country', 'type', 'startDate', 'endDate', 'thumbnailImageId', 'bigImageId', 'smallImageId'],
+                essential: ['title', 'body', 'country', 'type'],
                 resettable: [],
                 explains: {
                     'title': '공지제목',
                     'body': '공지내용',
-                    'country': '공지를 보여줄 국가 ' + STD.notice.enumCountries.join(", "),
-                    'type': '공지타입 ' + STD.notice.enumNoticeTypes.join(", ")
+                    'country': '공지를 보여줄 국가',
+                    'type': '공지타입 ' + STD.notice.enumNoticeTypes.join(", "),
+                    'startDate': '시작날짜',
+                    'endDate': '마감날짜',
+                    'thumbnailImageId': '썸네일 이미지 id',
+                    'bigImageId': '큰 이미지 id',
+                    'smallImageId': '작은 이미지 id'
                 },
-                defaults: {},
+                defaults: {
+                    country: 'KR',
+                    type: 'normal'
+                },
+                role: STD.user.roleAdmin,
                 title: '공지쓰기',
                 state: 'staging'
             };
@@ -139,7 +178,7 @@ var api = {
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
@@ -150,18 +189,24 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['title', 'body', 'country', 'type'],
+                acceptable: ['title', 'body', 'country', 'type', 'startDate', 'endDate', 'thumbnailImageId', 'bigImageId', 'smallImageId'],
                 essential: [],
-                resettable: ['country'],
+                resettable: [],
                 explains: {
                     'title': '공지제목',
                     'body': '공지내용',
-                    'country': '공지를 보여줄 국가 ' + STD.notice.enumCountries.join(", "),
-                    'type': '공지타입 ' + STD.notice.enumNoticeTypes.join(", ")
+                    'country': '공지를 보여줄 국가',
+                    'type': '공지타입 ' + STD.notice.enumNoticeTypes.join(", "),
+                    'startDate': '시작날짜',
+                    'endDate': '마감날짜',
+                    'thumbnailImageId': '썸네일 이미지 id',
+                    'bigImageId': '큰 이미지 id',
+                    'smallImageId': '작은 이미지 id'
                 },
+                role: STD.user.roleAdmin,
                 title: '공지 내용 수정',
                 param: 'id',
-                state: 'design'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -174,12 +219,12 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(put.validate());
-                apiCreator.add(put.updateReport());
+                apiCreator.add(put.update());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 
-                
-             }
+
+            }
             else {
                 return params;
             }
@@ -194,9 +239,10 @@ var api = {
                 explains: {
                     'id': '데이터 리소스의 id'
                 },
+                role: STD.user.roleAdmin,
                 title: '신고 제거',
                 param: 'id',
-                state: 'design'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -213,7 +259,7 @@ var api = {
                 apiCreator.add(del.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
