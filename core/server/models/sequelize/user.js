@@ -341,7 +341,7 @@ module.exports = {
              * @param {Object} size - 찾을 유저 수
              * @param {responseCallback} callback - 응답콜백
              */
-            'findUsersByOption': function (searchItem, field, last, size, order, sort, callback) {
+            'findUsersByOption': function (searchItem, searchField, last, size, order, sort, callback) {
                 var where = {};
 
                 var query = {
@@ -349,8 +349,8 @@ module.exports = {
                     'where': where
                 };
 
-                if (field && searchItem) {
-                    query.where[field] = {
+                if (searchField && searchItem) {
+                    query.where[searchField] = {
                         '$like': '%' + searchItem + '%'
                     };
                 } else if (searchItem) {
