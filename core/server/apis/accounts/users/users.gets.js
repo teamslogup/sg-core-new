@@ -14,7 +14,7 @@ gets.validate = function () {
         if (req.query.orderBy === undefined) req.query.orderBy = USER.orderCreate;
         if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
 
-        req.check('last', '400_5').isInt();
+        req.check('last', '400_5').isMicroTimestamp();
         req.check('searchField', '400_28').isEnum(USER.enumSearchFields);
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
         req.check('orderBy', '400_28').isEnum(USER.enumOrders);
