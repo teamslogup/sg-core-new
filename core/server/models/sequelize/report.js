@@ -47,18 +47,23 @@ module.exports = {
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllReports': function (searchItem, option, last, size, isSolved, sorted, callback) {
+            'findAllReports': function (searchItem, searchField, last, size, authorId, isSolved, sorted, callback) {
                 var where = {};
 
-                if (isSolved != null) where.isSolved = isSolved;
+                if (authorId) where.authorId = authorId;
+                if (isSolved) where.isSolved = isSolved;
                 
                 var query = {
                     'limit': parseInt(size),
-                    'where': where
+                    'where': where,
+                    'include': {
+                        'model': sequelize.models.User,
+                        'as': 'author'
+                    }
                 };
 
-                if (option) {
-                    query.where[option] = {
+                if (searchField) {
+                    query.where[searchField] = {
                         '$like': "%" + searchItem + "%"
                     };
                 }
@@ -70,12 +75,6 @@ module.exports = {
                 if (sorted) query.order = [['createdAt', sorted]];
 
                 sequelize.models.Report.findAllDataForQuery(query, callback);
-
-                // sequelize.models.Report.findAllDataIncludingForBlog(where, null, [{
-                //     'model': sequelize.models.User,
-                //     'as': 'author',
-                //     'attributes': sequelize.models.User.getUserFields()
-                // }], size, last, callback);
             },
             'findReportById': function (id, callback) {
                 sequelize.models.Report.findDataById(id, callback);

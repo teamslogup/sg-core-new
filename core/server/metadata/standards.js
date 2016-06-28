@@ -115,8 +115,7 @@ var standards = {
         "maxReplyLength": 255,
         "minNameLength": 1,
         "maxNameLength": 15,
-        "enumOrders": ["all", "unsolved", "solved"],
-        "enumFields": ["nick", "email"]
+        "enumSearchFields": ["body", "nick", "email"]
     },
     "notice": {
         "minTitleLength": 1,
