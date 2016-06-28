@@ -18,7 +18,7 @@ gets.validate = function () {
             req.query.authorId = null;
         }
         
-        req.check('last', '400_12').isInt();
+        req.check('last', '400_18').isMicroTimestamp();
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
         req.check('orderBy', '400_28').isEnum(IMAGE.enumOrders);
         req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
