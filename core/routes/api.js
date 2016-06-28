@@ -169,7 +169,9 @@ function refineResourceMethods(catList) {
         var catList2 = JSON.parse(JSON.stringify(catList));
         for (var i = 0; i < catList2.length; ++i) {
             var apiList = catList2[i].apiList;
-            apiList.forEach(function(api) {
+            var removeIndexes = [];
+            for (var j = 0; j < apiList.length; ++j) {
+                var api = apiList[j];
                 var methods = api.methods;
                 for (var key in methods) {
                     var method = methods[key];
@@ -178,20 +180,19 @@ function refineResourceMethods(catList) {
                         delete methods[key];
                     }
                 }
-                var isSearched = false;
-                for (var k in methods) {
-                    isSearched = true;
+                var bSearched = false;
+                for (var key in methods) {
+                    bSearched = true;
                     break;
                 }
-                if (!isSearched) {
-                    for (var k = 0; k < apiList.length; ++k) {
-                        if (apiList[k] == api) {
-                            apiList.splice(k, 1);
-                            break;
-                        }
-                    }
+                if (!bSearched) {
+                    removeIndexes.push(j);
                 }
-            });
+            }
+
+            for (var k = removeIndexes.length-1; k >= 0 ; --k) {
+                apiList.splice(removeIndexes[k], 1);
+            }
         }
         req.catList = catList2;
         next();
