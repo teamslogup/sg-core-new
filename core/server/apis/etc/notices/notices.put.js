@@ -14,7 +14,9 @@ put.validate = function () {
 
         if (req.body.startDate !== undefined) req.check('startDate', '400_18').isMicroTimestamp();
         if (req.body.endDate !== undefined) req.check('endDate', '400_18').isMicroTimestamp();
-        if (req.body.imageId !== undefined) req.check('imageId', '400_12').isInt();
+        if (req.body.thumbnailImageId !== undefined) req.check('thumbnailImageId', '400_12').isInt();
+        if (req.body.bigImageId !== undefined) req.check('bigImageId', '400_12').isInt();
+        if (req.body.smallImageId !== undefined) req.check('smallImageId', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
         next();

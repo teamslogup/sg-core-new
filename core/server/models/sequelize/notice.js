@@ -40,10 +40,22 @@ module.exports = {
             'type': Sequelize.BIGINT,
             'allowNull': true
         },
-        'imageId': {
+        'thumbnailImageId': {
             'reference': 'Image',
             'referenceKey': 'id',
-            'as': 'eventImage',
+            'as': 'thumbnailImage',
+            'allowNull': true
+        },
+        'bigImageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'as': 'bigImage',
+            'allowNull': true
+        },
+        'smallImageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'as': 'smallImage',
             'allowNull': true
         }
     },
@@ -64,31 +76,42 @@ module.exports = {
                 if (country) where.country = country;
                 if (type) where.type = type;
 
-                var query = {
-                    'limit': parseInt(size),
-                    'where': where
-                };
-
                 if (searchItem && searchField) {
-                    query.where[searchField] = {
+                    where[searchField] = {
                         '$like': "%" + searchItem + "%"
                     };
                 } else if (searchItem) {
-                    if (NOTICE.enumFields.length > 0) query.where.$or = [];
+                    if (NOTICE.enumFields.length > 0) where.$or = [];
                     for (var i = 0; i < NOTICE.enumFields.length; i++) {
                         var body = {};
                         body[NOTICE.enumFields[i]] = {
                             '$like': '%' + searchItem + '%'
                         };
-                        query.where.$or.push(body);
+                        where.$or.push(body);
                     }
                 }
 
-                query.where.createdAt = {
+                where.createdAt = {
                     '$lt': last
                 };
 
-                if (sort) query.order = [['createdAt', sort]];
+                if (!sort) sort = STD.common.DESC;
+
+                var query = {
+                    'limit': parseInt(size),
+                    'where': where,
+                    'order': [['createdAt', sort]],
+                    'include': [{
+                        'model': sequelize.models.Image,
+                        'as': 'thumbnailImage'
+                    },{
+                        'model': sequelize.models.Image,
+                        'as': 'bigImage'
+                    },{
+                        'model': sequelize.models.Image,
+                        'as': 'smallImage'
+                    }]
+                };
 
                 sequelize.models.Notice.findAllDataForQuery(query, callback);
             }

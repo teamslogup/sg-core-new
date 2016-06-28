@@ -78,22 +78,40 @@ var api = {
                     searchField: '검색할 항목 ' + STD.notice.enumFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    country: '국가 필터 ' + STD.notice.enumCountries.join(", ") + ', 없으면 전체',
+                    country: '국가 필터, 없으면 전체',
                     type: '유형 필터 ' + STD.notice.enumNoticeTypes.join(", "),
                     sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", ")
                 },
                 response: [{
-                    title: "공지사항 제목",
-                    body: "공지사항 내용",
-                    country: "KR",
-                    type: "normal",
-                    startDate: "2016-03-23",
-                    endDate: "2016-03-26",
-                    imageId: 1,
-                    id: 1,
-                    createAt: "2016-03-22",
-                    updateAt: "2016-03-22",
-                    deletedAt: null
+                    "title": "공지사항 제목",
+                    "body": "공지사항 내용",
+                    "country": "KR",
+                    "type": "normal",
+                    "startDate": "2016-03-23",
+                    "endDate": "2016-03-26",
+                    "id": 1,
+                    "createAt": "2016-03-22",
+                    "updateAt": "2016-03-22",
+                    "deletedAt": null,
+                    "thumbnailImage": {
+                        "authorId": 1,
+                        "folder": "common",
+                        "name": "upload_d8ea10c9b81d797a198a4f4d3ba32bd6.png",
+                        "authorized": true,
+                        "createdAt": "2016-06-27T07:23:17.000Z",
+                        "updatedAt": "2016-06-27T07:23:17.000Z",
+                        "id": 1
+                    },
+                    "bigImage": {
+                        "authorId": 1,
+                        "folder": "common",
+                        "name": "upload_83a28c7bdbfc1a08ff645dbea60748e6.png",
+                        "authorized": true,
+                        "createdAt": "2016-06-27T07:29:39.000Z",
+                        "updatedAt": "2016-06-27T07:29:39.000Z",
+                        "id": 2
+                    },
+                    "smallImage": null
                 }],
                 title: '공지리스트얻기',
                 state: 'staging'
@@ -123,17 +141,19 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['title', 'body', 'country', 'type', 'startDate', 'endDate', 'imageId'],
+                acceptable: ['title', 'body', 'country', 'type', 'startDate', 'endDate', 'thumbnailImageId', 'bigImageId', 'smallImageId'],
                 essential: ['title', 'body', 'country', 'type'],
                 resettable: [],
                 explains: {
                     'title': '공지제목',
                     'body': '공지내용',
-                    'country': '공지를 보여줄 국가 ' + STD.notice.enumCountries.join(", "),
+                    'country': '공지를 보여줄 국가',
                     'type': '공지타입 ' + STD.notice.enumNoticeTypes.join(", "),
                     'startDate': '시작날짜',
                     'endDate': '마감날짜',
-                    'imageId': '이미지 id'
+                    'thumbnailImageId': '썸네일 이미지 id',
+                    'bigImageId': '큰 이미지 id',
+                    'smallImageId': '작은 이미지 id'
                 },
                 defaults: {
                     country: 'KR',
@@ -169,17 +189,19 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['title', 'body', 'country', 'type', 'startDate', 'endDate', 'imageId'],
+                acceptable: ['title', 'body', 'country', 'type', 'startDate', 'endDate', 'thumbnailImageId', 'bigImageId', 'smallImageId'],
                 essential: [],
                 resettable: [],
                 explains: {
                     'title': '공지제목',
                     'body': '공지내용',
-                    'country': '공지를 보여줄 국가 ' + STD.notice.enumCountries.join(", "),
+                    'country': '공지를 보여줄 국가',
                     'type': '공지타입 ' + STD.notice.enumNoticeTypes.join(", "),
                     'startDate': '시작날짜',
                     'endDate': '마감날짜',
-                    'imageId': '이미지 id'
+                    'thumbnailImageId': '썸네일 이미지 id',
+                    'bigImageId': '큰 이미지 id',
+                    'smallImageId': '작은 이미지 id'
                 },
                 role: STD.user.roleAdmin,
                 title: '공지 내용 수정',
