@@ -185,6 +185,22 @@ function extending() {
         }
         return result;
     });
+
+    expressValidator.validator.extend('isNumberIds', function (str, maxCnt) {
+        if (!maxCnt) maxCnt = 1;
+        if (str === '') return false;
+        var arr = str.split(',');
+        if (arr.length > maxCnt) {
+            return false;
+        } else {
+            for (var i = 0; i < arr.length; ++i) {
+                if (!Number(arr[i])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    });
 }
 
 module.exports = extending;
