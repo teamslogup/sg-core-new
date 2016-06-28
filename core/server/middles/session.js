@@ -44,20 +44,13 @@ module.exports = function () {
 
     Session.prototype.hasAuthorization = function (role) {
         return function (req, res, next) {
-            if (role) {
-                if ((req.isAuthenticated() && req.user.id == req.params.id)
-                    || (req.user.role >= role)) {
-                    next();
-                } else {
-                    res.hjson(req, next, 403);
-                }
+            var standardRole = req.meta.std.user.roleAdmin;
+            if (role) standardRole = role;
+            if ((req.isAuthenticated() && req.user.id == req.params.id)
+                || (req.user.role >= standardRole)) {
+                next();
             } else {
-                if ((req.isAuthenticated() && req.user.id == req.params.id)
-                    || (req.user.role >= req.meta.std.user.roleAdmin)) {
-                    next();
-                } else {
-                    res.hjson(req, next, 403);
-                }
+                res.hjson(req, next, 403);
             }
         }
     };
