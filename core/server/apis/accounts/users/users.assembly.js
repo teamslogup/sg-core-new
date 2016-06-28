@@ -83,7 +83,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.session.hasPartialAuthorization());
+                apiCreator.add(req.middles.session.hasAuthorization());
                 apiCreator.add(gets.validate());
                 apiCreator.add(gets.getUsers());
                 apiCreator.add(gets.supplement());
@@ -244,7 +244,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.session.hasPartialAuthorization());
+                apiCreator.add(req.middles.session.hasAuthorization());
                 apiCreator.add(del.updateFields());
                 apiCreator.add(del.validate());
                 apiCreator.add(del.setParam());

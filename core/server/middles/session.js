@@ -42,24 +42,22 @@ module.exports = function () {
         }
     };
 
-    Session.prototype.hasPartialAuthorization = function () {
+    Session.prototype.hasAuthorization = function (role) {
         return function (req, res, next) {
-            if ((req.isAuthenticated() && req.user.id == req.params.id)
-                || (req.user.role >= req.meta.std.user.roleAdmin)) {
-                next();
+            if (role) {
+                if ((req.isAuthenticated() && req.user.id == req.params.id)
+                    || (req.user.role >= role)) {
+                    next();
+                } else {
+                    res.hjson(req, next, 403);
+                }
             } else {
-                res.hjson(req, next, 403);
-            }
-        }
-    };
-
-    Session.prototype.hasAuthorization = function () {
-        return function (req, res, next) {
-            if ((req.isAuthenticated() && req.user.id == req.params.id)
-                || (req.user.role >= req.meta.std.user.roleSuperAdmin)) {
-                next();
-            } else {
-                res.hjson(req, next, 403);
+                if ((req.isAuthenticated() && req.user.id == req.params.id)
+                    || (req.user.role >= req.meta.std.user.roleAdmin)) {
+                    next();
+                } else {
+                    res.hjson(req, next, 403);
+                }
             }
         }
     };
