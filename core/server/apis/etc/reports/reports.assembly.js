@@ -57,32 +57,18 @@ var api = {
     gets : function(isOnlyParams) {
         return function(req, res, next) {
 
-            // var params = {
-            //     acceptable: ['last', 'size', 'authorId', 'nick', 'email'],
-            //     essential: [],
-            //     resettable: [],
-            //     explains : {
-            //         'authorId': '유저별 필터링',
-            //         'last': '마지막 데이터',
-            //         'size': '몇개 로드할지에 대한 사이즈',
-            //         'nick': '이름',
-            //         'email': '이메일'
-            //     },
-            //     title: '신고리스트얻기',
-            //     state: 'staging'
-            // };
-
             var params = {
-                acceptable: ['searchItem', 'option', 'last', 'size', 'isSolved', 'sorted'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'authorId', 'isSolved', 'sort'],
                 essential: [],
                 resettable: [],
                 explains : {
                     searchItem: '검색할 내용',
-                    option: '검색할 항목 ' + STD.report.enumFields.join(", "),
+                    searchField: '검색할 항목 ' + STD.report.enumSearchFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    isSolved: '해결 여부 ' + STD.report.enumOrders.join(", "),
-                    sorted: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
+                    authorId: '작성자 id',
+                    isSolved: '해결 여부',
+                    sort: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
                 },
                 title: '신고리스트얻기',
                 state: 'staging'
