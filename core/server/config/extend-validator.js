@@ -2,6 +2,17 @@ var expressValidator = require('express-validator');
 
 function extending() {
 
+    expressValidator.validator.extend('isMicroTimestamp', function(str) {
+        if (str === '') return false;
+        if (Number(str)) {
+            str = str + '';
+            if (str.length == 16) {
+                return true;
+            }
+        }
+        return false;
+    });
+
     expressValidator.validator.extend('isAlphanumericPassword', function(str, min, max) {
         if (str === '') return false;
         var reg = new RegExp("^.*(?=.{" + min + "," + max +"})(?=.*[0-9])(?=.*[a-zA-Z]).*$");
