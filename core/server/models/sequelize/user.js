@@ -248,6 +248,7 @@ module.exports = {
              */
             'verifyEmail': function (token, callback) {
 
+                var isSuccess = false;
                 var self = this;
                 // 이미 인증되었으면 그냥 넘김.
                 // 인증이 되지 않았는데 잘못된 토큰이 오면
@@ -273,12 +274,12 @@ module.exports = {
                     }).then(function (auth) {
 
                         if (!auth) {
-                            throw {status: 404};
+                            throw new errorHandler.CustomSequelizeError(404);
                         }
 
                         if (auth.expiredAt < now || auth.token.toString() != token.toString()) {
                             console.log('fail');
-                            throw {status: 403};
+                            throw new errorHandler.CustomSequelizeError(403);
                         }
 
                         // 2. 인증성공하면 auth 제거
@@ -290,13 +291,16 @@ module.exports = {
                                 email: auth.key
                             }, {transaction: t}).then(function (user) {
                                 if (!user) {
-                                    throw {status: 404};
+                                    throw new errorHandler.CustomSequelizeError(404);
                                 }
+                                isSuccess = true;
                             });
                         });
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    callback(200, self);
+                    if (isSuccess) {
+                        callback(200, self);
+                    }
                 });
             },
 

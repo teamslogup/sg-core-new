@@ -11,6 +11,7 @@ module.exports = {
 
     email: {
         signup: function (req, user, callback) {
+            console.log(url + user.auth.token);
             if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
                 return callback(null);
             }
@@ -27,6 +28,7 @@ module.exports = {
             }, callback);
         },
         adding: function (req, auth, callback) {
+            console.log(url + auth.token);
             if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
                 return callback(null);
             }
@@ -42,6 +44,7 @@ module.exports = {
             }, callback);
         },
         newPass: function (req, redirect, auth, callback) {
+            console.log(url + auth.token);
             if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
                 return callback(null);
             }
