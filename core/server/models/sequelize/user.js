@@ -107,16 +107,16 @@ module.exports = {
             'asReverse': 'user'
         },
         'createdAt': {
-           'type': Sequelize.BIGINT,
-           'allowNull': true
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         },
         'updatedAt': {
-           'type': Sequelize.BIGINT,
-           'allowNull': true
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         },
         'deletedAt': {
-           'type': Sequelize.BIGINT,
-           'allowNull': true
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         }
     },
     options: {
@@ -324,6 +324,52 @@ module.exports = {
                         callback(200, loadedUser);
                     }
                 });
+            },
+            /**
+             * 아이디 패스워드 설정
+             * @param type
+             * @param id
+             * @param pass
+             * @param callback
+             */
+            updateUniqueAccount: function (type, id, pass, callback) {
+                var self = this;
+                var updatedUser = null;
+                var finalStatus = null;
+                sequelize.transaction(function (t) {
+                    var where = {};
+                    var query = {
+                        where: where,
+                        transaction: t
+                    };
+                    where.aid = id;
+
+                    var loadedData = null;
+                    return sequelize.models.User.find(query).then(function (data) {
+                        loadedData = data;
+                        if (!loadedData) {
+                            var loadedUser = false;
+                            return self.updateAttributes({
+                                secret: self.createHashPassword(pass),
+                                aid: id,
+                                email: type == STD.user.linkIdPassEmail ? id : null
+                            }, {transaction: t}).then(function (user) {
+                                if (user) {
+                                    finalStatus = 200;
+                                    loadedUser = user;
+                                } else {
+                                    finalStatus = 400;
+                                }
+                            });
+                        } else {
+                            finalStatus = 409;
+                        }
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (finalStatus) {
+                        return callback(finalStatus, updatedUser);
+                    }
+                });
             }
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
@@ -355,7 +401,7 @@ module.exports = {
                     };
                 } else if (searchItem) {
                     if (STD.user.enumSearchFields.length > 0) query.where.$or = [];
-                    for (var i=0; i<STD.user.enumSearchFields.length; i++) {
+                    for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
                         var body = {};
                         body[STD.user.enumSearchFields[i]] = {
                             '$like': '%' + searchItem + '%'

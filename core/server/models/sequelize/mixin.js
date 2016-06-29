@@ -382,6 +382,21 @@ var mixin = {
                 });
             },
 
+            'updateDataWithQuery': function(selector, update, callback) {
+                var isSuccess = false;
+                this.update(update, selector).then(function (data) {
+                    if (data && data[0]) {
+                        isSuccess = true;
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (isSuccess) {
+                        callback(204);
+                    } else {
+                        callback(404);
+                    }
+                });
+            },
+
             /**
              * 아이디를 통해서 데이터 없데이트
              * @param id
