@@ -20,6 +20,7 @@ gets.validate = function () {
         }
         if (req.query.isSolved !== undefined) {
             req.check('isSolved', '400_20').isBoolean();
+            req.sanitize('isSolved').toBoolean();
         }
         
         if (req.query.sort !== undefined) {
