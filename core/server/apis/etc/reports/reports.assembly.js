@@ -28,6 +28,7 @@ var api = {
                 explains : {
                     'id': '데이터를 얻을 리소스의 id'
                 },
+                role: STD.user.roleAdmin,
                 param: 'id',
                 title: '단일 신고 얻기',
                 state: 'staging'
@@ -70,6 +71,7 @@ var api = {
                     isSolved: '해결 여부',
                     sort: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
                 },
+                role: STD.user.roleAdmin,
                 title: '신고리스트얻기',
                 state: 'staging'
             };
@@ -100,7 +102,7 @@ var api = {
 
             var params = {
                 acceptable: ['body', 'nick', 'email'],
-                essential: ['body'],
+                essential: ['body', 'nick'],
                 resettable: [],
                 explains : {
                     'body': '신고내용',
@@ -139,13 +141,16 @@ var api = {
         return function(req, res, next) {
 
             var params = {
-                acceptable: ['body'],
-                essential: ['body'],
+                acceptable: ['body', 'reply', 'isSolved'],
+                essential: [],
                 resettable: [],
                 explains : {
                     'body': '수정할 신고 내용',
+                    'reply': '답변',
+                    'isSolved': '해결 여부',
                     'id': '데이터 리소스의 id'
                 },
+                role: STD.user.roleAdmin,
                 title: '신고 내용 수정',
                 param: 'id',
                 state: 'design'
@@ -182,6 +187,7 @@ var api = {
                 explains : {
                     'id': '데이터 리소스의 id'
                 },
+                role: STD.user.roleAdmin,
                 title: '신고 제거',
                 param: 'id',
                 state: 'design'
