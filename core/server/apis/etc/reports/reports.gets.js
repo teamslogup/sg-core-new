@@ -12,8 +12,14 @@ gets.validate = function () {
         if (req.query.searchField !== undefined) {
             req.check('searchField', '400_28').isEnum(REPORT.enumSearchFields);
         }
-        if (req.query.last === undefined) req.query.last = micro.now();
-        if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
+        if (req.query.last === undefined) {
+            req.query.last = micro.now();
+        }
+        if (req.query.size === undefined) {
+            req.query.size = COMMON.defaultLoadingLength;
+        }
+        req.check('last', '400_18').isMicroTimestamp();
+        req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
 
         if (req.query.authorId !== undefined) {
             req.check('authorId', '400_12').isInt();
@@ -22,13 +28,11 @@ gets.validate = function () {
             req.check('isSolved', '400_20').isBoolean();
             req.sanitize('isSolved').toBoolean();
         }
-        
         if (req.query.sort !== undefined) {
             req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
+        } else {
+            req.query.sort = COMMON.enumSortTypes[0];
         }
-
-        req.check('last', '400_18').isMicroTimestamp();
-        req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
 
         req.utils.common.checkError(req, res, next);
         next();
@@ -43,7 +47,7 @@ gets.setParam = function () {
             req.query.authorId = req.user.id;
         }
 
-        req.models.Report.findAllReports(req.query.searchItem, req.query.searchField, req.query.last, req.query.size, req.query.authorId, req.query.isSolved, req.query.sorted, function (status, data) {
+        req.models.Report.findReportsByOptions(req.query, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();
