@@ -52,7 +52,8 @@ var mixin = {
              */
             'delete': function (callback) {
                 var isSuccess = false;
-                this.destroy().then(function () {
+                this.destroy().then(function (data) {
+                    console.log(data);
                     isSuccess = true;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (isSuccess) {
@@ -217,7 +218,7 @@ var mixin = {
                     'attributes': attributes,
                     'order': [['createdAt', 'DESC']],
                     'include': include
-                };
+                }
 
                 if (!attributes || attributes.length == 0) delete query.attributes;
                 if (!include) delete query.include;

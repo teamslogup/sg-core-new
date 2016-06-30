@@ -443,6 +443,13 @@ module.exports = {
                 this.findDataIncludingById(id, [{
                     model: sequelize.models.Profile,
                     as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.Device,
+                    as: 'devices'
                 }], callback);
             },
             /**
@@ -479,6 +486,13 @@ module.exports = {
                 sequelize.models.User.findDataIncluding(where, [{
                     model: sequelize.models.Profile,
                     as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.Device,
+                    as: 'devices'
                 }], callback);
             },
             /**

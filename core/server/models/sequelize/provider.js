@@ -7,8 +7,30 @@ var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
 var crypto = require('crypto');
 var mixin = require('./mixin');
+var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+
+function requestFacebookValidadtor(uid, secret, callback) {
+    var request = require('request');
+    var rootUri = 'https://graph.facebook.com/me?access_token=';
+    var option = {
+        method: 'GET',
+        uri: rootUri + secret
+    };
+    request(option, function (error, response, body) {
+        if (response.statusCode == 200) {
+            body = JSON.parse(body);
+            if (body.id == uid) {
+                callback(200);
+            } else {
+                callback(403);
+            }
+        } else {
+            callback(403);
+        }
+    });
+}
 
 module.exports = {
     fields: {
@@ -37,11 +59,10 @@ module.exports = {
             'type': Sequelize.STRING,
             'allowNull': false
         },
-        'expiredAt': Sequelize.BIGINT,
         'allowNull': false
     }, options: {
         'charset': 'utf8',
-        'paranoid': true, // deletedAt 추가. delete안함.
+        'paranoid': false, // deletedAt 추가. delete안함.
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             'tokenAuthenticate': function (token) {
                 return this.token == this.createHashPassword(token);
@@ -56,32 +77,50 @@ module.exports = {
             }
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            checkAndRefreshFacebookToken: function(userId, secret, callback) {
-                var request = require('request');
-                var rootUri = 'https://graph.facebook.com/me?access_token=';
-                var option = {
-                    method: 'GET',
-                    uri: rootUri + secret
-                };
-                request(option, function (error, response, body) {
-                    if (response.statusCode == 200) {
-                        body = JSON.parse(body);
-                        if (body.id == userId) {
-                            sequelize.models.Provider.updateDataByKey('uid', userId, {
-                                uid: userId,
-                                token: secret
-                            }, function(status, data) {
-                                if (status == 404 || status == 204) {
-                                    callback(200);
-                                } else {
-                                    callback(status, data);
-                                }
-                            });
-                        } else {
-                            callback(403);
-                        }
+            getProviderFields: function() {
+                var fields = ['id', 'type', 'uid'];
+                return fields;
+            },
+            updateFacebookToken: function(userId, uid, secret, callback) {
+                requestFacebookValidadtor(uid, secret, function(status, data) {
+                    if (status == 200) {
+                        var finalStatus = 400;
+                        sequelize.models.Provider.create({
+                            type: STD.user.providerFacebook,
+                            uid: uid,
+                            token: secret,
+                            userId: userId
+                        }).then(function(data) {
+                            if (data) {
+                                finalStatus = 200;
+                            } else {
+                                finalStatus = 404;
+                            }
+                        }).catch(errorHandler.catchCallback(callback)).done(function (provider) {
+                            if (finalStatus != 400) {
+                                callback(finalStatus, provider);
+                            }
+                        });
                     } else {
-                        callback(403);
+                        callback(status, data);
+                    }
+                });
+            },
+            checkAndRefreshFacebookToken: function(uid, secret, callback) {
+                requestFacebookValidadtor(uid, secret, function(status, data) {
+                    if (status == 200) {
+                        sequelize.models.Provider.updateDataByKey('uid', uid, {
+                            uid: uid,
+                            token: secret
+                        }, function(status, data) {
+                            if (status == 404 || status == 204) {
+                                callback(200);
+                            } else {
+                                callback(status, data);
+                            }
+                        });
+                    } else {
+                        callback(status, data);
                     }
                 });
             }
