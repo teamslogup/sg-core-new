@@ -4,7 +4,8 @@ var logger = new Logger(__filename);
 
 put.validate = function () {
     return function (req, res, next) {
-        req.check('slug', '400_8').isAlphanumeric();
+        var BOARD = req.meta.std.board;
+        req.check('slug', '400_8').isAlphanumeric().len(BOARD.minSlugLength, BOARD.maxSlugLength);
 
         if (req.body.roleRead !== undefined) {
             req.check('roleRead', '400_3').isEnum(req.meta.std.user.enumRoles);
@@ -19,9 +20,9 @@ put.validate = function () {
             req.sanitize('isVisible').toBoolean();
         }
 
-        if (req.body.isAnnoy !== undefined) {
-            req.check('isAnnoy', '400_20').isBoolean();
-            req.sanitize('isAnnoy').toBoolean();
+        if (req.body.isAnonymous !== undefined) {
+            req.check('isAnonymous', '400_20').isBoolean();
+            req.sanitize('isAnonymous').toBoolean();
         }
 
         req.utils.common.checkError(req, res, next);

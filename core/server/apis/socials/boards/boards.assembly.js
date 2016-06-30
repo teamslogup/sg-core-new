@@ -56,30 +56,18 @@ var api = {
     gets : function(isOnlyParams) {
         return function(req, res, next) {
 
-            // var params = {
-            //     acceptable: ['last', 'size'],
-            //     essential: [],
-            //     resettable: [],
-            //     explains : {
-            //         'last': '마지막 데이터',
-            //         'size': '몇개 로드할지에 대한 사이즈'
-            //     },
-            //     title: '게시판 목록 얻어오기',
-            //     state: 'development'
-            // };
-
             var params = {
-                acceptable: ['searchItem', 'option','last', 'size', 'isVisible', 'isAnony', 'sorted'],
+                acceptable: ['searchItem', 'searchField','last', 'size', 'isVisible', 'isAnonymous', 'sort'],
                 essential: [],
                 resettable: [],
                 explains : {
                     searchItem: '검색할 내용',
-                    option: '검색할 항목',
+                    searchField: '검색할 항목',
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    isVisible: '인증 여부 ' + STD.board.enumVisible.join(", "),
-                    isAnony: '실명 여부 ' + STD.board.enumAnony.join(", "),
-                    sorted: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
+                    isVisible: '인증 여부',
+                    isAnonymous: '익명 게시판 여부',
+                    sort: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
                 },
                 title: '신고리스트얻기',
                 state: 'staging'
@@ -107,7 +95,7 @@ var api = {
         return function(req, res, next) {
 
             var params = {
-                acceptable: ['slug', 'skin', 'roleRead', 'roleWrite', 'isVisible', 'isAnnoy', 'categories'],
+                acceptable: ['slug', 'skin', 'roleRead', 'roleWrite', 'isVisible', 'isAnonymous', 'categories'],
                 essential: ['slug', 'skin', 'categories'],
                 resettable: [],
                 explains : {
@@ -117,7 +105,7 @@ var api = {
                     'roleRead': '읽기권한 (해당권한이상) ' + META.std.user.enumRoles.join(", "),
                     'roleWrite': '쓰기권한 (해당권한이상) ' + META.std.user.enumRoles.join(", "),
                     'isVisible': '게시판을 숨길지 여부. true, false',
-                    'isAnnoy': '익명게시판여부. true, false'
+                    'isAnonymous': '익명게시판여부. true, false'
                 },
                 title: '게시판만들기',
                 state: 'development'
@@ -148,7 +136,7 @@ var api = {
         return function(req, res, next) {
             
             var params = {
-                acceptable: ['slug', 'skin', 'roleRead', 'roleWrite', 'isVisible', 'isAnnoy'],
+                acceptable: ['skin', 'roleRead', 'roleWrite', 'isVisible', 'isAnonymous'],
                 essential: [],
                 resettable: [],
                 explains : {
@@ -157,7 +145,7 @@ var api = {
                     'roleRead': '읽기권한 (해당권한이상) ' + META.std.user.enumRoles.join(", "),
                     'roleWrite': '쓰기권한 (해당권한이상) ' + META.std.user.enumRoles.join(", "),
                     'isVisible': '게시판을 숨길지 여부. true, false',
-                    'isAnnoy': '익명게시판여부. true, false'
+                    'isAnonymous': '익명게시판여부. true, false'
                 },
                 title: '게시판수정',
                 param: 'slug',

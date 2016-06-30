@@ -134,10 +134,8 @@ var standards = {
         "enumFields": ["title", "body"]
     },
     "board": {
-        "minTitleLength": 1,
-        "maxTitleLength": 30,
-        "enumVisible": ["all", "visibleBoard", "invisibleBaord"],
-        "enumAnony": ["all", "anonymous", "notAnonymous"],
+        "minSlugLength": 1,
+        "maxSlugLength": 1000
     },
     "image": {
         "enumOrders": ["orderCreate", "orderUpdate"],
