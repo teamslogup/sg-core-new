@@ -6,7 +6,11 @@ put.validate = function () {
     return function (req, res, next) {
         var REPORT = req.meta.std.report;
         req.check('id', '400_12').isInt();
-        req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
+
+        if (req.body.body !== undefined) req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
+        if (req.body.reply !== undefined) req.check('reply', '400_8').len(REPORT.minReplyLength, REPORT.maxReplyLength);
+        if (req.body.isSolved !== undefined) req.check('isSolved', '400_20').isBoolean();
+        
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -14,9 +18,8 @@ put.validate = function () {
 
 put.updateReport = function () {
     return function (req, res, next) {
-        var update = {
-            body: req.body.body
-        };
+        var update = req.body;
+        
         req.report.updateFields(update, function (status, data) {
             if (status == 200) {
                 req.report = data;
