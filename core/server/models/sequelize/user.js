@@ -107,16 +107,16 @@ module.exports = {
             'asReverse': 'user'
         },
         'createdAt': {
-           'type': Sequelize.BIGINT,
-           'allowNull': true
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         },
         'updatedAt': {
-           'type': Sequelize.BIGINT,
-           'allowNull': true
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         },
         'deletedAt': {
-           'type': Sequelize.BIGINT,
-           'allowNull': true
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         }
     },
     options: {
@@ -248,6 +248,7 @@ module.exports = {
              */
             'verifyEmail': function (token, callback) {
 
+                var isSuccess = false;
                 var self = this;
                 // 이미 인증되었으면 그냥 넘김.
                 // 인증이 되지 않았는데 잘못된 토큰이 오면
@@ -273,12 +274,12 @@ module.exports = {
                     }).then(function (auth) {
 
                         if (!auth) {
-                            throw {status: 404};
+                            throw new errorHandler.CustomSequelizeError(404);
                         }
 
                         if (auth.expiredAt < now || auth.token.toString() != token.toString()) {
                             console.log('fail');
-                            throw {status: 403};
+                            throw new errorHandler.CustomSequelizeError(403);
                         }
 
                         // 2. 인증성공하면 auth 제거
@@ -290,13 +291,16 @@ module.exports = {
                                 email: auth.key
                             }, {transaction: t}).then(function (user) {
                                 if (!user) {
-                                    throw {status: 404};
+                                    throw new errorHandler.CustomSequelizeError(404);
                                 }
+                                isSuccess = true;
                             });
                         });
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    callback(200, self);
+                    if (isSuccess) {
+                        callback(200, self);
+                    }
                 });
             },
 
@@ -322,6 +326,52 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (loadedUser) {
                         callback(200, loadedUser);
+                    }
+                });
+            },
+            /**
+             * 아이디 패스워드 설정
+             * @param type
+             * @param id
+             * @param pass
+             * @param callback
+             */
+            updateUniqueAccount: function (type, id, pass, callback) {
+                var self = this;
+                var updatedUser = null;
+                var finalStatus = null;
+                sequelize.transaction(function (t) {
+                    var where = {};
+                    var query = {
+                        where: where,
+                        transaction: t
+                    };
+                    where.aid = id;
+
+                    var loadedData = null;
+                    return sequelize.models.User.find(query).then(function (data) {
+                        loadedData = data;
+                        if (!loadedData) {
+                            var loadedUser = false;
+                            return self.updateAttributes({
+                                secret: self.createHashPassword(pass),
+                                aid: id,
+                                email: type == STD.user.linkIdPassEmail ? id : null
+                            }, {transaction: t}).then(function (user) {
+                                if (user) {
+                                    finalStatus = 200;
+                                    loadedUser = user;
+                                } else {
+                                    finalStatus = 400;
+                                }
+                            });
+                        } else {
+                            finalStatus = 409;
+                        }
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (finalStatus) {
+                        return callback(finalStatus, updatedUser);
                     }
                 });
             }
@@ -355,7 +405,7 @@ module.exports = {
                     };
                 } else if (searchItem) {
                     if (STD.user.enumSearchFields.length > 0) query.where.$or = [];
-                    for (var i=0; i<STD.user.enumSearchFields.length; i++) {
+                    for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
                         var body = {};
                         body[STD.user.enumSearchFields[i]] = {
                             '$like': '%' + searchItem + '%'
@@ -393,6 +443,13 @@ module.exports = {
                 this.findDataIncludingById(id, [{
                     model: sequelize.models.Profile,
                     as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.Device,
+                    as: 'devices'
                 }], callback);
             },
             /**
@@ -429,6 +486,13 @@ module.exports = {
                 sequelize.models.User.findDataIncluding(where, [{
                     model: sequelize.models.Profile,
                     as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.Device,
+                    as: 'devices'
                 }], callback);
             },
             /**

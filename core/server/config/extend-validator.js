@@ -21,7 +21,7 @@ function extending() {
 
     expressValidator.validator.extend('isId', function(str, min, max) {
         if (str === '') return false;
-        if (str.length > min || str.length < max) return false;
+        if (str.length < min || str.length > max) return false;
         var reg = new RegExp("^[a-z0-9]{" + min + "," + max + "}$");
         return reg.test(str);
     });

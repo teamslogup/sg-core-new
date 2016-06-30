@@ -21,7 +21,7 @@ post.validate = function () {
             }
             req.check('secret', '400_2').isInt({min: Number(min), max: Number(max)});
         } else if (req.body.type == USER.signUpTypePhone) {
-            req.check('uid', '400_55').isId(USER.maxIdLength, USER.minIdLength);
+            req.check('uid', '400_55').isId(USER.minIdLength, USER.maxIdLength);
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         }
         req.utils.common.checkError(req, res, next);

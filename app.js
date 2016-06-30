@@ -34,7 +34,7 @@ sequelize.sync({force: config.db.force}).then(function (err) {
     } else {
         app.listen(config.app.port);
     }
-    console.log('Server running at ' + config.app.port + ' ' + env + ' mode.');
+    console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
 }, function (err) {
     console.log('Unable to connect to the database:', err);
 });

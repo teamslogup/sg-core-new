@@ -55,7 +55,7 @@ get.consent = function () {
                 return res.hjson(req, next, status, err);
             }
 
-            text = req.utils.common.errorTranslator(err);
+            text = req.coreUtils.common.errorTranslator(err);
 
             return res.render('verification-error', {
                 params: {
