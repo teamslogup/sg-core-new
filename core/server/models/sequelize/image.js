@@ -16,8 +16,10 @@ var STD = require('../../../../bridge/metadata/standards');
 module.exports = {
     fields: {
         'authorId': {
-            'type': Sequelize.INTEGER,
-            'allowNull': false
+            'reference': 'User',
+            'referenceKey': 'id',
+            'referenceType': 'one',
+            'as': 'author'
         },
         'folder': {
             'type': Sequelize.STRING,
@@ -76,6 +78,7 @@ module.exports = {
                 var query = {
                     'where': where
                 };
+                
                 sequelize.models.Image.findAllDataForQuery(query, function (status, data) {
                     callback(status, data);
                 });
