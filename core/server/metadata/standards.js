@@ -116,8 +116,8 @@ var standards = {
         "maxBodyLength": 10000,
         "minReplyLength": 1,
         "maxReplyLength": 10000,
-        "minNameLength": 1,
-        "maxNameLength": 40,
+        "minNickLength": 1,
+        "maxNickLength": 14,
         "enumSearchFields": ["body", "nick", "email"]
     },
     "notice": {

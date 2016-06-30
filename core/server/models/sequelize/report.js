@@ -47,14 +47,14 @@ module.exports = {
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllReports': function (searchItem, searchField, last, size, authorId, isSolved, sorted, callback) {
+            'findReportsByOptions': function (options, callback) {
                 var where = {};
 
-                if (authorId) where.authorId = authorId;
-                if (isSolved) where.isSolved = isSolved;
+                if (options.authorId) where.authorId = options.authorId;
+                if (options.isSolved) where.isSolved = options.isSolved;
                 
                 var query = {
-                    'limit': parseInt(size),
+                    'limit': parseInt(options.size),
                     'where': where,
                     'include': {
                         'model': sequelize.models.User,
@@ -62,17 +62,17 @@ module.exports = {
                     }
                 };
 
-                if (searchField) {
-                    query.where[searchField] = {
-                        '$like': "%" + searchItem + "%"
+                if (options.searchField) {
+                    query.where[options.searchField] = {
+                        '$like': "%" + options.searchItem + "%"
                     };
                 }
 
                 query.where.createdAt = {
-                    '$lt': last
+                    '$lt': options.last
                 };
                 
-                if (sorted) query.order = [['createdAt', sorted]];
+                if (options.sort) query.order = [['createdAt', options.sort]];
 
                 sequelize.models.Report.findAllDataForQuery(query, callback);
             },
