@@ -4,8 +4,9 @@ var logger = new Logger(__filename);
 
 post.validate = function () {
     return function (req, res, next) {
+        var BOARD = req.meta.std.board;
 
-        req.check('slug', '400_8').isAlphanumeric();
+        req.check('slug', '400_8').isAlphanumeric().len(BOARD.minSlugLength, BOARD.maxSlugLength);
         req.utils.common.toArray(req.body, 'categories');
 
         if (req.body.roleRead !== undefined) {
@@ -21,9 +22,9 @@ post.validate = function () {
             req.sanitize('isVisible').toBoolean();
         }
 
-        if (req.body.isAnnoy !== undefined) {
-            req.check('isAnnoy', '400_20').isBoolean();
-            req.sanitize('isAnnoy').toBoolean();
+        if (req.body.isAnonymous !== undefined) {
+            req.check('isAnonymous', '400_20').isBoolean();
+            req.sanitize('isAnonymous').toBoolean();
         }
 
         req.utils.common.checkError(req, res, next);

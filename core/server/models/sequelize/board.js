@@ -39,11 +39,11 @@ module.exports = {
             'defaultValue': true,
             'comment': '게시판 외부 노출여부'
         },
-        'isAnnoy': {
+        'isAnonymous': {
             'type': Sequelize.BOOLEAN,
             'allowNull': false,
             'defaultValue': false,
-            'comment': '익명인지 여부'
+            'comment': '게시판 익명 여부'
         }
     },
     options: {
@@ -268,7 +268,7 @@ module.exports = {
                     }
                 }).then(function (data) {
                     loadedData = data;
-                }).catch(errorHandler.catchCallback(callback)).done(function() {
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (!loadedData) return callback(404);
                     else return callback(204);
                 });
@@ -320,28 +320,27 @@ module.exports = {
                     }
                 });
             },
-            'findAllBoards': function (searchItem, option, last, size, isVisible, isAnnoy, sorted, callback) {
+            'findBoardsByOptions': function (options, callback) {
 
                 var include = [{
                     'model': sequelize.models.Category,
                     'as': 'categories',
                     'attributes': sequelize.models.Category.getCategoryFields(),
-                    'where': {
-                    }
+                    'where': {}
                 }];
-                
+
                 var where = {};
 
-                if (isVisible != null) where.isVisible = isVisible;
-                if (isAnnoy != null) where.isAnnoy = isAnnoy;
+                if (options.isVisible) where.isVisible = options.isVisible;
+                if (options.isAnonymous) where.isAnonymous = options.isAnonymous;
 
                 var query = {
-                    'limit': parseInt(size),
+                    'limit': parseInt(options.size),
                     'where': where
                 };
 
-                if (option) {
-                    query.where[option] = {
+                if (options.searchField) {
+                    query.where[options.searchField] = {
                         '$like': "%" + searchItem + "%"
                     };
                 }
@@ -349,9 +348,9 @@ module.exports = {
                 query.where.createdAt = {
                     '$lt': last
                 };
-                
-                if(sorted) query.order = [['createdAt', sorted]];
-                
+
+                if (options.sort) query.order = [['createdAt', options.sort]];
+
                 query.include = include;
 
                 sequelize.models.Board.findAllDataForQuery(query, callback);

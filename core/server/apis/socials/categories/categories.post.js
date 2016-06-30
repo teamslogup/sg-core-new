@@ -4,9 +4,9 @@ var logger = new Logger(__filename);
 
 post.validate = function () {
     return function (req, res, next) {
-
+        var BOARD = req.meta.std.board;
         var CATEGORY = req.meta.std.category;
-        req.check('slug', '400_8').isAlphanumeric();
+        req.check('slug', '400_8').isAlphanumeric().len(BOARD.minSlugLength, BOARD.maxSlugLength);;
         req.check('name', '400_8').len(CATEGORY.minNameLength, CATEGORY.maxNameLength);
 
         if (req.body.isVisible !== undefined) {
