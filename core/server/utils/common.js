@@ -63,6 +63,9 @@ module.exports = {
                     var body = req.body;
                     var tempParams = req.params;
 
+                    req.query = {};
+                    req.body = {};
+
                     if (method.toLowerCase() == 'get' || method.toLowerCase() == 'gets') {
                         req.query = requestData;
                     } else {
