@@ -50,8 +50,8 @@ module.exports = {
             'findReportsByOptions': function (options, callback) {
                 var where = {};
 
-                if (options.authorId) where.authorId = options.authorId;
-                if (options.isSolved) where.isSolved = options.isSolved;
+                if (options.authorId !== undefined) where.authorId = options.authorId;
+                if (options.isSolved !== undefined) where.isSolved = options.isSolved;
                 
                 var query = {
                     'limit': parseInt(options.size),
@@ -72,7 +72,7 @@ module.exports = {
                     '$lt': options.last
                 };
                 
-                if (options.sort) query.order = [['createdAt', options.sort]];
+                if (options.sort !== undefined) query.order = [['createdAt', options.sort]];
 
                 sequelize.models.Report.findAllDataForQuery(query, callback);
             },
