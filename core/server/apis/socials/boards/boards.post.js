@@ -6,29 +6,46 @@ post.validate = function () {
     return function (req, res, next) {
         var BOARD = req.meta.std.board;
 
-        req.check('slug', '400_8').isAlphanumeric().len(BOARD.minSlugLength, BOARD.maxSlugLength);
-        req.utils.common.toArray(req.body, 'categories');
+        var requestAPI = req.coreUtils.common.requestAPI(req, res, next);
+        requestAPI({
+            resource: '/socials/skins',
+            method: 'gets',
+            data: {},
+            params: {}
+        }, function (status, data) {
 
-        if (req.body.roleRead !== undefined) {
-            req.check('roleRead', '400_3').isEnum(req.meta.std.user.enumRoles);
-        }
+            if (status == 200) {
+                req.check('slug', '400_8').isAlphanumeric().len(BOARD.minSlugLength, BOARD.maxSlugLength);
+                req.utils.common.toArray(req.body, 'categories');
 
-        if (req.body.roleWrite !== undefined) {
-            req.check('roleWrite', '400_3').isEnum(req.meta.std.user.enumRoles);
-        }
+                req.check('skin', '400_3').isEnum(data);
 
-        if (req.body.isVisible !== undefined) {
-            req.check('isVisible', '400_20').isBoolean();
-            req.sanitize('isVisible').toBoolean();
-        }
+                if (req.body.roleRead !== undefined) {
+                    req.check('roleRead', '400_3').isEnum(req.meta.std.user.enumRoles);
+                }
 
-        if (req.body.isAnonymous !== undefined) {
-            req.check('isAnonymous', '400_20').isBoolean();
-            req.sanitize('isAnonymous').toBoolean();
-        }
+                if (req.body.roleWrite !== undefined) {
+                    req.check('roleWrite', '400_3').isEnum(req.meta.std.user.enumRoles);
+                }
 
-        req.utils.common.checkError(req, res, next);
-        next();
+                if (req.body.isVisible !== undefined) {
+                    req.check('isVisible', '400_20').isBoolean();
+                    req.sanitize('isVisible').toBoolean();
+                }
+
+                if (req.body.isAnonymous !== undefined) {
+                    req.check('isAnonymous', '400_20').isBoolean();
+                    req.sanitize('isAnonymous').toBoolean();
+                }
+
+                req.utils.common.checkError(req, res, next);
+                next();
+            } else {
+                return res.hjson(req, next, status, data);
+            }
+
+        });
+
     };
 };
 

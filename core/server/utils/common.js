@@ -41,6 +41,8 @@ module.exports = {
             var group = resourceArr[startIdx++];
             var resource = resourceArr[startIdx];
 
+            console.log(getApiPath(false, group, resource));
+            console.log(getApiPath(true, group, resource));
             var isAppExists = fs.existsSync(getApiPath(false, group, resource));
             var isCoreExists = false;
             if (!isAppExists) {
@@ -63,7 +65,7 @@ module.exports = {
 
                     req.query = {};
                     req.body = {};
-                    
+
                     if (method.toLowerCase() == 'get' || method.toLowerCase() == 'gets') {
                         req.query = requestData;
                     } else {
