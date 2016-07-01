@@ -1,12 +1,13 @@
 var gets = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
+var micro = require('microtime');
 
 gets.validate = function () {
     return function (req, res, next) {
-        if (req.query.last === undefined) req.query.last = new Date();
+        if (req.query.last === undefined) req.query.last = micro.now();
         if (req.query.size === undefined) req.query.size = req.meta.std.common.defaultLoadingLength;
-        req.check('last', '400_18').isDate();
+        req.check('last', '400_18').isMicroTimestamp();
         req.check('size', '400_5').isInt();
         req.check('slug', '400_8').isAlphanumeric();
         req.utils.common.checkError(req, res, next);
