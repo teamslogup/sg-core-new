@@ -331,8 +331,8 @@ module.exports = {
 
                 var where = {};
 
-                if (options.isVisible) where.isVisible = options.isVisible;
-                if (options.isAnonymous) where.isAnonymous = options.isAnonymous;
+                if (options.isVisible !== undefined) where.isVisible = options.isVisible;
+                if (options.isAnonymous !== undefined) where.isAnonymous = options.isAnonymous;
 
                 var query = {
                     'limit': parseInt(options.size),
@@ -346,7 +346,7 @@ module.exports = {
                 }
 
                 query.where.createdAt = {
-                    '$lt': last
+                    '$lt': options.last
                 };
 
                 if (options.sort) query.order = [['createdAt', options.sort]];

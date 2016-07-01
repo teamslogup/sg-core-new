@@ -9,7 +9,7 @@ gets.validate = function () {
 
         if (req.query.searchItem === undefined) req.query.searchItem = '';
         if (req.query.option === undefined) req.query.option = '';
-        if (req.query.last === undefined) req.query.last = new Date();
+        if (req.query.last === undefined) req.query.last = micro.now();
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
 
         if (req.query.isVisible !== undefined) {
@@ -23,7 +23,7 @@ gets.validate = function () {
         }
 
         if (req.query.sort !== undefined) {
-            req.check('sorted', '400_28').isEnum(COMMON.enumSortTypes);
+            req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
         } else {
             req.query.sort = COMMON.enumSortTypes[0];
         }
