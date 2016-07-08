@@ -35,6 +35,7 @@ module.exports = {
     },
     'options': {
         'timestamps': true,
+        'createdAt': false,
         'updatedAt': false,
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
