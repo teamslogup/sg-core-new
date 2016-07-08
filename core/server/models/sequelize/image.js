@@ -41,14 +41,20 @@ module.exports = {
         'updatedAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
+        },
+        'deletedAt': {
+            'type': Sequelize.DATE,
+            'allowNull': true
         }
     },
     options: {
-        'timestamps': false,
+        'timestamps': true,
+        'updatedAt': false,
         'charset': 'utf8',
         'paranoid': true,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
+            'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
             'beforeUpdate': mixin.options.hooks.microUpdatedAt
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
