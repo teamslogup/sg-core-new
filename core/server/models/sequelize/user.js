@@ -127,7 +127,19 @@ module.exports = {
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
-            'beforeUpdate': mixin.options.hooks.microUpdatedAt
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt,
+            'beforeBulkDelete': mixin.options.hooks.useIndividualHooks,
+            'beforeDelete': function (instance, options, fn) {
+                var body = {};
+                if (instance.aid) body.aid = STD.common.deletedRowPrefix + instance.id + "_" + instance.aid;
+                if (instance.email) body.email = STD.common.deletedRowPrefix + instance.id + "_" + instance.email;
+                if (instance.phoneNum) body.phoneNum = STD.common.deletedRowPrefix + instance.id + "_" + instance.phoneNum;
+                if (instance.nick) body.nick = STD.common.deletedRowPrefix + instance.id + "_" + instance.nick;
+                if (body.aid !== undefined || body.email !== undefined || body.phoneNum != undefined || body.nick != undefined) {
+                    instance.updateAttributes(body);
+                }
+                return fn(null, instance);
+            }
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             /**
