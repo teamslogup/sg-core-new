@@ -131,10 +131,11 @@ module.exports = {
             'beforeBulkDelete': mixin.options.hooks.useIndividualHooks,
             'beforeDelete': function (instance, options, fn) {
                 var body = {};
-                if (instance.aid) body.aid = STD.common.deletedRowPrefix + instance.id + "_" + instance.aid;
-                if (instance.email) body.email = STD.common.deletedRowPrefix + instance.id + "_" + instance.email;
-                if (instance.phoneNum) body.phoneNum = STD.common.deletedRowPrefix + instance.id + "_" + instance.phoneNum;
-                if (instance.nick) body.nick = STD.common.deletedRowPrefix + instance.id + "_" + instance.nick;
+                var prefix = STD.common.deletedRowPrefix + instance.id + "_";
+                if (instance.aid) body.aid = prefix + instance.aid;
+                if (instance.email) body.email = prefix + instance.email;
+                if (instance.phoneNum) body.phoneNum = prefix + instance.phoneNum;
+                if (instance.nick) body.nick = prefix + instance.nick;
                 if (body.aid !== undefined || body.email !== undefined || body.phoneNum != undefined || body.nick != undefined) {
                     instance.updateAttributes(body);
                 }
