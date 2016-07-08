@@ -521,7 +521,7 @@ var mixin = {
             /**
              * Bulk 데이터 수정시 beforeUpdate 호출을 위한 속성 변경
              */
-            'bulkUpdatedAt': function (options) {
+            'useIndividualHooks': function (options) {
                 options.individualHooks = true;
             },
             /**

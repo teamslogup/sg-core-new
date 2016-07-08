@@ -159,6 +159,7 @@ var standards = {
         "item48Week": ":48WEEK:"
     },
     "common": {
+        "deletedRowPrefix": "deleted_",
         "wordMaxLength": 100000,
         "wordMinLength": 1,
         "oidLength": 24,
