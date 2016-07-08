@@ -115,19 +115,19 @@ module.exports = {
             'allowNull': true
         },
         'deletedAt': {
-            'type': Sequelize.BIGINT,
+            'type': Sequelize.DATE,
             'allowNull': true
         }
     },
     options: {
-        'timestamps': false,
+        'timestamps': true,
+        'updatedAt': false,
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
-            'beforeUpdate': mixin.options.hooks.microUpdatedAt,
-            'beforeBulkUpdate': mixin.options.hooks.bulkUpdatedAt,
-            'beforeDestroy': mixin.options.hooks.microDeletedAt
+            'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             /**
