@@ -20,12 +20,30 @@ var STD = require('../../../../bridge/metadata/standards');
 
 module.exports = {
     'fields': { // if app have some profile items, we have to insert sequelize model in app just including field without options.
-
+        'createdAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'updatedAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'deletedAt': {
+            'type': Sequelize.DATE,
+            'allowNull': true
+        }
     },
     'options': {
+        'timestamps': true,
+        'createdAt': false,
+        'updatedAt': false,
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
-        'hooks': {},
+        'hooks': {
+            'beforeCreate': mixin.options.hooks.microCreatedAt,
+            'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt
+        },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             updateProfile: function (update, callback) {
