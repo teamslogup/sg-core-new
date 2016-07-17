@@ -83,7 +83,8 @@ var standards = {
         "phoneNum": "phoneNum",
         "birth": "birth",
         "name": "name",
-        "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png"
+        "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
+        "deletedUserStoringDay": 60
     },
     "flag": {
         "isMoreInfo": true,

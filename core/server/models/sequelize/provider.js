@@ -42,7 +42,8 @@ module.exports = {
             referenceKey: 'id',
             as: 'user',
             asReverse: 'providers',
-            allowNull: false
+            allowNull: false,
+            onDelete: 'cascade'
         },
         'type': {
             'type': Sequelize.ENUM,
@@ -71,7 +72,7 @@ module.exports = {
                 return this.token == this.createHashPassword(token);
             },
             'createHashToken': function (token) {
-                return crypto.pbkdf2Sync(token, this.salt, 15000, 64).toString('base64');
+                return crypto.pbkdf2Sync(token, this.salt, 15000, 64, 'sha512').toString('base64');
             },
             'tokenEncryption': function () {
                 this.salt = crypto.randomBytes(20).toString('base64');

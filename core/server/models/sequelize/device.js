@@ -18,7 +18,8 @@ module.exports = {
             referenceKey: 'id',
             as: 'user',
             asReverse: 'devices',
-            allowNull: false
+            allowNull: false,
+            onDelete: 'cascade'
         },
         'type': {
             'type': Sequelize.ENUM,

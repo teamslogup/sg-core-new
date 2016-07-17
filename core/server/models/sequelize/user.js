@@ -104,7 +104,8 @@ module.exports = {
             'referenceKey': 'id',
             'referenceType': 'one',
             'as': 'profile',
-            'asReverse': 'user'
+            'asReverse': 'user',
+            'onDelete': 'cascade'
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -150,7 +151,7 @@ module.exports = {
              * @returns {boolean}
              */
             'createHashPassword': function (secret) {
-                return crypto.pbkdf2Sync(secret, this.salt, 10000, 64).toString('base64');
+                return crypto.pbkdf2Sync(secret, this.salt, 10000, 64, 'sha512').toString('base64');
             },
 
             /**

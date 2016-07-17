@@ -161,7 +161,7 @@ var api = {
                     'birthYear': 1991,
                     'birthMonth': 5,
                     'birthDay': 17,
-                    'deviceToken': '1234567890',
+                    'deviceToken': '12345678902',
                     'deviceType': USER.deviceTypeIOS,
                     'country': '',
                     'language': '',
@@ -279,6 +279,7 @@ var api = {
                 ));
                 apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.session.hasAuthorization());
+                apiCreator.add(del.checkUser());
                 apiCreator.add(del.updateFields());
                 apiCreator.add(del.validate());
                 apiCreator.add(del.setParam());
