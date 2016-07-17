@@ -193,7 +193,7 @@ post.supplement = function () {
                     if (req.createdUser.auth) {
                         user.auth = req.createdUser.auth.dataValues;
                     }
-                    return res.hjson(req, next, 201, req.createdUser.toSecuredJSON());
+                    return res.hjson(req, next, 201, user);
                 }
                 res.hjson(req, next, 201, req.createdUser.toSecuredJSON());
             }

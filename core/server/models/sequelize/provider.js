@@ -12,6 +12,9 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 
 function requestFacebookValidadtor(uid, secret, callback) {
+    if (process.env.NODE_ENV == "test") {
+        return callback(200);
+    }
     var request = require('request');
     var rootUri = 'https://graph.facebook.com/me?access_token=';
     var option = {

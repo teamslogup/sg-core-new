@@ -6,6 +6,7 @@
 
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
+var mixin = require('./mixin');
 
 var STD = require('../../../../bridge/metadata/standards');
 var User = require('./user');
@@ -33,6 +34,12 @@ module.exports = {
         'charset': 'utf8',
         'paranoid': false, // deletedAt 추가. delete안함.
         'instanceMethods': {},
-        'hooks': {}
+        'hooks': {},
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            getDeviceFields: function () {
+                var fields = ['id', 'type'];
+                return fields;
+            }
+        })
     }
 };

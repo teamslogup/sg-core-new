@@ -449,8 +449,9 @@ module.exports = {
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
                     model: sequelize.models.Device,
-                    as: 'devices'
-                }], callback);
+                    as: 'devices',
+                    attributes: sequelize.models.Device.getDeviceFields()
+                } ], callback);
             },
             /**
              * 번호로 유저 찾기
@@ -462,6 +463,14 @@ module.exports = {
                 sequelize.models.User.findDataIncluding(where, [{
                     model: sequelize.models.Profile,
                     as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.Device,
+                    as: 'devices',
+                    attributes: sequelize.models.Device.getDeviceFields()
                 }], callback);
             },
             /**
@@ -474,6 +483,14 @@ module.exports = {
                 sequelize.models.User.findDataIncluding(where, [{
                     model: sequelize.models.Profile,
                     as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.Device,
+                    as: 'devices',
+                    attributes: sequelize.models.Device.getDeviceFields()
                 }], callback);
             },
             /**
@@ -492,7 +509,8 @@ module.exports = {
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
                     model: sequelize.models.Device,
-                    as: 'devices'
+                    as: 'devices',
+                    attributes: sequelize.models.Device.getDeviceFields()
                 }], callback);
             },
             /**
@@ -540,44 +558,53 @@ module.exports = {
                     return user.save({transaction: t}).then(function () {
 
                         createdUser = user;
-                        var authData = {
-                            type: type,
-                            key: createdUser.email,
-                            userId: user.id
-                        };
 
-                        // 2. 이메일 인증을 위해 인증토큰 생성.
-                        return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
+                        if (!STD.flag.isAutoVerifiedEmail) {
+                            var authData = {
+                                type: type,
+                                key: createdUser.email,
+                                userId: user.id
+                            };
 
-                            // 3. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                            if (data.deviceToken && data.deviceType) {
-                                return sequelize.models.Device.upsert({
-                                    type: data.deviceType,
-                                    token: data.deviceToken,
-                                    userId: user.id
-                                }, {transaction: t}).then(function () {
+                            // 2. 이메일 인증을 위해 인증토큰 생성.
+                            return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
 
-                                });
-                            }
-                        });
+                                // 3. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
+                                if (data.deviceToken && data.deviceType) {
+                                    return sequelize.models.Device.upsert({
+                                        type: data.deviceType,
+                                        token: data.deviceToken,
+                                        userId: user.id
+                                    }, {transaction: t}).then(function () {
+
+                                    });
+                                }
+                            });
+                        }
                     });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
-                        var loadedAuth = null;
-                        sequelize.models.Auth.findOne({
-                            where: {
-                                type: type,
-                                key: createdUser.email
-                            }
-                        }).then(function (auth) {
-                            loadedAuth = auth;
-                        }).catch(errorHandler.catchCallback(callback)).done(function () {
-                            if (loadedAuth) {
-                                createdUser.auth = loadedAuth;
-                                callback(200, createdUser);
+                        sequelize.models.User.findUserByEmail(createdUser.email, function(status, data) {
+                            if (status == 200) {
+                                createdUser = data;
+                                if (!STD.flag.isAutoVerifiedEmail) {
+                                    sequelize.models.Auth.findDataIncluding({
+                                        type: type,
+                                        key: createdUser.email
+                                    }, null, function(status, auth) {
+                                        if (status == 200) {
+                                            createdUser.auth = auth;
+                                            callback(200, createdUser);
+                                        } else {
+                                            callback(404);
+                                        }
+                                    })
+                                } else {
+                                    callback(status, data);
+                                }
                             } else {
-                                callback(404);
+                                callback(status, data);
                             }
                         });
                     }
@@ -645,7 +672,7 @@ module.exports = {
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
-                        return callback(200, createdUser);
+                        return sequelize.models.User.findUserByPhoneNumber(createdUser.phoneNum, callback);
                     }
                 });
             },
@@ -698,7 +725,7 @@ module.exports = {
 
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
-                        return callback(200, createdUser);
+                        sequelize.models.User.findUserById(createdUser.id, callback);
                     }
                 });
             },

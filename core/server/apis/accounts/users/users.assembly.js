@@ -14,7 +14,7 @@ var del = require('./' + resource + '.del.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 var META = require('../../../../../bridge/metadata');
 var STD = META.std;
@@ -31,6 +31,7 @@ var api = {
                 explains: {
                     'id': '데이터를 얻을 리소스의 id'
                 },
+                response: resforms.user,
                 param: 'id',
                 title: '단일 유저 정보 얻기',
                 state: 'staging'
@@ -70,6 +71,7 @@ var api = {
                     orderBy: '정렬 기준 필드' + STD.user.enumOrders.join(", "),
                     sort: '정렬 순서' + STD.common.enumSortTypes.join(", ")
                 },
+                response: {list: [resforms.user]},
                 title: '유저 리스트 얻기',
                 state: 'staging'
             };
@@ -104,10 +106,10 @@ var api = {
                     'provider',
                     'uid',
                     'secret',
+                    'nick',
                     'aid',
                     'apass',
                     'name',
-                    'nick',
                     'gender',
                     'birthYear',
                     'birthMonth',
@@ -131,10 +133,10 @@ var api = {
                     'provider': 'type이 소셜이면 반드시 입력해야함. ' + USER.enumProviders.join(", "),
                     'uid': '아이디, 이메일 가입이면 이메일, 전화번호가입이면 전화번호',
                     'secret': '비밀번호 혹은 엑세스토큰, 전화번호가입이면 인증번호',
-                    'aid':  '전화번호 가입을 할때 아이디 / 비밀번호를 이용할 경우 아이디',
+                    'nick': '닉네임',
+                    'aid': '전화번호 가입을 할때 아이디 / 비밀번호를 이용할 경우 아이디',
                     'apass': '전화번호 가입을 할때 아이디 / 비밀번호를 이용할 경우 비밀번호',
                     'name': '이름',
-                    'nick': '닉네임',
                     'gender': '성별 ' + USER.enumGenders.join(", "),
                     'birthYear': '생년',
                     'birthMonth': '생월',
@@ -146,6 +148,27 @@ var api = {
                     'agreedEmail': '이메일 수신 동의',
                     'agreedPhoneNum': '휴대폰 수신 동의'
                 },
+                defaults: {
+                    'type': USER.signUpTypeEmail,
+                    'provider': '',
+                    'uid': 'gozillacj@naver.com',
+                    'secret': '123qwe',
+                    'nick': 'hwarang',
+                    'aid': '',
+                    'apass': '',
+                    'name': '',
+                    'gender': USER.genderMale,
+                    'birthYear': 1991,
+                    'birthMonth': 5,
+                    'birthDay': 17,
+                    'deviceToken': '1234567890',
+                    'deviceType': USER.deviceTypeIOS,
+                    'country': '',
+                    'language': '',
+                    'agreedEmail': false,
+                    'agreedPhoneNum': ''
+                },
+                response: resforms.user,
                 title: '일반회원가입',
                 state: 'staging'
             };
@@ -164,8 +187,6 @@ var api = {
                 apiCreator.add(post.sendEmailAuth());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
-
-
             }
             else {
                 return params;
@@ -193,6 +214,21 @@ var api = {
                     'agreedEmail': '이메일 수신 동의',
                     'agreedPhoneNum': '전화번호 수신 동의'
                 },
+                defaults: {
+                    'id': 1,
+                    'nick': '닉네임',
+                    'name': '이름',
+                    'gender': '성별 (수퍼어드민이상만 가능)' + USER.enumGenders.join(", "),
+                    'birthYear': '생년',
+                    'birthMonth': '생월',
+                    'birthDay': '생일',
+                    'country': '국가',
+                    'language': '언어',
+                    'role': '권한수정 (수퍼어드민이상만 가능) ' + META.std.user.enumRoles.join(", "),
+                    'agreedEmail': '이메일 수신 동의',
+                    'agreedPhoneNum': '전화번호 수신 동의'
+                },
+                response: resforms.user,
                 title: '회원정보수정',
                 param: 'id',
                 state: 'staging'
@@ -213,8 +249,6 @@ var api = {
                 apiCreator.add(put.updateUser());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
-
-
             }
             else {
                 return params;
@@ -250,8 +284,6 @@ var api = {
                 apiCreator.add(del.setParam());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
-
-
             }
             else {
                 return params;
