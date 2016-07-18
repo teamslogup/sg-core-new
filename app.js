@@ -9,6 +9,7 @@ var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var config = require('./bridge/config/env');
 var express = require('./bridge/config/express');
+var https = require('./core/server/config/https');
 var passport = require('./core/server/config/passport');
 var sequelize = require('./core/server/config/sequelize');
 var models = require('./bridge/models/sequelize');
@@ -26,13 +27,23 @@ if (!stat) {
 }
 
 var app = express(sequelize);
+var server = https(app);
+
 passport();
 
 sequelize.sync({force: config.db.force}).then(function (err) {
     if (env === 'production') {
-        app.listen(config.app.port);
+        if (server.isUseHttps) {
+            server.https.listen(config.app.port);
+        } else {
+            server.http.listen(config.app.port);
+        }
     } else {
-        app.listen(config.app.port);
+        if (server.isUseHttps) {
+            server.https.listen(config.app.port);
+        } else {
+            server.http.listen(config.app.port);
+        }
     }
     console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
 }, function (err) {
