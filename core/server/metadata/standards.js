@@ -90,7 +90,8 @@ var standards = {
         "isAutoVerifiedEmail": false,
         "isJoinFriendNotifications": true,
         "isUseS3Bucket": true,
-        "isUseRedis": false
+        "isUseRedis": false,
+        "isUseHttps": false
     },
     "category": {
         "minNameLength": 1,
