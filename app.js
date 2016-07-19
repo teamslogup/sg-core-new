@@ -10,6 +10,7 @@ var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var config = require('./bridge/config/env');
 var express = require('./bridge/config/express');
 var https = require('./core/server/config/https');
+var cluster = require('./core/server/config/cluster');
 var passport = require('./core/server/config/passport');
 var sequelize = require('./core/server/config/sequelize');
 var models = require('./bridge/models/sequelize');
@@ -34,9 +35,9 @@ passport();
 sequelize.sync({force: config.db.force}).then(function (err) {
     if (env === 'production') {
         if (server.isUseHttps) {
-            server.https.listen(config.app.port);
+            cluster(server.https);
         } else {
-            server.http.listen(config.app.port);
+            cluster(server.http);
         }
     } else {
         if (server.isUseHttps) {
@@ -44,8 +45,8 @@ sequelize.sync({force: config.db.force}).then(function (err) {
         } else {
             server.http.listen(config.app.port);
         }
+        console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
     }
-    console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
 }, function (err) {
     console.log('Unable to connect to the database:', err);
 });
