@@ -35,9 +35,9 @@ passport();
 sequelize.sync({force: config.db.force}).then(function (err) {
     if (env === 'production') {
         if (server.isUseHttps) {
-            cluster(server.https);
+            cluster.startCluster(server.https);
         } else {
-            cluster(server.http);
+            cluster.startCluster(server.http);
         }
     } else {
         if (server.isUseHttps) {
