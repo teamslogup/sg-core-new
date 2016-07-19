@@ -9,7 +9,7 @@ post.validate = function () {
         var enumCountry = req.coreUtils.common.getCountryEnum(req);
         req.check("country", "400_3").isEnum(enumCountry);
         if (req.body.title !== undefined) req.check("title", "400_8").len(TERMS.minTitleLength, TERMS.maxTitleLength);
-        if (req.body.content !== undefined) req.check("content", "400_8").len(TERMS.minTitleLength, TEMRS.maxTitleLength);
+        if (req.body.content !== undefined) req.check("content", "400_8").len(TERMS.minTitleLength, TERMS.maxTitleLength);
         req.utils.common.checkError(req, res, next);
         next();
     };

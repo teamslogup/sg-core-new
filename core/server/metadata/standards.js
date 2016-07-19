@@ -115,8 +115,9 @@ var standards = {
     "terms": {
         "enumTypes": ["etc"],
         "defaultType": "etc",
+        "contentDataType": "long",
         "minContentLength": 2,
-        "maxContentLength": 1000000,
+        "maxContentLength": 100000,
         "minTitleLength": 2,
         "maxTitleLength": 40,
         "enumSearchFields": ["id", "title"],

@@ -2,10 +2,8 @@ var path = require('path');
 var filePath = path.resolve(__filename, '../').split('/');
 var resource = filePath[filePath.length - 1];
 
-var top = require('./' + resource + '.top.js');
 var gets = require('./' + resource + '.gets.js');
 var get = require('./' + resource + '.get.js');
-var put = require('./' + resource + '.put.js');
 var post = require('./' + resource + '.post.js');
 var del = require('./' + resource + '.del.js');
 
@@ -73,7 +71,7 @@ var api = {
                     "sort": "정렬 방식 " + STD.common.enumSortTypes.join(", "),
                     "last": "조회 기준 마지막 데이터 일자",
                     "size": "가져올 데이터 갯수",
-                    "type": "이용약관 유형"
+                    "type": "이용약관 유형 " + STD.terms.enumTypes.join(", ")
                 },
                 defaults: {
 
@@ -113,10 +111,10 @@ var api = {
                 essential: ["type", "country"],
                 resettable: [],
                 explains: {
-                    "type": "이용약관 유형",
+                    "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
                     "title": "이용약관 제목",
                     "content": "이용약관 내용",
-                    "country": "국가 코드 (KR)"
+                    "country": "국가 코드 KR"
                 },
                 defaults: {
 

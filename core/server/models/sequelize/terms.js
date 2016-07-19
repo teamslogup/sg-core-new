@@ -36,7 +36,7 @@ module.exports = {
             'allowNull': true
         },
         'content': {
-            'type': Sequelize.STRING(STD.terms.maxContentLength),
+            'type': Sequelize.TEXT(STD.terms.contentDataType),
             'allowNull': true
         },
         'createdAt': {
@@ -113,8 +113,8 @@ module.exports = {
                 
                 sequelize.models.Terms.findAllDataForQuery(query, callback);
             },
-            "deleteTerms": function (callback) {
-                var query = "DELETE FROM Terms WHERE id != (SELECT x.id FROM (SELECT MAX(t.id) AS id FROM Terms t) x)";
+            "deleteTerms": function (now, callback) {
+                var query = 'UPDATE Terms SET deletedAt = "' + now + '" WHERE id != (SELECT x.id FROM (SELECT MAX(t.id) AS id FROM Terms t) x)';
                 
                 var deleteTermsData = null;
                 sequelize.query(query).then(function () {
