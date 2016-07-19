@@ -23,8 +23,8 @@ module.exports = {
         },
         'type': {
             'type': Sequelize.ENUM,
-            'values': [],
-            'defaultValue': '',
+            'values': STD.terms.enumTypes,
+            'defaultValue': STD.terms.defaultType,
             'allowNull': false
         },
         'country': {
@@ -36,7 +36,7 @@ module.exports = {
             'allowNull': true
         },
         'content': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(STD.terms.maxContentLength),
             'allowNull': true
         },
         'createdAt': {
@@ -65,7 +65,66 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            "findTermsByOptions": function (options, callback) {
+                var where = {};
+                var query = {
+                    "limit": parseInt(options.size),
+                    "order": [[options.orderBy, options.sort]],
+                    "where": where
+                };
 
+                if (options.sort == STD.common.DESC) {
+                    where[options.orderBy] = {
+                        "$lt": options.last
+                    };
+                } else {
+                    where[options.orderBy] = {
+                        "$gt": options.last
+                    }
+                }
+
+                if (options.searchItem && options.searchField) {
+                    where[options.searchField] = {
+                        "$like": "%" + options.searchItem + "%"
+                    };
+                } else if (options.searchItem) {
+                    if (STD.terms.enumSearchFields.length > 0) where.$or = [];
+                    for (var i=0; i<STD.terms.enumSearchFields.length; i++) {
+                        var body = {};
+                        body[STD.terms.enumSearchFields[i]] = {
+                            "$like": "%" + options.searchItem + "%"
+                        };
+                        where.$or.push(body);
+                    }
+                }
+                
+                if (options.type) {
+                    where.type = options.type;
+                }
+                
+                if (options.user) {
+                    if (options.user.role >= STD.user.roleAdmin) {
+                        query.include = [{
+                            "model": sequelize.models.User,
+                            "as": "author"
+                        }];
+                    }
+                }
+                
+                sequelize.models.Terms.findAllDataForQuery(query, callback);
+            },
+            "deleteTerms": function (callback) {
+                var query = "DELETE FROM Terms WHERE id != (SELECT x.id FROM (SELECT MAX(t.id) AS id FROM Terms t) x)";
+                
+                var deleteTermsData = null;
+                sequelize.query(query).then(function () {
+                    deleteTermsData = true;
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (deleteTermsData) {
+                        callback(204);
+                    }
+                });
+            }
         })
     }
 };

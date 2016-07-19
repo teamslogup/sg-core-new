@@ -112,6 +112,17 @@ var standards = {
         "maxPositionNumberLength": 14,
         "maxDepth": 2
     },
+    "terms": {
+        "enumTypes": ["etc"],
+        "defaultType": "etc",
+        "minContentLength": 2,
+        "maxContentLength": 1000000,
+        "minTitleLength": 2,
+        "maxTitleLength": 40,
+        "enumSearchFields": ["id", "title"],
+        "enumOrderBys": ["createdAt", "updatedAt"],
+        "defaultOrderBy": "createdAt"
+    },
     "report": {
         "minBodyLength": 1,
         "maxBodyLength": 10000,
