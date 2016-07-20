@@ -2,9 +2,6 @@ var cluster = require('cluster'),
     os = require('os');
 
 var config = require('../../../bridge/config/env');
-var express = require('../../../bridge/config/express');
-var https = require('../../../core/server/config/https');
-var sequelize = require('../../../core/server/config/sequelize');
 var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var workers = []; // que of running workers
