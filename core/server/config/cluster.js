@@ -1,41 +1,73 @@
 var cluster = require('cluster'),
-    os = require('os'),
-    async = require('async');
+    os = require('os');
 
 var config = require('../../../bridge/config/env');
 var express = require('../../../bridge/config/express');
 var https = require('../../../core/server/config/https');
 var sequelize = require('../../../core/server/config/sequelize');
 var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-var workers = [];
-var restartWorkers = [];
+
+var workers = []; // que of running workers
+var restartWorkers = []; // que of restart workers
+
+var TIMEOUT = 120 * 1000; // 2 minutes
+var timeout;
 
 function inItWorker (worker) {
     worker.on("message", function (msg) {
-        if (msg.type && msg.type == "workerStart") {
+        if (msg.cmd && msg.cmd == "workerStart") {
             console.log("(pid: " + msg.pid + ") Server running at " + config.app.port + " " + env + " mode. logging: " + config.db.logging);
             if (restartWorkers.length > 0) {
                 if (restartWorkers.length == workers.length) {
                     restartWorkers = [];
                 } else {
-                    workers[0].send({type: "restart"});
+                    restartWorker(workers[0]);
                 }
             }
-        } else if (msg.type && msg.type == "workerClose") {
+        } else if (msg.cmd && msg.cmd == "workerClose") {
             console.log("(pid: " + msg.pid + ") Server close");
-        } else if (msg.type && msg.type == "workerRestart") {
+        } else if (msg.cmd && msg.cmd == "workerRestart") {
             console.log("(pid: " + msg.pid + ") Server restart");
-        } else if (msg.type && msg.type == "restart") {
-            workers[0].send({type: "restart"});
-        } else if (msg.type && msg.type == "close") {
-            workers[0].send({type: "close"});
+        } else if (msg.cmd && msg.cmd == "restart") {
+            restartWorker(workers[0]);
+        } else if (msg.cmd && msg.cmd == "close") {
+            closeWorker(workers[0]);
         }
+    });
+
+    worker.on("disconnect", function () {
+        clearTimeout(timeout);
     });
     return worker;
 }
 
+function restartWorker (worker) {
+    worker.send({cmd: "restart"});
+    worker.disconnect();
+    timeout = setTimeout(worker.kill, TIMEOUT);
+}
+
+function closeWorker (worker) {
+    worker.send({cmd: "close"});
+    worker.disconnect();
+    timeout = setTimeout(worker.kill, TIMEOUT);
+}
+
+function gracefulCloseServer (server, app, code) {
+    server.close(function () {
+        console.log("exit worker with code: ", code);
+        process.exit(code);
+    });
+
+    setTimeout(function () {
+        console.log("forcefully exit worker with code: ", code);
+        process.exit(code);
+    }, TIMEOUT);
+}
+
 module.exports = {
-    startCluster: function (server) {
+    startCluster: function (argServer) {
+        var app = argServer;
         cluster.schedulingPolicy = cluster.SCHED_RR;
         
         if (cluster.isMaster) {
@@ -55,24 +87,27 @@ module.exports = {
                     restartWorkers.push(worker);
                     workers.push(inItWorker(cluster.fork()));
                 } else if (code == 100) {
-                    if (workers.length > 0) workers[0].send({type: "close"});
+                    if (workers.length > 0) closeWorker(workers[0]);
                 }
                 
             });
 
         } else if (cluster.isWorker) {
-            server.listen(config.app.port);
-            process.send({type: "workerStart", pid: cluster.worker.process.pid});
+            var server = app.listen(config.app.port);
+
+            process.send({cmd: "workerStart", pid: cluster.worker.process.pid});
 
             process.on("message", function (msg) {
-                if (msg.type && msg.type == "close") {
+                if (msg.cmd && msg.cmd == "close") {
+                    process.send({cmd: "workerClose", pid: cluster.worker.process.pid});
+
                     // initiate graceful close
-                    process.send({type: "workerClose", pid: cluster.worker.process.pid});
-                    process.exit(100);
-                } else if (msg.type && msg.type == "restart") {
+                    gracefulCloseServer(server, app, 100);
+                } else if (msg.cmd && msg.cmd == "restart") {
+                    process.send({cmd: "workerRestart", pid: cluster.worker.process.pid});
+
                     // initiate graceful close
-                    process.send({type: "workerRestart", pid: cluster.worker.process.pid});
-                    process.exit(200);
+                    gracefulCloseServer(server, app, 200);
                 }
             });
         } else {
@@ -81,18 +116,18 @@ module.exports = {
     },
     closeCluster: function () {
         if (cluster.isMaster) {
-            workers[0].send({type: "close"});
+            closeWorker(workers[0]);
         } else if (cluster.isWorker) {
-            process.send({type: "close"});
+            process.send({cmd: "close"});
         } else {
             console.log("close cluster error...");
         }
     },
     restartCluster: function () {
         if (cluster.isMaster) {
-            workers[0].send({type: "restart"});
+            restartWorker(workers[0]);
         } else if (cluster.isWorker) {
-            process.send({type: "restart"});
+            process.send({cmd: "restart"});
         } else {
             console.log("restart cluster error...");
         }
