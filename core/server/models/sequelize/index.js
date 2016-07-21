@@ -14,6 +14,7 @@ var Article = require('./article');
 var Test = require('./test');
 var Profile = require('./profile');
 var Image = require('./image');
+var Terms = require('./terms');
 
 var sequelize = require('../../config/sequelize');
 var models = {
@@ -29,7 +30,8 @@ var models = {
     Article: Article,
     Test: Test,
     Profile: Profile,
-    Image: Image
+    Image: Image,
+    Terms: Terms
 };
 
 module.exports = models;

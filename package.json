@@ -37,8 +37,10 @@
     "method-override": "*",
     "microtime": "*",
     "mobile-detect": "*",
+    "moment": "^2.14.1",
     "mongoose": "*",
     "morgan": "*",
+    "multi-views": "*",
     "mysql": "*",
     "passport": "*",
     "passport-custom": "*",
@@ -61,8 +63,7 @@
     "sg-sender": "*",
     "sg-sequelize-error-handler": "*",
     "sg-upload-manager": "*",
-    "sticky-session": "*",
-    "multi-views": "*"
+    "sticky-session": "*"
   },
   "engines": {
     "node": ">=6.1.0"
