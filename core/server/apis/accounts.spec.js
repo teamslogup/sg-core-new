@@ -31,12 +31,21 @@ describe('Email Accounts Api Tests', function () {
     phoneIdUserParam.aid = 'gozillacj';
     phoneIdUserParam.apass = '123qwe';
 
+
+    var socialUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
+    socialUserParam.type = STD.user.signUpTypeSocial;
+    socialUserParam.provider = STD.user.providerFacebook;
+    socialUserParam.uid = '1210123981203';
+    socialUserParam.secret = 'aksdfhaksdhfaASdfkuasdhfaDSFDASfaDSFASDfadsf23dsfa23123sdgdf45';
+
+
     var Account = require('./accounts.spec.suite');
     var emailUser = new Account(emailUserParam);
     var emailUser2 = new Account(emailUserParam2);
     var normalIdUser = new Account(normalUserParam);
     var phoneUser = new Account(phoneUserParam);
     var phoneIdUser = new Account(phoneIdUserParam);
+    var socialUser = new Account(socialUserParam);
 
     it('should register email user', function (done) {
         emailUser.signup(done);
@@ -134,5 +143,33 @@ describe('Email Accounts Api Tests', function () {
 
     it('should remove account', function (done) {
         phoneIdUser.removeAccount(done);
+    });
+
+    it('should signup social user', function (done) {
+        socialUser.signup(done);
+    });
+
+    it('should logout social user', function (done) {
+        socialUser.logout(done);
+    });
+
+    it('should login social user', function (done) {
+        socialUser.loginSocial(done);
+    });
+
+    it('should remove account', function (done) {
+        socialUser.removeAccount(done);
+    });
+
+    it('should signup social user', function (done) {
+        socialUser.signup(done);
+    });
+
+    it('should login social user', function (done) {
+        socialUser.loginSocial(done);
+    });
+
+    it('should remove account', function (done) {
+        socialUser.removeAccount(done);
     });
 });

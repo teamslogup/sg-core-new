@@ -52,8 +52,7 @@ module.exports = {
         },
         'uid': {
             'type': Sequelize.STRING,
-            'allowNull': false,
-            'unique': true
+            'allowNull': false
         },
         'token': {
             'type': Sequelize.STRING,
@@ -62,11 +61,17 @@ module.exports = {
         'salt': {
             'type': Sequelize.STRING,
             'allowNull': false
-        },
-        'allowNull': false
+        }
     }, options: {
         'charset': 'utf8',
-        'paranoid': false, // deletedAt 추가. delete안함.
+        'paranoid': true,
+        indexes: [{
+            unique: true,
+            fields: ['userId', 'type']
+        }, {
+            unique: true,
+            fields: ['type', 'uid']
+        }],
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             'tokenAuthenticate': function (token) {
                 return this.token == this.createHashPassword(token);
@@ -128,12 +133,7 @@ module.exports = {
                     }
                 });
             }
-        }),
-        'hooks': {
-            beforeValidate: function (provider, options) {
-                provider.tokenEncryption();
-            }
-        }
+        })
     }
 };
 

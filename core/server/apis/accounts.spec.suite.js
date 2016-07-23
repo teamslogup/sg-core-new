@@ -15,7 +15,8 @@ var url = {
     session: "/api/accounts/session",
     extinctUsers: "/api/accounts/extinct-users",
     senderPhone: "/api/accounts/sender-phone",
-    authEmail: "/api/accounts/auth-email"
+    authEmail: "/api/accounts/auth-email",
+    socialSession: "/api/accounts/social-session"
 };
 
 function Account(fixture) {
@@ -47,6 +48,9 @@ Account.prototype.signup = function (callback) {
         .set("Cookie", self.cookie)
         .send(self.fixture)
         .end(function (err, res) {
+            if (res.status !== 201) {
+                console.error(res.body);
+            }
             res.status.should.exactly(201);
             self.cookie = res.header['set-cookie'][0];
             self.data = res.body;
@@ -116,11 +120,29 @@ Account.prototype.loginNormalId = function (callback) {
         .send({
             type: STD.user.signUpTypeNormalId,
             uid: self.fixture.uid,
-            secret: self.fixture.secret
+            secret: self.getFixture('secret')
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
             self.cookie = res.header['set-cookie'][0];
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            callback();
+        });
+};
+
+Account.prototype.loginSocial = function (callback) {
+    var self = this;
+    request(app).post(url.socialSession)
+        .set("Cookie", self.cookie)
+        .send({
+            provider: STD.user.providerFacebook,
+            pid: self.getFixture('uid'),
+            accessToken: self.getFixture('secret')
+        })
+        .end(function (err, res) {
+            if (res.status !== 200) console.error(res.body);
+            res.status.should.exactly(200);
             self.data = res.body;
             tester.do(resform.user, self.data);
             callback();
@@ -213,7 +235,6 @@ Account.prototype.signupPhoneAuthFail = function (callback) {
         .send(self.fixture)
         .end(function (err, res) {
             res.status.should.within(403, 404);
-            res.body.should.have.property('code', '404_4');
             callback();
         });
 };

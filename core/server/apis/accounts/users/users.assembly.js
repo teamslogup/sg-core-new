@@ -265,7 +265,7 @@ var api = {
                 },
                 title: '',
                 param: 'id',
-                state: 'design'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
