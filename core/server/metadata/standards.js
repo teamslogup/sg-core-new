@@ -252,6 +252,9 @@ var standards = {
         "board": "boards",
         "profile": "profile",
         "admin": "admin"
+    },
+    "cluster": {
+        "defaultExecutionDelay": 1000
     }
 };
 
