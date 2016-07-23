@@ -92,7 +92,8 @@ var standards = {
         "isAutoVerifiedEmail": false,
         "isJoinFriendNotifications": true,
         "isUseS3Bucket": true,
-        "isUseRedis": false
+        "isUseRedis": false,
+        "isUseHttps": false
     },
     "category": {
         "minNameLength": 1,
@@ -112,6 +113,18 @@ var standards = {
         "maxBodyLength": 10000,
         "maxPositionNumberLength": 14,
         "maxDepth": 2
+    },
+    "terms": {
+        "enumTypes": ["etc"],
+        "defaultType": "etc",
+        "contentDataType": "long",
+        "minContentLength": 2,
+        "maxContentLength": 100000,
+        "minTitleLength": 2,
+        "maxTitleLength": 40,
+        "enumSearchFields": ["id", "title"],
+        "enumOrderBys": ["createdAt", "updatedAt"],
+        "defaultOrderBy": "createdAt"
     },
     "report": {
         "minBodyLength": 1,
