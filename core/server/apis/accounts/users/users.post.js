@@ -18,7 +18,7 @@ post.validate = function () {
         if (type == USER.signUpTypeEmail) {
             req.check('uid', '400_1').isEmail();
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
-        } else if (type == USER.signUpTypePhone) {
+        } else if (type == USER.signUpTypePhone || type == USER.signUpTypePhoneId) {
             req.check('uid', '400_3').len(5, 15);
             req.check('secret', '400_51').len(SMS.authNumLength, SMS.authNumLength);
             if (req.body.aid !== undefined && req.body.apass !== undefined) {
@@ -26,19 +26,24 @@ post.validate = function () {
                 req.check('apass', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
             }
             // 둘 중에 하나만 있을 경우 필수 요청 값 에러 출력.
-            if (!(req.body.aid === undefined && req.body.apass === undefined)) {
+            if (type == USER.signUpTypePhoneId && (req.body.aid === undefined || req.body.apass === undefined)) {
                 req.check('aid', '400_14').onlyError();
             }
         } else if (type == USER.signUpTypeSocial) {
             req.check('uid', '400_8').len(1, 200);
             req.check('provider', '400_3').isEnum(USER.enumProviders);
+        } else if (type == USER.signUpTypeNormalId) {
+            req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
+            req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         }
 
         if (req.body.name !== undefined) {
             req.check('name', '400_8').len(USER.minNameLength, USER.maxNameLength);
         }
 
-        req.check('nick', '400_8').len(USER.minNickLength, USER.maxNickLength);
+        if (req.body.nick !== undefined) {
+            req.check('nick', '40400_260_8').len(USER.minNickLength, USER.maxNickLength);
+        }
 
         if (req.body.gender !== undefined) req.check('gender', '400_3').isEnum(USER.enumGenders);
         if (req.body.birthYear !== undefined && req.body.birthMonth !== undefined && req.body.birthDay !== undefined) {

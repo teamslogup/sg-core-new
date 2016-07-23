@@ -33,9 +33,9 @@ module.exports = {
         }
     }, options: {
         'charset': 'utf8',
-        'paranoid': false, // deletedAt 추가. delete안함.
-        'instanceMethods': {},
+        'paranoid': true,
         'hooks': {},
+        'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             getDeviceFields: function () {
                 var fields = ['id', 'type'];

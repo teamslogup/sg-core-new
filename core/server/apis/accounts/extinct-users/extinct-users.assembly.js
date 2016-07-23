@@ -34,8 +34,8 @@ var api = {
                 response: resforms.user,
                 role: role,
                 param: 'id',
-                title: '단일 얻기',
-                state: 'development'
+                title: '탈퇴한 유저 단일 얻기',
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -51,8 +51,6 @@ var api = {
                 apiCreator.add(get.setParam());
                 apiCreator.add(get.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
@@ -75,7 +73,7 @@ var api = {
                 },
                 role: role,
                 title: '탈퇴한 유저 목록 불러오기',
-                state: 'development'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -90,8 +88,6 @@ var api = {
                 apiCreator.add(gets.setParam());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
@@ -106,9 +102,9 @@ var api = {
                 resettable: [],
                 explains : {},
                 role: role,
-                title: '제거',
+                title: '탈퇴한 유저 모든 정보 제거',
                 param: 'id',
-                state: 'design'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -123,8 +119,6 @@ var api = {
                 apiCreator.add(del.destroy());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

@@ -3,7 +3,7 @@ var META = require('../../../bridge/metadata/index');
 var STD = META.std;
 
 module.exports = {
-    "aid": tester.type.STRING,
+    "aid": tester.type.STRING_ALLOW_NULL,
     "email": tester.type.STRING_ALLOW_NULL,
     "phoneNum": tester.type.STRING_ALLOW_NULL,
     "name": tester.type.STRING_ALLOW_NULL,

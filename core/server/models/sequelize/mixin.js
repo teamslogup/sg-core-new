@@ -53,7 +53,6 @@ var mixin = {
             'delete': function (callback) {
                 var isSuccess = false;
                 this.destroy().then(function (data) {
-                    console.log(data);
                     isSuccess = true;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (isSuccess) {

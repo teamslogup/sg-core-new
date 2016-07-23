@@ -124,14 +124,13 @@ var api = {
                 essential: [
                     'type',
                     'uid',
-                    'nick',
                     'secret'
                 ],
                 resettable: [],
                 explains: {
                     'type': '가입 형태(제공자타입) ' + USER.enumSignUpTypes.join(", "),
                     'provider': 'type이 소셜이면 반드시 입력해야함. ' + USER.enumProviders.join(", "),
-                    'uid': '아이디, 이메일 가입이면 이메일, 전화번호가입이면 전화번호',
+                    'uid': '아이디, 그냥 아이디로만 가입할땐 일반 아이디, 이메일 가입이면 이메일, 전화번호가입이면 전화번호',
                     'secret': '비밀번호 혹은 엑세스토큰, 전화번호가입이면 인증번호',
                     'nick': '닉네임',
                     'aid': '전화번호 가입을 할때 아이디 / 비밀번호를 이용할 경우 아이디',
@@ -199,7 +198,7 @@ var api = {
             var params = {
                 acceptable: ['nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum'],
                 essential: [],
-                resettable: ['name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
+                resettable: ['nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
                 explains: {
                     'id': '데이터 리소스의 id',
                     'nick': '닉네임',
@@ -279,10 +278,8 @@ var api = {
                 ));
                 apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.session.hasAuthorization());
-                apiCreator.add(del.checkUser());
-                apiCreator.add(del.updateFields());
+                apiCreator.add(del.destroyUser());
                 apiCreator.add(del.validate());
-                apiCreator.add(del.setParam());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
             }

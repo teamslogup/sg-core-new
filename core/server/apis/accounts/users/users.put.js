@@ -11,7 +11,10 @@ put.validate = function () {
         var isBirthParam = false;
 
         req.check('id', '400_17').isInt();
-
+        if (req.body.nick !== undefined && req.body.nick !== MAGIC.reset) {
+            isEmpty = true;
+            req.check('nick', '400_26').len(USER.minNickLength, USER.maxNickLength);
+        }
         if (req.body.gender !== undefined && req.body.gender !== MAGIC.reset) {
             isEmpty = true;
             req.check('gender', '400_3').isEnum(USER.enumGenders);
@@ -106,7 +109,6 @@ put.validate = function () {
 
 put.dataSet = function() {
     return function (req, res, next) {
-        const USER = req.meta.std.user;
         const MAGIC = req.meta.std.magic;
         var update = {};
         if (req.body.gender !== undefined) update.gender = req.body.gender;
@@ -128,6 +130,7 @@ put.dataSet = function() {
         if (req.body.agreedEmail !== undefined) update.agreedEmail = req.body.agreedEmail;
         if (req.body.name !== undefined) update.name = req.body.name;
         if (req.body.phoneNum !== undefined) update.phoneNum = req.body.phoneNum;
+        if (req.body.nick !== undefined) update.nick = req.body.nick;
 
         for (var k in update) {
             if (update[k] == MAGIC.reset) {

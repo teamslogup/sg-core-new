@@ -20,6 +20,9 @@ var errorHandler = require('sg-sequelize-error-handler');
 const profileKey = "profile";
 
 var STD = require('../../../../bridge/metadata/standards');
+var ENV = require('../../../../bridge/config/env');
+var async = require('async');
+
 module.exports = {
     fields: {
         'aid': {
@@ -452,7 +455,7 @@ module.exports = {
                     model: sequelize.models.Device,
                     as: 'devices',
                     attributes: sequelize.models.Device.getDeviceFields()
-                } ], callback);
+                }], callback);
             },
             /**
              * 번호로 유저 찾기
@@ -540,9 +543,50 @@ module.exports = {
                     delete data.uid;
                     this.createUserWithPhoneNumber(data, callback);
                 }
+                else if (data.type == STD.user.signUpTypeNormalId) {
+
+                    delete data.aid;
+                    delete data.apass;
+                    delete data.email;
+
+                    data.aid = data.uid;
+
+                    delete data.provider;
+                    delete data.uid;
+
+                    this.createUserWithNormalId(data, callback);
+                }
                 else {
                     this.createUserWithProvider(data, callback);
                 }
+            },
+            /**
+             * 일반 id 가입 생성
+             * @param data
+             * @param callback
+             */
+            'createUserWithNormalId': function (data, callback) {
+                var createdUser = null;
+                sequelize.transaction(function (t) {
+                    var user = sequelize.models.User.build(data);
+                    user.encryption();
+                    return user.save({transaction: t}).then(function () {
+                        createdUser = user;
+                        if (data.deviceToken && data.deviceType) {
+                            return sequelize.models.Device.upsert({
+                                type: data.deviceType,
+                                token: data.deviceToken,
+                                userId: user.id
+                            }, {transaction: t}).then(function () {
+
+                            });
+                        }
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (createdUser) {
+                        sequelize.models.User.findUserByAid(createdUser.aid, callback);
+                    }
+                });
             },
             /**
              * Email 유저생성
@@ -586,14 +630,14 @@ module.exports = {
 
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
-                        sequelize.models.User.findUserByEmail(createdUser.email, function(status, data) {
+                        sequelize.models.User.findUserByEmail(createdUser.email, function (status, data) {
                             if (status == 200) {
                                 createdUser = data;
                                 if (!STD.flag.isAutoVerifiedEmail) {
                                     sequelize.models.Auth.findDataIncluding({
                                         type: type,
                                         key: createdUser.email
-                                    }, null, function(status, auth) {
+                                    }, null, function (status, auth) {
                                         if (status == 200) {
                                             createdUser.auth = auth;
                                             callback(200, createdUser);
@@ -800,6 +844,100 @@ module.exports = {
                         }
                     }
                 );
+            },
+            destroyUser: function (id, callback) {
+                var isSuccess = false;
+                var self = this;
+
+                /*
+                 탈퇴시에는 모든 정보를 폐기해야한다. 단 요청에 의해서 몇개월간 개인정보를 보관해야할 필요가 있는데,
+                 이럴땐 del-user 테이블을 이용하여 임시저장 처리해야한다.
+                 */
+                sequelize.transaction(function (t) {
+                    var loadedData = null;
+                    var query = {
+                        transaction: t,
+                        where: {
+                            id: id
+                        },
+                        include: [{
+                            model: sequelize.models.Profile,
+                            as: profileKey
+                        }, {
+                            model: sequelize.models.Provider,
+                            as: 'providers',
+                            attributes: sequelize.models.Provider.getProviderFields()
+                        }, {
+                            model: sequelize.models.Device,
+                            as: 'devices',
+                            attributes: sequelize.models.Device.getDeviceFields()
+                        }]
+                    };
+
+                    return self.find(query).then(function (data) {
+                        loadedData = data;
+
+                        var deletedUserPrefix = ENV.app.deletedUserPrefix;
+                        return sequelize.models.User.update({
+                            aid: deletedUserPrefix + id,
+                            email: deletedUserPrefix + id,
+                            phoneNum: deletedUserPrefix + id,
+                            name: deletedUserPrefix + id,
+                            nick: deletedUserPrefix + id
+                        }, {
+                            transaction: t,
+                            where: {
+                                id: id
+                            }
+                        }).then(function (data) {
+                            if (data && data[0]) {
+
+                                var deviceTasks = [];
+                                if (!loadedData.devices) {
+                                    loadedData.devices = [];
+                                }
+                                loadedData.devices.forEach(function (device) {
+                                    deviceTasks.push(device.destroy({transaction: t}));
+                                });
+                                var providerTasks = [];
+                                if (!loadedData.providers) {
+                                    loadedData.providers = [];
+                                }
+                                loadedData.providers.forEach(function (provider) {
+                                    providerTasks.push(provider.delete({transaction: t}));
+                                });
+
+                                return Promise.all(deviceTasks).then(function(devices) {
+                                    return Promise.all(providerTasks).then(function(providers) {
+                                        return loadedData.destroy({
+                                            where: {id: id},
+                                            cascade: true,
+                                            transaction: t
+                                        }).then(function (data) {
+                                            // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
+                                            if (STD.user.deletedUserStoringDay > 0) {
+                                                var userDel = sequelize.models.ExtinctUser.build({
+                                                    userId: id,
+                                                    data: JSON.stringify(loadedData)
+                                                });
+                                                return userDel.save({transaction: t}).then(function () {
+                                                    isSuccess = true;
+                                                });
+                                            } else {
+                                                isSuccess = true;
+                                            }
+                                        });
+
+                                    });
+                                });
+                            }
+                        });
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (isSuccess) {
+                        callback(204);
+                    }
+                });
             }
         })
     }
