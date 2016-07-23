@@ -12,6 +12,9 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 
 function requestFacebookValidadtor(uid, secret, callback) {
+    if (process.env.NODE_ENV == "test") {
+        return callback(200);
+    }
     var request = require('request');
     var rootUri = 'https://graph.facebook.com/me?access_token=';
     var option = {
@@ -39,7 +42,8 @@ module.exports = {
             referenceKey: 'id',
             as: 'user',
             asReverse: 'providers',
-            allowNull: false
+            allowNull: false,
+            onDelete: 'cascade'
         },
         'type': {
             'type': Sequelize.ENUM,
@@ -48,8 +52,7 @@ module.exports = {
         },
         'uid': {
             'type': Sequelize.STRING,
-            'allowNull': false,
-            'unique': true
+            'allowNull': false
         },
         'token': {
             'type': Sequelize.STRING,
@@ -58,17 +61,23 @@ module.exports = {
         'salt': {
             'type': Sequelize.STRING,
             'allowNull': false
-        },
-        'allowNull': false
+        }
     }, options: {
         'charset': 'utf8',
-        'paranoid': false, // deletedAt 추가. delete안함.
+        'paranoid': true,
+        indexes: [{
+            unique: true,
+            fields: ['userId', 'type']
+        }, {
+            unique: true,
+            fields: ['type', 'uid']
+        }],
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             'tokenAuthenticate': function (token) {
                 return this.token == this.createHashPassword(token);
             },
             'createHashToken': function (token) {
-                return crypto.pbkdf2Sync(token, this.salt, 15000, 64).toString('base64');
+                return crypto.pbkdf2Sync(token, this.salt, 15000, 64, 'sha512').toString('base64');
             },
             'tokenEncryption': function () {
                 this.salt = crypto.randomBytes(20).toString('base64');
@@ -124,12 +133,7 @@ module.exports = {
                     }
                 });
             }
-        }),
-        'hooks': {
-            beforeValidate: function (provider, options) {
-                provider.tokenEncryption();
-            }
-        }
+        })
     }
 };
 

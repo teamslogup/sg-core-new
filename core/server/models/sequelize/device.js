@@ -6,6 +6,7 @@
 
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
+var mixin = require('./mixin');
 
 var STD = require('../../../../bridge/metadata/standards');
 var User = require('./user');
@@ -17,7 +18,8 @@ module.exports = {
             referenceKey: 'id',
             as: 'user',
             asReverse: 'devices',
-            allowNull: false
+            allowNull: false,
+            onDelete: 'cascade'
         },
         'type': {
             'type': Sequelize.ENUM,
@@ -31,8 +33,14 @@ module.exports = {
         }
     }, options: {
         'charset': 'utf8',
-        'paranoid': false, // deletedAt 추가. delete안함.
-        'instanceMethods': {},
-        'hooks': {}
+        'paranoid': true,
+        'hooks': {},
+        'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            getDeviceFields: function () {
+                var fields = ['id', 'type'];
+                return fields;
+            }
+        })
     }
 };

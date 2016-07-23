@@ -38,7 +38,6 @@ describe('Phone Accounts Api Tests', function () {
             });
     });
 
-
     it('should fail to register user', function (done) {
         request(app).post('/api/accounts/users')
             .send(flexture)

@@ -14,6 +14,7 @@ var Article = require('./article');
 var Test = require('./test');
 var Profile = require('./profile');
 var Image = require('./image');
+var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
 
 var sequelize = require('../../config/sequelize');
@@ -31,6 +32,7 @@ var models = {
     Test: Test,
     Profile: Profile,
     Image: Image,
+    ExtinctUser: ExtinctUser,
     Terms: Terms
 };
 

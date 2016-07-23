@@ -1,19 +1,20 @@
-var del = {};
+var get = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 
-del.validate = function () {
+get.validate = function () {
     return function (req, res, next) {
-        req.check('id', '400_17').isInt();
+        req.check('id', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
-del.destroyUser = function () {
+get.setParam = function () {
     return function (req, res, next) {
-        req.models.User.destroyUser(req.params.id, function (status, data) {
-            if (status == 204) {
+        req.models.ExtinctUser.findExtinctUserByUserId(req.params.id, function (status, data) {
+            if (status == 200) {
+                req.data = JSON.parse(data.data);
                 next();
             } else {
                 res.hjson(req, next, status, data);
@@ -22,11 +23,10 @@ del.destroyUser = function () {
     };
 };
 
-del.supplement = function () {
+get.supplement = function () {
     return function (req, res, next) {
-        req.logout();
-        res.hjson(req, next, 204);
+        res.hjson(req, next, 200, req.data);
     };
 };
 
-module.exports = del;
+module.exports = get;

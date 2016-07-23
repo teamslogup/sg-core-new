@@ -18,10 +18,11 @@ var standards = {
         "enumGenders": ["m", "f"],
         "genderMale": "m",
         "genderFemale": "f",
-        "enumSignUpTypes": ["email", "phone", "social", "phoneId"],
+        "enumSignUpTypes": ["email", "phone", "social", "phoneId", "normalId"],
         "signUpTypeEmail": "email",
         "signUpTypePhone": "phone",
         "signUpTypePhoneId": "phoneId",
+        "signUpTypeNormalId": "normalId",
         "signUpTypeSocial": "social",
         "defaultSignUpType": "email",
         "enumProviders": ["facebook", "twitter", "google", "kakao"],
@@ -83,7 +84,8 @@ var standards = {
         "phoneNum": "phoneNum",
         "birth": "birth",
         "name": "name",
-        "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png"
+        "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
+        "deletedUserStoringDay": 10
     },
     "flag": {
         "isMoreInfo": true,

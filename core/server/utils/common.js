@@ -3,6 +3,47 @@ var CODES = META.codes;
 var fs = require('fs');
 
 module.exports = {
+    getAPIParams: function(url, method) {
+        var api = this.getAPI(url);
+        if (api) {
+            return api[method](true)();
+        } else {
+            return {};
+        }
+    },
+    getAPI: function(url) {
+        function getApiPath(isCore, group, resource) {
+            if (isCore) {
+                return require('path').resolve(__dirname, '../apis/' + group + '/' + resource + '/' + resource + ".assembly.js");
+            } else {
+                return require('path').resolve(__dirname, '../../../app/server/apis/' + group + '/' + resource + '/' + resource + ".assembly.js");
+            }
+        }
+
+        var apiResource = url;
+        var resourceArr = apiResource.split("/");
+        var startIdx = 0;
+        if (resourceArr[0] == "") {
+            startIdx = 1;
+        }
+        var group = resourceArr[startIdx++];
+        var resource = resourceArr[startIdx];
+
+        var isAppExists = fs.existsSync(getApiPath(false, group, resource));
+        var isCoreExists = false;
+        if (!isAppExists) {
+            isCoreExists = fs.existsSync(getApiPath(true, group, resource));
+        }
+        if (!isCoreExists && !isAppExists) {
+            return null;
+        } else {
+            var path = getApiPath(true, group, resource);
+            if (isAppExists) {
+                path = getApiPath(false, group, resource);
+            }
+            return require(path).api;
+        }
+    },
     requestAPI: function(req, res, next) {
         /**
          * request api
@@ -18,46 +59,13 @@ module.exports = {
          * }
          */
         return function(options, callback) {
-            function getApiPath(isCore, group, resource) {
-                if (isCore) {
-                    return require('path').resolve(__dirname, '../apis/' + group + '/' + resource + '/' + resource + ".assembly.js");
-                } else {
-                    return require('path').resolve(__dirname, '../../../app/server/apis/' + group + '/' + resource + '/' + resource + ".assembly.js");
-                }
-            }
-
             var apiResource = options.resource;
             var method = options.method;
             var params = options.params;
             var requestData = options.data;
-
-            var resourceArr = apiResource.split("/");
-            var startIdx = 0;
-
-            if (resourceArr[0] == "") {
-                startIdx = 1;
-            }
-
-            var group = resourceArr[startIdx++];
-            var resource = resourceArr[startIdx];
-
-            console.log(getApiPath(false, group, resource));
-            console.log(getApiPath(true, group, resource));
-            var isAppExists = fs.existsSync(getApiPath(false, group, resource));
-            var isCoreExists = false;
-            if (!isAppExists) {
-                isCoreExists = fs.existsSync(getApiPath(true, group, resource));
-            }
-            if (!isCoreExists && !isAppExists) {
-                return callback(404);
-            } else {
-                var path = getApiPath(true, group, resource);
-                if (isAppExists) {
-                    path = getApiPath(false, group, resource);
-                }
-                var api = require(path).api;
+            var api = this.getAPI(apiResource);
+            if (api) {
                 if (api[method]) {
-
                     var tempCallback = req.callback;
                     var query = req.query;
                     var body = req.body;
@@ -81,10 +89,9 @@ module.exports = {
                         callback(status, data);
                     };
                     api[method]()(req, res, next);
-
-                } else {
-                    return callback(404);
                 }
+            } else {
+                callback(404);
             }
         };
     },

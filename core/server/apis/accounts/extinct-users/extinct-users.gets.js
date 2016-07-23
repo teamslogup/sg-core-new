@@ -21,8 +21,11 @@ gets.setParam = function() {
         var last = req.query.last;
         var where = {};
         if (req.query.userId !== undefined) where.userId = req.query.userId;
-        req.models.Test.findAllDataForPage(where, size, last, function(status, data) {
-            req.data = data;
+        req.extinctUsers = [];
+        req.models.ExtinctUser.findAllExtinctUsers(size, last, function(status, data) {
+            for (var i = 0; i < data.length; ++i) {
+                req.extinctUsers.push(JSON.parse(data[i].data));
+            }
             next();
         });
     };
@@ -31,9 +34,9 @@ gets.setParam = function() {
 gets.supplement = function(){
     return function(req, res, next){
         var ret = {
-            list: req.data
+            list: req.extinctUsers
         };
-        res.hjson(req, next, 200, req.data);
+        res.hjson(req, next, 200, ret);
     };
 };
 
