@@ -28,36 +28,6 @@ post.validate = function () {
     };
 };
 
-post.checkEmail = function () {
-    return function (req, res, next) {
-
-        var USER = req.meta.std.user;
-        req.models.User.findUserByEmail(req.body.email, function (status, data) {
-            // 계정 추가인 경우 이메일로 가입된 계정이 없어야 한다.
-            if (req.body.type == USER.emailSenderTypeAdding) {
-                if (status == 404) {
-                    next();
-                } else if (status == 200) {
-                    res.hjson(req, next, 409, {code: '409_5'});
-                } else {
-                    res.hjson(req, next, status, data);
-                }
-            }
-            // 그외 (비번찾기, 가입인증) 경우 이메일로 가입된 계정이 이미 있어야한다.
-            else {
-                if (status == 200) {
-                    req.user = data;
-                    next();
-                } else if (status == 404) {
-                    res.hjson(req, next, 404, {code: '404_10'});
-                } else {
-                    res.hjson(req, next, status, data);
-                }
-            }
-        });
-    };
-};
-
 post.checkAlreadySignUp = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
@@ -72,30 +42,33 @@ post.checkAlreadySignUp = function () {
     };
 };
 
-post.updateAuth = function () {
+post.checkAndAddEmail = function () {
     return function (req, res, next) {
-
         var USER = req.meta.std.user;
-
-        var data = {
-            type: USER.signUpTypeEmail,
-            key: req.body.email
-        };
-
-        // adding인 상태는 로그인이 이미 되어있는 상태임.
         if (req.body.type == USER.emailSenderTypeAdding) {
-            data.userId = req.user.id;
+            req.user.updateEmailAndAuth(req.body.email, function (status, data) {
+                if (status == 200) {
+                    req.auth = data.auth;
+                    next();
+                } else {
+                    res.hjson(req, next, status, data);
+                }
+            });
         }
-
-        req.models.Auth.upsertAuth(data, function (status, data) {
-            if (status == 200) {
-                req.auth = data;
-                req.user.auth = data;
-                next();
-            } else {
-                return res.hjson(req, next, status, data);
-            }
-        });
+        // 그외 (비번찾기, 가입인증) 경우 이메일로 가입된 계정이 이미 있어야한다.
+        else {
+            req.user.upsertAuth(req.body.email, function (status, data) {
+                if (status == 200) {
+                    req.user = data;
+                    req.auth = data.auth;
+                    next();
+                } else if (status == 404) {
+                    res.hjson(req, next, 404, {code: '404_10'});
+                } else {
+                    res.hjson(req, next, status, data);
+                }
+            });
+        }
     };
 };
 

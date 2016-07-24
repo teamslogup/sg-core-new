@@ -282,7 +282,6 @@ module.exports = {
                         }
 
                         if (auth.expiredAt < now || auth.token.toString() != token.toString()) {
-                            console.log('fail');
                             throw new errorHandler.CustomSequelizeError(403);
                         }
 
@@ -307,7 +306,104 @@ module.exports = {
                     }
                 });
             },
+            /**
+             * 비번찾기나 가입인증을 위해 단순히 인증테이블만 upsert하는 경우,
+             * @param email
+             * @param callback
+             */
+            upsertAuth: function (email, callback) {
+                var self = this;
+                var updatedUser = null;
+                sequelize.transaction(function (t) {
+                    return sequelize.models.User.findOne({
+                        where: {
+                            email: email
+                        },
+                        transaction: t
+                    }).then(function (user) {
+                        updatedUser = user;
+                        return sequelize.models.Auth.upsert({
+                            type: STD.user.signUpTypeEmail,
+                            key: email
+                        }, {transaction: t}).then(function() {
+                            return sequelize.models.Auth.findOne({
+                                where: {
+                                    type: STD.user.signUpTypeEmail,
+                                    key: email
+                                },
+                                transaction: t
+                            }).then(function(auth) {
+                                updatedUser['auth'] = auth;
+                            });
+                        });
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (updatedUser && updatedUser.auth) {
+                        callback(200, updatedUser);
+                    }
+                });
+            },
+            /**
+             * 이메일 추가 후 인증 테이블 추가(isAutoVerifiedEmail false일경우)
+             * @param email - 추가할 이메일
+             * @param callback
+             */
+            updateEmailAndAuth: function (email, callback) {
+                var self = this;
+                var updatedUser = null;
+                sequelize.transaction(function (t) {
+                    return sequelize.models.User.findOne({
+                        where: {
+                            email: email,
+                            id: {
+                                $ne: self.id
+                            }
+                        },
+                        transaction: t
+                    }).then(function (user) {
+                        if (!user) {
+                            return self.updateAttributes({
+                                isVerifiedEmail: STD.flag.isAutoVerifiedEmail,
+                                email: email
+                            }, {transaction: t}).then(function (user) {
+                                if (!user) {
+                                    throw new errorHandler.CustomSequelizeError(404);
+                                }
+                                updatedUser = user;
 
+                                if (!STD.flag.isAutoVerifiedEmail) {
+                                    return sequelize.models.Auth.upsert({
+                                        type: STD.user.signUpTypeEmail,
+                                        key: email,
+                                        userId: self.id
+                                    }, {transaction: t}).then(function(auth) {
+                                        return sequelize.models.Auth.findOne({
+                                            where: {
+                                                type: STD.user.signUpTypeEmail,
+                                                key: email,
+                                                userId: self.id
+                                            },
+                                            transaction: t
+                                        }).then(function(auth) {
+                                            updatedUser['auth'] = auth;
+                                        });
+                                    });
+                                }
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(409, {
+                                code: '409_5'
+                            });
+                        }
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    var isAutoVerifiedEmail = STD.flag.isAutoVerifiedEmail;
+                    if ((updatedUser && isAutoVerifiedEmail) ||
+                        (updatedUser && updatedUser.auth && !isAutoVerifiedEmail)) {
+                        callback(200, updatedUser);
+                    }
+                });
+            },
             /**
              * 비밀번호 변경
              * @param {sequelize.models.Auth} auth - auth모델

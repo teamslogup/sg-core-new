@@ -38,9 +38,8 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(post.checkEmail());
                 apiCreator.add(post.checkAlreadySignUp());
-                apiCreator.add(post.updateAuth());
+                apiCreator.add(post.checkAndAddEmail());
                 apiCreator.add(post.sendEmailAuth());
                 apiCreator.add(post.supplement());
                 apiCreator.run();

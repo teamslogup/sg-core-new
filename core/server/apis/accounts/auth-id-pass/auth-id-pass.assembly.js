@@ -51,8 +51,6 @@ var api = {
                 apiCreator.add(post.updateAccount());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

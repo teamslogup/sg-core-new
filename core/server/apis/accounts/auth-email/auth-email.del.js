@@ -19,7 +19,7 @@ del.removeEmail = function () {
         if (req.isAuthenticated() && req.user.email) {
             req.user.updateFields({
                 email: null,
-                isVerifiedEmail: false
+                isVerifiedEmail: req.meta.std.flag.isAutoVerifiedEmail
             }, function (status, data) {
                 if (status == 200) {
                     next();

@@ -129,6 +129,14 @@ describe('Email Accounts Api Tests', function () {
         phoneUser.signup(done);
     });
 
+    it('should send adding email auth', function (done) {
+        phoneUser.sendAddingEmailAuth('gozillacj3@naver.com', done);
+    });
+
+    it('should verify adding email', function (done) {
+        phoneUser.verifyEmail(done);
+    });
+
     it('should remove account', function (done) {
         phoneUser.removeAccount(done);
     });
@@ -172,4 +180,35 @@ describe('Email Accounts Api Tests', function () {
     it('should remove account', function (done) {
         socialUser.removeAccount(done);
     });
+
+    it('should signup email user', function (done) {
+        emailUser.signup(done);
+    });
+
+    it('should logout email user', function (done) {
+        emailUser.logout(done);
+    });
+
+    it('should login email user', function (done) {
+        emailUser.loginEmail(done);
+    });
+
+    it('should send email auth', function (done) {
+        emailUser.authToken = "123";
+        emailUser.sendSignupEmailAuth(done);
+    });
+
+    it('should send email auth', function (done) {
+        emailUser.authToken = "123";
+        emailUser.sendSignupEmailAuth(done);
+    });
+
+    it('should verify email', function (done) {
+        emailUser.verifyEmail(done);
+    });
+
+    it('should remove account', function (done) {
+        emailUser.removeAccount(done);
+    });
+
 });

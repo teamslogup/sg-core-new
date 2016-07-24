@@ -26,7 +26,7 @@ var api = {
                 explains: {
                     'token': 'email token'
                 },
-                title: '이메일연동',
+                title: '이메일연동벨리데이션',
                 state: 'staging'
             };
 

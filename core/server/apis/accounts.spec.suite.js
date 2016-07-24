@@ -16,7 +16,11 @@ var url = {
     extinctUsers: "/api/accounts/extinct-users",
     senderPhone: "/api/accounts/sender-phone",
     authEmail: "/api/accounts/auth-email",
-    socialSession: "/api/accounts/social-session"
+    socialSession: "/api/accounts/social-session",
+    senderEmail: "/api/accounts/sender-email",
+    authPhone: "/api/accounts/auth-phone",
+    authIdPass: "/api/accounts/auth-id-pass",
+    pass: "/api/accounts/pass"
 };
 
 function Account(fixture) {
@@ -198,10 +202,10 @@ Account.prototype.removeExtincts = function(callback) {
 /**
  * account link methods.
  phone
- - aid, apass
- - email, apass
- - email
- - social
+ - aid, apass > authIdPass
+ - email, apass > authIdPass
+ - email > sender-mail > auth-email
+ - social > auth-social
 
  phoneId
  - email
@@ -223,6 +227,37 @@ Account.prototype.removeExtincts = function(callback) {
  - phone
  */
 
+Account.prototype.sendAddingEmailAuth = function(email, callback) {
+    var self = this;
+    request(app).post(url.senderEmail)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.emailSenderTypeAdding,
+            email: email
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+            callback();
+        });
+};
+
+Account.prototype.sendSignupEmailAuth = function(callback) {
+    var self = this;
+    request(app).post(url.senderEmail)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.emailSenderTypeSignUp,
+            email: self.getFixture('uid')
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+            callback();
+        });
+};
 
 /**
  * fail methods.
