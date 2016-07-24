@@ -304,5 +304,19 @@ Account.prototype.loginEmailFail = function (callback) {
         });
 };
 
+Account.prototype.sendAddingEmailAuthFail = function(email, callback) {
+    var self = this;
+    request(app).post(url.senderEmail)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.emailSenderTypeAdding,
+            email: email
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(409);
+            callback();
+        });
+};
+
 
 module.exports = Account;

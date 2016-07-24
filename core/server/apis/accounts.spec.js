@@ -13,31 +13,35 @@ describe('Email Accounts Api Tests', function () {
     var emailUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     emailUserParam.type = STD.user.signUpTypeEmail;
     emailUserParam.uid = 'gozillacj@naver.com';
+    emailUserParam.nick = 'email1';
 
     var emailUserParam2 = JSON.parse(JSON.stringify(emailUserParam));
     emailUserParam2.uid = 'gozillacj2@naver.com';
+    emailUserParam.nick = 'email2';
 
     var normalUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     normalUserParam.type = STD.user.signUpTypeNormalId;
     normalUserParam.uid = 'gozillacj';
+    emailUserParam.nick = 'normalId1';
 
     var phoneUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     phoneUserParam.type = STD.user.signUpTypePhone;
     phoneUserParam.uid = '+821089981764';
+    emailUserParam.nick = 'phone1';
 
     var phoneIdUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     phoneIdUserParam.type = STD.user.signUpTypePhoneId;
     phoneIdUserParam.uid = '+821089981764';
     phoneIdUserParam.aid = 'gozillacj';
     phoneIdUserParam.apass = '123qwe';
-
+    emailUserParam.nick = 'phoneId1';
 
     var socialUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     socialUserParam.type = STD.user.signUpTypeSocial;
     socialUserParam.provider = STD.user.providerFacebook;
     socialUserParam.uid = '1210123981203';
     socialUserParam.secret = 'aksdfhaksdhfaASdfkuasdhfaDSFDASfaDSFASDfadsf23dsfa23123sdgdf45';
-
+    emailUserParam.nick = 'social1';
 
     var Account = require('./accounts.spec.suite');
     var emailUser = new Account(emailUserParam);
@@ -169,18 +173,6 @@ describe('Email Accounts Api Tests', function () {
         socialUser.removeAccount(done);
     });
 
-    it('should signup social user', function (done) {
-        socialUser.signup(done);
-    });
-
-    it('should login social user', function (done) {
-        socialUser.loginSocial(done);
-    });
-
-    it('should remove account', function (done) {
-        socialUser.removeAccount(done);
-    });
-
     it('should signup email user', function (done) {
         emailUser.signup(done);
     });
@@ -205,6 +197,46 @@ describe('Email Accounts Api Tests', function () {
 
     it('should verify email', function (done) {
         emailUser.verifyEmail(done);
+    });
+
+    it('should remove account', function (done) {
+        emailUser.removeAccount(done);
+    });
+
+    it('should signup email user', function (done) {
+        emailUser.signup(done);
+    });
+
+    it('should send email auth', function (done) {
+        emailUser.sendSignupEmailAuth(done);
+    });
+
+    it('should verify email', function (done) {
+        emailUser.verifyEmail(done);
+    });
+
+    it('should signup social user', function (done) {
+        socialUser.signup(done);
+    });
+
+    it('should login social user', function (done) {
+        socialUser.loginSocial(done);
+    });
+
+    it('should send adding mail', function (done) {
+        socialUser.sendAddingEmailAuthFail(emailUser.getData('email'), done);
+    });
+
+    it('should send adding mail', function (done) {
+        socialUser.sendAddingEmailAuth('gozillacj4@naver.com', done);
+    });
+
+    it('should verify email', function (done) {
+        socialUser.verifyEmail(done);
+    });
+
+    it('should remove account', function (done) {
+        socialUser.removeAccount(done);
     });
 
     it('should remove account', function (done) {
