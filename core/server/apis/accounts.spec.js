@@ -13,7 +13,7 @@ describe('Email Accounts Api Tests', function () {
     var emailUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     emailUserParam.type = STD.user.signUpTypeEmail;
     emailUserParam.uid = 'gozillacj@naver.com';
-    emailUserParam.nick = 'email1';
+    emailUserParam.nick = '';
 
     var emailUserParam2 = JSON.parse(JSON.stringify(emailUserParam));
     emailUserParam2.uid = 'gozillacj2@naver.com';
