@@ -7,7 +7,7 @@ post.validate = function () {
         var REPORT = req.meta.std.report;
         req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
         if (req.body.nick !== undefined) {
-            req.check('nick', '400_8').len(REPORT.minNameLength, REPORT.maxNameLength)
+            req.check('nick', '400_8').len(REPORT.minNickLength, REPORT.maxNickLength)
         }
         if (req.body.email !== undefined) {
             req.check('email', '400_1').isEmail();
