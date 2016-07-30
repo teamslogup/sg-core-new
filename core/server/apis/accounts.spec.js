@@ -218,7 +218,7 @@ describe('Email Accounts Api Tests', function () {
         socialUser.loginSocial(done);
     });
 
-    it('should send adding mail', function (done) {
+    it('should send adding email', function (done) {
         socialUser.sendAddingEmailAuthFail(emailUser.getData('email'), done);
     });
 
@@ -255,6 +255,19 @@ describe('Email Accounts Api Tests', function () {
             normalIdUser.getData('phoneNum').should.be.exactly('+821089981764');
             done();
         });
+    });
+
+    it('should change password', function (done) {
+        normalIdUser.changePassword('123123qwe', done);
+    });
+
+    it('should logout', function (done) {
+        normalIdUser.logout(done);
+    });
+
+    it('should login normal id', function (done) {
+        normalIdUser.setFixture('secret', '123123qwe');
+        normalIdUser.loginNormalId(done);
     });
 
     it('should remove account', function (done) {
@@ -384,5 +397,4 @@ describe('Email Accounts Api Tests', function () {
     it('should remove account', function (done) {
         phoneUser.removeAccount(done);
     });
-
 });

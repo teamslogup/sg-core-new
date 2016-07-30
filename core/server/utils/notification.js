@@ -44,7 +44,6 @@ module.exports = {
             }, callback);
         },
         newPass: function (req, redirect, auth, callback) {
-            console.log(url + auth.token);
             if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
                 return callback(null);
             }
@@ -63,7 +62,7 @@ module.exports = {
         }
     },
     sms: {
-        signup: function (req, phoneNum, token, callback) {
+        sendAuth: function (req, phoneNum, token, callback) {
 
             var MAGIC = req.meta.std.magic;
             var lang = req.meta.langs[req.language];
@@ -80,6 +79,23 @@ module.exports = {
             else {
                 callback(null);
             }
+        },
+        newPass: function (req, redirect, auth, callback) {
+            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
+                return callback(null);
+            }
+            var url = APP_CONFIG.rootUrl + "/" + redirect;
+            url = url + "?token=" + auth.token;
+            var newPassMsg = meta.langs[req.language].newPassExplain;
+            req.sendNoti.email(auth.key, "NewPass", {
+                subject: newPassMsg,
+                dir: appDir,
+                name: 'new-pass',
+                params: {
+                    url: url,
+                    expiredAt: auth.expiredAt
+                }
+            }, callback);
         }
     }
 };

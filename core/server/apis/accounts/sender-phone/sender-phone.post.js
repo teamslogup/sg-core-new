@@ -8,7 +8,7 @@ post.validate = function () {
 
         req.check('phoneNum', '400_7').len(5, 18);
         req.check('type', '400_3').isEnum(req.meta.std.user.enumPhoneSenderTypes);
-        req.type = req.meta.std.user.signUpTypePhone;
+        req.type = req.meta.std.user.authPhoneSignup;
 
         // 연동일 경우 무조건 로그인이 되어 있어야한다.
         if (req.body.type == USER.phoneSenderTypeAdding && !req.isAuthenticated()) {
@@ -40,7 +40,7 @@ post.checkPhoneNumber = function () {
                     });
                 }
             }
-            // 그외는 로그인인데, 로그인의 경우 유저가 없으면 안된다.
+            // 그외는 로그인인데 비번찾기, 로그인 비번찾기의 경우 유저가 없으면 안된다.
             else {
                 // 유저가 있어야만 넘김.
                 if (status == 200) {
@@ -83,7 +83,7 @@ post.createToken = function () {
 
 post.sendSMS = function () {
     return function (req, res, next) {
-        req.coreUtils.notification.sms.signup(req, req.body.phoneNum, req.authNum, function (err) {
+        req.coreUtils.notification.sms.sendAuth(req, req.body.phoneNum, req.authNum, function (err) {
             if (err) {
                 if (err.status == 400) {
                     return res.hjson(req, next, 400, {code: '400_7'});

@@ -28,7 +28,7 @@ module.exports = {
         },
         'type': {
             'type': Sequelize.ENUM,
-            'values': STD.user.enumSignUpTypes,
+            'values': STD.user.enumAuthTypes,
             'allowNull': false
         },
         'key': {
@@ -134,7 +134,7 @@ module.exports = {
              * @param {responseCallback} callback - 응답콜백.
              */
             checkValidPhoneToken: function (where, token, callback) {
-                this.checkValidToken(STD.user.signUpTypePhone, where, token, callback);
+                this.checkValidToken(STD.user.authPhoneSignup, where, token, callback);
             },
 
             /**
@@ -144,7 +144,7 @@ module.exports = {
              * @param {responseCallback} callback - 응답콜백.
              */
             checkValidEmailToken: function (where, token, callback) {
-                this.checkValidToken(STD.user.signUpTypeEmail, where, token, callback);
+                this.checkValidToken(STD.user.authEmailSignup, where, token, callback);
             },
 
             /**

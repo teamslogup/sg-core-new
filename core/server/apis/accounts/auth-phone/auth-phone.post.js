@@ -5,7 +5,6 @@ var passport = require('passport');
 
 post.validate = function () {
     return function (req, res, next) {
-        const USER = req.meta.std.user;
         const SMS = req.meta.std.sms;
         req.check('token', '400_13').len(SMS.authNumLength, SMS.authNumLength);
         req.utils.common.checkError(req, res, next);
@@ -21,7 +20,7 @@ post.getUser = function () {
         req.models.Auth.findOne({
             where: {
                 userId: req.user.id,
-                type: USER.signUpTypePhone
+                type: USER.authPhoneSignup
             }
         }).then(function (auth) {
             req.loadedAuth = auth;

@@ -75,9 +75,6 @@ post.checkAndAddEmail = function () {
 post.sendEmailAuth = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
-        if (USER.isAutoVerifiedEmail == true) {
-            return next();
-        }
         if (req.body.type == USER.emailSenderTypeAdding) {
             req.coreUtils.notification.email.adding(req, req.auth, function (err) {
                 if (err) return res.hjson(req, next, 503, err);

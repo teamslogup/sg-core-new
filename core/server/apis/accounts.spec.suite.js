@@ -210,6 +210,19 @@ Account.prototype.removeExtincts = function (callback) {
         });
 };
 
+Account.prototype.changePassword = function (pass, callback) {
+    var self = this;
+    request(app).put(url.pass)
+        .set("Cookie", self.cookie)
+        .send({
+            newPass: pass
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(204);
+            callback();
+        });
+};
+
 
 /**
  * account link methods.

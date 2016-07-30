@@ -141,7 +141,7 @@ module.exports = {
             'createEmailToken': function () {
                 var now = new Date();
                 return {
-                    type: STD.user.signUpTypeEmail,
+                    type: STD.user.authEmailSignup,
                     key: this.email,
                     token: crypto.randomBytes(STD.user.emailTokenLength).toString('base64'),
                     expiredAt: now.setMinutes(now.getMinutes() + STD.user.expiredEmailTokenMinutes)
@@ -271,7 +271,7 @@ module.exports = {
                     // 1. auth 체크
                     return sequelize.models.Auth.findOne({
                         where: {
-                            type: USER.signUpTypeEmail,
+                            type: USER.authEmailSignup,
                             userId: self.id
                         },
                         transaction: t
@@ -323,12 +323,12 @@ module.exports = {
                     }).then(function (user) {
                         updatedUser = user;
                         return sequelize.models.Auth.upsert({
-                            type: STD.user.signUpTypeEmail,
+                            type: STD.user.authEmailSignup,
                             key: email
                         }, {transaction: t}).then(function () {
                             return sequelize.models.Auth.findOne({
                                 where: {
-                                    type: STD.user.signUpTypeEmail,
+                                    type: STD.user.authEmailSignup,
                                     key: email
                                 },
                                 transaction: t
@@ -373,13 +373,13 @@ module.exports = {
 
                                 if (!STD.flag.isAutoVerifiedEmail) {
                                     return sequelize.models.Auth.upsert({
-                                        type: STD.user.signUpTypeEmail,
+                                        type: STD.user.authEmailSignup,
                                         key: email,
                                         userId: self.id
                                     }, {transaction: t}).then(function (auth) {
                                         return sequelize.models.Auth.findOne({
                                             where: {
-                                                type: STD.user.signUpTypeEmail,
+                                                type: STD.user.authEmailSignup,
                                                 key: email,
                                                 userId: self.id
                                             },
@@ -410,19 +410,17 @@ module.exports = {
              * @param {string} pass - 바꿀 비밀번호
              * @param {responseCallback} callback - 응답콜백
              */
-            'changePassword': function (auth, pass, callback) {
+            'changePassword': function (pass, callback) {
                 var loadedUser = null;
                 var self = this;
-                sequelize.transaction(function (t) {
-                    return self.updateAttributes({
-                        secret: self.createHashPassword(pass)
-                    }, {transaction: t}).then(function (user) {
-                        if (!user) throw {status: 404};
+                this.updateAttributes({
+                    secret: self.createHashPassword(pass)
+                }).then(function (user) {
+                    if (user) {
                         loadedUser = user;
-                        if (auth) {
-                            return auth.destroy({transaction: t});
-                        }
-                    });
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (loadedUser) {
                         callback(200, loadedUser);
@@ -694,7 +692,7 @@ module.exports = {
              */
             'createUserWithEmail': function (data, callback) {
                 var createdUser = null;
-                var type = STD.user.signUpTypeEmail;
+                var type = STD.user.authEmailSignup;
 
                 sequelize.transaction(function (t) {
                     var user = sequelize.models.User.build(data);
@@ -780,7 +778,7 @@ module.exports = {
                         // 2. 번호 인증 스키마 얻기.
                         return sequelize.models.Auth.findOne({
                             where: {
-                                type: STD.user.signUpTypePhone,
+                                type: STD.user.authPhoneSignup,
                                 key: user.phoneNum
                             },
                             transaction: t
