@@ -141,6 +141,18 @@ describe('Email Accounts Api Tests', function () {
         phoneUser.verifyEmail(done);
     });
 
+    it('should logout phone user', function (done) {
+        phoneUser.logout(done);
+    });
+
+    it('should login phone', function (done) {
+        phoneUser.sendLoginPhoneAuth(done);
+    });
+
+    it('should login phone', function (done) {
+        phoneUser.loginPhone(done);
+    });
+
     it('should remove account', function (done) {
         phoneUser.removeAccount(done);
     });
@@ -151,6 +163,10 @@ describe('Email Accounts Api Tests', function () {
 
     it('should signup phoneId user', function (done) {
         phoneIdUser.signup(done);
+    });
+
+    it('should remove phone', function (done) {
+        phoneIdUser.removePhone(done);
     });
 
     it('should remove account', function (done) {

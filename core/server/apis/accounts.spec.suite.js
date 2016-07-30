@@ -57,6 +57,21 @@ Account.prototype.sendPhoneAuth = function (callback) {
         });
 };
 
+Account.prototype.sendLoginPhoneAuth = function (callback) {
+    var self = this;
+    request(app).post(url.senderPhone)
+        .send({
+            phoneNum: self.getFixture('uid'),
+            type: STD.user.phoneSenderTypeLogIn
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+            callback();
+        });
+};
+
 Account.prototype.signup = function (callback) {
     var self = this;
     request(app).post(url.users)
@@ -84,6 +99,24 @@ Account.prototype.logout = function (callback) {
         .end(function (err, res) {
             res.status.should.exactly(204);
             self.cookie = res.header['set-cookie'][0];
+            callback();
+        });
+};
+
+Account.prototype.loginPhone = function (callback) {
+    var self = this;
+    request(app).post(url.session)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.signUpTypePhone,
+            uid: self.fixture.uid,
+            secret: self.authToken
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.cookie = res.header['set-cookie'][0];
+            self.data = res.body;
+            tester.do(resform.user, self.data);
             callback();
         });
 };
