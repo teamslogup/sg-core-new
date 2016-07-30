@@ -695,36 +695,38 @@ module.exports = {
                 var type = STD.user.authEmailSignup;
 
                 sequelize.transaction(function (t) {
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function () {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
 
-                        createdUser = user;
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
+                            if (!STD.flag.isAutoVerifiedEmail) {
+                                var authData = {
+                                    type: type,
+                                    key: createdUser.email,
+                                    userId: user.id
+                                };
 
-                        if (!STD.flag.isAutoVerifiedEmail) {
-                            var authData = {
-                                type: type,
-                                key: createdUser.email,
-                                userId: user.id
-                            };
+                                // 2. 이메일 인증을 위해 인증토큰 생성.
+                                return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
 
-                            // 2. 이메일 인증을 위해 인증토큰 생성.
-                            return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
+                                    // 3. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
+                                    if (data.deviceToken && data.deviceType) {
+                                        return sequelize.models.Device.upsert({
+                                            type: data.deviceType,
+                                            token: data.deviceToken,
+                                            userId: user.id
+                                        }, {transaction: t}).then(function () {
 
-                                // 3. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                                if (data.deviceToken && data.deviceType) {
-                                    return sequelize.models.Device.upsert({
-                                        type: data.deviceType,
-                                        token: data.deviceToken,
-                                        userId: user.id
-                                    }, {transaction: t}).then(function () {
-
-                                    });
-                                }
-                            });
-                        }
+                                        });
+                                    }
+                                });
+                            }
+                        });
                     });
-
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
                         sequelize.models.User.findUserByEmail(createdUser.email, function (status, data) {
@@ -769,47 +771,53 @@ module.exports = {
                 }
 
                 sequelize.transaction(function (t) {
-                    // 1. 유저생성.
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function () {
-                        createdUser = user;
 
-                        // 2. 번호 인증 스키마 얻기.
-                        return sequelize.models.Auth.findOne({
-                            where: {
-                                type: STD.user.authPhoneSignup,
-                                key: user.phoneNum
-                            },
-                            transaction: t
-                        }).then(function (auth) {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
 
-                            if (!auth) throw {status: 404};
+                        // 1. 유저생성.
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
 
-                            // 3. 번호 체크
-                            if (auth.token != authNum) {
-                                throw {status: 403}
-                            } else {
-                                // 4. 날짜 체크
-                                var now = new Date();
-                                if (auth.expiredAt < now) {
+                            // 2. 번호 인증 스키마 얻기.
+                            return sequelize.models.Auth.findOne({
+                                where: {
+                                    type: STD.user.authPhoneSignup,
+                                    key: user.phoneNum
+                                },
+                                transaction: t
+                            }).then(function (auth) {
+
+                                if (!auth) throw {status: 404};
+
+                                // 3. 번호 체크
+                                if (auth.token != authNum) {
                                     throw {status: 403}
                                 } else {
-                                    // 5. 모두 성공하면 Auth를 지움.
-                                    return auth.destroy({transaction: t}).then(function () {
-                                        // 6. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                                        if (data.deviceToken && data.deviceType) {
-                                            return sequelize.models.Device.upsert({
-                                                type: data.deviceType,
-                                                token: data.deviceToken,
-                                                userId: user.id
-                                            }, {transaction: t}).then(function () {
+                                    // 4. 날짜 체크
+                                    var now = new Date();
+                                    if (auth.expiredAt < now) {
+                                        throw {status: 403}
+                                    } else {
+                                        // 5. 모두 성공하면 Auth를 지움.
+                                        return auth.destroy({transaction: t}).then(function () {
+                                            // 6. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
+                                            if (data.deviceToken && data.deviceType) {
+                                                return sequelize.models.Device.upsert({
+                                                    type: data.deviceType,
+                                                    token: data.deviceToken,
+                                                    userId: user.id
+                                                }, {transaction: t}).then(function () {
 
-                                            });
-                                        }
-                                    });
+                                                });
+                                            }
+                                        });
+                                    }
                                 }
-                            }
+                            });
                         });
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
@@ -829,45 +837,48 @@ module.exports = {
 
                 sequelize.transaction(function (t) {
 
-                    var uid = data.uid;
-                    var type = data.provider;
-                    var token = data.secret;
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
+                        var uid = data.uid;
+                        var type = data.provider;
+                        var token = data.secret;
 
-                    delete data.uid;
-                    delete data.provider;
-                    delete data.secret;
+                        delete data.uid;
+                        delete data.provider;
+                        delete data.secret;
 
-                    // 1. 유저생성.
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function (user) {
+                        // 1. 유저생성.
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function (user) {
 
-                        var provider = sequelize.models.Provider.build({
-                            type: type,
-                            uid: uid,
-                            token: token,
-                            userId: user.id
-                        });
-                        provider.tokenEncryption();
+                            var provider = sequelize.models.Provider.build({
+                                type: type,
+                                uid: uid,
+                                token: token,
+                                userId: user.id
+                            });
+                            provider.tokenEncryption();
 
-                        // 2. 프로바이더생성
-                        return provider.save({transaction: t}).then(function (provider) {
-                            user.setDataValue('provider', provider);
-                            createdUser = user;
+                            // 2. 프로바이더생성
+                            return provider.save({transaction: t}).then(function (provider) {
+                                user.setDataValue('provider', provider);
+                                createdUser = user;
 
-                            // 3. 앱으로 가입한 경우 토큰 생성
-                            if (data.deviceToken && data.deviceType) {
-                                return sequelize.models.Device.upsert({
-                                    type: data.deviceType,
-                                    token: data.deviceToken,
-                                    userId: user.id
-                                }, {transaction: t}).then(function (device) {
+                                // 3. 앱으로 가입한 경우 토큰 생성
+                                if (data.deviceToken && data.deviceType) {
+                                    return sequelize.models.Device.upsert({
+                                        type: data.deviceType,
+                                        token: data.deviceToken,
+                                        userId: user.id
+                                    }, {transaction: t}).then(function (device) {
 
-                                });
-                            }
+                                    });
+                                }
+                            });
                         });
                     });
-
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
                         sequelize.models.User.findUserById(createdUser.id, callback);
@@ -1008,6 +1019,13 @@ module.exports = {
                                 loadedData.providers.forEach(function (provider) {
                                     providerTasks.push(provider.destroy({transaction: t}));
                                 });
+
+                                deviceTasks.push(sequelize.models.Profile.destroy({
+                                    where: {
+                                        id: loadedData.profileId
+                                    },
+                                    transaction: t
+                                }));
 
                                 return Promise.all(deviceTasks).then(function (devices) {
                                     return Promise.all(providerTasks).then(function (providers) {

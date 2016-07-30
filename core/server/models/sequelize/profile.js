@@ -38,7 +38,7 @@ module.exports = {
         'createdAt': false,
         'updatedAt': false,
         'charset': 'utf8',
-        'paranoid': true, // deletedAt 추가. delete안함.
+        'paranoid': true,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
