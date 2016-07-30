@@ -8,7 +8,7 @@ var post = require('./' + resource + '.post.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;

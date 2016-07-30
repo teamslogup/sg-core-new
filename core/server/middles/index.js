@@ -4,7 +4,8 @@ module.exports.connect = function (config) {
             s3: require('./s3')(config),
             session: require('./session')(),
             upload: require('./upload')(),
-            validator: require('./validator')()
+            validator: require('./validator')(),
+            role: require('./role')()
         };
         req.middles = middles;
         next();

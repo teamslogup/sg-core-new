@@ -31,7 +31,7 @@ post.updateAccount = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.instance);
+        res.hjson(req, next, 200, req.user.toSecuredJSON());
     };
 };
 

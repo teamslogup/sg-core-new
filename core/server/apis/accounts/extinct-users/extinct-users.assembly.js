@@ -15,7 +15,7 @@ var resforms = require('../../../resforms');
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
 
-var role = STD.user.roleSupervisor;
+var role = STD.role.account;
 if (process.env.NODE_ENV == "test") {
     role = STD.user.roleUser;
 }

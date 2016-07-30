@@ -17,26 +17,22 @@ post.validate = function () {
 post.createProvider = function () {
     return function (req, res, next) {
         req.provider = {};
-        var USER = req.meta.std.user;
         var body = req.body;
-        if (body.provider == USER.providerFacebook) {
-            req.models.Provider.updateFacebookToken(req.user.id, body.id, body.accessToken, function (status, data) {
-                if (status == 200) {
-                    req.provider = data;
-                    next();
-                } else {
-                    res.hjson(req, next, status, data);
-                }
-            });
-        } else {
-            next();
-        }
+
+        req.models.Provider.updateToken(req.body.provider, req.user.id, body.id, body.accessToken, function (status, data) {
+            if (status == 200) {
+                req.user.dataValues.providers = [data];
+                next();
+            } else {
+                res.hjson(req, next, status, data);
+            }
+        });
     };
 };
 
 post.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.provider);
+        res.hjson(req, next, 200, req.user);
     };
 };
 

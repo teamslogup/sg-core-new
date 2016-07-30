@@ -20,6 +20,7 @@ var url = {
     senderEmail: "/api/accounts/sender-email",
     authPhone: "/api/accounts/auth-phone",
     authIdPass: "/api/accounts/auth-id-pass",
+    authSocial: "/api/accounts/auth-social",
     pass: "/api/accounts/pass"
 };
 
@@ -30,6 +31,16 @@ function Account(fixture) {
 }
 
 util.inherits(Account, Super);
+
+Account.prototype.loadUser = function (callback) {
+    var self = this;
+    request(app).get(url.users + "/" + self.getData('id'))
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            callback();
+        });
+};
 
 Account.prototype.sendPhoneAuth = function (callback) {
     var self = this;
@@ -103,6 +114,7 @@ Account.prototype.verifyEmail = function (callback) {
             res.status.should.exactly(200);
             self.data = res.body;
             tester.do(resform.user, self.data);
+            self.data.isVerifiedEmail.should.exactly(true);
             callback();
         });
 };
@@ -123,7 +135,7 @@ Account.prototype.loginNormalId = function (callback) {
         .set("Cookie", self.cookie)
         .send({
             type: STD.user.signUpTypeNormalId,
-            uid: self.fixture.uid,
+            uid: self.getFixture('uid'),
             secret: self.getFixture('secret')
         })
         .end(function (err, res) {
@@ -153,7 +165,7 @@ Account.prototype.loginSocial = function (callback) {
         });
 };
 
-Account.prototype.removeAccount = function(callback) {
+Account.prototype.removeAccount = function (callback) {
     var self = this;
     request(app).del(url.users + "/" + self.data.id)
         .set("Cookie", self.cookie)
@@ -164,7 +176,7 @@ Account.prototype.removeAccount = function(callback) {
         });
 };
 
-Account.prototype.loadExtinct = function(id, callback) {
+Account.prototype.loadExtinct = function (id, callback) {
     var self = this;
     request(app).get(url.extinctUsers + "/" + id)
         .set("Cookie", self.cookie)
@@ -175,7 +187,7 @@ Account.prototype.loadExtinct = function(id, callback) {
         });
 };
 
-Account.prototype.loadAllExtincts = function(callback) {
+Account.prototype.loadAllExtincts = function (callback) {
     var self = this;
     request(app).get(url.extinctUsers)
         .set("Cookie", self.cookie)
@@ -188,7 +200,7 @@ Account.prototype.loadAllExtincts = function(callback) {
         });
 };
 
-Account.prototype.removeExtincts = function(callback) {
+Account.prototype.removeExtincts = function (callback) {
     var self = this;
     request(app).del(url.extinctUsers)
         .set("Cookie", self.cookie)
@@ -204,12 +216,14 @@ Account.prototype.removeExtincts = function(callback) {
  phone
  - aid, apass > authIdPass
  - email, apass > authIdPass
- - email > sender-mail > auth-email
+ - email > sender-email > auth-email : sender-email만 해도 email은 등록되고 auth-email을 통해서 인증된 이메일로 바꿔야함.
  - social > auth-social
+ - phone > sender-phone > auth-phone : 번호 변경시
 
  phoneId
  - email
  - social
+ - phone > sender-phone > auth-phone : 번호 변경시
 
  normalId
  - email
@@ -227,7 +241,108 @@ Account.prototype.removeExtincts = function(callback) {
  - phone
  */
 
-Account.prototype.sendAddingEmailAuth = function(email, callback) {
+Account.prototype.removeEmail = function (callback) {
+    var self = this;
+    request(app).del(url.authEmail + "/" + self.data.id)
+        .set("Cookie", self.cookie)
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            self.data.should.property('email', null);
+            callback();
+        });
+};
+
+Account.prototype.removePhone = function (callback) {
+    var self = this;
+    request(app).del(url.authPhone + "/" + self.data.id)
+        .set("Cookie", self.cookie)
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            self.data.should.property('phoneNum', null);
+            callback();
+        });
+};
+
+Account.prototype.addSocial = function (provider, id, accessToken, callback) {
+    var self = this;
+    request(app).post(url.authSocial)
+        .set("Cookie", self.cookie)
+        .send({
+            provider: provider,
+            id: id,
+            accessToken: accessToken
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            var providers = self.data.providers;
+            providers.length.should.greaterThan(0);
+
+            for (var i = 0; i < providers.length; ++i) {
+                if (providers[i].type == provider) {
+                    providers[i].uid.should.exactly(id);
+                }
+            }
+
+            callback();
+        });
+};
+
+Account.prototype.removeSocial = function (provider, callback) {
+    var self = this;
+    request(app).del(url.authSocial + "/" + self.data.id)
+        .set("Cookie", self.cookie)
+        .send({
+            provider: provider
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            var providers = self.data.providers;
+
+            for (var i = 0; i < providers.length; ++i) {
+                if (providers[i].type == provider) {
+                    should.throw("error");
+                }
+            }
+
+            callback();
+        });
+};
+
+Account.prototype.addIdAndPass = function (type, id, pass, callback) {
+    var self = this;
+    request(app).post(url.authIdPass)
+        .set("Cookie", self.cookie)
+        .send({
+            type: type,
+            id: id,
+            pass: pass
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            self.data.aid.should.exactly(id);
+            callback();
+        });
+};
+
+Account.prototype.addEmailIdAndPass = function (id, pass, callback) {
+    this.addIdAndPass(STD.user.linkIdPassEmail, id, pass, callback);
+};
+
+Account.prototype.addNormalIdAndPass = function (id, pass, callback) {
+    this.addIdAndPass(STD.user.linkIdPassNormal, id, pass, callback);
+};
+
+Account.prototype.sendAddingEmailAuth = function (email, callback) {
     var self = this;
     request(app).post(url.senderEmail)
         .set("Cookie", self.cookie)
@@ -243,7 +358,7 @@ Account.prototype.sendAddingEmailAuth = function(email, callback) {
         });
 };
 
-Account.prototype.sendSignupEmailAuth = function(callback) {
+Account.prototype.sendSignupEmailAuth = function (callback) {
     var self = this;
     request(app).post(url.senderEmail)
         .set("Cookie", self.cookie)
@@ -255,6 +370,39 @@ Account.prototype.sendSignupEmailAuth = function(callback) {
             res.status.should.exactly(200);
             res.body.should.be.an.String;
             self.authToken = res.body;
+            callback();
+        });
+};
+
+Account.prototype.sendAddingPhoneAuth = function (phoneNum, callback) {
+    var self = this;
+    request(app).post(url.senderPhone)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.phoneSenderTypeAdding,
+            phoneNum: phoneNum
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+            callback();
+        });
+};
+
+Account.prototype.checkAddingPhoneAuth = function (phoneNum, callback) {
+    var self = this;
+    request(app).post(url.authPhone)
+        .set("Cookie", self.cookie)
+        .send({
+            token: self.authToken
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            self.data.should.have.a.property('phoneNum');
+            self.data.phoneNum.should.exactly(phoneNum);
+            tester.do(resform.user, self.data);
             callback();
         });
 };
@@ -304,7 +452,7 @@ Account.prototype.loginEmailFail = function (callback) {
         });
 };
 
-Account.prototype.sendAddingEmailAuthFail = function(email, callback) {
+Account.prototype.sendAddingEmailAuthFail = function (email, callback) {
     var self = this;
     request(app).post(url.senderEmail)
         .set("Cookie", self.cookie)
@@ -318,5 +466,30 @@ Account.prototype.sendAddingEmailAuthFail = function(email, callback) {
         });
 };
 
+Account.prototype.addSocialFail = function (provider, id, accessToken, callback) {
+    var self = this;
+    request(app).post(url.authSocial)
+        .set("Cookie", self.cookie)
+        .send({
+            provider: provider,
+            id: id,
+            accessToken: accessToken
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(409);
+
+            callback();
+        });
+};
+
+Account.prototype.removePhoneFail = function (callback) {
+    var self = this;
+    request(app).del(url.authPhone + "/" + self.data.id)
+        .set("Cookie", self.cookie)
+        .end(function (err, res) {
+            res.status.should.within(400, 499);
+            callback();
+        });
+};
 
 module.exports = Account;

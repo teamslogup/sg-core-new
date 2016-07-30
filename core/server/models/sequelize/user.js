@@ -325,14 +325,14 @@ module.exports = {
                         return sequelize.models.Auth.upsert({
                             type: STD.user.signUpTypeEmail,
                             key: email
-                        }, {transaction: t}).then(function() {
+                        }, {transaction: t}).then(function () {
                             return sequelize.models.Auth.findOne({
                                 where: {
                                     type: STD.user.signUpTypeEmail,
                                     key: email
                                 },
                                 transaction: t
-                            }).then(function(auth) {
+                            }).then(function (auth) {
                                 updatedUser['auth'] = auth;
                             });
                         });
@@ -376,7 +376,7 @@ module.exports = {
                                         type: STD.user.signUpTypeEmail,
                                         key: email,
                                         userId: self.id
-                                    }, {transaction: t}).then(function(auth) {
+                                    }, {transaction: t}).then(function (auth) {
                                         return sequelize.models.Auth.findOne({
                                             where: {
                                                 type: STD.user.signUpTypeEmail,
@@ -384,7 +384,7 @@ module.exports = {
                                                 userId: self.id
                                             },
                                             transaction: t
-                                        }).then(function(auth) {
+                                        }).then(function (auth) {
                                             updatedUser['auth'] = auth;
                                         });
                                     });
@@ -453,11 +453,14 @@ module.exports = {
                         loadedData = data;
                         if (!loadedData) {
                             var loadedUser = false;
-                            return self.updateAttributes({
+                            var update = {
                                 secret: self.createHashPassword(pass),
-                                aid: id,
-                                email: type == STD.user.linkIdPassEmail ? id : null
-                            }, {transaction: t}).then(function (user) {
+                                aid: id
+                            };
+                            if (type == STD.user.linkIdPassEmail) {
+                                update.email = id;
+                            }
+                            return self.updateAttributes(update, {transaction: t}).then(function (user) {
                                 if (user) {
                                     finalStatus = 200;
                                     loadedUser = user;
@@ -982,7 +985,8 @@ module.exports = {
                             email: deletedUserPrefix + id,
                             phoneNum: deletedUserPrefix + id,
                             name: deletedUserPrefix + id,
-                            nick: deletedUserPrefix + id
+                            nick: deletedUserPrefix + id,
+                            ip: deletedUserPrefix + id
                         }, {
                             transaction: t,
                             where: {
@@ -992,65 +996,42 @@ module.exports = {
                             if (data && data[0]) {
 
                                 var deviceTasks = [];
-                                var deviceUpdateTasks = [];
                                 if (!loadedData.devices) {
                                     loadedData.devices = [];
                                 }
                                 loadedData.devices.forEach(function (device) {
-                                    deviceUpdateTasks.push(sequelize.models.Device.update({
-                                        token: deletedUserPrefix + id
-                                    }, {
-                                        transaction: t,
-                                        where: {
-                                            id: device.id
-                                        }
-                                    }));
                                     deviceTasks.push(device.destroy({transaction: t}));
                                 });
                                 var providerTasks = [];
-                                var providerUpdateTasks = [];
                                 if (!loadedData.providers) {
                                     loadedData.providers = [];
                                 }
 
                                 loadedData.providers.forEach(function (provider) {
-                                    providerUpdateTasks.push(sequelize.models.Provider.update({
-                                        uid: deletedUserPrefix + id,
-                                        token: deletedUserPrefix + id
-                                    }, {
-                                        transaction: t,
-                                        where: {
-                                            id: provider.id
-                                        }
-                                    }));
                                     providerTasks.push(provider.destroy({transaction: t}));
                                 });
 
-                                return Promise.all(deviceUpdateTasks).then(function (devices) {
-                                    return Promise.all(deviceTasks).then(function (devices) {
-                                        return Promise.all(providerUpdateTasks).then(function (providers) {
-                                            return Promise.all(providerTasks).then(function (providers) {
-                                                return loadedData.destroy({
-                                                    where: {id: id},
-                                                    cascade: true,
-                                                    transaction: t
-                                                }).then(function (data) {
-                                                    // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
-                                                    if (STD.user.deletedUserStoringDay > 0) {
-                                                        var userDel = sequelize.models.ExtinctUser.build({
-                                                            userId: id,
-                                                            data: JSON.stringify(loadedData)
-                                                        });
-                                                        return userDel.save({transaction: t}).then(function () {
-                                                            isSuccess = true;
-                                                        });
-                                                    } else {
-                                                        isSuccess = true;
-                                                    }
+                                return Promise.all(deviceTasks).then(function (devices) {
+                                    return Promise.all(providerTasks).then(function (providers) {
+                                        return loadedData.destroy({
+                                            where: {id: id},
+                                            cascade: true,
+                                            transaction: t
+                                        }).then(function (data) {
+                                            // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
+                                            if (STD.user.deletedUserStoringDay > 0) {
+                                                var userDel = sequelize.models.ExtinctUser.build({
+                                                    userId: id,
+                                                    data: JSON.stringify(loadedData)
                                                 });
-
-                                            });
+                                                return userDel.save({transaction: t}).then(function () {
+                                                    isSuccess = true;
+                                                });
+                                            } else {
+                                                isSuccess = true;
+                                            }
                                         });
+
                                     });
                                 });
                             }

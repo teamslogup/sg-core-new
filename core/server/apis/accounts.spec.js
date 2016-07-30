@@ -190,11 +190,6 @@ describe('Email Accounts Api Tests', function () {
         emailUser.sendSignupEmailAuth(done);
     });
 
-    it('should send email auth', function (done) {
-        emailUser.authToken = "123";
-        emailUser.sendSignupEmailAuth(done);
-    });
-
     it('should verify email', function (done) {
         emailUser.verifyEmail(done);
     });
@@ -227,7 +222,7 @@ describe('Email Accounts Api Tests', function () {
         socialUser.sendAddingEmailAuthFail(emailUser.getData('email'), done);
     });
 
-    it('should send adding mail', function (done) {
+    it('should send adding email', function (done) {
         socialUser.sendAddingEmailAuth('gozillacj4@naver.com', done);
     });
 
@@ -241,6 +236,153 @@ describe('Email Accounts Api Tests', function () {
 
     it('should remove account', function (done) {
         emailUser.removeAccount(done);
+    });
+
+    it('should send adding auth num as phone', function (done) {
+        normalIdUser.signup(done);
+    });
+
+    it('should send adding auth num as phone', function (done) {
+        normalIdUser.sendAddingPhoneAuth('+821089981764', done);
+    });
+
+    it('should check adding auth num as phone', function (done) {
+        normalIdUser.checkAddingPhoneAuth('+821089981764', done);
+    });
+
+    it('should check phone number', function (done) {
+        normalIdUser.loadUser(function () {
+            normalIdUser.getData('phoneNum').should.be.exactly('+821089981764');
+            done();
+        });
+    });
+
+    it('should remove account', function (done) {
+        normalIdUser.removeAccount(done);
+    });
+
+
+    /**
+     * 핸드폰계정 연동테스트
+     */
+
+    it('should send phone auth number', function (done) {
+        phoneUser.sendPhoneAuth(done);
+    });
+
+    it('should signup phone user', function (done) {
+        phoneUser.signup(done);
+    });
+
+    // 이메일연동
+    it('should send adding email auth', function (done) {
+        phoneUser.sendAddingEmailAuth('gozillacj3@naver.com', done);
+    });
+
+    it('should verify adding email', function (done) {
+        phoneUser.verifyEmail(done);
+    });
+
+    it('should fail to remove phone', function (done) {
+        phoneUser.removePhoneFail(done);
+    });
+
+    // 번호연동 (여기선 번호 변경)
+    it('should send adding auth num as phone', function (done) {
+        phoneUser.sendAddingPhoneAuth('+821089981763', done);
+    });
+
+    it('should check adding auth num as phone', function (done) {
+        phoneUser.checkAddingPhoneAuth('+821089981763', done);
+    });
+
+    it('should add normal id and pass', function (done) {
+        phoneUser.addNormalIdAndPass('abc1', '123qwe', done);
+    });
+
+    // 아이디를 변경할 수 있다.
+    it('should add normal id and pass', function (done) {
+        phoneUser.addNormalIdAndPass('abc12', '123qwe', done);
+    });
+
+    it('should remove phone', function (done) {
+        phoneUser.removePhone(done);
+    });
+
+    it('should logout', function (done) {
+        phoneUser.logout(done);
+    });
+
+    it('should login', function (done) {
+        phoneUser.setFixture('uid', 'abc12');
+        phoneUser.setFixture('secret', '123qwe');
+        phoneUser.loginNormalId(done);
+    });
+
+    // 이메일 아이디를 변경할 수 있다.
+    it('should add email id and pass', function (done) {
+        phoneUser.addEmailIdAndPass('abc12@naver.com', '123qwe', done);
+    });
+
+    it('should logout', function (done) {
+        phoneUser.logout(done);
+    });
+
+    it('should login', function (done) {
+        phoneUser.setFixture('uid', 'abc12@naver.com');
+        phoneUser.setFixture('secret', '123qwe');
+        phoneUser.loginEmail(done);
+    });
+
+
+    // 다시 일반 아이디로 변경할 수 있다.
+    it('should add normal id and pass', function (done) {
+        phoneUser.addNormalIdAndPass('abc12', '123qwe', done);
+    });
+
+    it('should logout', function (done) {
+        phoneUser.logout(done);
+    });
+
+    it('should login', function (done) {
+        phoneUser.setFixture('uid', 'abc12');
+        phoneUser.setFixture('secret', '123qwe');
+        phoneUser.loginNormalId(done);
+    });
+
+    it('should exists email', function (done) {
+        // 아이디로 다시 변경했어도 이메일은 남아 있어야 한다
+        phoneUser.data.email.should.exactly('abc12@naver.com');
+        done();
+    });
+
+    it('should remove email', function (done) {
+        phoneUser.removeEmail(done);
+    });
+
+    // 소셜연동
+    it('should add facebook', function (done) {
+        phoneUser.addSocial(STD.user.providerFacebook, '102030405060', 'asldkjfo912lkjsadlfjasldijfla', done);
+    });
+
+    it('should fail to add facebook', function (done) {
+        phoneUser.addSocialFail(STD.user.providerFacebook, '102030405060', '123123123123123123', done);
+    });
+
+    it('should remove facebook', function (done) {
+        phoneUser.removeSocial(STD.user.providerFacebook, done);
+    });
+
+    it('should fail to add facebook', function (done) {
+        phoneUser.addSocial(STD.user.providerFacebook, '102030405060', '123123123123123123', done);
+    });
+
+    it('should add kakao', function (done) {
+        phoneUser.addSocial(STD.user.providerKakao, '102030405061', 'asld123kjfo912lkjsadlfjasldijfla', done);
+    });
+
+    it('should remove account', function (done) {
+        phoneUser.removeAccount(done);
     });
 
 });

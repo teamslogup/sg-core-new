@@ -8,7 +8,7 @@ var post = require('./' + resource + '.post.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
@@ -22,7 +22,7 @@ var api = {
                 essential: ['type', 'id', 'pass'],
                 resettable: [],
                 explains : {
-                    'type': STD.user.enumLinkIdPassTypes,
+                    'type': STD.user.enumLinkIdPassTypes.join(", "),
                     'id': '이메일아이디 혹은 일반 아이디', 
                     'pass': '비밀번호'
                 },
@@ -31,11 +31,9 @@ var api = {
                     'id': 'admin@slogup.com',
                     'pass': '123qwe'
                 },
-                response: {
-
-                },
+                response: resforms.user,
                 title: '아이디 패스워드 연동',
-                state: 'development'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {

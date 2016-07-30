@@ -255,6 +255,10 @@ var standards = {
     },
     "cluster": {
         "defaultExecutionDelay": 1000
+    },
+    "role": {
+        "account": "roleD",
+        "report": "roleD"
     }
 };
 

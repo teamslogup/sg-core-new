@@ -4,11 +4,7 @@ var logger = new Logger(__filename);
 
 del.validate = function () {
     return function (req, res, next) {
-        if (req.user.id.toString() == req.params.id.toString() || req.user.role >= req.meta.std.user.roleAdmin) {
-            return next();
-        } else {
-            res.hjson(req, next, 403);
-        }
+        req.check('id', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -16,8 +12,8 @@ del.validate = function () {
 
 del.removeEmail = function () {
     return function (req, res, next) {
-        if (req.isAuthenticated() && req.user.email) {
-            req.user.updateFields({
+        if (req.loadedUser.email) {
+            req.loadedUser.updateFields({
                 email: null,
                 isVerifiedEmail: req.meta.std.flag.isAutoVerifiedEmail
             }, function (status, data) {
@@ -35,7 +31,7 @@ del.removeEmail = function () {
 
 del.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 204);
+        res.hjson(req, next, 200, req.loadedUser.toSecuredJSON());
     };
 };
 
