@@ -238,7 +238,7 @@ describe('Email Accounts Api Tests', function () {
         emailUser.removeAccount(done);
     });
 
-    it('should send adding auth num as phone', function (done) {
+    it('should signup normal user', function (done) {
         normalIdUser.signup(done);
     });
 
@@ -246,7 +246,7 @@ describe('Email Accounts Api Tests', function () {
         normalIdUser.sendAddingPhoneAuth('+821089981764', done);
     });
 
-    it('should check adding auth num as phone', function (done) {
+    it('should check adding auth num as phone from normal id user', function (done) {
         normalIdUser.checkAddingPhoneAuth('+821089981764', done);
     });
 

@@ -408,6 +408,7 @@ Account.prototype.checkAddingPhoneAuth = function (phoneNum, callback) {
     request(app).post(url.authPhone)
         .set("Cookie", self.cookie)
         .send({
+            type: STD.user.authPhoneAdding,
             token: self.authToken
         })
         .end(function (err, res) {

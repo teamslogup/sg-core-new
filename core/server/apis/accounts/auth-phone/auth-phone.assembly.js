@@ -19,10 +19,11 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['token'],
-                essential: ['token'],
+                acceptable: ['type', 'token'],
+                essential: ['type', 'token'],
                 resettable: [],
                 explains: {
+                    'type': STD.user.authPhoneSignup + ", " + STD.user.authPhoneAdding + ", " + STD.user.authPhoneFindPass,
                     'token': '인증번호'
                 },
                 response: resforms.user,

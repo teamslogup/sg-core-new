@@ -6,6 +6,8 @@ var passport = require('passport');
 post.validate = function () {
     return function (req, res, next) {
         const SMS = req.meta.std.sms;
+        const USER = req.meta.std.user;
+        req.check('type', '400_3').isEnum([USER.authPhoneAdding, USER.authPhoneFindPass, USER.authPhoneSignup]);
         req.check('token', '400_13').len(SMS.authNumLength, SMS.authNumLength);
         req.utils.common.checkError(req, res, next);
         next();
@@ -16,11 +18,10 @@ post.getUser = function () {
     return function (req, res, next) {
 
         req.loadedAuth = null;
-        var USER = req.meta.std.user;
         req.models.Auth.findOne({
             where: {
                 userId: req.user.id,
-                type: USER.authPhoneSignup
+                type: req.body.type
             }
         }).then(function (auth) {
             req.loadedAuth = auth;

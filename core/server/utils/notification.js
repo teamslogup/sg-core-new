@@ -43,19 +43,32 @@ module.exports = {
                 }
             }, callback);
         },
+        findPass: function (req, auth, callback) {
+            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
+                return callback(null);
+            }
+            var newPassMsg = meta.langs[req.language].newPassExplain;
+            req.sendNoti.email(auth.key, "FindPass", {
+                subject: newPassMsg,
+                dir: appDir,
+                name: 'find-pass',
+                params: {
+                    url: url + user.auth.token,
+                    expiredAt: auth.expiredAt
+                }
+            }, callback);
+        },
         newPass: function (req, redirect, auth, callback) {
             if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
                 return callback(null);
             }
-            var url = APP_CONFIG.rootUrl + "/" + redirect;
-            url = url + "?token=" + auth.token;
             var newPassMsg = meta.langs[req.language].newPassExplain;
             req.sendNoti.email(auth.key, "NewPass", {
                 subject: newPassMsg,
                 dir: appDir,
                 name: 'new-pass',
                 params: {
-                    url: url,
+                    url: url + user.auth.token,
                     expiredAt: auth.expiredAt
                 }
             }, callback);
@@ -81,21 +94,21 @@ module.exports = {
             }
         },
         newPass: function (req, redirect, auth, callback) {
-            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
-                return callback(null);
+            var MAGIC = req.meta.std.magic;
+            var lang = req.meta.langs[req.language];
+            var msg = lang.smsAuthExplain;
+            var min = req.meta.std.user.expiredPhoneTokenMinutes;
+
+            msg = msg.replace(MAGIC.authNum, token);
+            msg = msg.replace(MAGIC.minute, min);
+
+            console.log(phoneNum, token, msg);
+            if (req.sendNoti.sms) {
+                req.sendNoti.sms(phoneNum, msg, null, callback);
             }
-            var url = APP_CONFIG.rootUrl + "/" + redirect;
-            url = url + "?token=" + auth.token;
-            var newPassMsg = meta.langs[req.language].newPassExplain;
-            req.sendNoti.email(auth.key, "NewPass", {
-                subject: newPassMsg,
-                dir: appDir,
-                name: 'new-pass',
-                params: {
-                    url: url,
-                    expiredAt: auth.expiredAt
-                }
-            }, callback);
+            else {
+                callback(null);
+            }
         }
     }
 };

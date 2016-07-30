@@ -81,8 +81,7 @@ post.sendEmailAuth = function () {
                 next();
             });
         } else if (req.body.type == USER.emailSenderTypeFindPass) {
-            var redirect = req.meta.std.prefix.account + "/change-pass";
-            req.coreUtils.notification.email.newPass(req, redirect, req.auth, function (err) {
+            req.coreUtils.notification.email.findPass(req, req.auth, function (err) {
                 if (err) return res.hjson(req, next, 503, err);
                 next();
             });
