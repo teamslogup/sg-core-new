@@ -100,7 +100,7 @@ module.exports = {
              * @returns {string}
              */
             'createAuthToken': function (type) {
-                if (type == STD.user.signUpTypeEmail) {
+                if (type == STD.user.authEmailSignup || type == STD.user.authEmailFindPass) {
                     return crypto.randomBytes(STD.user.emailTokenLength).toString('base64');
                 }
                 else {
