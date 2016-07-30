@@ -665,20 +665,27 @@ module.exports = {
             'createUserWithNormalId': function (data, callback) {
                 var createdUser = null;
                 sequelize.transaction(function (t) {
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function () {
-                        createdUser = user;
-                        if (data.deviceToken && data.deviceType) {
-                            return sequelize.models.Device.upsert({
-                                type: data.deviceType,
-                                token: data.deviceToken,
-                                userId: user.id
-                            }, {transaction: t}).then(function () {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
 
-                            });
-                        }
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
+                            if (data.deviceToken && data.deviceType) {
+                                return sequelize.models.Device.upsert({
+                                    type: data.deviceType,
+                                    token: data.deviceToken,
+                                    userId: user.id
+                                }, {transaction: t}).then(function () {
+
+                                });
+                            }
+                        });
                     });
+
+
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
                         sequelize.models.User.findUserByAid(createdUser.aid, callback);

@@ -531,7 +531,6 @@ var mixin = {
                 return fn(null, instance);
             },
             'microDeletedAt': function (instance, options, fn) {
-                console.log('microDeletedAt');
                 instance.set("deletedAt", MICRO.now());
                 return fn(null, instance);
             }
