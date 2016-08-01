@@ -14,6 +14,7 @@ var cluster = require('./core/server/config/cluster');
 var passport = require('./core/server/config/passport');
 var sequelize = require('./core/server/config/sequelize');
 var models = require('./bridge/models/sequelize');
+var STD = require('./bridge/metadata/standards');
 
 if (!process.env.AWS_ACCESS_KEY_ID) {
     process.env.AWS_ACCESS_KEY_ID = config.aws.accessKeyId;
@@ -35,11 +36,17 @@ passport();
 sequelize.sync({force: config.db.force}).then(function (err) {
     if (env === 'production') {
         if (server.isUseHttps) {
-            // cluster.startCluster(server.https);
-            server.https.listen(config.app.port);
+            if (STD.flag.isUseCluster) {
+                cluster.startCluster(server.https);
+            } else {
+                server.https.listen(config.app.port);
+            }
         } else {
-            // cluster.startCluster(server.http);
-            server.http.listen(config.app.port);
+            if (STD.flag.isUseCluster) {
+                cluster.startCluster(server.http);
+            } else {
+                server.http.listen(config.app.port);
+            }
         }
     } else {
         if (server.isUseHttps) {

@@ -91,7 +91,8 @@ var standards = {
         "isJoinFriendNotifications": true,
         "isUseS3Bucket": true,
         "isUseRedis": false,
-        "isUseHttps": false
+        "isUseHttps": false,
+        "isUseCluster": false
     },
     "category": {
         "minNameLength": 1,
