@@ -103,15 +103,9 @@ post.sendPassword = function () {
         var USER = req.meta.std.user;
         if (req.body.type == USER.authPhoneFindPass) {
             req.coreUtils.notification.sms.newPass(req, req.body.phoneNum, req.newPass, function (err) {
-                if (err) {
-                    if (err.status == 400) {
-                        return res.hjson(req, next, 400, {code: '400_7'});
-                    }
-                    return res.hjson(req, next, 500);
-                } else {
-                    next();
-                }
+                if (err) {}
             });
+            next();
         } else {
             next();
         }
@@ -120,7 +114,10 @@ post.sendPassword = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.user.toSecuredJSON());
+        if (process.NODE_ENV == "test") {
+            return res.hjson(req, next, 200, req.newPass);
+        }
+        res.hjson(req, next, 204);
     };
 };
 
