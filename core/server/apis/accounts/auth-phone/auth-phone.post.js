@@ -114,7 +114,7 @@ post.sendPassword = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
-        if (process.NODE_ENV == "test") {
+        if (process.env.NODE_ENV == "test") {
             return res.hjson(req, next, 200, req.newPass);
         }
         res.hjson(req, next, 204);
