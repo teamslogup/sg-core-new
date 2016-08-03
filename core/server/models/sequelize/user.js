@@ -311,7 +311,7 @@ module.exports = {
              * @param email
              * @param callback
              */
-            upsertAuth: function (email, callback) {
+            'upsertAuth': function (email, callback) {
                 var self = this;
                 var updatedUser = null;
                 sequelize.transaction(function (t) {
@@ -348,7 +348,7 @@ module.exports = {
              * @param email - 추가할 이메일
              * @param callback
              */
-            updateEmailAndAuth: function (email, callback) {
+            'updateEmailAndAuth': function (email, callback) {
                 var self = this;
                 var updatedUser = null;
                 sequelize.transaction(function (t) {
@@ -426,6 +426,18 @@ module.exports = {
                         callback(200, loadedUser);
                     }
                 });
+            },
+            'createRandomPassword': function() {
+                var length = STD.user.minSecretLength;
+                var pass = "";
+                for (var i = 0; i < length; ++i) {
+                    if ((Math.random() * 100000) % 2 == 0) {
+                        pass += (Math.random() * 100000) % 10;
+                    } else {
+                        pass += String.fromCharCode(((Math.random() * 100000) % 26) + 97);
+                    }
+                }
+                return pass;
             },
             /**
              * 아이디 패스워드 설정

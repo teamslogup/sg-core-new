@@ -18,11 +18,10 @@ var standards = {
         "enumGenders": ["m", "f"],
         "genderMale": "m",
         "genderFemale": "f",
-        "enumAuthTypes": ["emailSignup", "phoneSignup", "emailFindPass", "phoneFindPass", "emailAdding", "phoneAdding"],
+        "enumAuthTypes": ["emailSignup", "emailFindPass", "phoneFindPass", "emailAdding", "phoneAdding"],
         "authEmailSignup": "emailSignup",
         "authEmailAdding": "emailAdding",
         "authEmailFindPass": "emailFindPass",
-        "authPhoneSignup": "phoneSignup",
         "authPhoneFindPass": "phoneFindPass",
         "authPhoneAdding": "phoneAdding",
         "enumSignUpTypes": ["email", "phone", "social", "phoneId", "normalId"],
@@ -179,7 +178,8 @@ var standards = {
         "item4Week": ":4WEEK:",
         "item12Week": ":12WEEK:",
         "item24Week": ":24WEEK:",
-        "item48Week": ":48WEEK:"
+        "item48Week": ":48WEEK:",
+        "pass": ":PASS:"
     },
     "common": {
         "deletedRowPrefix": "deleted_",

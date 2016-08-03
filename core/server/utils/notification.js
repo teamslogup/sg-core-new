@@ -93,16 +93,12 @@ module.exports = {
                 callback(null);
             }
         },
-        newPass: function (req, redirect, auth, callback) {
+        newPass: function (req, phoneNum, pass, callback) {
             var MAGIC = req.meta.std.magic;
             var lang = req.meta.langs[req.language];
-            var msg = lang.smsAuthExplain;
-            var min = req.meta.std.user.expiredPhoneTokenMinutes;
-
-            msg = msg.replace(MAGIC.authNum, token);
-            msg = msg.replace(MAGIC.minute, min);
-
-            console.log(phoneNum, token, msg);
+            var msg = lang.findPassExplain;
+            msg = msg.replace(MAGIC.pass, pass);
+            console.log(phoneNum, msg);
             if (req.sendNoti.sms) {
                 req.sendNoti.sms(phoneNum, msg, null, callback);
             }

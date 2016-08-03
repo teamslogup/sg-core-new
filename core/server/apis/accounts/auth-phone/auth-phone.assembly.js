@@ -23,7 +23,7 @@ var api = {
                 essential: ['type', 'token'],
                 resettable: [],
                 explains: {
-                    'type': STD.user.authPhoneSignup + ", " + STD.user.authPhoneAdding + ", " + STD.user.authPhoneFindPass,
+                    'type': STD.user.authPhoneAdding + ", " + STD.user.authPhoneFindPass,
                     'token': '인증번호'
                 },
                 response: resforms.user,
@@ -34,7 +34,6 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -43,6 +42,7 @@ var api = {
                 apiCreator.add(post.validate());
                 apiCreator.add(post.getUser());
                 apiCreator.add(post.updateUser());
+                apiCreator.add(post.sendPassword());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
