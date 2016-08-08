@@ -2,7 +2,7 @@ var expressValidator = require('express-validator');
 
 function extending() {
 
-    expressValidator.validator.extend('isMicroTimestamp', function(str) {
+    expressValidator.validator.extend('isMicroTimestamp', function (str) {
         if (str === '') return false;
         if (Number(str)) {
             str = str + '';
@@ -13,13 +13,46 @@ function extending() {
         return false;
     });
 
-    expressValidator.validator.extend('isAlphanumericPassword', function(str, min, max) {
+    expressValidator.validator.extend('isVersion', function (str) {
         if (str === '') return false;
-        var reg = new RegExp("^.*(?=.{" + min + "," + max +"})(?=.*[0-9])(?=.*[a-zA-Z]).*$");
+        var versionArr = str.split(".");
+        if (versionArr.length == 3) {
+            if (Number(versionArr[0]) && Number(versionArr[1]) && Number(versionArr[2])) {
+                return true;
+            }
+        }
+        return false;
+    });
+
+    expressValidator.validator.extend('haveKeywords', function (str, keywords, isStrong) {
+        if (str === '') return false;
+        var count = 0;
+        if (keywords instanceof Array && keywords.length > 0) {
+            if (isStrong) {
+                str = str.toUpperCase();
+            }
+            for (var i = 0; i < keywords.length; ++i) {
+                var keyword = keywords[i];
+                if (isStrong) {
+                    keyword = keyword.toUpperCase();
+                }
+                if (str.indexOf(keyword) != -1) {
+                    count++;
+                }
+            }
+            return (count == keywords.length);
+        }
+
+        return false;
+    });
+
+    expressValidator.validator.extend('isAlphanumericPassword', function (str, min, max) {
+        if (str === '') return false;
+        var reg = new RegExp("^.*(?=.{" + min + "," + max + "})(?=.*[0-9])(?=.*[a-zA-Z]).*$");
         return reg.test(str);
     });
 
-    expressValidator.validator.extend('isId', function(str, min, max) {
+    expressValidator.validator.extend('isId', function (str, min, max) {
         if (str === '') return false;
         if (str.length < min || str.length > max) return false;
         var reg = new RegExp("^[a-z0-9]{" + min + "," + max + "}$");

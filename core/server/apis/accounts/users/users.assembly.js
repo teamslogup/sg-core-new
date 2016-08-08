@@ -114,12 +114,14 @@ var api = {
                     'birthYear',
                     'birthMonth',
                     'birthDay',
-                    'deviceToken',
-                    'deviceType',
                     'country',
                     'language',
                     'agreedEmail',
-                    'agreedPhoneNum'
+                    'agreedPhoneNum',
+                    'platform',
+                    'device',
+                    'version',
+                    'token'
                 ],
                 essential: [
                     'type',
@@ -140,12 +142,14 @@ var api = {
                     'birthYear': '생년',
                     'birthMonth': '생월',
                     'birthDay': '생일',
-                    'deviceToken': '푸시를 위한 디바이스 토큰',
-                    'deviceType': '디바이스 기종. ' + USER.enumDeviceTypes.join(", "),
                     'country': '국가',
                     'language': '언어',
                     'agreedEmail': '이메일 수신 동의',
-                    'agreedPhoneNum': '휴대폰 수신 동의'
+                    'agreedPhoneNum': '휴대폰 수신 동의',
+                    'platform': 'OS 및 버전',
+                    'device': '휴대폰 기종',
+                    'version': '앱버전',
+                    'token': '푸시를 위한 디바이스토큰'
                 },
                 defaults: {
                     'type': USER.signUpTypeEmail,
@@ -160,12 +164,14 @@ var api = {
                     'birthYear': 1991,
                     'birthMonth': 5,
                     'birthDay': 17,
-                    'deviceToken': '12345678902',
-                    'deviceType': USER.deviceTypeIOS,
                     'country': '',
                     'language': '',
                     'agreedEmail': false,
-                    'agreedPhoneNum': ''
+                    'agreedPhoneNum': '',
+                    'platform': 'iOS 10.0',
+                    'device': 'iPhone 6s',
+                    'version': '1.0.0',
+                    'token': '23kljflaksdjf23ijlrjlksdjflkasdjfsfad'
                 },
                 response: resforms.user,
                 title: '일반회원가입',

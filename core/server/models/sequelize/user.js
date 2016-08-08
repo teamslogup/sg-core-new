@@ -77,10 +77,6 @@ module.exports = {
             'allowNull': false,
             'defaultValue': false
         },
-        'ip': {
-            'type': Sequelize.STRING,
-            'allowNull': false
-        },
         'country': {
             'type': Sequelize.STRING,
             'allowNull': false
@@ -562,9 +558,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -582,9 +578,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -602,9 +598,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -622,9 +618,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -677,6 +673,8 @@ module.exports = {
              */
             'createUserWithNormalId': function (data, callback) {
                 var createdUser = null;
+                var ip = data.ip;
+                delete  data.ip;
                 sequelize.transaction(function (t) {
                     var profile = sequelize.models.Profile.build({});
                     return profile.save({transaction: t}).then(function () {
@@ -723,28 +721,22 @@ module.exports = {
                         user.encryption();
                         return user.save({transaction: t}).then(function () {
                             createdUser = user;
-                            if (!STD.flag.isAutoVerifiedEmail) {
-                                var authData = {
-                                    type: type,
-                                    key: createdUser.email,
-                                    userId: user.id
-                                };
+                            return sequelize.models.Device.upsert({
+                                type: data.deviceType,
+                                token: data.deviceToken,
+                                userId: user.id
+                            }, {transaction: t}).then(function () {
+                                if (!STD.flag.isAutoVerifiedEmail) {
+                                    var authData = {
+                                        type: type,
+                                        key: createdUser.email,
+                                        userId: user.id
+                                    };
+                                    return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
 
-                                // 2. 이메일 인증을 위해 인증토큰 생성.
-                                return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
-
-                                    // 3. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                                    if (data.deviceToken && data.deviceType) {
-                                        return sequelize.models.Device.upsert({
-                                            type: data.deviceType,
-                                            token: data.deviceToken,
-                                            userId: user.id
-                                        }, {transaction: t}).then(function () {
-
-                                        });
-                                    }
-                                });
-                            }
+                                    });
+                                }
+                            });
                         });
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
@@ -789,6 +781,9 @@ module.exports = {
                 } else {
                     delete data.secret;
                 }
+
+                var ip = data.ip;
+                delete  data.ip;
 
                 sequelize.transaction(function (t) {
 
@@ -868,10 +863,19 @@ module.exports = {
                         delete data.provider;
                         delete data.secret;
 
+                        var ip = data.ip;
+                        delete  data.ip;
+
                         // 1. 유저생성.
                         var user = sequelize.models.User.build(data);
                         user.encryption();
                         return user.save({transaction: t}).then(function (user) {
+
+                            var loginHistory = sequelize.models.LoginHistory.build({
+                                type: STD.user.signUpTypeSocial,
+                                ip: ip,
+                                userId: user.id
+                            });
 
                             var provider = sequelize.models.Provider.build({
                                 type: type,
@@ -999,9 +1003,9 @@ module.exports = {
                             as: 'providers',
                             attributes: sequelize.models.Provider.getProviderFields()
                         }, {
-                            model: sequelize.models.Device,
-                            as: 'devices',
-                            attributes: sequelize.models.Device.getDeviceFields()
+                            model: sequelize.models.LoginHistory,
+                            as: 'loginHistories',
+                            attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                         }]
                     };
 
@@ -1014,8 +1018,7 @@ module.exports = {
                             email: deletedUserPrefix + id,
                             phoneNum: deletedUserPrefix + id,
                             name: deletedUserPrefix + id,
-                            nick: deletedUserPrefix + id,
-                            ip: deletedUserPrefix + id
+                            nick: deletedUserPrefix + id
                         }, {
                             transaction: t,
                             where: {

@@ -55,14 +55,6 @@ post.validate = function () {
             req.sanitize('birthDay').toInt();
         }
 
-        if (req.body.deviceToken !== undefined) {
-            req.check('deviceToken', '400_8').len(5, 500);
-        }
-
-        if (req.body.deviceType !== undefined) {
-            req.check('deviceType', '400_3').isEnum(USER.enumDeviceTypes);
-        }
-
         if (req.body.country !== undefined) {
             var enumCountry = req.coreUtils.common.getCountryEnum(req);
             req.check('country', '400_3').isEnum(enumCountry);
@@ -85,6 +77,22 @@ post.validate = function () {
             req.sanitize('agreedPhoneNum').toBoolean();
         } else {
             req.body.agreedPhoneNum = USER.defaultAgreedPhoneNum;
+        }
+
+        if (req.body.platform !== undefined) {
+            req.check('platform', '400_8').haveKeywords(["iOS", "android"]);
+        }
+
+        if (req.body.device !== undefined) {
+            req.check('device', '400_8').haveKeywords(["iOS", "android"]);
+        }
+
+        if (req.body.version !== undefined) {
+            req.check('version', '400_57').isVersion();
+        }
+
+        if (req.body.token !== undefined) {
+            req.check('token', '400_8').len(5, 500);
         }
 
         req.utils.common.checkError(req, res, next);
@@ -127,13 +135,18 @@ post.createUser = function () {
             nick: req.body.nick || '',
             gender: req.body.gender,
             birth: birth,
-            ip: req.refinedIP,
-            deviceToken: req.body.deviceToken,
-            deviceType: req.body.deviceType,
             country: req.body.country || req.country,
             language: req.body.language || req.language,
             agreedEmail: req.body.agreedEmail,
             agreedPhoneNum: req.body.agreedPhoneNum
+        };
+
+        data.history = {
+            platform: req.body.platform || null,
+            device: req.body.device || null,
+            version: req.body.version || null,
+            token: req.body.token || null,
+            ip: req.refinedIP
         };
 
         req.models.User.createUserWithType(data, function (status, user) {
