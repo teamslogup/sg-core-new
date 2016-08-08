@@ -27,4 +27,12 @@ SuperModel.prototype.getFixture = function (key) {
     return this.fixture[key];
 };
 
+SuperModel.prototype.setCookie = function (cookie) {
+    this.cookie = cookie;
+};
+
+SuperModel.prototype.getCookie = function () {
+    return this.cookie;
+};
+
 module.exports = SuperModel;
