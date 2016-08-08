@@ -7,17 +7,10 @@ post.validate = function () {
         var USER = req.meta.std.user;
 
         req.check('phoneNum', '400_7').len(5, 18);
-        req.check('type', '400_3').isEnum(req.meta.std.user.enumPhoneSenderTypes);
-        if (req.body.type == USER.phoneSenderTypeAdding) {
-            req.type = USER.authPhoneAdding;
-        } else if (req.body.type == USER.phoneSenderTypeFindPass) {
-            req.type = USER.authPhoneFindPass;
-        } else {
-            req.type = USER.authPhoneSignup;
-        }
+        req.check('type', '400_3').isEnum(req.meta.std.user.enumAuthPhoneTypes);
 
         // 연동일 경우 무조건 로그인이 되어 있어야한다.
-        if (req.body.type == USER.phoneSenderTypeAdding && !req.isAuthenticated()) {
+        if (req.body.type == USER.authPhoneAdding && !req.isAuthenticated()) {
             return res.hjson(req, next, 401);
         }
 
@@ -32,9 +25,9 @@ post.checkPhoneNumber = function () {
 
         req.models.User.findUserByPhoneNumber(req.body.phoneNum, function(status, data) {
 
-            // 연동이던 가입이던 유저가 현재의 폰번호로 가입 / 연동한 이력이 없어야한다.
-            if (req.body.type == USER.phoneSenderTypeSignUp
-                || req.body.type == USER.phoneSenderTypeAdding) {
+            // 연동이던 가입이던, 유저가 현재의 폰번호로 가입 / 연동한 이력이 없어야한다.
+            if (req.body.type == USER.authPhoneSignup
+                || req.body.type == USER.authPhoneAdding) {
                 // 유저가 없어야만 넘김.
                 if (status == 404) {
                     return next();
@@ -68,11 +61,11 @@ post.createToken = function () {
 
         var USER = req.meta.std.user;
         var data = {
-            type: req.type,
+            type: req.body.type,
             key: req.body.phoneNum
         };
 
-        if (req.body.type == USER.phoneSenderTypeAdding) {
+        if (req.body.type == USER.authPhoneAdding) {
             data.userId = req.user.id;
         }
 

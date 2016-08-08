@@ -45,8 +45,6 @@ var api = {
                 apiCreator.add(post.sendPassword());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
@@ -83,8 +81,6 @@ var api = {
                 apiCreator.add(del.removePhone());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

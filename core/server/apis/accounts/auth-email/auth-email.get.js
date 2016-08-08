@@ -4,7 +4,9 @@ var logger = new Logger(__filename);
 
 get.validate = function () {
     return function (req, res, next) {
+        var USER = req.meta.std.user;
         req.check('token', '400_17').len(1, 2000);
+        req.check('type', '400_3').isEnum([USER.authEmailSignup, USER.authEmailAdding]);
         req.query.token = decodeURIComponent(req.query.token);
         req.utils.common.checkError(req, res, next);
         next();
@@ -29,7 +31,7 @@ get.consent = function () {
             });
         }
 
-        req.user.verifyEmail(req.query.token, function (status, body) {
+        req.user.verifyEmail(req.query.token, req.query.type, function (status, body) {
             if (status == 200) return next();
 
             res.status(status);

@@ -22,7 +22,7 @@ var api = {
                 essential: ['type', 'email'],
                 resettable: [],
                 explains : {
-                    'type': '이메일 발송 타입 ' + STD.user.enumEmailSenderTypes.join(", "),
+                    'type': '이메일 발송 타입 ' + STD.user.enumAuthEmailTypes.join(", "),
                     'email': '이메일'
                 },
                 title: '타입별 이메일 전송자',

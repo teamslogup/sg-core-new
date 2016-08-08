@@ -56,11 +56,11 @@ describe('Email Accounts Api Tests', function () {
     });
 
     it('should verify email', function (done) {
-        emailUser.verifyEmail(done);
+        emailUser.verifyEmail(STD.user.authEmailSignup, done);
     });
 
     it('should fail to verify email', function (done) {
-        emailUser.verifyEmailFail(done);
+        emailUser.verifyEmailFail(STD.user.authEmailSignup, done);
     });
 
     it('should login email user', function (done) {
@@ -138,14 +138,14 @@ describe('Email Accounts Api Tests', function () {
     });
 
     it('should verify adding email', function (done) {
-        phoneUser.verifyEmail(done);
+        phoneUser.verifyEmail(STD.user.authEmailAdding, done);
     });
 
     it('should logout phone user', function (done) {
         phoneUser.logout(done);
     });
 
-    it('should login phone', function (done) {
+    it('should send login auth', function (done) {
         phoneUser.sendLoginPhoneAuth(done);
     });
 
@@ -207,7 +207,7 @@ describe('Email Accounts Api Tests', function () {
     });
 
     it('should verify email', function (done) {
-        emailUser.verifyEmail(done);
+        emailUser.verifyEmail(STD.user.authEmailSignup, done);
     });
 
     it('should remove account', function (done) {
@@ -223,7 +223,7 @@ describe('Email Accounts Api Tests', function () {
     });
 
     it('should verify email', function (done) {
-        emailUser.verifyEmail(done);
+        emailUser.verifyEmail(STD.user.authEmailSignup, done);
     });
 
     it('should signup social user', function (done) {
@@ -243,7 +243,7 @@ describe('Email Accounts Api Tests', function () {
     });
 
     it('should verify email', function (done) {
-        socialUser.verifyEmail(done);
+        socialUser.verifyEmail(STD.user.authEmailAdding, done);
     });
 
     it('should remove account', function (done) {
@@ -309,7 +309,7 @@ describe('Email Accounts Api Tests', function () {
     });
 
     it('should verify adding email', function (done) {
-        phoneUser.verifyEmail(done);
+        phoneUser.verifyEmail(STD.user.authEmailAdding, done);
     });
 
     it('should fail to remove phone', function (done) {

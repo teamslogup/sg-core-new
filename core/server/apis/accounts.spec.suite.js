@@ -47,7 +47,7 @@ Account.prototype.sendPhoneAuth = function (callback) {
     request(app).post(url.senderPhone)
         .send({
             phoneNum: self.getFixture('uid'),
-            type: STD.user.phoneSenderTypeSignUp
+            type: STD.user.authPhoneSignup
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
@@ -62,7 +62,7 @@ Account.prototype.sendLoginPhoneAuth = function (callback) {
     request(app).post(url.senderPhone)
         .send({
             phoneNum: self.getFixture('uid'),
-            type: STD.user.phoneSenderTypeLogIn
+            type: STD.user.authPhoneLogin
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
@@ -139,9 +139,9 @@ Account.prototype.loginEmail = function (callback) {
         });
 };
 
-Account.prototype.verifyEmail = function (callback) {
+Account.prototype.verifyEmail = function (type, callback) {
     var self = this;
-    request(app).get(url.authEmail + "?token=" + self.authToken)
+    request(app).get(url.authEmail + "?token=" + self.authToken + "&type=" + type)
         .set("Cookie", self.cookie)
         .end(function (err, res) {
             res.status.should.exactly(200);
@@ -152,9 +152,9 @@ Account.prototype.verifyEmail = function (callback) {
         });
 };
 
-Account.prototype.verifyEmailFail = function (callback) {
+Account.prototype.verifyEmailFail = function (type, callback) {
     var self = this;
-    request(app).get(url.authEmail + "?token=" + self.authToken)
+    request(app).get(url.authEmail + "?token=" + self.authToken + "&type=" + type)
         .set("Cookie", self.cookie)
         .end(function (err, res) {
             res.status.should.within(400, 404);
@@ -393,7 +393,7 @@ Account.prototype.sendAddingEmailAuth = function (email, callback) {
     request(app).post(url.senderEmail)
         .set("Cookie", self.cookie)
         .send({
-            type: STD.user.emailSenderTypeAdding,
+            type: STD.user.authEmailAdding,
             email: email
         })
         .end(function (err, res) {
@@ -409,7 +409,7 @@ Account.prototype.sendSignupEmailAuth = function (callback) {
     request(app).post(url.senderEmail)
         .set("Cookie", self.cookie)
         .send({
-            type: STD.user.emailSenderTypeSignUp,
+            type: STD.user.authEmailSignup,
             email: self.getFixture('uid')
         })
         .end(function (err, res) {
@@ -425,7 +425,7 @@ Account.prototype.sendAddingPhoneAuth = function (phoneNum, callback) {
     request(app).post(url.senderPhone)
         .set("Cookie", self.cookie)
         .send({
-            type: STD.user.phoneSenderTypeAdding,
+            type: STD.user.authPhoneAdding,
             phoneNum: phoneNum
         })
         .end(function (err, res) {
@@ -504,7 +504,7 @@ Account.prototype.sendAddingEmailAuthFail = function (email, callback) {
     request(app).post(url.senderEmail)
         .set("Cookie", self.cookie)
         .send({
-            type: STD.user.emailSenderTypeAdding,
+            type: STD.user.authEmailAdding,
             email: email
         })
         .end(function (err, res) {

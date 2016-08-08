@@ -128,26 +128,6 @@ module.exports = {
             },
 
             /**
-             * 인증번호 확인
-             * @param {Object} where - 검색객체
-             * @param {string} token - 인증번호
-             * @param {responseCallback} callback - 응답콜백.
-             */
-            checkValidPhoneToken: function (where, token, callback) {
-                this.checkValidToken(STD.user.authPhoneSignup, where, token, callback);
-            },
-
-            /**
-             * 이메일 토큰 확인.
-             * @param {Object} where - 검색객체
-             * @param {string} token - 이메일토큰
-             * @param {responseCallback} callback - 응답콜백.
-             */
-            checkValidEmailToken: function (where, token, callback) {
-                this.checkValidToken(STD.user.authEmailSignup, where, token, callback);
-            },
-
-            /**
              * 범용 토큰확인 함수.
              * @private
              * @param {enum} type - 이메일 혹은 폰번호 상수키.

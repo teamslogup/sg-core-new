@@ -23,17 +23,13 @@ post.getUser = function () {
 
         var USER = req.meta.std.user;
         req.loadedAuth = null;
-        var where = {};
+        var where = {
+            type: req.body.type
+        };
         if (req.body.type == USER.authPhoneAdding) {
-            where = {
-                userId: req.user.id,
-                type: req.body.type
-            }
+            where.userId = req.user.id;
         } else {
-            where = {
-                token: req.body.token,
-                type: req.body.type
-            };
+            where.token = req.body.token;
         }
 
         req.models.Auth.findOne({
@@ -115,7 +111,12 @@ post.sendPassword = function () {
 post.supplement = function () {
     return function (req, res, next) {
         if (process.env.NODE_ENV == "test") {
-            return res.hjson(req, next, 200, req.newPass);
+            var USER = req.meta.std.user;
+            if (req.body.type == USER.authPhoneFindPass) {
+                return res.hjson(req, next, 200, req.newPass);
+            } else {
+                return res.hjson(req, next, 200, req.user.toSecuredJSON());
+            }
         }
         res.hjson(req, next, 204);
     };

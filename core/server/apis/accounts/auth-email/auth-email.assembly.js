@@ -19,11 +19,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['token'],
-                essential: ['token'],
+                acceptable: ['token', 'type'],
+                essential: ['token', 'type'],
                 resettable: [],
                 explains: {
-                    'token': 'email token'
+                    'token': 'email token',
+                    'type': '인증 타입, ' + [STD.user.authEmailSignup, STD.user.authEmailAdding].join(", ")
                 },
                 title: '이메일연동벨리데이션',
                 state: 'staging'
@@ -41,8 +42,6 @@ var api = {
                 apiCreator.add(get.consent());
                 apiCreator.add(get.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

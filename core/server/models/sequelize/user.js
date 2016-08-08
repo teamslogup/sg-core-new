@@ -247,10 +247,11 @@ module.exports = {
             /**
              * 이메일인증
              * @param {string} token - 토큰값
+             * @param {string} type - 타입
              * @param {responseCallback} callback - 응답콜백
              * @todo testing
              */
-            'verifyEmail': function (token, callback) {
+            'verifyEmail': function (token, type, callback) {
 
                 var isSuccess = false;
                 var self = this;
@@ -260,7 +261,6 @@ module.exports = {
                 token = token.replace(new RegExp(' ', "g"), '+');
 
                 var now = new Date();
-                var USER = STD.user;
 
                 // 이미 인증이 되어있다면.
                 if (this.isVerifiedEmail == true) {
@@ -271,7 +271,7 @@ module.exports = {
                     // 1. auth 체크
                     return sequelize.models.Auth.findOne({
                         where: {
-                            type: USER.authEmailSignup,
+                            type: type,
                             userId: self.id
                         },
                         transaction: t
@@ -309,9 +309,10 @@ module.exports = {
             /**
              * 비번찾기나 가입인증을 위해 단순히 인증테이블만 upsert하는 경우,
              * @param email
+             * @param type
              * @param callback
              */
-            'upsertAuth': function (email, callback) {
+            'upsertAuth': function (email, type, callback) {
                 var self = this;
                 var updatedUser = null;
                 sequelize.transaction(function (t) {
@@ -323,12 +324,12 @@ module.exports = {
                     }).then(function (user) {
                         updatedUser = user;
                         return sequelize.models.Auth.upsert({
-                            type: STD.user.authEmailSignup,
+                            type: type,
                             key: email
                         }, {transaction: t}).then(function () {
                             return sequelize.models.Auth.findOne({
                                 where: {
-                                    type: STD.user.authEmailSignup,
+                                    type: type,
                                     key: email
                                 },
                                 transaction: t
@@ -373,13 +374,13 @@ module.exports = {
 
                                 if (!STD.flag.isAutoVerifiedEmail) {
                                     return sequelize.models.Auth.upsert({
-                                        type: STD.user.authEmailSignup,
+                                        type: STD.user.authEmailAdding,
                                         key: email,
                                         userId: self.id
                                     }, {transaction: t}).then(function (auth) {
                                         return sequelize.models.Auth.findOne({
                                             where: {
-                                                type: STD.user.authEmailSignup,
+                                                type: STD.user.authEmailAdding,
                                                 key: email,
                                                 userId: self.id
                                             },
