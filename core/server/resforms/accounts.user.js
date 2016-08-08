@@ -9,7 +9,7 @@ module.exports = {
     "name": tester.type.STRING_ALLOW_NULL,
     "nick": tester.type.STRING,
     "role": tester.type.ENUM + STD.user.enumRoles,
-    "gender": tester.type.ENUM + STD.user.enumGenders,
+    "gender": tester.type.ENUM_ALLOW_NULL + STD.user.enumGenders,
     "birth": tester.type.DATE_ALLOW_NULL,
     "isVerifiedEmail": tester.type.BOOLEAN,
     "ip": tester.type.STRING,
