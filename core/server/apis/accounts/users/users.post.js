@@ -96,17 +96,13 @@ post.checkSocialProvider = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
         if (req.body.type == USER.signUpTypeSocial) {
-            if (req.body.provider == USER.providerFacebook) {
-                req.models.Provider.checkAndRefreshFacebookToken(req.body.uid, req.body.secret, function(status, data) {
-                    if (status == 200) {
-                        next();
-                    } else {
-                        res.hjson(req, next, status);
-                    }
-                });
-            } else {
-                next();
-            }
+            req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.uid, req.body.secret, function(status, data) {
+                if (status == 200) {
+                    next();
+                } else {
+                    res.hjson(req, next, status);
+                }
+            });
         } else {
             next();
         }
@@ -128,7 +124,7 @@ post.createUser = function () {
             apass: req.body.apass,
             provider: req.body.provider,
             secret: req.body.secret,
-            nick: req.body.nick,
+            nick: req.body.nick || '',
             gender: req.body.gender,
             birth: birth,
             ip: req.refinedIP,

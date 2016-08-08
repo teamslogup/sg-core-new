@@ -57,7 +57,7 @@ post.getUser = function () {
         // 전화번호로 로그인을 시도하는 경우. uid는 핸드폰번호가 되고, secret은 sender-phone으로 발급받은 인증번호가 된다.
         else {
             // 1. 토큰이 유효한지 체크
-            req.models.Auth.checkValidPhoneToken({key: req.body.uid}, req.body.secret, function (status, auth) {
+            req.models.Auth.checkValidToken(USER.authPhoneLogin, {key: req.body.uid}, req.body.secret, function (status, auth) {
 
                 if (status == 403) {
                     res.hjson(req, next, 403, {code: '403_4'});

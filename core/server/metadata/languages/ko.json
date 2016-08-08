@@ -8,7 +8,7 @@
   "adding": "님 슬로그업 연동 이메일입니다.",
   "newPassExplain": "님 비밀번호 정보입니다.",
   "connectAccount": "님 해당 버튼을 클릭하면 이메일 연동이 완료됩니다.",
-  "smsAuthExplain": "[슬로그업] 인증번호 :AUTH_NUM: 입력해주세요 (:MINUTE:분 이내.)",
+  "smsAuthExplain": "인증번호 :AUTH_NUM: 입력해주세요 (:MINUTE:분 이내.)",
   "findPassExplain": "새로운 비밀번호는 :PASS:입니다. 로그인 후 바꿔주세요",
   "findPass": "비밀번호찾기",
   "uploadSuccess": "업로드성공",

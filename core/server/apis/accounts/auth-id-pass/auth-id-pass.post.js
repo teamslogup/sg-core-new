@@ -8,7 +8,7 @@ post.validate = function () {
         req.check('type', '400_1').isEnum(USER.enumLinkIdPassTypes);
         if (req.body.type == USER.linkIdPassEmail) {
             req.check('id', '').isEmail();
-        } else if (req.body.type == USER.linkIdPassApp) {
+        } else if (req.body.type == USER.linkIdPassNormal) {
             req.check('id', '400_55').isId(USER.minIdLength, USER.maxIdLength);
         }
         req.check('pass', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
@@ -31,7 +31,7 @@ post.updateAccount = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.instance);
+        res.hjson(req, next, 200, req.user.toSecuredJSON());
     };
 };
 

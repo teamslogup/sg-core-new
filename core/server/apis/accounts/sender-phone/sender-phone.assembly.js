@@ -8,7 +8,7 @@ var post = require('./' + resource + '.post.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
@@ -23,7 +23,7 @@ var api = {
                 resettable: [],
                 explains : {
                     'phoneNum': '인증받을 전화번호',
-                    'type': '전송형태 ' + STD.user.enumPhoneSenderTypes.join(", ")
+                    'type': '전송형태 ' + STD.user.enumAuthPhoneTypes.join(", ")
                 },
                 title: '가입시 인증번호 요청',
                 state: 'staging'

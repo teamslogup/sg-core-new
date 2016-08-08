@@ -10,30 +10,8 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
-
-function requestFacebookValidadtor(uid, secret, callback) {
-    if (process.env.NODE_ENV == "test") {
-        return callback(200);
-    }
-    var request = require('request');
-    var rootUri = 'https://graph.facebook.com/me?access_token=';
-    var option = {
-        method: 'GET',
-        uri: rootUri + secret
-    };
-    request(option, function (error, response, body) {
-        if (response.statusCode == 200) {
-            body = JSON.parse(body);
-            if (body.id == uid) {
-                callback(200);
-            } else {
-                callback(403);
-            }
-        } else {
-            callback(403);
-        }
-    });
-}
+var ENV = require('../../../../bridge/config/env');
+var socialValidator = require('../../utils/social-validator');
 
 module.exports = {
     fields: {
@@ -64,7 +42,7 @@ module.exports = {
         }
     }, options: {
         'charset': 'utf8',
-        'paranoid': true,
+        'paranoid': false,
         indexes: [{
             unique: true,
             fields: ['userId', 'type']
@@ -90,24 +68,26 @@ module.exports = {
                 var fields = ['id', 'type', 'uid'];
                 return fields;
             },
-            updateFacebookToken: function(userId, uid, secret, callback) {
-                requestFacebookValidadtor(uid, secret, function(status, data) {
+            updateToken: function(type, userId, uid, secret, callback) {
+                socialValidator[type + 'Validadtor'](uid, secret, function(status, data) {
                     if (status == 200) {
-                        var finalStatus = 400;
-                        sequelize.models.Provider.create({
-                            type: STD.user.providerFacebook,
+                        var createdProvider = null;
+                        var provider = sequelize.models.Provider.build({
+                            type: type,
                             uid: uid,
                             token: secret,
                             userId: userId
-                        }).then(function(data) {
+                        });
+                        provider.tokenEncryption();
+
+                        // 2. 프로바이더생성
+                        return provider.save().then(function (data) {
                             if (data) {
-                                finalStatus = 200;
-                            } else {
-                                finalStatus = 404;
+                                createdProvider = data;
                             }
-                        }).catch(errorHandler.catchCallback(callback)).done(function (provider) {
-                            if (finalStatus != 400) {
-                                callback(finalStatus, provider);
+                        }).catch(errorHandler.catchCallback(callback)).done(function () {
+                            if (createdProvider) {
+                                callback(200, createdProvider);
                             }
                         });
                     } else {
@@ -115,8 +95,8 @@ module.exports = {
                     }
                 });
             },
-            checkAndRefreshFacebookToken: function(uid, secret, callback) {
-                requestFacebookValidadtor(uid, secret, function(status, data) {
+            checkAndRefreshToken: function(type, uid, secret, callback) {
+                socialValidator[type + 'Validadtor'](uid, secret, function(status, data) {
                     if (status == 200) {
                         sequelize.models.Provider.updateDataByKey('uid', uid, {
                             uid: uid,

@@ -9,24 +9,24 @@ var del = require('./' + resource + '.del.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
-const USER = STD.user;
 
 var api = {
     get: function (isOnlyParams) {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['token'],
-                essential: ['token'],
+                acceptable: ['token', 'type'],
+                essential: ['token', 'type'],
                 resettable: [],
                 explains: {
-                    'token': 'email token'
+                    'token': 'email token',
+                    'type': '인증 타입, ' + [STD.user.authEmailSignup, STD.user.authEmailAdding].join(", ")
                 },
-                title: '이메일연동',
+                title: '이메일연동벨리데이션',
                 state: 'staging'
             };
 
@@ -42,8 +42,6 @@ var api = {
                 apiCreator.add(get.consent());
                 apiCreator.add(get.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
@@ -60,7 +58,8 @@ var api = {
                 explains: {
                     id: 'user id'
                 },
-                title: '이메일연동해제',
+                response: resforms.user,
+                title: '이메일제거 (이메일만제거됨)',
                 param: 'id',
                 state: 'staging'
             };
@@ -74,6 +73,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
                 apiCreator.add(del.validate());
                 apiCreator.add(del.removeEmail());
                 apiCreator.add(del.supplement());

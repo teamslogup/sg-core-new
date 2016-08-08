@@ -17,30 +17,13 @@ post.validate = function () {
 
 post.getUser = function () {
     return function (req, res, next) {
-        var USER = req.meta.std.user;
-        var provider = req.body.provider;
-
-        if (provider == USER.providerFacebook) {
-            req.models.Provider.checkAndRefreshFacebookToken(req.body.pid, req.body.accessToken, function(status, data) {
-                if (status == 200) {
-                    next();
-                } else {
-                    res.hjson(req, next, 403);
-                }
-            });
-        }
-        else if (provider == USER.providerTwitter) {
-            next();
-        }
-        else if (provider == USER.providerGoogle) {
-            next();
-        }
-        else if (provider == USER.providerKakao) {
-            next();
-        }
-        else {
-            res.hjson(req, next, 403);
-        }
+        req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.pid, req.body.accessToken, function(status, data) {
+            if (status == 200) {
+                next();
+            } else {
+                res.hjson(req, next, 403);
+            }
+        });
     };
 };
 

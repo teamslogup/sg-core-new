@@ -33,7 +33,7 @@ module.exports = {
         }
     }, options: {
         'charset': 'utf8',
-        'paranoid': true,
+        'paranoid': false,
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {

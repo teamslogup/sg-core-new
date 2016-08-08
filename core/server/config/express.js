@@ -141,7 +141,6 @@ module.exports = function (sequelize) {
         req.sequelize = sequelize;
 
         req.coreUtils = require('../utils');
-
         next();
     });
 

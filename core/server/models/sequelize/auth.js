@@ -28,7 +28,7 @@ module.exports = {
         },
         'type': {
             'type': Sequelize.ENUM,
-            'values': STD.user.enumSignUpTypes,
+            'values': STD.user.enumAuthTypes,
             'allowNull': false
         },
         'key': {
@@ -100,7 +100,7 @@ module.exports = {
              * @returns {string}
              */
             'createAuthToken': function (type) {
-                if (type == STD.user.signUpTypeEmail) {
+                if (type == STD.user.authEmailSignup || type == STD.user.authEmailFindPass) {
                     return crypto.randomBytes(STD.user.emailTokenLength).toString('base64');
                 }
                 else {
@@ -125,26 +125,6 @@ module.exports = {
                     min = STD.user.expiredPhoneTokenMinutes;
                 }
                 return now.setMinutes(now.getMinutes() + min);
-            },
-
-            /**
-             * 인증번호 확인
-             * @param {Object} where - 검색객체
-             * @param {string} token - 인증번호
-             * @param {responseCallback} callback - 응답콜백.
-             */
-            checkValidPhoneToken: function (where, token, callback) {
-                this.checkValidToken(STD.user.signUpTypePhone, where, token, callback);
-            },
-
-            /**
-             * 이메일 토큰 확인.
-             * @param {Object} where - 검색객체
-             * @param {string} token - 이메일토큰
-             * @param {responseCallback} callback - 응답콜백.
-             */
-            checkValidEmailToken: function (where, token, callback) {
-                this.checkValidToken(STD.user.signUpTypeEmail, where, token, callback);
             },
 
             /**

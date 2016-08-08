@@ -18,6 +18,16 @@ var standards = {
         "enumGenders": ["m", "f"],
         "genderMale": "m",
         "genderFemale": "f",
+        "enumAuthTypes": ["emailSignup", "phoneSignup", "emailFindPass", "phoneFindPass", "emailAdding", "phoneAdding", "phoneLogin"],
+        "enumAuthPhoneTypes": ["phoneSignup", "phoneFindPass", "phoneAdding", "phoneLogin"],
+        "enumAuthEmailTypes": ["emailSignup", "emailFindPass", "emailAdding"],
+        "authEmailSignup": "emailSignup",
+        "authEmailAdding": "emailAdding",
+        "authEmailFindPass": "emailFindPass",
+        "authPhoneSignup": "phoneSignup",
+        "authPhoneFindPass": "phoneFindPass",
+        "authPhoneAdding": "phoneAdding",
+        "authPhoneLogin": "phoneLogin",
         "enumSignUpTypes": ["email", "phone", "social", "phoneId", "normalId"],
         "signUpTypeEmail": "email",
         "signUpTypePhone": "phone",
@@ -43,17 +53,18 @@ var standards = {
         "roleUltraAdmin": "roleF",
         "roleSuperUltraAdmin": "roleG",
         "roleSupervisor": "roleS",
-        "enumEmailSenderTypes": ["signUp", "findPass", "adding"],
-        "emailSenderTypeSignUp": "signUp",
-        "emailSenderTypeAdding": "adding",
-        "emailSenderTypeFindPass": "findPass",
-        "enumPhoneSenderTypes": ["signUp", "adding", "logIn"],
-        "phoneSenderTypeSignUp": "signUp",
-        "phoneSenderTypeAdding": "adding",
-        "phoneSenderTypeLogIn": "logIn",
-        "enumLinkIdPassTypes": ["email", "app"],
+        // "enumEmailSenderTypes": ["signUp", "findPass", "adding"],
+        // "emailSenderTypeSignUp": "signUp",
+        // "emailSenderTypeAdding": "adding",
+        // "emailSenderTypeFindPass": "findPass",
+        // "enumPhoneSenderTypes": ["signUp", "adding", "logIn", "findPass"],
+        // "phoneSenderTypeSignUp": "signUp",
+        // "phoneSenderTypeAdding": "adding",
+        // "phoneSenderTypeLogIn": "logIn",
+        // "phoneSenderTypeFindPass": "findPass",
+        "enumLinkIdPassTypes": ["email", "normal"],
         "linkIdPassEmail": "email",
-        "linkIdPassApp": "app",
+        "linkIdPassNormal": "normal",
         "minNickLength": 2,
         "maxNickLength": 14,
         "minNameLength": 2,
@@ -172,7 +183,8 @@ var standards = {
         "item4Week": ":4WEEK:",
         "item12Week": ":12WEEK:",
         "item24Week": ":24WEEK:",
-        "item48Week": ":48WEEK:"
+        "item48Week": ":48WEEK:",
+        "pass": ":PASS:"
     },
     "common": {
         "deletedRowPrefix": "deleted_",
@@ -256,6 +268,10 @@ var standards = {
     },
     "cluster": {
         "defaultExecutionDelay": 1000
+    },
+    "role": {
+        "account": "roleD",
+        "report": "roleD"
     }
 };
 

@@ -15,7 +15,7 @@ put.validate = function () {
 put.updateReport = function () {
     return function (req, res, next) {
         var update = {
-            userId: req.user.id,
+            userId: req.loadedUser.id,
             body: req.body.body
         };
         req.models.Test.updateDataById(req.params.id, update, function (status, data) {
