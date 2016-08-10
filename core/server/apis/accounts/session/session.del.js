@@ -4,8 +4,13 @@ var logger = new Logger(__filename);
 
 del.logout = function(){
     return function(req, res, next){
-        req.logout();
-        return res.hjson(req, next, 204);
+        req.coreUtils.session.logout(req, function(status, data) {
+            if (status == 204) {
+                return res.hjson(req, next, 204);
+            } else {
+                return res.hjson(req, next, status, data);
+            }
+        });
     };
 };
 

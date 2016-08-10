@@ -1,6 +1,7 @@
 var del = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
+var async = require('async');
 
 del.validate = function () {
     return function (req, res, next) {
@@ -10,22 +11,28 @@ del.validate = function () {
     };
 };
 
-del.destroyUser = function () {
+del.removeAllSessions = function () {
     return function (req, res, next) {
-        req.models.User.destroyUser(req.params.id, function (status, data) {
+        req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.user.id, function(status, data) {
             if (status == 204) {
                 next();
-            } else {
+            }
+            else {
                 res.hjson(req, next, status, data);
             }
         });
     };
 };
 
-del.supplement = function () {
+del.destroyUser = function () {
     return function (req, res, next) {
-        req.logout();
-        res.hjson(req, next, 204);
+        req.models.User.destroyUser(req.params.id, function (status, data) {
+            if (status == 204) {
+                res.hjson(req, next, 204);
+            } else {
+                res.hjson(req, next, status, data);
+            }
+        });
     };
 };
 

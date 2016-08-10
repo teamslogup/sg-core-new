@@ -1,9 +1,6 @@
-var path = require('path');
-var fs = require('fs');
 
 var User = require('./user');
 var Provider = require('./provider');
-var Device = require('./device');
 var Auth = require('./auth');
 var Report = require('./report');
 var Notice = require('./notice');
@@ -16,12 +13,11 @@ var Profile = require('./profile');
 var Image = require('./image');
 var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
+var LoginHistory = require('./login-history');
 
-var sequelize = require('../../config/sequelize');
 var models = {
     User: User,
     Provider: Provider,
-    Device: Device,
     Auth: Auth,
     Report: Report,
     Notice: Notice,
@@ -33,7 +29,8 @@ var models = {
     Profile: Profile,
     Image: Image,
     ExtinctUser: ExtinctUser,
-    Terms: Terms
+    Terms: Terms,
+    LoginHistory: LoginHistory
 };
 
 module.exports = models;

@@ -16,6 +16,7 @@ var crypto = require('crypto');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var MICRO = require('microtime');
 
 const profileKey = "profile";
 
@@ -77,10 +78,6 @@ module.exports = {
             'allowNull': false,
             'defaultValue': false
         },
-        'ip': {
-            'type': Sequelize.STRING,
-            'allowNull': false
-        },
         'country': {
             'type': Sequelize.STRING,
             'allowNull': false
@@ -125,7 +122,6 @@ module.exports = {
     },
     options: {
         'timestamps': true,
-        'updatedAt': false,
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
         'hooks': {
@@ -141,7 +137,7 @@ module.exports = {
             'createEmailToken': function () {
                 var now = new Date();
                 return {
-                    type: STD.user.signUpTypeEmail,
+                    type: STD.user.authEmailSignup,
                     key: this.email,
                     token: crypto.randomBytes(STD.user.emailTokenLength).toString('base64'),
                     expiredAt: now.setMinutes(now.getMinutes() + STD.user.expiredEmailTokenMinutes)
@@ -247,10 +243,11 @@ module.exports = {
             /**
              * 이메일인증
              * @param {string} token - 토큰값
+             * @param {string} type - 타입
              * @param {responseCallback} callback - 응답콜백
              * @todo testing
              */
-            'verifyEmail': function (token, callback) {
+            'verifyEmail': function (token, type, callback) {
 
                 var isSuccess = false;
                 var self = this;
@@ -260,7 +257,6 @@ module.exports = {
                 token = token.replace(new RegExp(' ', "g"), '+');
 
                 var now = new Date();
-                var USER = STD.user;
 
                 // 이미 인증이 되어있다면.
                 if (this.isVerifiedEmail == true) {
@@ -271,7 +267,7 @@ module.exports = {
                     // 1. auth 체크
                     return sequelize.models.Auth.findOne({
                         where: {
-                            type: USER.signUpTypeEmail,
+                            type: type,
                             userId: self.id
                         },
                         transaction: t
@@ -282,7 +278,6 @@ module.exports = {
                         }
 
                         if (auth.expiredAt < now || auth.token.toString() != token.toString()) {
-                            console.log('fail');
                             throw new errorHandler.CustomSequelizeError(403);
                         }
 
@@ -307,31 +302,139 @@ module.exports = {
                     }
                 });
             },
+            /**
+             * 비번찾기나 가입인증을 위해 단순히 인증테이블만 upsert하는 경우,
+             * @param email
+             * @param type
+             * @param callback
+             */
+            'upsertAuth': function (email, type, callback) {
+                var self = this;
+                var updatedUser = null;
+                sequelize.transaction(function (t) {
+                    return sequelize.models.User.findOne({
+                        where: {
+                            email: email
+                        },
+                        transaction: t
+                    }).then(function (user) {
+                        updatedUser = user;
+                        return sequelize.models.Auth.upsert({
+                            type: type,
+                            key: email
+                        }, {transaction: t}).then(function () {
+                            return sequelize.models.Auth.findOne({
+                                where: {
+                                    type: type,
+                                    key: email
+                                },
+                                transaction: t
+                            }).then(function (auth) {
+                                updatedUser['auth'] = auth;
+                            });
+                        });
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (updatedUser && updatedUser.auth) {
+                        callback(200, updatedUser);
+                    }
+                });
+            },
+            /**
+             * 이메일 추가 후 인증 테이블 추가(isAutoVerifiedEmail false일경우)
+             * @param email - 추가할 이메일
+             * @param callback
+             */
+            'updateEmailAndAuth': function (email, callback) {
+                var self = this;
+                var updatedUser = null;
+                sequelize.transaction(function (t) {
+                    return sequelize.models.User.findOne({
+                        where: {
+                            email: email,
+                            id: {
+                                $ne: self.id
+                            }
+                        },
+                        transaction: t
+                    }).then(function (user) {
+                        if (!user) {
+                            return self.updateAttributes({
+                                isVerifiedEmail: STD.flag.isAutoVerifiedEmail,
+                                email: email
+                            }, {transaction: t}).then(function (user) {
+                                if (!user) {
+                                    throw new errorHandler.CustomSequelizeError(404);
+                                }
+                                updatedUser = user;
 
+                                if (!STD.flag.isAutoVerifiedEmail) {
+                                    return sequelize.models.Auth.upsert({
+                                        type: STD.user.authEmailAdding,
+                                        key: email,
+                                        userId: self.id
+                                    }, {transaction: t}).then(function (auth) {
+                                        return sequelize.models.Auth.findOne({
+                                            where: {
+                                                type: STD.user.authEmailAdding,
+                                                key: email,
+                                                userId: self.id
+                                            },
+                                            transaction: t
+                                        }).then(function (auth) {
+                                            updatedUser['auth'] = auth;
+                                        });
+                                    });
+                                }
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(409, {
+                                code: '409_5'
+                            });
+                        }
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    var isAutoVerifiedEmail = STD.flag.isAutoVerifiedEmail;
+                    if ((updatedUser && isAutoVerifiedEmail) ||
+                        (updatedUser && updatedUser.auth && !isAutoVerifiedEmail)) {
+                        callback(200, updatedUser);
+                    }
+                });
+            },
             /**
              * 비밀번호 변경
              * @param {sequelize.models.Auth} auth - auth모델
              * @param {string} pass - 바꿀 비밀번호
              * @param {responseCallback} callback - 응답콜백
              */
-            'changePassword': function (auth, pass, callback) {
+            'changePassword': function (pass, callback) {
                 var loadedUser = null;
                 var self = this;
-                sequelize.transaction(function (t) {
-                    return self.updateAttributes({
-                        secret: self.createHashPassword(pass)
-                    }, {transaction: t}).then(function (user) {
-                        if (!user) throw {status: 404};
+                this.updateAttributes({
+                    secret: self.createHashPassword(pass)
+                }).then(function (user) {
+                    if (user) {
                         loadedUser = user;
-                        if (auth) {
-                            return auth.destroy({transaction: t});
-                        }
-                    });
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (loadedUser) {
                         callback(200, loadedUser);
                     }
                 });
+            },
+            'createRandomPassword': function() {
+                var length = STD.user.minSecretLength;
+                var pass = "";
+                for (var i = 0; i < length; ++i) {
+                    if ((Math.random() * 100000) % 2 == 0) {
+                        pass += (Math.random() * 100000) % 10;
+                    } else {
+                        pass += String.fromCharCode(((Math.random() * 100000) % 26) + 97);
+                    }
+                }
+                return pass;
             },
             /**
              * 아이디 패스워드 설정
@@ -357,11 +460,14 @@ module.exports = {
                         loadedData = data;
                         if (!loadedData) {
                             var loadedUser = false;
-                            return self.updateAttributes({
+                            var update = {
                                 secret: self.createHashPassword(pass),
-                                aid: id,
-                                email: type == STD.user.linkIdPassEmail ? id : null
-                            }, {transaction: t}).then(function (user) {
+                                aid: id
+                            };
+                            if (type == STD.user.linkIdPassEmail) {
+                                update.email = id;
+                            }
+                            return self.updateAttributes(update, {transaction: t}).then(function (user) {
                                 if (user) {
                                     finalStatus = 200;
                                     loadedUser = user;
@@ -452,9 +558,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -472,9 +578,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -492,9 +598,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -512,9 +618,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.Device,
-                    as: 'devices',
-                    attributes: sequelize.models.Device.getDeviceFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }], callback);
             },
             /**
@@ -568,20 +674,32 @@ module.exports = {
             'createUserWithNormalId': function (data, callback) {
                 var createdUser = null;
                 sequelize.transaction(function (t) {
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function () {
-                        createdUser = user;
-                        if (data.deviceToken && data.deviceType) {
-                            return sequelize.models.Device.upsert({
-                                type: data.deviceType,
-                                token: data.deviceToken,
-                                userId: user.id
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
+
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
+
+                            var history = data.history;
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
                             }, {transaction: t}).then(function () {
 
                             });
-                        }
+                        });
                     });
+
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
                         sequelize.models.User.findUserByAid(createdUser.aid, callback);
@@ -595,39 +713,43 @@ module.exports = {
              */
             'createUserWithEmail': function (data, callback) {
                 var createdUser = null;
-                var type = STD.user.signUpTypeEmail;
+                var type = STD.user.authEmailSignup;
 
                 sequelize.transaction(function (t) {
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function () {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
 
-                        createdUser = user;
+                        var history = data.history;
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
 
-                        if (!STD.flag.isAutoVerifiedEmail) {
-                            var authData = {
-                                type: type,
-                                key: createdUser.email,
-                                userId: user.id
-                            };
-
-                            // 2. 이메일 인증을 위해 인증토큰 생성.
-                            return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
-
-                                // 3. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                                if (data.deviceToken && data.deviceType) {
-                                    return sequelize.models.Device.upsert({
-                                        type: data.deviceType,
-                                        token: data.deviceToken,
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
+                            }, {transaction: t}).then(function () {
+                                if (!STD.flag.isAutoVerifiedEmail) {
+                                    var authData = {
+                                        type: type,
+                                        key: createdUser.email,
                                         userId: user.id
-                                    }, {transaction: t}).then(function () {
+                                    };
+                                    return sequelize.models.Auth.upsert(authData, {transaction: t}).then(function () {
 
                                     });
                                 }
                             });
-                        }
+                        });
                     });
-
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
                         sequelize.models.User.findUserByEmail(createdUser.email, function (status, data) {
@@ -672,47 +794,62 @@ module.exports = {
                 }
 
                 sequelize.transaction(function (t) {
-                    // 1. 유저생성.
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function () {
-                        createdUser = user;
 
-                        // 2. 번호 인증 스키마 얻기.
-                        return sequelize.models.Auth.findOne({
-                            where: {
-                                type: STD.user.signUpTypePhone,
-                                key: user.phoneNum
-                            },
-                            transaction: t
-                        }).then(function (auth) {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
 
-                            if (!auth) throw {status: 404};
+                        // 1. 유저생성.
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
+                            var history = data.history;
 
-                            // 3. 번호 체크
-                            if (auth.token != authNum) {
-                                throw {status: 403}
-                            } else {
-                                // 4. 날짜 체크
-                                var now = new Date();
-                                if (auth.expiredAt < now) {
-                                    throw {status: 403}
-                                } else {
-                                    // 5. 모두 성공하면 Auth를 지움.
-                                    return auth.destroy({transaction: t}).then(function () {
-                                        // 6. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                                        if (data.deviceToken && data.deviceType) {
-                                            return sequelize.models.Device.upsert({
-                                                type: data.deviceType,
-                                                token: data.deviceToken,
-                                                userId: user.id
-                                            }, {transaction: t}).then(function () {
+                            var signUpType = STD.user.signUpTypePhone;
+                            if (data.aid && data.apass) {
+                                signUpType = STD.user.signUpTypePhoneId;
+                            }
+
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
+                            }, {transaction: t}).then(function () {
+                                // 2. 번호 인증 스키마 얻기.
+                                return sequelize.models.Auth.findOne({
+                                    where: {
+                                        type: STD.user.authPhoneSignup,
+                                        key: user.phoneNum
+                                    },
+                                    transaction: t
+                                }).then(function (auth) {
+
+                                    if (!auth) throw {status: 404};
+
+                                    // 3. 번호 체크
+                                    if (auth.token != authNum) {
+                                        throw {status: 403}
+                                    } else {
+                                        // 4. 날짜 체크
+                                        var now = new Date();
+                                        if (auth.expiredAt < now) {
+                                            throw {status: 403}
+                                        } else {
+                                            // 5. 모두 성공하면 Auth를 지움.
+                                            return auth.destroy({transaction: t}).then(function () {
 
                                             });
                                         }
-                                    });
-                                }
-                            }
+                                    }
+                                });
+                            });
                         });
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
@@ -732,45 +869,54 @@ module.exports = {
 
                 sequelize.transaction(function (t) {
 
-                    var uid = data.uid;
-                    var type = data.provider;
-                    var token = data.secret;
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
+                        var uid = data.uid;
+                        var type = data.provider;
+                        var token = data.secret;
 
-                    delete data.uid;
-                    delete data.provider;
-                    delete data.secret;
+                        delete data.uid;
+                        delete data.provider;
+                        delete data.secret;
 
-                    // 1. 유저생성.
-                    var user = sequelize.models.User.build(data);
-                    user.encryption();
-                    return user.save({transaction: t}).then(function (user) {
+                        var ip = data.ip;
+                        delete  data.ip;
 
-                        var provider = sequelize.models.Provider.build({
-                            type: type,
-                            uid: uid,
-                            token: token,
-                            userId: user.id
-                        });
-                        provider.tokenEncryption();
+                        // 1. 유저생성.
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function (user) {
 
-                        // 2. 프로바이더생성
-                        return provider.save({transaction: t}).then(function (provider) {
-                            user.setDataValue('provider', provider);
-                            createdUser = user;
+                            var provider = sequelize.models.Provider.build({
+                                type: type,
+                                uid: uid,
+                                token: token,
+                                userId: user.id
+                            });
+                            provider.tokenEncryption();
+                            // 2. 프로바이더생성
+                            return provider.save({transaction: t}).then(function (provider) {
+                                user.setDataValue('provider', provider);
+                                createdUser = user;
+                                var history = data.history;
 
-                            // 3. 앱으로 가입한 경우 토큰 생성
-                            if (data.deviceToken && data.deviceType) {
-                                return sequelize.models.Device.upsert({
-                                    type: data.deviceType,
-                                    token: data.deviceToken,
-                                    userId: user.id
-                                }, {transaction: t}).then(function (device) {
+                                return sequelize.models.LoginHistory.upsert({
+                                    userId: user.id,
+                                    platform: history.platform,
+                                    device: history.device,
+                                    version: history.version,
+                                    token: history.token,
+                                    ip: history.ip,
+                                    session: history.session,
+                                    createdAt: MICRO.now(),
+                                    updatedAt: MICRO.now()
+                                }, {transaction: t}).then(function () {
 
                                 });
-                            }
+                            });
                         });
                     });
-
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
                         sequelize.models.User.findUserById(createdUser.id, callback);
@@ -779,13 +925,19 @@ module.exports = {
             },
             /**
              * 소셜인증 시 가입요청, 로그인 등을 한번에 수행하는 함수.
+             * @param req
+             * @param loadedUser - 이미 로그인할 유저를 로드해온 적이 있다면 로드된 유저 객체를 보냄
              * @param providerData
              * @param callback
              */
-            checkAccountForProvider: function (req, providerData, callback) {
+            checkAccountForProvider: function (req, loadedUser, providerData, callback) {
 
-                function login(req, data, callback) {
-                    req.login(data, function (err) {
+                // 회원가입일 경우에 true플래그가 되며 회원가입이 아닐경우에만 (false) history를 추가한다.
+                var isSignup = false;
+
+                function login(req, user, callback) {
+
+                    function loginCallback(err, callback) {
                         var bSearched = false;
                         if (err) {
                             for (var k in err) {
@@ -798,17 +950,40 @@ module.exports = {
                             callback(400, err);
                         }
                         else {
-                            callback(200, data);
-                            if (process.env.NODE_ENV == 'test') {
-
-                            } else {
-
-                            }
+                            callback(200, user);
                         }
-                    });
+                    }
+
+                    if (!isSignup) {
+                        var history = {
+                            'platform': req.body.platform,
+                            'device': req.body.device,
+                            'version': req.body.version,
+                            'token': req.body.token,
+                            'ip': req.refinedIP,
+                            'session': req.sessionID
+                        };
+                        req.models.LoginHistory.createLoginHistory(user.id, history, function(status, data) {
+                            if (status == 200) {
+                                req.login(user, function (err) {
+                                    loginCallback(err, callback);
+                                });
+                            }
+                            else {
+                                callback(status, data)
+                            }
+                        });
+                    } else {
+                        // 회원가입을 통해 왔다면 이미 가입시 히스토리를 생성했음.
+                        req.login(user, function (err) {
+                            loginCallback(err, callback);
+                        });
+                    }
+
                 }
 
                 function signup(req, data, callback) {
+                    isSignup = true;
                     sequelize.models.User.createUserWithType(data, function (status, data) {
                         if (status == 409) {
                             data.nick = data.nick + Math.floor(Math.random() * 100000) % 4;
@@ -822,31 +997,35 @@ module.exports = {
                     });
                 }
 
-
-                sequelize.models.Provider.findDataIncluding({
-                        'type': providerData.provider,
-                        'uid': providerData.uid
-                    }, [{
-                        model: sequelize.models.User,
-                        as: 'user'
-                    }],
-                    function (status, data) {
-                        if (status == 200) {
-                            // 가입되어있으면 바로 로그인
-                            login(req, data.user, callback);
-                        }
-                        else {
-                            // 가입되어 있지 않음
-                            if (STD.flag.isMoreInfo) {
-                                // 더 많은 정보가 필요함. 301을 리턴해서 리다이렉트가 필요하다고 알려줌.
-                                callback(301, providerData);
-                            } else {
-                                // 최소 정보로 가입함, 로그인 필요.
-                                signup(req, providerData, callback);
+                if (!loadedUser) {
+                    sequelize.models.Provider.findDataIncluding({
+                            'type': providerData.provider,
+                            'uid': providerData.uid
+                        }, [{
+                            model: sequelize.models.User,
+                            as: 'user'
+                        }],
+                        function (status, data) {
+                            if (status == 200) {
+                                login(req, data.user, callback);
+                            }
+                            else {
+                                // 가입되어 있지 않음
+                                if (STD.flag.isMoreSocialInfo) {
+                                    // 더 많은 정보가 필요함. 301을 리턴해서 리다이렉트가 필요하다고 알려줌.
+                                    // 페이스북등으로 가입하고 추가 데이터가 필요할때
+                                    // providerData를 리턴받고 해당 값과 함께 user-post를 요청해야함.
+                                    callback(301, providerData);
+                                } else {
+                                    // 최소 정보로 가입함, 로그인 필요.
+                                    signup(req, providerData, callback);
+                                }
                             }
                         }
-                    }
-                );
+                    );
+                } else {
+                    login(req, loadedUser, callback);
+                }
             },
             destroyUser: function (id, callback) {
                 var isSuccess = false;
@@ -871,9 +1050,9 @@ module.exports = {
                             as: 'providers',
                             attributes: sequelize.models.Provider.getProviderFields()
                         }, {
-                            model: sequelize.models.Device,
-                            as: 'devices',
-                            attributes: sequelize.models.Device.getDeviceFields()
+                            model: sequelize.models.LoginHistory,
+                            as: 'loginHistories',
+                            attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                         }]
                     };
 
@@ -895,66 +1074,50 @@ module.exports = {
                         }).then(function (data) {
                             if (data && data[0]) {
 
-                                var deviceTasks = [];
-                                var deviceUpdateTasks = [];
-                                if (!loadedData.devices) {
-                                    loadedData.devices = [];
+                                var historyTasks = [];
+                                if (!loadedData.loginHistories) {
+                                    loadedData.loginHistories = [];
                                 }
-                                loadedData.devices.forEach(function (device) {
-                                    deviceUpdateTasks.push(sequelize.models.Device.update({
-                                        token: deletedUserPrefix + id
-                                    }, {
-                                        transaction: t,
-                                        where: {
-                                            id: device.id
-                                        }
-                                    }));
-                                    deviceTasks.push(device.destroy({transaction: t}));
+                                loadedData.loginHistories.forEach(function (history) {
+                                    historyTasks.push(history.destroy({transaction: t}));
                                 });
                                 var providerTasks = [];
-                                var providerUpdateTasks = [];
                                 if (!loadedData.providers) {
                                     loadedData.providers = [];
                                 }
 
                                 loadedData.providers.forEach(function (provider) {
-                                    providerUpdateTasks.push(sequelize.models.Provider.update({
-                                        uid: deletedUserPrefix + id,
-                                        token: deletedUserPrefix + id
-                                    }, {
-                                        transaction: t,
-                                        where: {
-                                            id: provider.id
-                                        }
-                                    }));
                                     providerTasks.push(provider.destroy({transaction: t}));
                                 });
 
-                                return Promise.all(deviceUpdateTasks).then(function (devices) {
-                                    return Promise.all(deviceTasks).then(function (devices) {
-                                        return Promise.all(providerUpdateTasks).then(function (providers) {
-                                            return Promise.all(providerTasks).then(function (providers) {
-                                                return loadedData.destroy({
-                                                    where: {id: id},
-                                                    cascade: true,
-                                                    transaction: t
-                                                }).then(function (data) {
-                                                    // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
-                                                    if (STD.user.deletedUserStoringDay > 0) {
-                                                        var userDel = sequelize.models.ExtinctUser.build({
-                                                            userId: id,
-                                                            data: JSON.stringify(loadedData)
-                                                        });
-                                                        return userDel.save({transaction: t}).then(function () {
-                                                            isSuccess = true;
-                                                        });
-                                                    } else {
-                                                        isSuccess = true;
-                                                    }
-                                                });
+                                historyTasks.push(sequelize.models.Profile.destroy({
+                                    where: {
+                                        id: loadedData.profileId
+                                    },
+                                    transaction: t
+                                }));
 
-                                            });
+                                return Promise.all(historyTasks).then(function (devices) {
+                                    return Promise.all(providerTasks).then(function (providers) {
+                                        return loadedData.destroy({
+                                            where: {id: id},
+                                            cascade: true,
+                                            transaction: t
+                                        }).then(function (data) {
+                                            // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
+                                            if (STD.user.deletedUserStoringDay > 0) {
+                                                var userDel = sequelize.models.ExtinctUser.build({
+                                                    userId: id,
+                                                    data: JSON.stringify(loadedData)
+                                                });
+                                                return userDel.save({transaction: t}).then(function () {
+                                                    isSuccess = true;
+                                                });
+                                            } else {
+                                                isSuccess = true;
+                                            }
                                         });
+
                                     });
                                 });
                             }

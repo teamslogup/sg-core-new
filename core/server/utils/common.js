@@ -3,7 +3,7 @@ var CODES = META.codes;
 var fs = require('fs');
 
 module.exports = {
-    getAPIParams: function(url, method) {
+    getAPIParams: function (url, method) {
         var api = this.getAPI(url);
         if (api) {
             return api[method](true)();
@@ -11,7 +11,7 @@ module.exports = {
             return {};
         }
     },
-    getAPI: function(url) {
+    getAPI: function (url) {
         function getApiPath(isCore, group, resource) {
             if (isCore) {
                 return require('path').resolve(__dirname, '../apis/' + group + '/' + resource + '/' + resource + ".assembly.js");
@@ -44,7 +44,7 @@ module.exports = {
             return require(path).api;
         }
     },
-    requestAPI: function(req, res, next) {
+    requestAPI: function (req, res, next) {
         /**
          * request api
          * {
@@ -58,7 +58,7 @@ module.exports = {
          *  }
          * }
          */
-        return function(options, callback) {
+        return function (options, callback) {
             var apiResource = options.resource;
             var method = options.method;
             var params = options.params;
@@ -81,7 +81,7 @@ module.exports = {
                     }
                     req.params = params;
 
-                    req.callback = function(status, data) {
+                    req.callback = function (status, data) {
                         req.callback = tempCallback;
                         req.query = query;
                         req.body = body;

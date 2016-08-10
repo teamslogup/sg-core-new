@@ -53,13 +53,17 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['type', 'uid', 'secret'],
+                acceptable: ['type', 'uid', 'secret', 'platform', 'device', 'version', 'token'],
                 essential: ['type', 'uid', 'secret'],
                 resettable: [],
                 explains: {
                     'type': '로그인 방식 ' + STD.user.signUpTypeEmail + ", " + STD.user.signUpTypePhone + ", " + STD.user.signUpTypePhoneId + ", " + STD.user.signUpTypeNormalId,
                     'uid': '이메일 혹은 번호와 같은 유저의 식별 아이디',
-                    'secret': '비밀번호 혹은 인증번호'
+                    'secret': '비밀번호 혹은 인증번호',
+                    'platform': 'OS 및 버전',
+                    'device': '휴대폰 기종',
+                    'version': '앱버전',
+                    'token': '푸시를 위한 디바이스토큰'
                 },
                 title: '로그인',
                 state: 'staging'
@@ -75,6 +79,7 @@ var api = {
                 ));
                 apiCreator.add(post.validate());
                 apiCreator.add(post.getUser());
+                apiCreator.add(post.removeAllSessions());
                 apiCreator.add(post.logInUser());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
@@ -108,8 +113,6 @@ var api = {
                 ));
                 apiCreator.add(del.logout());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

@@ -28,7 +28,7 @@ var api = {
                 explains : {
                     'id': '데이터를 얻을 리소스의 id'
                 },
-                role: STD.user.roleSupervisor,
+                role: STD.role.account,
                 param: 'id',
                 title: '단일 얻기',
                 state: 'design'
@@ -74,7 +74,7 @@ var api = {
                         role: 'admin'
                     }]
                 },
-                role: STD.user.roleSupervisor,
+                role: STD.role.account,
                 title: '',
                 state: 'design'
             };
@@ -113,14 +113,8 @@ var api = {
                 defaults: {
                     body: '디폴트내용'
                 },
-                response: {
-                    users: [{
-                        name: 'hwarang',
-                        birth: 1987,
-                        role: 'admin'
-                    }]
-                },
-                title: '신고하기',
+                response: {},
+                title: '',
                 state: 'design'
             };
 
@@ -157,7 +151,7 @@ var api = {
                     'id': '데이터 리소스의 id'
                 },
                 param: 'id',
-                role: STD.user.roleSupervisor,
+                role: STD.role.account,
                 title: '수정',
                 state: 'design'
             };
@@ -171,6 +165,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
                 apiCreator.add(put.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(put.updateReport());
@@ -193,7 +188,7 @@ var api = {
                 explains : {
                     'id': '데이터 리소스의 id'
                 },
-                role: STD.user.roleSupervisor,
+                role: STD.role.account,
                 title: '제거',
                 param: 'id',
                 state: 'design'
@@ -208,6 +203,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
                 apiCreator.add(del.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(del.destroy());

@@ -9,7 +9,7 @@ var del = require('./' + resource + '.del.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
@@ -27,6 +27,7 @@ var api = {
                     'id': "발급받은 소셜아아디",
                     'accessToken': "액세스토큰"
                 },
+                response: resforms.user,
                 title: '소셜 연동',
                 state: 'staging'
             };
@@ -58,9 +59,12 @@ var api = {
                 essential: ['provider'],
                 resettable: [],
                 explains: {
+                    'id': 'user id',
                     'provider': STD.user.enumProviders.join(", ")
                 },
-                title: '소셜 연동 해제',
+                param: 'id',
+                response: resforms.user,
+                title: '소셜 연동 해제 (아이디, 폰번호 연동없이 소셜로 가입만 되어 있는경우 제거 불가.',
                 state: 'staging'
             };
 
@@ -73,6 +77,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
                 apiCreator.add(del.validate());
                 apiCreator.add(del.removeProvider());
                 apiCreator.add(del.supplement());
@@ -88,7 +93,7 @@ var api = {
 };
 
 router.post('/' + resource, api.post());
-router.delete('/' + resource, api.delete());
+router.delete('/' + resource + '/:id', api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

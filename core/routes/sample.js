@@ -13,7 +13,7 @@ module.exports = function (app) {
 
             req.preparedParam.params.oauth = {};
 
-            if (META.std.flag.isMoreInfo == true) {
+            if (META.std.flag.isMoreSocialInfo == true) {
                 req.preparedParam.params.oauth.facebook = req.flash('facebook')[0];
                 req.preparedParam.params.oauth.twitter = req.flash('twitter')[0];
                 req.preparedParam.params.oauth.google = req.flash('google')[0];

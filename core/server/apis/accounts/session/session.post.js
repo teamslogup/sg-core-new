@@ -57,7 +57,7 @@ post.getUser = function () {
         // 전화번호로 로그인을 시도하는 경우. uid는 핸드폰번호가 되고, secret은 sender-phone으로 발급받은 인증번호가 된다.
         else {
             // 1. 토큰이 유효한지 체크
-            req.models.Auth.checkValidPhoneToken({key: req.body.uid}, req.body.secret, function (status, auth) {
+            req.models.Auth.checkValidToken(USER.authPhoneLogin, {key: req.body.uid}, req.body.secret, function (status, auth) {
 
                 if (status == 403) {
                     res.hjson(req, next, 403, {code: '403_4'});
@@ -91,19 +91,52 @@ post.getUser = function () {
     };
 };
 
+post.removeAllSessions = function () {
+    return function (req, res, next) {
+        if (req.meta.std.flag.isDuplicatedLogin) {
+            next();
+        } else {
+            req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.loadedUser.id, function (status, data) {
+                if (status == 204 || status == 404) {
+                    next();
+                }
+                else {
+                    res.hjson(req, next, status, data);
+                }
+            });
+        }
+    };
+};
+
 post.logInUser = function () {
     return function (req, res, next) {
-        req.login(req.loadedUser, function (err) {
-            if (err) {
-                var bSearched = false;
-                for (var k in err) {
-                    bSearched = true;
-                }
-                if (bSearched) {
-                    return res.hjson(req, next, 400);
-                }
+
+        var data = {
+            'platform': req.body.platform,
+            'device': req.body.device,
+            'version': req.body.version,
+            'token': req.body.token,
+            'ip': req.refinedIP,
+            'session': req.sessionID
+        };
+        req.models.LoginHistory.createLoginHistory(req.loadedUser.id, data, function (status, data) {
+            if (status == 200) {
+                req.login(req.loadedUser, function (err) {
+                    if (err) {
+                        var bSearched = false;
+                        for (var k in err) {
+                            bSearched = true;
+                        }
+                        if (bSearched) {
+                            return res.hjson(req, next, 400);
+                        }
+                    }
+                    next();
+                });
             }
-            next();
+            else {
+                res.hjson(req, next, status, data);
+            }
         });
     };
 };

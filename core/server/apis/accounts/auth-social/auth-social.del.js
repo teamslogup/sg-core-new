@@ -5,7 +5,16 @@ var logger = new Logger(__filename);
 del.validate = function () {
     return function (req, res, next) {
         const USER = req.meta.std.user;
+        req.check('id', '400_12').isInt();
         req.check('provider', '400_3').isEnum(USER.enumProviders);
+
+        // 아이디 비번 로그인, 폰번호 불가능할 경우
+        if (!req.loadedUser.aid && !req.loadedUser.phoneNum) {
+            return res.hjson(req, next, 400, {
+                code: '400_50'
+            });
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -14,7 +23,7 @@ del.validate = function () {
 del.removeProvider = function () {
     return function (req, res, next) {
         var isSearched = false;
-        var providers = req.user.providers;
+        var providers = req.loadedUser.providers;
         var body = req.body;
         for (var i = 0; i < providers.length; ++i) {
             if (providers[i].type == body.provider) {
@@ -42,7 +51,14 @@ del.removeProvider = function () {
 
 del.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 204);
+        var providers = req.loadedUser.providers;
+        for (var i = 0; i < providers.length; ++i) {
+            if (providers[i].type == req.body.provider) {
+                break;
+            }
+        }
+        req.loadedUser.providers.splice(i, 1);
+        res.hjson(req, next, 200, req.loadedUser);
     };
 };
 

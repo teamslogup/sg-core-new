@@ -3,7 +3,7 @@ var filePath = path.resolve(__filename, '../').split('/');
 var resource = filePath[filePath.length - 1];
 
 var top = require('./' + resource + '.top.js');
-var post = require('./' + resource + '.post.js');
+var del = require('./' + resource + '.del.js');
 
 var express = require('express');
 var router = new express.Router();
@@ -16,42 +16,31 @@ const STD = META.std;
 var passport = require('passport');
 
 var api = {
-    post: function (isOnlyParams) {
+    delete: function (isOnlyParams) {
         return function (req, res, next) {
-
             var params = {
-                acceptable: ['provider', 'pid', 'accessToken', 'platform', 'device', 'version', 'token'],
-                essential: ['provider', 'pid', 'accessToken'],
+                acceptable: ['id'],
+                essential: ['id'],
                 resettable: [],
                 explains: {
-                    'provider': '로그인 방식 ' + STD.user.enumProviders.join(", "),
-                    'pid': 'provider id',
-                    'accessToken': 'accessToken',
-                    'platform': 'OS 및 버전',
-                    'device': '휴대폰 기종',
-                    'version': '앱버전',
-                    'token': '푸시를 위한 디바이스토큰'
+                    'id': '히스토리 아이디'
                 },
-                title: '로그인',
+                title: '로그아웃 (자신의 계정 로그아웃 시키기 기능)',
                 state: 'staging'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(post.validate());
-                apiCreator.add(post.getUser());
-                apiCreator.add(post.removeAllSessions());
-                apiCreator.add(post.logInUser());
-                apiCreator.add(post.supplement());
+                apiCreator.add(del.validate());
+                apiCreator.add(del.logout());
                 apiCreator.run();
-
-
             }
             else {
                 return params;
@@ -60,7 +49,7 @@ var api = {
     }
 };
 
-router.post('/' + resource, api.post());
+router.delete('/' + resource, api.delete());
 
 module.exports.router = router;
 module.exports.api = api;
