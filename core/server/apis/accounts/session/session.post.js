@@ -91,19 +91,52 @@ post.getUser = function () {
     };
 };
 
+post.removeAllSessions = function () {
+    return function (req, res, next) {
+        if (req.meta.std.flag.isDuplicatedLogin) {
+            next();
+        } else {
+            req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.loadedUser.id, function (status, data) {
+                if (status == 204 || status == 404) {
+                    next();
+                }
+                else {
+                    res.hjson(req, next, status, data);
+                }
+            });
+        }
+    };
+};
+
 post.logInUser = function () {
     return function (req, res, next) {
-        req.login(req.loadedUser, function (err) {
-            if (err) {
-                var bSearched = false;
-                for (var k in err) {
-                    bSearched = true;
-                }
-                if (bSearched) {
-                    return res.hjson(req, next, 400);
-                }
+
+        var data = {
+            'platform': req.body.platform,
+            'device': req.body.device,
+            'version': req.body.version,
+            'token': req.body.token,
+            'ip': req.refinedIP,
+            'session': req.sessionID
+        };
+        req.models.LoginHistory.createLoginHistory(req.loadedUser.id, data, function (status, data) {
+            if (status == 200) {
+                req.login(req.loadedUser, function (err) {
+                    if (err) {
+                        var bSearched = false;
+                        for (var k in err) {
+                            bSearched = true;
+                        }
+                        if (bSearched) {
+                            return res.hjson(req, next, 400);
+                        }
+                    }
+                    next();
+                });
             }
-            next();
+            else {
+                res.hjson(req, next, status, data);
+            }
         });
     };
 };

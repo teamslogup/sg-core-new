@@ -34,36 +34,44 @@ get.consent = function () {
         req.user.verifyEmail(req.query.token, req.query.type, function (status, body) {
             if (status == 200) return next();
 
+            var verifyStatus = status;
+            var verifyBody = body;
+
             res.status(status);
-            req.logout();
+            req.coreUtils.session.logout(req, function(status, data) {
+                if (status == 204) {
+                    var text = '';
+                    var err = {};
 
-            var text = '';
-            var err = {};
+                    if (status == 404) {
+                        // 해당 토큰이 존재하지 않음.
+                        err = {code: '404_5'};
+                    } else if (status == 400) {
+                        // 이미 인증되었음.
+                        err = {code: '400_33'};
+                    } else if (status == 403) {
+                        // 만기되었거나 잘못된 인증정보.
+                        err = {code: '403_4'};
+                    } else {
+                        err = body;
+                    }
 
-            if (status == 404) {
-                // 해당 토큰이 존재하지 않음.
-                err = {code: '404_5'};
-            } else if (status == 400) {
-                // 이미 인증되었음.
-                err = {code: '400_33'};
-            } else if (status == 403) {
-                // 만기되었거나 잘못된 인증정보.
-                err = {code: '403_4'};
-            } else {
-                err = body;
-            }
+                    if (process.env.NODE_ENV == 'test') {
+                        return res.hjson(req, next, verifyStatus, verifyBody);
+                    }
 
-            if (process.env.NODE_ENV == 'test') {
-                return res.hjson(req, next, status, err);
-            }
+                    text = req.coreUtils.common.errorTranslator(err);
 
-            text = req.coreUtils.common.errorTranslator(err);
-
-            return res.render('verification-error', {
-                params: {
-                    language: req.language,
-                    meta: req.meta,
-                    text: text
+                    return res.render('verification-error', {
+                        params: {
+                            language: req.language,
+                            meta: req.meta,
+                            text: text
+                        }
+                    });
+                }
+                else {
+                    res.hjson(req, next, status, data);
                 }
             });
         });

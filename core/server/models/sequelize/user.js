@@ -16,6 +16,7 @@ var crypto = require('crypto');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var MICRO = require('microtime');
 
 const profileKey = "profile";
 
@@ -121,7 +122,6 @@ module.exports = {
     },
     options: {
         'timestamps': true,
-        'updatedAt': false,
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
         'hooks': {
@@ -673,8 +673,6 @@ module.exports = {
              */
             'createUserWithNormalId': function (data, callback) {
                 var createdUser = null;
-                var ip = data.ip;
-                delete  data.ip;
                 sequelize.transaction(function (t) {
                     var profile = sequelize.models.Profile.build({});
                     return profile.save({transaction: t}).then(function () {
@@ -684,18 +682,23 @@ module.exports = {
                         user.encryption();
                         return user.save({transaction: t}).then(function () {
                             createdUser = user;
-                            if (data.deviceToken && data.deviceType) {
-                                return sequelize.models.Device.upsert({
-                                    type: data.deviceType,
-                                    token: data.deviceToken,
-                                    userId: user.id
-                                }, {transaction: t}).then(function () {
 
-                                });
-                            }
+                            var history = data.history;
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
+                            }, {transaction: t}).then(function () {
+
+                            });
                         });
                     });
-
 
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (createdUser) {
@@ -717,14 +720,22 @@ module.exports = {
                     return profile.save({transaction: t}).then(function () {
                         data.profileId = profile.id;
 
+                        var history = data.history;
                         var user = sequelize.models.User.build(data);
                         user.encryption();
                         return user.save({transaction: t}).then(function () {
                             createdUser = user;
-                            return sequelize.models.Device.upsert({
-                                type: data.deviceType,
-                                token: data.deviceToken,
-                                userId: user.id
+
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
                             }, {transaction: t}).then(function () {
                                 if (!STD.flag.isAutoVerifiedEmail) {
                                     var authData = {
@@ -782,9 +793,6 @@ module.exports = {
                     delete data.secret;
                 }
 
-                var ip = data.ip;
-                delete  data.ip;
-
                 sequelize.transaction(function (t) {
 
                     var profile = sequelize.models.Profile.build({});
@@ -796,42 +804,51 @@ module.exports = {
                         user.encryption();
                         return user.save({transaction: t}).then(function () {
                             createdUser = user;
+                            var history = data.history;
 
-                            // 2. 번호 인증 스키마 얻기.
-                            return sequelize.models.Auth.findOne({
-                                where: {
-                                    type: STD.user.authPhoneSignup,
-                                    key: user.phoneNum
-                                },
-                                transaction: t
-                            }).then(function (auth) {
+                            var signUpType = STD.user.signUpTypePhone;
+                            if (data.aid && data.apass) {
+                                signUpType = STD.user.signUpTypePhoneId;
+                            }
 
-                                if (!auth) throw {status: 404};
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
+                            }, {transaction: t}).then(function () {
+                                // 2. 번호 인증 스키마 얻기.
+                                return sequelize.models.Auth.findOne({
+                                    where: {
+                                        type: STD.user.authPhoneSignup,
+                                        key: user.phoneNum
+                                    },
+                                    transaction: t
+                                }).then(function (auth) {
 
-                                // 3. 번호 체크
-                                if (auth.token != authNum) {
-                                    throw {status: 403}
-                                } else {
-                                    // 4. 날짜 체크
-                                    var now = new Date();
-                                    if (auth.expiredAt < now) {
+                                    if (!auth) throw {status: 404};
+
+                                    // 3. 번호 체크
+                                    if (auth.token != authNum) {
                                         throw {status: 403}
                                     } else {
-                                        // 5. 모두 성공하면 Auth를 지움.
-                                        return auth.destroy({transaction: t}).then(function () {
-                                            // 6. 모바일 앱으로 가입한 경우라면 토큰 값을 설정해준다.
-                                            if (data.deviceToken && data.deviceType) {
-                                                return sequelize.models.Device.upsert({
-                                                    type: data.deviceType,
-                                                    token: data.deviceToken,
-                                                    userId: user.id
-                                                }, {transaction: t}).then(function () {
+                                        // 4. 날짜 체크
+                                        var now = new Date();
+                                        if (auth.expiredAt < now) {
+                                            throw {status: 403}
+                                        } else {
+                                            // 5. 모두 성공하면 Auth를 지움.
+                                            return auth.destroy({transaction: t}).then(function () {
 
-                                                });
-                                            }
-                                        });
+                                            });
+                                        }
                                     }
-                                }
+                                });
                             });
                         });
                     });
@@ -871,12 +888,6 @@ module.exports = {
                         user.encryption();
                         return user.save({transaction: t}).then(function (user) {
 
-                            var loginHistory = sequelize.models.LoginHistory.build({
-                                type: STD.user.signUpTypeSocial,
-                                ip: ip,
-                                userId: user.id
-                            });
-
                             var provider = sequelize.models.Provider.build({
                                 type: type,
                                 uid: uid,
@@ -884,22 +895,25 @@ module.exports = {
                                 userId: user.id
                             });
                             provider.tokenEncryption();
-
                             // 2. 프로바이더생성
                             return provider.save({transaction: t}).then(function (provider) {
                                 user.setDataValue('provider', provider);
                                 createdUser = user;
+                                var history = data.history;
 
-                                // 3. 앱으로 가입한 경우 토큰 생성
-                                if (data.deviceToken && data.deviceType) {
-                                    return sequelize.models.Device.upsert({
-                                        type: data.deviceType,
-                                        token: data.deviceToken,
-                                        userId: user.id
-                                    }, {transaction: t}).then(function (device) {
+                                return sequelize.models.LoginHistory.upsert({
+                                    userId: user.id,
+                                    platform: history.platform,
+                                    device: history.device,
+                                    version: history.version,
+                                    token: history.token,
+                                    ip: history.ip,
+                                    session: history.session,
+                                    createdAt: MICRO.now(),
+                                    updatedAt: MICRO.now()
+                                }, {transaction: t}).then(function () {
 
-                                    });
-                                }
+                                });
                             });
                         });
                     });
@@ -911,13 +925,19 @@ module.exports = {
             },
             /**
              * 소셜인증 시 가입요청, 로그인 등을 한번에 수행하는 함수.
+             * @param req
+             * @param loadedUser - 이미 로그인할 유저를 로드해온 적이 있다면 로드된 유저 객체를 보냄
              * @param providerData
              * @param callback
              */
-            checkAccountForProvider: function (req, providerData, callback) {
+            checkAccountForProvider: function (req, loadedUser, providerData, callback) {
 
-                function login(req, data, callback) {
-                    req.login(data, function (err) {
+                // 회원가입일 경우에 true플래그가 되며 회원가입이 아닐경우에만 (false) history를 추가한다.
+                var isSignup = false;
+
+                function login(req, user, callback) {
+
+                    function loginCallback(err, callback) {
                         var bSearched = false;
                         if (err) {
                             for (var k in err) {
@@ -930,17 +950,40 @@ module.exports = {
                             callback(400, err);
                         }
                         else {
-                            callback(200, data);
-                            if (process.env.NODE_ENV == 'test') {
-
-                            } else {
-
-                            }
+                            callback(200, user);
                         }
-                    });
+                    }
+
+                    if (!isSignup) {
+                        var history = {
+                            'platform': req.body.platform,
+                            'device': req.body.device,
+                            'version': req.body.version,
+                            'token': req.body.token,
+                            'ip': req.refinedIP,
+                            'session': req.sessionID
+                        };
+                        req.models.LoginHistory.createLoginHistory(user.id, history, function(status, data) {
+                            if (status == 200) {
+                                req.login(user, function (err) {
+                                    loginCallback(err, callback);
+                                });
+                            }
+                            else {
+                                callback(status, data)
+                            }
+                        });
+                    } else {
+                        // 회원가입을 통해 왔다면 이미 가입시 히스토리를 생성했음.
+                        req.login(user, function (err) {
+                            loginCallback(err, callback);
+                        });
+                    }
+
                 }
 
                 function signup(req, data, callback) {
+                    isSignup = true;
                     sequelize.models.User.createUserWithType(data, function (status, data) {
                         if (status == 409) {
                             data.nick = data.nick + Math.floor(Math.random() * 100000) % 4;
@@ -954,31 +997,35 @@ module.exports = {
                     });
                 }
 
-
-                sequelize.models.Provider.findDataIncluding({
-                        'type': providerData.provider,
-                        'uid': providerData.uid
-                    }, [{
-                        model: sequelize.models.User,
-                        as: 'user'
-                    }],
-                    function (status, data) {
-                        if (status == 200) {
-                            // 가입되어있으면 바로 로그인
-                            login(req, data.user, callback);
-                        }
-                        else {
-                            // 가입되어 있지 않음
-                            if (STD.flag.isMoreInfo) {
-                                // 더 많은 정보가 필요함. 301을 리턴해서 리다이렉트가 필요하다고 알려줌.
-                                callback(301, providerData);
-                            } else {
-                                // 최소 정보로 가입함, 로그인 필요.
-                                signup(req, providerData, callback);
+                if (!loadedUser) {
+                    sequelize.models.Provider.findDataIncluding({
+                            'type': providerData.provider,
+                            'uid': providerData.uid
+                        }, [{
+                            model: sequelize.models.User,
+                            as: 'user'
+                        }],
+                        function (status, data) {
+                            if (status == 200) {
+                                login(req, data.user, callback);
+                            }
+                            else {
+                                // 가입되어 있지 않음
+                                if (STD.flag.isMoreSocialInfo) {
+                                    // 더 많은 정보가 필요함. 301을 리턴해서 리다이렉트가 필요하다고 알려줌.
+                                    // 페이스북등으로 가입하고 추가 데이터가 필요할때
+                                    // providerData를 리턴받고 해당 값과 함께 user-post를 요청해야함.
+                                    callback(301, providerData);
+                                } else {
+                                    // 최소 정보로 가입함, 로그인 필요.
+                                    signup(req, providerData, callback);
+                                }
                             }
                         }
-                    }
-                );
+                    );
+                } else {
+                    login(req, loadedUser, callback);
+                }
             },
             destroyUser: function (id, callback) {
                 var isSuccess = false;
@@ -1027,12 +1074,12 @@ module.exports = {
                         }).then(function (data) {
                             if (data && data[0]) {
 
-                                var deviceTasks = [];
-                                if (!loadedData.devices) {
-                                    loadedData.devices = [];
+                                var historyTasks = [];
+                                if (!loadedData.loginHistories) {
+                                    loadedData.loginHistories = [];
                                 }
-                                loadedData.devices.forEach(function (device) {
-                                    deviceTasks.push(device.destroy({transaction: t}));
+                                loadedData.loginHistories.forEach(function (history) {
+                                    historyTasks.push(history.destroy({transaction: t}));
                                 });
                                 var providerTasks = [];
                                 if (!loadedData.providers) {
@@ -1043,14 +1090,14 @@ module.exports = {
                                     providerTasks.push(provider.destroy({transaction: t}));
                                 });
 
-                                deviceTasks.push(sequelize.models.Profile.destroy({
+                                historyTasks.push(sequelize.models.Profile.destroy({
                                     where: {
                                         id: loadedData.profileId
                                     },
                                     transaction: t
                                 }));
 
-                                return Promise.all(deviceTasks).then(function (devices) {
+                                return Promise.all(historyTasks).then(function (devices) {
                                     return Promise.all(providerTasks).then(function (providers) {
                                         return loadedData.destroy({
                                             where: {id: id},

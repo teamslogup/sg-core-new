@@ -17,26 +17,27 @@ function extending() {
         if (str === '') return false;
         var versionArr = str.split(".");
         if (versionArr.length == 3) {
-            if (Number(versionArr[0]) && Number(versionArr[1]) && Number(versionArr[2])) {
+            if (Number(versionArr[0]) > -1&& Number(versionArr[1])  > -1 && Number(versionArr[2]) > -1) {
                 return true;
             }
         }
         return false;
     });
 
-    expressValidator.validator.extend('haveKeywords', function (str, keywords, isStrong) {
+    expressValidator.validator.extend('isKeywords', function (str, keywords, isUpperCase, isOR) {
         if (str === '') return false;
         var count = 0;
         if (keywords instanceof Array && keywords.length > 0) {
-            if (isStrong) {
+            if (isUpperCase) {
                 str = str.toUpperCase();
             }
             for (var i = 0; i < keywords.length; ++i) {
                 var keyword = keywords[i];
-                if (isStrong) {
+                if (isUpperCase) {
                     keyword = keyword.toUpperCase();
                 }
                 if (str.indexOf(keyword) != -1) {
+                    if (isOR) return true;
                     count++;
                 }
             }

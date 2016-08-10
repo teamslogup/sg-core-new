@@ -79,6 +79,7 @@ var api = {
                 ));
                 apiCreator.add(post.validate());
                 apiCreator.add(post.getUser());
+                apiCreator.add(post.removeAllSessions());
                 apiCreator.add(post.logInUser());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
@@ -112,8 +113,6 @@ var api = {
                 ));
                 apiCreator.add(del.logout());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

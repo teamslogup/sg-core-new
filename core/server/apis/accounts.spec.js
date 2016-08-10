@@ -48,6 +48,7 @@ describe('Email Accounts Api Tests', function () {
     var emailUser2 = new Account(emailUserParam2);
     var normalIdUser = new Account(normalUserParam);
     var phoneUser = new Account(phoneUserParam);
+    var phoneUserClone = new Account(phoneUserParam);
     var phoneIdUser = new Account(phoneIdUserParam);
     var socialUser = new Account(socialUserParam);
 
@@ -412,5 +413,41 @@ describe('Email Accounts Api Tests', function () {
 
     it('should remove account', function (done) {
         phoneUser.removeAccount(done);
+    });
+
+    // 외부 로그아웃 테스트
+    it('should send phone auth number', function (done) {
+        phoneUser.sendPhoneAuth(done);
+    });
+
+    it('should register phone user', function (done) {
+        phoneUser.signup(done);
+    });
+
+    it('should add email id and pass', function (done) {
+        phoneUser.addNormalIdAndPass('abc12', '123qwe', done);
+    });
+
+    it('should login email user as other', function (done) {
+        phoneUserClone.setFixture('uid','abc12');
+        phoneUserClone.setFixture('secret','123qwe');
+        phoneUserClone.loginNormalId(done);
+    });
+
+    it('should logout for remote', function (done) {
+        var phoneUserId = phoneUser.getData('loginHistories')[0].id;
+        if (STD.flag.isDuplicatedLogin) {
+            phoneUserClone.remoteLogout(phoneUserId, done);
+        } else {
+            phoneUserClone.remoteLogoutFail(phoneUserId, done);
+        }
+    });
+
+    it('should fail to remove account', function (done) {
+        phoneUser.removeAccountFail(done);
+    });
+
+    it('should remove account for clone', function (done) {
+        phoneUserClone.removeAccount(done);
     });
 });

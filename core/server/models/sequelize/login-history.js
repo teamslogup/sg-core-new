@@ -12,6 +12,7 @@
 
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
+var MICRO = require('microtime');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
@@ -28,11 +29,6 @@ module.exports = {
             'onDelete': 'cascade',
             'allowNull': false
         },
-        'type': {
-            'type': Sequelize.ENUM,
-            'values': STD.user.enumSignUpTypes,
-            'allowNull': false
-        },
         'platform': {
             'type': Sequelize.STRING,
             'allowNull': true
@@ -47,12 +43,17 @@ module.exports = {
         },
         'token': {
             'type': Sequelize.STRING,
-            'allowNull': false,
-            'unique': true
+            'allowNull': true,
+            'indicesType': 'SPATIAL'
         },
         'ip': {
             'type': Sequelize.STRING,
             'allowNull': false
+        },
+        'session': {
+            'type': Sequelize.STRING,
+            'allowNull': false,
+            'unique': true
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -64,9 +65,11 @@ module.exports = {
         }
     },
     'options': {
+        indexes: [{
+            'unique': true,
+            fields: ['userId', 'device', 'token']
+        }],
         'timestamps': true,
-        'createdAt': false,
-        'updatedAt': false,
         'charset': 'utf8',
         'paranoid': false,
         'hooks': {
@@ -77,8 +80,65 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             getLoginHistoryFields: function () {
-                var fields = ['platform', 'device', 'version', 'type', 'token'];
+                var fields = ['id', 'platform', 'device', 'version', 'token'];
                 return fields;
+            },
+            createLoginHistory: function(id, data, callback) {
+                if (!data.ip || !data.session) return callback(500);
+                var update = {
+                    platform: data.platform || "",
+                    version: data.version || "",
+                    ip: data.ip,
+                    createdAt: MICRO.now(),
+                    updatedAt: MICRO.now(),
+                    userId: id,
+                    device: data.device || '',
+                    token: data.token || '',
+                    session: data.session
+                };
+
+                var query = {
+                    where: {
+                        userId: id,
+                        device: data.device || '',
+                        token: data.token || ''
+                    }
+                };
+
+                this.upsertData(update, query, callback);
+            },
+            removeLoginHistory: function(sessionId, callback) {
+                this.destroyData({
+                    session: sessionId
+                }, false, callback)
+            },
+            removeAllLoginHistory: function(userId, callback) {
+                var self = this;
+                var loadedData = null;
+
+                sequelize.transaction(function (t) {
+
+                    var query = {
+                        where: {
+                            userId: userId
+                        },
+                        transaction: t
+                    };
+
+                    return self.findAll(query).then(function (histories) {
+                        return self.destroy(query).then(function () {
+                            loadedData = histories;
+                        });
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (loadedData) {
+                        if (loadedData.length == 0) {
+                            return callback(404);
+                        }
+                        return callback(200, loadedData);
+                    }
+                });
             }
         })
     }

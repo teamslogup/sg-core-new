@@ -43,7 +43,7 @@ module.exports = function () {
                 language: req.language
             };
 
-            User.checkAccountForProvider(req, providerUserProfile, function (status, data) {
+            User.checkAccountForProvider(req, null, providerUserProfile, function (status, data) {
                 if (status == 200) {
                     done(null, data);
                 } else if (status == 301) {

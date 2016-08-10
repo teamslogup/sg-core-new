@@ -27,39 +27,58 @@ post.getUser = function () {
     };
 };
 
+post.removeAllSessions = function () {
+    return function (req, res, next) {
+        var USER = req.meta.std.user;
+
+        req.loadedUser = null;
+        req.providerUserProfile = {
+            type: USER.signUpTypeSocial,
+            uid: req.body.pid,
+            provider: req.body.provider,
+            secret: req.body.accessToken
+        };
+
+        req.models.Provider.findDataIncluding({
+                'type': req.providerUserProfile.provider,
+                'uid': req.providerUserProfile.uid
+            }, [{
+                model: req.models.User,
+                as: 'user'
+            }],
+            function (status, data) {
+                if (status == 200) {
+                    req.loadedUser = data.user;
+                    if (req.meta.std.flag.isDuplicatedLogin) {
+                        next();
+                    } else {
+                        req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, data.user.id, function (status, data) {
+                            if (status == 204 || status == 404) {
+                                next();
+                            }
+                            else {
+                                res.hjson(req, next, status, data);
+                            }
+                        });
+                    }
+                }
+                else {
+                    next();
+                }
+            }
+        );
+    };
+};
+
 post.logInUser = function () {
     return function (req, res, next) {
-
-        var USER = req.meta.std.user;
-        var provider = req.body.provider;
-
-        if (provider == USER.providerFacebook) {
-            var providerUserProfile = {
-                type: USER.signUpTypeSocial,
-                uid: req.body.pid,
-                provider: USER.providerFacebook,
-                secret: req.body.accessToken
-            };
-            req.models.User.checkAccountForProvider(req, providerUserProfile, function (status, data) {
-                if (status == 200) {
-                    next();
-                } else {
-                    res.hjson(req, next, 403);
-                }
-            });
-        }
-        else if (provider == USER.providerTwitter) {
-            next();
-        }
-        else if (provider == USER.providerGoogle) {
-            next();
-        }
-        else if (provider == USER.providerKakao) {
-            next();
-        }
-        else {
-            res.hjson(req, next, 403);
-        }
+        req.models.User.checkAccountForProvider(req, req.loadedUser, req.providerUserProfile, function (status, data) {
+            if (status == 200) {
+                next();
+            } else {
+                res.hjson(req, next, 403);
+            }
+        });
     };
 };
 

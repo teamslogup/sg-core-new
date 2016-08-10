@@ -80,11 +80,11 @@ post.validate = function () {
         }
 
         if (req.body.platform !== undefined) {
-            req.check('platform', '400_8').haveKeywords(["iOS", "android"]);
+            req.check('platform', '400_8').isKeywords(["iOS", "android"], true, true);
         }
 
         if (req.body.device !== undefined) {
-            req.check('device', '400_8').haveKeywords(["iOS", "android"]);
+            req.check('device', '400_8').len(1, 100);
         }
 
         if (req.body.version !== undefined) {
@@ -146,7 +146,8 @@ post.createUser = function () {
             device: req.body.device || null,
             version: req.body.version || null,
             token: req.body.token || null,
-            ip: req.refinedIP
+            ip: req.refinedIP,
+            session: req.sessionID
         };
 
         req.models.User.createUserWithType(data, function (status, user) {

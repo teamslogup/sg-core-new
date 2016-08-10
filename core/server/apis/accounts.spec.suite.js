@@ -21,11 +21,12 @@ var url = {
     authPhone: "/api/accounts/auth-phone",
     authIdPass: "/api/accounts/auth-id-pass",
     authSocial: "/api/accounts/auth-social",
-    pass: "/api/accounts/pass"
+    pass: "/api/accounts/pass",
+    sessionRemote: "/api/accounts/session-remote"
 };
 
 function Account(fixture) {
-    fixture.deviceToken = (Math.random() * 100000000) % 100000000 + 123412;
+    fixture.token = (Math.random() * 100000000) % 100000000 + 123412;
     Account.super_.call(this, fixture);
     this.authToken = '';
 }
@@ -98,7 +99,6 @@ Account.prototype.logout = function (callback) {
         .set("Cookie", self.cookie)
         .end(function (err, res) {
             res.status.should.exactly(204);
-            self.cookie = res.header['set-cookie'][0];
             callback();
         });
 };
@@ -132,7 +132,6 @@ Account.prototype.loginEmail = function (callback) {
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
-            self.cookie = res.header['set-cookie'][0];
             self.data = res.body;
             tester.do(resform.user, self.data);
             callback();
@@ -158,6 +157,19 @@ Account.prototype.verifyEmailFail = function (type, callback) {
         .set("Cookie", self.cookie)
         .end(function (err, res) {
             res.status.should.within(400, 404);
+            callback();
+        });
+};
+
+Account.prototype.remoteLogout = function (id, callback) {
+    var self = this;
+    request(app).del(url.sessionRemote)
+        .set("Cookie", self.cookie)
+        .send({
+            id: id
+        })
+        .end(function (err, res) {
+            res.status.should.be.exactly(204);
             callback();
         });
 };
@@ -533,6 +545,29 @@ Account.prototype.removePhoneFail = function (callback) {
     var self = this;
     request(app).del(url.authPhone + "/" + self.data.id)
         .set("Cookie", self.cookie)
+        .end(function (err, res) {
+            res.status.should.within(400, 499);
+            callback();
+        });
+};
+
+Account.prototype.removeAccountFail = function (callback) {
+    var self = this;
+    request(app).del(url.users + "/" + self.data.id)
+        .set("Cookie", self.cookie)
+        .end(function (err, res) {
+            res.status.should.within(400, 499);
+            callback();
+        });
+};
+
+Account.prototype.remoteLogoutFail = function (id, callback) {
+    var self = this;
+    request(app).del(url.sessionRemote)
+        .set("Cookie", self.cookie)
+        .send({
+            id: id
+        })
         .end(function (err, res) {
             res.status.should.within(400, 499);
             callback();

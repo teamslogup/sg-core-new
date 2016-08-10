@@ -12,7 +12,6 @@ module.exports = {
     "gender": tester.type.ENUM + STD.user.enumGenders,
     "birth": tester.type.DATE_ALLOW_NULL,
     "isVerifiedEmail": tester.type.BOOLEAN,
-    "ip": tester.type.STRING,
     "country": tester.type.STRING,
     "language": tester.type.STRING,
     "isReviewed": tester.type.BOOLEAN,
@@ -29,8 +28,11 @@ module.exports = {
         "type": tester.type.ENUM + STD.user.enumProviders,
         "uid": tester.type.NUMBER
     }],
-    "devices": [{
+    "loginHistories": [{
         "id": tester.type.NUMBER,
-        "type": tester.type.ENUM + STD.user.enumDeviceTypes
+        "platform": tester.type.STRING,
+        "device": tester.type.STRING,
+        "version": tester.type.STRING,
+        "token": tester.type.STRING
     }]
 };

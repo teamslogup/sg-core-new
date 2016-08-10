@@ -284,9 +284,9 @@ var api = {
                 ));
                 apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.session.hasAuthorization());
-                apiCreator.add(del.destroyUser());
                 apiCreator.add(del.validate());
-                apiCreator.add(del.supplement());
+                apiCreator.add(del.removeAllSessions());
+                apiCreator.add(del.destroyUser());
                 apiCreator.run();
             }
             else {

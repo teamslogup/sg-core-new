@@ -99,12 +99,13 @@ var standards = {
         "deletedUserStoringDay": 10
     },
     "flag": {
-        "isMoreInfo": true,
+        "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.
         "isAutoVerifiedEmail": false,
         "isJoinFriendNotifications": true,
         "isUseS3Bucket": true,
         "isUseRedis": false,
-        "isUseHttps": false
+        "isUseHttps": false,
+        "isDuplicatedLogin": false
     },
     "category": {
         "minNameLength": 1,

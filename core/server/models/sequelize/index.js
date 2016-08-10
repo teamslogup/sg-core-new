@@ -1,7 +1,6 @@
 
 var User = require('./user');
 var Provider = require('./provider');
-var Device = require('./device');
 var Auth = require('./auth');
 var Report = require('./report');
 var Notice = require('./notice');
@@ -19,7 +18,6 @@ var LoginHistory = require('./login-history');
 var models = {
     User: User,
     Provider: Provider,
-    Device: Device,
     Auth: Auth,
     Report: Report,
     Notice: Notice,
