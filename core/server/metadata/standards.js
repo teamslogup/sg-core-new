@@ -106,6 +106,7 @@ var standards = {
         "isUseRedis": false,
         "isUseHttps": false,
         "isDuplicatedLogin": false
+        "isUseCluster": false
     },
     "category": {
         "minNameLength": 1,
