@@ -105,7 +105,7 @@ var standards = {
         "isUseS3Bucket": true,
         "isUseRedis": false,
         "isUseHttps": false,
-        "isDuplicatedLogin": false
+        "isDuplicatedLogin": false,
         "isUseCluster": false
     },
     "category": {
