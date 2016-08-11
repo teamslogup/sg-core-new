@@ -25,7 +25,11 @@ var express = require('express'),
     sgcSequelizeErrorHandler = require('sg-sequelize-error-handler'),
     sgCommonUtils = require('sg-common-utils'),
     middles = require('../middles'),
-    ejsEngine = require('ejs-locals');
+    ejsEngine = require('ejs-locals'),
+    helmet = require('helmet'),
+    expressSanitizer = require('express-sanitizer'),
+    expressDefend = require('express-defend'),
+    blacklist = require('express-blacklist');
 
 var multiViews = require('multi-views');
 var bridgeUtils = require('../../../bridge/utils');
@@ -93,7 +97,6 @@ module.exports = function (sequelize) {
     app.use(bodyParser.urlencoded({
         extended: true
     }));
-
     app.use(methodOverride(function (req, res) {
         if (req.body && typeof req.body === 'object' && '_method' in req.body) {
             var method = req.body._method;
@@ -105,6 +108,7 @@ module.exports = function (sequelize) {
     app.use(cookieParser(CONFIG.app.secret));
     var sessionSettings = {
         secret: CONFIG.app.secret,
+        name : 'slogupSessionId',
         saveUninitialized: true,
         resave: true,
         cookie: { maxAge : 3600000 }
@@ -159,6 +163,22 @@ module.exports = function (sequelize) {
 
     app.use(passport.initialize());
     app.use(passport.session());
+
+
+    // security
+
+    app.use(blacklist.blockRequests('blacklist.txt'));
+    app.use(expressDefend.protect({
+        maxAttempts: 5,                   // (default: 5) number of attempts until "onMaxAttemptsReached" gets triggered
+        dropSuspiciousRequest: true,      // respond 403 Forbidden when max attempts count is reached
+        consoleLogging: true,             // (default: true) enable console logging
+        logFile: 'suspicious.log',        // if specified, express-defend will log it's output here
+        onMaxAttemptsReached: function(ipAddress, url){
+            console.log('IP address ' + ipAddress + ' is considered to be malicious, URL: ' + url);
+        }
+    }));
+    app.use(helmet());
+    app.disable('x-powered-by');
 
     return app;
 };
