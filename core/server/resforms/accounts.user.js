@@ -30,9 +30,9 @@ module.exports = {
     }],
     "loginHistories": [{
         "id": tester.type.NUMBER,
-        "platform": tester.type.STRING,
-        "device": tester.type.STRING,
-        "version": tester.type.STRING,
-        "token": tester.type.STRING
+        "platform": tester.type.STRING_ALLOW_NULL,
+        "device": tester.type.STRING_ALLOW_NULL,
+        "version": tester.type.STRING_ALLOW_NULL,
+        "token": tester.type.STRING_ALLOW_NULL
     }]
 };
