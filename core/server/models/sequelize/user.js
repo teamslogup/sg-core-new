@@ -123,6 +123,8 @@ module.exports = {
     options: {
         'timestamps': true,
         'charset': 'utf8',
+        'createdAt': false,
+        'updatedAt': false,
         'paranoid': true, // deletedAt 추가. delete안함.
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,

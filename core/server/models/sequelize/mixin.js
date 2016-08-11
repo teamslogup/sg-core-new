@@ -382,7 +382,7 @@ var mixin = {
                 });
             },
 
-            'updateDataWithQuery': function(selector, update, callback) {
+            'updateDataWithQuery': function (selector, update, callback) {
                 var isSuccess = false;
                 this.update(update, selector).then(function (data) {
                     if (data && data[0]) {
@@ -491,7 +491,7 @@ var mixin = {
             'milliCreatedAt': function (instance, options, fn) {
                 instance.set("createdAt", sequelize.fn("NOW", 3));
                 instance.set("updatedAt", sequelize.fn("NOW", 3));
-                return fn (null, instance);
+                return fn(null, instance);
             },
             /**
              * 데이터 수정시 updatedAt 변경 (milliseconds)
@@ -500,13 +500,13 @@ var mixin = {
                 if (!instance._changed.updatedAt) {
                     instance.updateAttributes({updatedAt: sequelize.fn("NOW", 3)});
                 }
-                return fn (null, instance);
+                return fn(null, instance);
             },
             'milliDeletedAt': function (instance, options, fn) {
                 if (!instance._changed.deletedAt) {
                     instance.updateAttributes({deletedAt: sequelize.fn("NOW", 3)});
                 }
-                return fn (null, instance);
+                return fn(null, instance);
             },
             /**
              * 데이터 만들시 createdAtMicro와 updatedAtMicro 추가(microseconds)
