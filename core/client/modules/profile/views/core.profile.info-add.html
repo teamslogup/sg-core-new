@@ -1,0 +1,236 @@
+core.profile.info.html<div class="container" data-ng-controller="ProfileCtrl">
+    <div class="row">
+        <div class="col-md-12 sg-top-margin">
+            <form class="form-horizontal" ng-submit="vm.request()">
+
+                <fieldset>
+                    <legend>기본정보</legend>
+                    <div class="form-group">
+                        <label for="inputTitle" class="col-lg-2 control-label">활동제목</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.title" class="form-control" id="inputTitle"
+                                   placeholder="활동제목" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputImpact" class="col-lg-2 control-label">공존임팩트</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.impact" class="form-control" id="inputImpact"
+                                   placeholder="해당 활동이 어떤영향을 미치는지" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="selectRepeat" class="col-lg-2 control-label">참여횟수</label>
+
+                        <div class="col-lg-10">
+                            <select ng-model="vm.form.repeat" class="form-control" id="selectRepeat" required>
+                                <option data-ng-repeat="item in vm.enumRepeatTexts">{{ item }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="selectInvolved" class="col-lg-2 control-label">관여정도</label>
+
+                        <div class="col-lg-10">
+                            <select ng-model="vm.form.involved" class="form-control" id="selectInvolved" required>
+                                <option data-ng-repeat="item in vm.enumInvolvedTexts">{{ item }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>활동 상세 정보</legend>
+
+                    <div class="form-group">
+                        <label for="inputStartedAtDate" class="col-lg-2 control-label">시작날짜</label>
+
+                        <div class="col-lg-4">
+                            <div class="datepicker" date-format="yyyy-MM-dd">
+                                <input type="text" id="inputStartedAtDate" ng-model="vm.form.startedAtDate"
+                                       class="form-control" placeholder="날짜선택" required/>
+                            </div>
+                            <!--<span class="help-block">활동의 소개를 적어주세요</span>-->
+                        </div>
+                        <label for="inputStartedAtTime" class="col-lg-2 control-label">시작시간</label>
+
+                        <div class="col-lg-4">
+                            <select class="form-control" ng-model="vm.form.startedAtTime" id="inputStartedAtTime"
+                                    required>
+                                <option data-ng-repeat="item in vm.enumTimes">{{ item }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputFinishedAtDate" class="col-lg-2 control-label">종료날짜</label>
+
+                        <div class="col-lg-4">
+                            <div class="datepicker" date-format="yyyy-MM-dd">
+                                <input type="text" id="inputFinishedAtDate" ng-model="vm.form.finishedAtDate"
+                                       class="form-control" placeholder="날짜선택" required/>
+                            </div>
+                            <!--<span class="help-block">활동의 소개를 적어주세요</span>-->
+                        </div>
+                        <label for="inputFinishedAtTime" class="col-lg-2 control-label">종료시간</label>
+
+                        <div class="col-lg-4">
+                            <select class="form-control" ng-model="vm.form.finishedAtTime" id="inputFinishedAtTime"
+                                    required>
+                                <option data-ng-repeat="item in vm.enumTimes">{{ item }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="selectMemeberCount" class="col-lg-2 control-label">모집인원</label>
+                        <div class="col-lg-10">
+                            <select ng-model="vm.form.memberCount" class="form-control" id="selectMemeberCount" required>
+                                <option data-ng-repeat="item in vm.enumMemberCount">{{ item }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputLocation" class="col-lg-2 control-label">활동장소</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.location" class="form-control" id="inputLocation"
+                                   placeholder="활동장소" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="textareaExplain" class="col-lg-2 control-label">활동설명(일정)</label>
+
+                        <div class="col-lg-10">
+                            <textarea class="form-control" ng-model="vm.form.explain" id="textareaExplain"
+                                      placeholder="활동설명(일정)" required></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputTarget" class="col-lg-2 control-label">활동대상</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.target" class="form-control" id="inputTarget"
+                                   placeholder="활동대상" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEtc" class="col-lg-2 control-label">기타사항</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.etc" class="form-control" id="inputEtc"
+                                   placeholder="기타사항" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>참가당일 숙지사항</legend>
+                    <div class="form-group">
+                        <label for="inputNeed" class="col-lg-2 control-label">준비물</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.need" class="form-control" id="inputNeed"
+                                   placeholder="준비물" required>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="inputMeetingDate" class="col-lg-2 control-label">모임날짜</label>
+
+                        <div class="col-lg-4">
+                            <div class="datepicker" id="inputMeetingDate" date-format="yyyy-MM-dd">
+                                <input type="text" ng-model="vm.form.meetingDate" class="form-control"
+                                       placeholder="날짜선택" required/>
+                            </div>
+                            <!--<span class="help-block">활동의 소개를 적어주세요</span>-->
+                        </div>
+                        <label for="selectMeetingTime" class="col-lg-2 control-label">모임시간</label>
+
+                        <div class="col-lg-4">
+                            <select class="form-control" ng-model="vm.form.meetingTime" id="selectMeetingTime" required>
+                                <option data-ng-repeat="item in vm.enumTimes">{{ item }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputMeetingPlace" class="col-lg-2 control-label">모임장소</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.meetingPlace" class="form-control"
+                                   id="inputMeetingPlace" placeholder="모임장소" required>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>추가사항</legend>
+                    <div class="form-group">
+                        <label for="inputCost" class="col-lg-2 control-label">비용</label>
+
+                        <div class="col-lg-10">
+                            <input type="number" id="inputCost" ng-model="vm.form.cost" class="form-control"
+                                   placeholder="원 단위" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputTags" class="col-lg-2 control-label">태그</label>
+
+                        <div class="col-lg-10">
+                            <input type="text" ng-model="vm.form.tags" class="form-control" id="inputTags"
+                                   placeholder="태그입력, 컴마로 구분" required>
+                        </div>
+                    </div>
+
+                    <input type="hidden" ng-model="vm.form.contact" class="form-control" id="inputContact"
+                           placeholder="연락처" required>
+
+                    <!--imgs <input type="text" ng-model="vm.form.imgs" />-->
+                    <!--bgImh<input type="text" ng-model="vm.form.bgImg" />-->
+                    <div class="form-group">
+                        <label for="inputBgImg" class="col-lg-2 control-label">배경사진</label>
+
+                        <div class="col-lg-10">
+                            <file-dropzone id="inputBgImg" files="vm.form.bgImg"
+                                           max-file-count="1"
+                                           valid-mime-types="image/*"
+                                           after-load="vm.uploadBgImg"></file-dropzone>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputImgs" class="col-lg-2 control-label">활동사진</label>
+
+                        <div class="col-lg-10">
+                            <file-dropzone id="inputImgs" files="vm.form.imgs"
+                                           max-file-count="1"
+                                           valid-mime-types="image/*"
+                                           after-load="vm.uploadImgs"></file-dropzone>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <button type="reset" class="btn btn-lg btn-default">재설정</button>
+                        <button type="submit" class="btn btn-lg btn-primary">활동등록</button>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</div>

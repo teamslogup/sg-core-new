@@ -1,0 +1,71 @@
+<div class="container-fluid" ng-controller="ProfileCtrl">
+    <div class="row">
+        <div class="col-md-12 sg-box">
+            <form class="form-horizontal" name="formProfilePass" ng-submit="vm.submit()" ng-controller="ProfilePassCtrl">
+                <fieldset>
+                    <legend>{{ 'basicInfo' | translate }}</legend>
+                    <div class="form-group">
+                        <label for="inputOldPass" class="col-lg-2 control-label">{{ 'oldPass' | translate }}</label>
+
+                        <div class="col-lg-10">
+                            <input type="password" name="inputOldPass" class="form-control" id="inputOldPass"
+                                   data-ng-model="vm.form.oldPass"
+                                   minlength="{{ vm.USER.minSecretLength }}"
+                                   maxlength="{{ vm.USER.maxSecretLength }}"
+                                   placeholder="{{ 'oldPass' | translate }}" required>
+                            <span class="help-block"
+                                  data-ng-show="formProfilePass.inputOldPass.$error.minlength">
+                                {{ '400_2' | translate }}
+                                ({{ vm.USER.minSecretLength + "~" + vm.USER.maxSecretLength }} 자리)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputNewPass" class="col-lg-2 control-label">{{ 'newPass' | translate }}</label>
+
+                        <div class="col-lg-10">
+                            <input type="password"
+                                   minlength="{{ vm.USER.minSecretLength }}"
+                                   maxlength="{{ vm.USER.maxSecretLength }}"
+                                   name="inputNewPass"
+                                   data-ng-model="vm.form.newPass"
+                                   class="form-control"
+                                   id="inputNewPass"
+                                   placeholder="{{ 'newPass' | translate }}" required>
+                            <span class="help-block"
+                                  data-ng-show="formProfilePass.inputNewPass.$error.minlength">
+                                {{ '400_2' | translate }}
+                                ({{ vm.USER.minSecretLength + "~" + vm.USER.maxSecretLength }} 자리)
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputRePass" class="col-lg-2 control-label">{{ 'rePass' | translate }}</label>
+
+                        <div class="col-lg-10">
+                            <input type="password"
+                                   minlength="{{ vm.USER.minSecretLength }}"
+                                   maxlength="{{ vm.USER.maxSecretLength }}"
+                                   name="inputRePass"
+                                   class="form-control"
+                                   id="inputRePass"
+                                   data-ng-model="vm.form.rePass"
+                                   placeholder="{{ 'rePass' | translate }}" required>
+                            <span class="help-block"
+                                  data-ng-show="formProfilePass.inputRePass.$error.minlength">
+                                {{ '400_2' | translate }}
+                                ({{ vm.USER.minSecretLength + "~" + vm.USER.maxSecretLength }} 자리)
+                            </span>
+                        </div>
+                    </div>
+                </fieldset>
+                <div class="form-group">
+                    <div class="col-lg-10 col-lg-offset-2">
+                        <button type="reset" class="btn btn-lg btn-default">{{ 'reset' | translate }}</button>
+                        <button type="submit" class="btn btn-lg btn-primary">{{ 'modify' | translate }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

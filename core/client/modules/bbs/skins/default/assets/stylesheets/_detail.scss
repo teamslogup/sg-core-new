@@ -1,0 +1,89 @@
+.sg-board-detail-wrap {
+  position: relative;
+
+  > .sg-header {
+    color: #666;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background: #f4f4f4;
+  }
+
+  .sg-header-up {
+    color: #000;
+    line-height: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .sg-header-cat {
+    display: inline-block;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1px solid #ddd;
+  }
+
+  .sg-header-title {
+    font-weight: bold;
+  }
+
+  .sg-header-down {
+    background: #fafafa;
+  }
+
+  .sg-header-down div {
+    display: inline-block;
+    padding: 10px;
+  }
+
+  .sg-header-down-l {
+  }
+
+  .sg-header-down-r {
+    float: right;
+  }
+
+  .sg-header-author {
+    font-weight: bold;
+  }
+
+  .sg-header-down-r span {
+    display: inline-block;
+    padding: 0 10px;
+    border-right: 1px solid #ddd;
+  }
+
+  .sg-header-down-r span.sg-header-last {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  > .sg-body {
+    padding: 10px;
+    min-height: 200px;
+    border-bottom: 1px solid #ddd;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  > .sg-footer {
+    position: relative;
+    padding: 10px 0 10px 10px;
+    text-align: right;
+  }
+
+  @media screen and (max-width: 480px) {
+
+    .sg-header-down .sg-header-down-r {
+      width: 100%;
+      display: block;
+      text-align: right;
+      padding-top: 0;
+      font-size: 0.875em;
+      color: #999;
+      span{
+        padding: 0 5px;
+      }
+    }
+
+  }
+}

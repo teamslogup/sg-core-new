@@ -1,0 +1,90 @@
+.sg-board-detail-wrap {
+  position: relative;
+
+  > .sg-header {
+    color: #666;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    background: #f4f4f4;
+  }
+
+  .sg-header-up {
+    color: #000;
+    line-height: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .sg-header-cat {
+    display: inline-block;
+    padding-right: 10px;
+    margin-right: 10px;
+    border-right: 1px solid #ddd;
+  }
+
+  .sg-header-title {
+    font-weight: bold;
+  }
+
+  .sg-header-down {
+    height: 40px;
+    background: #fafafa;
+  }
+
+  .sg-header-down div {
+    display: inline-block;
+    height: 20px;
+    padding: 10px;
+  }
+
+  .sg-header-down-l {
+    float: left;
+  }
+
+  .sg-header-down-r {
+    float: right;
+  }
+
+  .sg-header-author {
+    font-weight: bold;
+  }
+
+  .sg-header-down-r span {
+    display: block;
+    float: left;
+    padding: 0 10px;
+    border-right: 1px solid #ddd;
+  }
+
+  .sg-header-down-r span.sg-header-last {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .sg-img-wrap {
+    width: 60%;
+    margin:0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+
+    img {
+      width: 100%;
+    }
+  }
+
+  > .sg-body {
+    padding: 10px;
+    min-height: 200px;
+    border-bottom: 1px solid #ddd;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  > .sg-footer {
+    position: relative;
+    padding: 10px 0 10px 10px;
+    text-align: right;
+  }
+}

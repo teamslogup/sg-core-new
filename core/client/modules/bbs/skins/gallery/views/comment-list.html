@@ -1,0 +1,48 @@
+<div class="sg-board-comment-wrap" data-ng-controller="BbsDetailCommentCtrl">
+
+    <div data-ng-if="vm.isLoggedIn()"
+         data-ng-include="'modules/bbs/skins/' + vm.data.board.skin + '/views/comment-form.html'"></div>
+
+    <div class="sg-item-list">
+        <div class="sg-item-wrap-depth{{ comment.depth }}" data-ng-repeat-start="comment in vm.data.comments">
+            <div class="sg-item">
+                <div class="sg-pfimg">
+                    <img src="http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png"/>
+                </div>
+                <div class="sg-contents">
+                    <div class="sg-info">
+                        <span class="sg-name">{{ comment.author.nick }}</span>
+                        <span class="sg-date">{{ comment.createdAt | date:'yy-MM-dd hh:mm' }}</span>
+                    </div>
+                    <div class="sg-options">
+                        <span data-ng-click="vm.remove(comment)"
+                              data-ng-if="vm.hasAuthentication(comment.author.id)">제거</span>
+                        <span class="{{ comment.depth == 1 ? 'sg-last' : '' }}"
+                              data-ng-if="vm.isLoggedIn()">신고</span>
+                        <span class="sg-last"
+                              data-ng-click="vm.toggleCommentForm(comment)"
+                              data-ng-if="vm.isLoggedIn() && comment.depth == 0">
+                            {{ comment.isShowCommentForm == true ? '닫기' : '댓글'}}
+                        </span>
+                    </div>
+                    <p class="sg-body">{{ comment.body }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="sg-item-wrap-depth1" data-ng-if="comment.depth == 0" data-ng-repeat-end>
+            <div data-ng-if="comment.isShowCommentForm"
+                 data-ng-include="'modules/bbs/skins/' + vm.data.board.skin + '/views/re-comment-form.html'"></div>
+        </div>
+    </div>
+
+    <div class="sg-more-wrap" data-ng-if="!vm.isFinish">
+        <button class="btn btn-default btn-sm sg-more {{ vm.isMoreLoading == true ? 'disabled' : '' }}"
+                ng-if="!vm.isMoreLoading"
+                data-ng-click="vm.more()">
+            더보기
+        </button>
+        <img ng-if="vm.isMoreLoading"
+             width="16"
+             src="modules/bbs/skins/default/assets/images/ajax-loader.gif" alt="LOADING"/>
+    </div>
+</div>

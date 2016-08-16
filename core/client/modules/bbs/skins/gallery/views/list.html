@@ -1,0 +1,68 @@
+<div class="sg-board-list-wrap" ng-controller="BbsListCtrl">
+
+    <div class="sg-header">
+        <div class="sg-header-l" ng-if="vm.data.categories.length > 1">
+            <select class="form-control input-sm sg-control-cat"
+                    data-ng-options="category.id as category.name for category in vm.data.board.categories"
+                    data-ng-model="vm.form.categoryId">
+                <option value="">전체</option>
+            </select>
+        </div>
+
+        <form class="sg-header-r form-inline">
+            <select class="form-control input-sm"
+                    data-ng-model="vm.form.searchType">
+                <option value="nick">작성자</option>
+                <option value="title">제목</option>
+            </select>
+            <input type="text" class="form-control input-sm"
+                   data-ng-model="vm.form.searchInput"
+                   data-ng-enter="vm.filter(0)"/>
+            <button class="btn btn-sm btn-default"
+                    data-ng-click="vm.filter(0)">검색
+            </button>
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-xs-4 col-sm-4" data-ng-repeat="article in vm.data.articles">
+            <div class="sg-gallery-card-wrap" data-ng-click="vm.goToDetail(article)">
+                <div class="sg-header">{{ article.title }}</div>
+                <div class="sg-card-img-wrap">
+                    <img data-ng-src="{{ vm.getImgUrl(article, 'attach') }}" data-ng-alt="{{ article.title }}" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sg-footer">
+        <button type="button" class="btn btn-sm btn-default"
+                data-ng-if="vm.hasWriteRole(vm.data.board)"
+                data-ng-click="vm.goToWriteForm()">쓰기</button>
+    </div>
+
+    <div class="sg-pagination-wrap">
+        <ul class="pagination pagination-sm">
+            <li class="{{ vm.paging.currentPage == 0 ? 'disabled' : '' }}"
+                data-ng-click="vm.movePage(vm.paging.prevLast)">
+                <a href="" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            <li class="{{ vm.paging.currentPage == num ? 'active' : '' }}"
+                data-ng-repeat="num in vm.paging.numbers"
+                data-ng-click="vm.movePage(num * vm.paging.listSize)">
+                <a href="">{{ num + 1 }}</a>
+            </li>
+            <li class="{{ vm.paging.currentPage + 1 == vm.paging.maxPageSize ? 'disabled' : '' }}"
+                data-ng-click="vm.movePage(vm.paging.nextLast)">
+                <a href="" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+

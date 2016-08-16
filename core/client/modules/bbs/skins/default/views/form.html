@@ -1,0 +1,53 @@
+<div class="sg-board-write-wrap" data-ng-controller="BbsFormCtrl">
+    <form name="form" data-ng-submit="vm.submit(vm.form)" novalidate>
+
+        <div class="sg-header">
+            <div class="sg-cat-wrap">
+                <select class="form-control sg-control-cat input-sm"
+                        data-ng-model="vm.form.categoryId"
+                        data-ng-required="true"
+                        data-ng-options="category.id as category.name for category in vm.data.categories">
+                    <option value="">분류 선택</option>
+                </select>
+            </div>
+            <div class="sg-title-wrap">
+                <input type="text"
+                       class="form-control sg-bw-title input-sm"
+                       name="title"
+                       data-ng-required="true"
+                       data-ng-model="vm.form.title" />
+            </div>
+        </div>
+
+        <textarea ckeditor="editorOptions"
+                  rows="15" cols="80"
+                  name="body"
+                  data-ng-model="vm.form.body"
+                  data-ng-required="true"></textarea>
+
+        <div class="sg-footer">
+            <div class="sg-options">
+                <label class="checkbox-inline" ng-if="vm.isAdmin()" >
+                    <input type="checkbox" data-ng-model="vm.form.isNotice"> 공지사항
+                </label>
+
+                <label class="checkbox-inline">
+                    <input type="checkbox"
+                           data-ng-model="vm.form.isVisible"
+                           data-ng-false-value="true"
+                           data-ng-true-value="false"> 비공개
+                </label>
+            </div>
+            <button type="button"
+                    class="btn btn-default btn-sm"
+                    data-ng-click="vm.goBack()">
+                돌아가기
+            </button>
+            <button type="submit"
+                    class="btn btn-default btn-sm"
+                    data-ng-disabled="form.$invalid">
+                {{ vm.submitTitle }}
+            </button>
+        </div>
+    </form>
+</div>

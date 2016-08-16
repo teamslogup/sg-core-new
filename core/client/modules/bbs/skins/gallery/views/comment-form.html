@@ -1,0 +1,24 @@
+<div class="sg-item">
+    <div class="sg-pfimg">
+        <img src="http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png"/>
+    </div>
+    <div class="sg-contents">
+        <div class="sg-comment-form-wrap">
+            <textarea type="text"
+                   data-ng-model="vm.form.body"
+                   class="form-control input-sm"></textarea>
+        </div>
+        <div class="sg-comment-btn-wrap">
+            <button type="button"
+                    data-ng-click="vm.submit()"
+                    ng-if="!vm.isLoading"
+                    class="btn btn-default btn-sm {{ vm.form.body == '' ? 'disabled' : '' }}">
+                댓글달기
+            </button>
+            <div ng-if="vm.isLoading">
+                <img width="16"
+                     src="modules/bbs/skins/default/assets/images/ajax-loader.gif" alt="LOADING" />
+            </div>
+        </div>
+    </div>
+</div>

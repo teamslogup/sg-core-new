@@ -1,0 +1,54 @@
+<div class="sg-core-login-wrap" data-ng-controller="SessionCtrl">
+    <div class="row">
+        <div class="col-md-3 col-sm-3"></div>
+        <div class="col-md-6 col-sm-6">
+            <h2 style="text-align: center; padding: 40px 0 20px 0; font-weight: bold;">{{ 'login' | translate }}</h2>
+            <form class="form-horizontal" name="form" data-ng-submit="vm.login(form)" novalidate>
+                <div class="form-group" data-ng-class="{'has-error': vm.isInvalid(form.email)}">
+                    <label for="email" class="col-sm-4 control-label">{{ 'email' | translate }}</label>
+                    <div class="col-sm-8">
+                        <input type="email"
+                               name="email"
+                               data-ng-model="vm.form.email"
+                               class="form-control"
+                               id="email"
+                               data-ng-focus="form.email.$focus = true"
+                               data-ng-blur="form.email.$focus = false"
+                               placeholder="{{ 'email' | translate }}"
+                               data-ng-required="true">
+                        <span class="help-block" data-ng-show="vm.isInvalid(form.email)">
+                            {{ vm.getFormError(form.email.$error) | translate }}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group" data-ng-class="{'has-error': vm.isInvalid(form.pass)}">
+                    <label for="pass" class="col-sm-4 control-label">{{ 'pass' | translate }}</label>
+                    <div class="col-sm-8">
+                        <input type="password"
+                               data-ng-model="vm.form.pass"
+                               class="form-control"
+                               id="pass"
+                               name="pass"
+                               data-ng-focus="form.pass.$focus = true"
+                               data-ng-blur="form.pass.$focus = false"
+                               placeholder="{{ 'pass' | translate }}"
+                               data-ng-required="true">
+                        <span class="help-block" data-ng-show="vm.isInvalid(form.pass)">
+                            {{ vm.getFormError(form.pass.$error) | translate }}
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-4 col-sm-8">
+                        <button type="submit" class="btn btn-default" data-ng-disabled="form.$invalid">{{ 'login' | translate }}</button>
+                        <div style="margin-top:10px;">
+                            <p>{{ 'forgotPassExplain' | translate}} <a ui-sref="session.find-pass">{{ 'findPass' | translate }}</a></p>
+                            <p>{{ 'stillNotMember' | translate }} <a ui-sref="session.signup">{{ 'signUp' | translate }}</a></p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3  col-sm-3"></div>
+    </div>
+</div>

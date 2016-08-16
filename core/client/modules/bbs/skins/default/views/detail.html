@@ -1,0 +1,47 @@
+<div class="sg-board-detail-wrap" data-ng-controller="BbsDetailCtrl">
+    <div class="sg-header">
+        <div class="sg-header-up">
+            <span class="sg-header-cat" ng-if="vm.data.categories.length > 1">
+                {{ vm.data.article.category.name }}
+            </span>
+            <span ng-if="vm.data.article.isNotice">[공지]</span>
+            <span class="sg-header-title">{{ vm.data.article.title }}</span>
+        </div>
+        <div class="sg-header-down clearfix">
+            <div class="sg-header-down-l">
+                <span class="sg-header-author">{{ vm.data.article.author.nick }}</span>
+            </div>
+            <div class="sg-header-down-r">
+                <span class="sg-header-date">{{ vm.data.article.createdAt | date:'yy-MM-dd hh:mm' }}</span>
+                <span class="sg-header-comment-cnt">댓글수 <strong>{{ vm.data.commentCount }}</strong></span>
+                <span class="sg-header-view sg-header-last">
+                    조회수
+                    <strong class="sg-views">{{ vm.data.article.views }}</strong>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="sg-body" data-ng-bind-html="vm.data.article.body"></div>
+
+    <div class="sg-footer">
+        <button type="button"
+                data-ng-if="vm.hasAuthentication(vm.data.article.author.id) && vm.hasWriteRole(vm.data.board)"
+                class="btn btn-default btn-sm"
+                data-ng-click="vm.editArticle()">
+            수정
+        </button>
+        <button type="button"
+                class="btn btn-default btn-sm"
+                data-ng-click="vm.removeArticle()"
+                data-ng-if="vm.hasAuthentication(vm.data.article.author.id) && vm.hasWriteRole(vm.data.board)">
+            삭제
+        </button>
+        <button type="button"
+                class="btn btn-default btn-sm"
+                data-ng-click="vm.goToList()">목록
+        </button>
+    </div>
+
+    <ng-include src="'modules/bbs/skins/default/views/comment-list.html'"></ng-include>
+</div>

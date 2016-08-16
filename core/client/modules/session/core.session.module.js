@@ -1,0 +1,1 @@
+angular.module("core.session", ['core.base', 'core.users']);

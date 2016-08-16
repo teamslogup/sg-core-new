@@ -1,0 +1,12 @@
+<div style="text-align:center;">
+
+    <button ng-click="change('ko')">ko</button>
+    <button ng-click="change('en')">en</button>
+
+    <h1>{{contents.h1 | translate}}</h1>
+    <p>{{contents.p | translate}}</p>
+    <p>{{ '400' | translate}}</p>
+
+    <div ui-view></div>
+
+</div>

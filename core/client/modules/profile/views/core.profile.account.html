@@ -1,0 +1,109 @@
+<div class="container-fluid sg-core-profile-wrap" ng-controller="ProfileCtrl">
+    <div class="row">
+        <div class="col-md-12 sg-box">
+            <form class="form-horizontal" ng-submit="vm.submit()" ng-controller="ProfileAccountCtrl">
+                <fieldset>
+                    <legend>{{ 'accountInfo' | translate }}</legend>
+                    <div class="form-group">
+                        <label for="selectPhone1"
+                               class="col-lg-2 control-label sg-account-form-label">{{ 'contact' | translate }}</label>
+
+                        <div class="col-lg-3 sg-account-form-item">
+                            <select class="form-control"
+                                    id="selectPhone1"
+                                    data-ng-model="vm.form.phone1">
+                                <option value="010">010</option>
+                                <option value="011">011</option>
+                                <option value="017">017</option>
+                                <option value="016">016</option>
+                                <option value="018">018</option>
+                                <option value="019">019</option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3 sg-account-form-item">
+                            <input type="text"
+                                   maxlength="4"
+                                   ng-model="vm.form.phone2"
+                                   class="form-control"
+                                   id="inputPhone2"
+                                   required>
+                        </div>
+                        <div class="col-lg-3 sg-account-form-item">
+                            <input type="text"
+                                   maxlength="4"
+                                   ng-model="vm.form.phone3"
+                                   class="form-control"
+                                   id="inputPhone3"
+                                   required>
+                        </div>
+                        <div class="col-lg-1 sg-account-form-check">
+                            <img class="sg-core-profile-check"
+                                 ng-src="{{
+                                    vm.hasPhone ?
+                                    'pages/main/assets/images/icon_check_auth.png' :
+                                    'pages/main/assets/images/icon_check.png' }}"
+                                 alt="{{ 'noAuth' | translate }}"
+                                 width="25">
+                        </div>
+                    </div>
+                    <div class="form-group" data-ng-if="!vm.hasPhone">
+                        <div class="col-lg-10 col-lg-offset-2 sg-account-form-item">
+                            <span class="help-block">
+                                {{ 'explainForNoAuth' | translate }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group" data-ng-if="vm.hasPhone">
+                        <div class="col-lg-10 col-lg-offset-2 sg-account-form-item">
+                            <span class="help-block">
+                                {{ 'explainForYesAuth' | translate }}
+                            </span>
+                            <button type="button" class="btn-sm btn-default"
+                                    data-ng-click="vm.deletePhone()">{{ 'deletePhone' | translate }}</button>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset data-ng-if="!vm.hasPhone">
+                    <div class="form-group">
+                        <label class="col-lg-2 control-label sg-account-form-label">{{ 'authNum' | translate }}</label>
+                        <div class="col-lg-3 sg-account-form-item">
+                            <button type="button"
+                                    data-ng-click="vm.requestAuthNum()"
+                                    class="btn btn-default">
+                                {{ !vm.requestingAuth ?
+                                ('sendAuthNum' | translate) :
+                                ('resendAuthNum' | translate) }}
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-3 col-lg-offset-2 sg-account-form-item sg-account-form-num">
+                            <input type="text"
+                                   maxlength="{{ vm.SMS.authNumLength }}"
+                                   ng-model="vm.form.authNum"
+                                   class="form-control" id="inputAuthNum"
+                                   placeholder="{{ 'inputAuthNum' | translate }}"
+                                   data-ng-disabled="!vm.requestingAuth"
+                                   required>
+                        </div>
+                        <div class="col-lg-3 sg-account-form-item sg-account-form-num">
+                            <input type="text"
+                                   ng-model="vm.remainTime"
+                                   class="form-control"
+                                   disabled
+                                   required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10 col-lg-offset-2 sg-account-form-item">
+                            <button type="submit"
+                                    data-ng-disabled="!vm.form.authNum"
+                                    class="btn btn-lg btn-primary">{{ 'save' | translate }}</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+.sg-board-write-wrap {
+  position: relative;
+
+  .sg-header {
+    position: relative;
+    margin-bottom: 10px;
+  }
+
+  .sg-cat-wrap {
+    width: 150px;
+    top: 0;
+    left: 0;
+    position: absolute;
+  }
+
+  .sg-cat-wrap select {
+    width: 100%;
+  }
+
+  .sg-title-wrap {
+    margin-left: 160px;
+  }
+
+  .sg-file-wrap {
+    margin-left: 160px;
+    margin-right: 100px;
+  }
+
+  .sg-upload-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 90px;
+  }
+
+  .sg-url-title {
+    position: absolute;
+    width: 150px;
+    top: 0;
+    left: 0;
+    text-align: right;
+    line-height: 34px;
+    font-size: 0.875em;
+    color: #666;
+  }
+
+  .sg-url {
+    margin-top: 10px;
+  }
+
+  .sg-footer {
+    position: relative;
+    margin-top: 10px;
+    text-align: right;
+
+    .sg-options {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+}
