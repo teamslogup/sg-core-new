@@ -22,7 +22,8 @@ var url = {
     authIdPass: "/api/accounts/auth-id-pass",
     authSocial: "/api/accounts/auth-social",
     pass: "/api/accounts/pass",
-    sessionRemote: "/api/accounts/session-remote"
+    sessionRemote: "/api/accounts/session-remote",
+    role: "/api/accounts/role"
 };
 
 function Account(fixture) {
@@ -94,6 +95,22 @@ Account.prototype.signup = function (callback) {
                 self.authToken = self.data.auth.token;
             }
             tester.do(resform.user, self.data);
+            callback();
+        });
+};
+
+Account.prototype.updateRoleUltraAdmin = function (callback) {
+    var self = this;
+    request(app).put(url.role + '/' + self.data.id)
+        .set("Cookie", self.cookie)
+        .send({
+            role: STD.user.roleUltraAdmin
+        })
+        .end(function (err, res) {
+            if (res.status !== 204) {
+                console.error(res.body);
+            }
+            res.status.should.exactly(204);
             callback();
         });
 };
