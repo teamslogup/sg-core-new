@@ -101,9 +101,10 @@ Account.prototype.signup = function (callback) {
 
 Account.prototype.updateRoleUltraAdmin = function (callback) {
     var self = this;
-    request(app).put(url.role + '/' + self.data.id)
+    request(app).put(url.role)
         .set("Cookie", self.cookie)
         .send({
+            userId: self.data.id,
             role: STD.user.roleUltraAdmin
         })
         .end(function (err, res) {
