@@ -1,14 +1,22 @@
-(function () {
-    'use strict';
 
-    var sampleAppModuleName = "core.sample";
+import coreBaseModule from '../../modules/base/core.base.module';
 
-    angular.module(sampleAppModuleName, ['core.bbs', 'core.session']);
+import config from './config/core.sample.config';
+import routing from './config/core.sample.route';
 
-    if (window.location.hash === '#_=_') window.location.hash = '';
+import mainCtrl from './controllers/core.sample.main.controller';
 
-    angular.element(document).ready(function () {
-        angular.bootstrap(document, [sampleAppModuleName]);
-    });
+const CORE_SAMPLE_APP_NAME = "core.sample";
 
-})();
+angular.module(CORE_SAMPLE_APP_NAME, [coreBaseModule])
+    .config(config)
+    .config(routing)
+    .controller('mainCtrl', mainCtrl);
+
+if (window.location.hash === '#_=_') window.location.hash = '';
+
+angular.element(document).ready(function () {
+    angular.bootstrap(document, [CORE_SAMPLE_APP_NAME]);
+});
+
+export default CORE_SAMPLE_APP_NAME;

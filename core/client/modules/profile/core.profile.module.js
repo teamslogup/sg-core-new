@@ -1,1 +1,0 @@
-angular.module("core.profile", ['core.base', 'core.users']);

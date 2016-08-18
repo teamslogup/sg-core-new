@@ -20,7 +20,8 @@ module.exports = function (app) {
             }
 
             if (process.env.NODE_ENV == 'production') {
-                res.render('sample-production', req.preparedParam);
+                // res.render('sample-production', req.preparedParam);
+                res.render('sample', req.preparedParam);
             }
             else {
                 res.render('sample', req.preparedParam);
