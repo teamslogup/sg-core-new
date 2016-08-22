@@ -1,4 +1,4 @@
-import angular from 'angular';
+
 import coreCommon from '../../components/core.common.module';
 import uiRouter from 'angular-ui-router';
 import translate from 'angular-translate';

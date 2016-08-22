@@ -19,13 +19,7 @@ module.exports = function (app) {
                 req.preparedParam.params.oauth.google = req.flash('google')[0];
             }
 
-            if (process.env.NODE_ENV == 'production') {
-                // res.render('sample-production', req.preparedParam);
-                res.render('sample', req.preparedParam);
-            }
-            else {
-                res.render('sample', req.preparedParam);
-            }
+            res.render('sample-' + process.env.NODE_ENV, req.preparedParam);
         };
     }
 
