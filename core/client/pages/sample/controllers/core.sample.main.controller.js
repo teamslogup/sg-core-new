@@ -1,4 +1,8 @@
-mainCtrl.$inject = ['$scope', '$translate', '$location'];
+
+import '../assets/stylesheets/controllers/core.sample.main.controller.scss';
+
+MainCtrl.$inject = ['$scope', '$translate', '$location'];
+
 
 class Hwarang {
     constructor(age) {
@@ -10,12 +14,16 @@ class Hwarang {
     print() {
         console.log(this.getAge());
     }
+    print2() {
+        console.log(this.getAge());
+    }
 }
 
-export default function mainCtrl($scope, $location) {
+export default function MainCtrl($scope, $location) {
     // staticLoader.get('route1.json', function (status, data) {
     //     $scope.contents = data;
     // });
     var hwarang = new Hwarang(100);
     hwarang.print();
+    hwarang.print2();
 }

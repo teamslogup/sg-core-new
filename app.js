@@ -48,6 +48,7 @@ sequelize.sync({force: config.db.force}).then(function (err) {
                 server.http.listen(config.app.port);
             }
         }
+        console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
     } else {
         if (server.isUseHttps) {
             server.https.listen(config.app.port);

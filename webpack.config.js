@@ -1,3 +1,6 @@
+
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 var webpack = require('webpack');
 
 var path = require('path');
@@ -27,11 +30,11 @@ config.output = {
 
 config.module = {
     preLoaders: [],
-    loaders: [
-        { test: /\.ejs$/, loader: 'ejs-loader?variable=data' },
-        {
+    loaders: [{
+        test: /\.ejs$/, loader: 'ejs-loader?variable=data'
+    }, {
         test: /\.scss$/,
-        loader: 'style!css!scss'
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
     }, {
         test: /\.js$/,
         loader: 'babel',
@@ -50,6 +53,9 @@ config.module = {
 
 config.plugins = [
     new webpack.optimize.CommonsChunkPlugin('sg-lib.js'),
+    new ExtractTextPlugin("[name].css", {
+        allChunks: true
+    })
 ];
 
 if (ENV == 'production') {
@@ -64,7 +70,8 @@ if (ENV == 'production') {
     )
 } else {
     config.devtool = 'source-map';
-    config.plugins.push(new webpack.HotModuleReplacementPlugin())
+    // config.watch = true;
+    // config.plugins.push(new webpack.HotModuleReplacementPlugin())
 }
 
 module.exports = config;
