@@ -22,7 +22,8 @@ var url = {
     authIdPass: "/api/accounts/auth-id-pass",
     authSocial: "/api/accounts/auth-social",
     pass: "/api/accounts/pass",
-    sessionRemote: "/api/accounts/session-remote"
+    sessionRemote: "/api/accounts/session-remote",
+    role: "/api/accounts/role"
 };
 
 function Account(fixture) {
@@ -53,6 +54,9 @@ Account.prototype.sendPhoneAuth = function (callback) {
         .end(function (err, res) {
             res.status.should.exactly(200);
             res.body.should.be.an.String;
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
             self.setFixture('secret', res.body);
             callback();
         });
@@ -83,12 +87,31 @@ Account.prototype.signup = function (callback) {
                 console.error(res.body);
             }
             res.status.should.exactly(201);
-            self.cookie = res.header['set-cookie'][0];
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
             self.data = res.body;
             if (self.data.auth && self.data.auth.token) {
                 self.authToken = self.data.auth.token;
             }
             tester.do(resform.user, self.data);
+            callback();
+        });
+};
+
+Account.prototype.updateRoleUltraAdmin = function (callback) {
+    var self = this;
+    request(app).put(url.role)
+        .set("Cookie", self.cookie)
+        .send({
+            userId: self.data.id,
+            role: STD.user.roleUltraAdmin
+        })
+        .end(function (err, res) {
+            if (res.status !== 204) {
+                console.error(res.body);
+            }
+            res.status.should.exactly(204);
             callback();
         });
 };
@@ -114,7 +137,9 @@ Account.prototype.loginPhone = function (callback) {
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
-            self.cookie = res.header['set-cookie'][0];
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
             self.data = res.body;
             tester.do(resform.user, self.data);
             callback();
@@ -133,6 +158,9 @@ Account.prototype.loginEmail = function (callback) {
         .end(function (err, res) {
             res.status.should.exactly(200);
             self.data = res.body;
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
             tester.do(resform.user, self.data);
             callback();
         });
@@ -185,7 +213,9 @@ Account.prototype.loginNormalId = function (callback) {
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
-            self.cookie = res.header['set-cookie'][0];
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
             self.data = res.body;
             tester.do(resform.user, self.data);
             callback();

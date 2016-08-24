@@ -18,13 +18,19 @@ var mixin = {
              * @param callback
              */
             'create': function (callback) {
+                var t = false;
                 var loadedData = false;
                 var self = this;
-                this.save().then(function (data) {
+                self.save().then(function (data) {
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        return callback(200, loadedData);
+                    if (t) {
+                        if (loadedData) {
+                            return callback(200, loadedData);
+                        } else {
+                            return callback(404, loadedData);
+                        }
                     }
                 });
             },
@@ -35,13 +41,18 @@ var mixin = {
              * @param callback
              */
             'updateFields': function (update, callback) {
-                var loadedData = null;
+                var t = false;
+                var loadedData = false;
                 this.updateAttributes(update).then(function (data) {
-                    if (!data) return callback(404);
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        callback(200, loadedData);
+                    if (t) {
+                        if (loadedData) {
+                            return callback(200, loadedData);
+                        } else {
+                            return callback(404);
+                        }
                     }
                 });
             },
@@ -51,11 +62,11 @@ var mixin = {
              * @param callback - 성공시 204
              */
             'delete': function (callback) {
-                var isSuccess = false;
+                var t = false;
                 this.destroy().then(function (data) {
-                    isSuccess = true;
+                    t = true;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (isSuccess) {
+                    if (t) {
                         return callback(204);
                     }
                 });
@@ -115,14 +126,18 @@ var mixin = {
              * @param callback
              */
             'findDataById': function (id, callback) {
+                var t = false;
                 var loadedData = null;
                 this.findById(id).then(function (data) {
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        callback(200, loadedData);
-                    } else {
-                        callback(404);
+                    if (t) {
+                        if (loadedData) {
+                            callback(200, loadedData);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -158,15 +173,18 @@ var mixin = {
              * @param callback
              */
             'findAllDataForQuery': function (query, callback) {
+                var t = false;
                 var loadedData = null;
                 this.findAll(query).then(function (data) {
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        if (loadedData.length == 0) {
+                    if (t) {
+                        if (loadedData && loadedData.length > 0) {
+                            return callback(200, loadedData);
+                        } else {
                             return callback(404);
                         }
-                        return callback(200, loadedData);
                     }
                 });
             },
@@ -209,6 +227,7 @@ var mixin = {
              * @param callback
              */
             'findAllDataIncludingForPage': function (where, attributes, include, size, last, callback) {
+                var t = false;
                 var loadedData = null;
                 var query = {
                     'where': where,
@@ -217,19 +236,21 @@ var mixin = {
                     'attributes': attributes,
                     'order': [['createdAt', 'DESC']],
                     'include': include
-                }
+                };
 
                 if (!attributes || attributes.length == 0) delete query.attributes;
                 if (!include) delete query.include;
 
                 this.findAll(query).then(function (data) {
-                    if (!data || data.length == 0) {
-                        return callback(404);
-                    }
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        callback(200, loadedData);
+                    if (t) {
+                        if (loadedData) {
+                            callback(200, loadedData);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -264,6 +285,8 @@ var mixin = {
              */
             'findDataIncluding': function (where, include, callback) {
                 var loadedData = null;
+                var t = false;
+
                 var query = {
                     where: where
                 };
@@ -271,12 +294,15 @@ var mixin = {
                     query.include = include;
                 }
                 this.find(query).then(function (data) {
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        callback(200, loadedData);
-                    } else {
-                        callback(404);
+                    if (t) {
+                        if (loadedData) {
+                            callback(200, loadedData);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -298,13 +324,18 @@ var mixin = {
              */
             'findDataWithQuery': function (query, callback) {
                 var loadedData = null;
+                var t = false;
+
                 this.find(query).then(function (data) {
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        callback(200, loadedData);
-                    } else {
-                        callback(404);
+                    if (t) {
+                        if (loadedData) {
+                            callback(200, loadedData);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -316,12 +347,17 @@ var mixin = {
              */
             'findAllDataWithQuery': function (query, callback) {
                 var loadedData = null;
+                var t = false;
                 this.findAll(query).then(function (data) {
-                    if (!data) return callback(404);
+                    t = true;
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (loadedData) {
-                        callback(200, loadedData);
+                    if (t) {
+                        if (loadedData) {
+                            callback(200, loadedData);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -334,11 +370,17 @@ var mixin = {
             'countDataWithQuery': function (query, callback) {
                 var self = this;
                 var counter = null;
+                var t = false;
                 self.count(query).then(function (count) {
+                    t = true;
                     counter = count;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (counter >= 0) {
-                        callback(200, counter);
+                    if (t) {
+                        if (counter >= 0) {
+                            callback(200, counter);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -351,11 +393,17 @@ var mixin = {
             'countData': function (where, callback) {
                 var self = this;
                 var counter = null;
+                var t = false;
                 self.count({where: where}).then(function (count) {
+                    t = true;
                     counter = count;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (counter >= 0) {
-                        callback(200, counter);
+                    if (t) {
+                        if (counter >= 0) {
+                            callback(200, counter);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -369,30 +417,36 @@ var mixin = {
             'upsertData': function (data, query, callback) {
                 var createdData = null;
                 var self = this;
+                var t = false;
                 self.upsert(data).catch(errorHandler.catchCallback(callback)).done(function () {
                     self.findOne(query).then(function (data) {
                         createdData = data;
+                        t = true;
                     }).catch(errorHandler.catchCallback(callback)).done(function () {
-                        if (createdData) {
-                            callback(200, createdData);
-                        } else {
-                            callback(404);
+                        if (t) {
+                            if (createdData) {
+                                callback(200, createdData);
+                            } else {
+                                callback(404);
+                            }
                         }
                     });
                 });
             },
 
-            'updateDataWithQuery': function(selector, update, callback) {
-                var isSuccess = false;
+            'updateDataWithQuery': function (selector, update, callback) {
+                var loadedData = false;
+                var t = false;
                 this.update(update, selector).then(function (data) {
-                    if (data && data[0]) {
-                        isSuccess = true;
-                    }
+                    t = true;
+                    loadedData = data && data[0];
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (isSuccess) {
-                        callback(204);
-                    } else {
-                        callback(404);
+                    if (t) {
+                        if (loadedData) {
+                            callback(204);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -404,20 +458,22 @@ var mixin = {
              * @param callback - 성공시 204
              */
             'updateDataById': function (id, update, callback) {
-                var isSuccess = false;
+                var loadedData = null;
+                var t = false;
                 this.update(update, {
                     where: {
                         id: id
                     }
                 }).then(function (data) {
-                    if (data && data[0]) {
-                        isSuccess = true;
-                    }
+                    t = true;
+                    loadedData = data && data[0];
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (isSuccess) {
-                        callback(204);
-                    } else {
-                        callback(404);
+                    if (t) {
+                        if (loadedData) {
+                            callback(204);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -429,20 +485,22 @@ var mixin = {
              * @param callback - 성공시 204
              */
             'updateDataByKey': function (key, field, update, callback) {
-                var isSuccess = false;
+                var loadedData = false;
                 var updateOptions = {
                     where: {}
                 };
+                var t = false;
                 updateOptions.where[key] = field;
                 this.update(update, updateOptions).then(function (data) {
-                    if (data && data[0]) {
-                        isSuccess = true;
-                    }
+                    loadedData = data && data[0];
+                    t = true;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (isSuccess) {
-                        callback(204);
-                    } else {
-                        callback(404);
+                    if (t) {
+                        if (loadedData) {
+                            callback(204);
+                        } else {
+                            callback(404);
+                        }
                     }
                 });
             },
@@ -491,7 +549,7 @@ var mixin = {
             'milliCreatedAt': function (instance, options, fn) {
                 instance.set("createdAt", sequelize.fn("NOW", 3));
                 instance.set("updatedAt", sequelize.fn("NOW", 3));
-                return fn (null, instance);
+                return fn(null, instance);
             },
             /**
              * 데이터 수정시 updatedAt 변경 (milliseconds)
@@ -500,13 +558,13 @@ var mixin = {
                 if (!instance._changed.updatedAt) {
                     instance.updateAttributes({updatedAt: sequelize.fn("NOW", 3)});
                 }
-                return fn (null, instance);
+                return fn(null, instance);
             },
             'milliDeletedAt': function (instance, options, fn) {
                 if (!instance._changed.deletedAt) {
                     instance.updateAttributes({deletedAt: sequelize.fn("NOW", 3)});
                 }
-                return fn (null, instance);
+                return fn(null, instance);
             },
             /**
              * 데이터 만들시 createdAtMicro와 updatedAtMicro 추가(microseconds)

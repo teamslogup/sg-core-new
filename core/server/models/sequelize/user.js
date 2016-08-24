@@ -123,6 +123,8 @@ module.exports = {
     options: {
         'timestamps': true,
         'charset': 'utf8',
+        'createdAt': false,
+        'updatedAt': false,
         'paranoid': true, // deletedAt 추가. delete안함.
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
@@ -274,10 +276,12 @@ module.exports = {
                     }).then(function (auth) {
 
                         if (!auth) {
+                            isSuccess = false;
                             throw new errorHandler.CustomSequelizeError(404);
                         }
 
                         if (auth.expiredAt < now || auth.token.toString() != token.toString()) {
+                            isSuccess = false;
                             throw new errorHandler.CustomSequelizeError(403);
                         }
 
@@ -290,6 +294,7 @@ module.exports = {
                                 email: auth.key
                             }, {transaction: t}).then(function (user) {
                                 if (!user) {
+                                    isSuccess = false;
                                     throw new errorHandler.CustomSequelizeError(404);
                                 }
                                 isSuccess = true;
@@ -364,6 +369,7 @@ module.exports = {
                                 email: email
                             }, {transaction: t}).then(function (user) {
                                 if (!user) {
+                                    updatedUser = null;
                                     throw new errorHandler.CustomSequelizeError(404);
                                 }
                                 updatedUser = user;
@@ -388,6 +394,7 @@ module.exports = {
                                 }
                             });
                         } else {
+                            updatedUser = null;
                             throw new errorHandler.CustomSequelizeError(409, {
                                 code: '409_5'
                             });
@@ -416,6 +423,7 @@ module.exports = {
                     if (user) {
                         loadedUser = user;
                     } else {
+                        loadedUser = false;
                         throw new errorHandler.CustomSequelizeError(404);
                     }
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
@@ -831,16 +839,21 @@ module.exports = {
                                     transaction: t
                                 }).then(function (auth) {
 
-                                    if (!auth) throw {status: 404};
+                                    if (!auth) {
+                                        createdUser = null;
+                                        throw new errorHandler.CustomSequelizeError(404);
+                                    }
 
                                     // 3. 번호 체크
                                     if (auth.token != authNum) {
-                                        throw {status: 403}
+                                        createdUser = null;
+                                        throw new errorHandler.CustomSequelizeError(403);
                                     } else {
                                         // 4. 날짜 체크
                                         var now = new Date();
                                         if (auth.expiredAt < now) {
-                                            throw {status: 403}
+                                            createdUser = null;
+                                            throw  new errorHandler.CustomSequelizeError(403);
                                         } else {
                                             // 5. 모두 성공하면 Auth를 지움.
                                             return auth.destroy({transaction: t}).then(function () {
