@@ -113,7 +113,8 @@
     "sg-sender": "*",
     "sg-sequelize-error-handler": "*",
     "sg-upload-manager": "*",
-    "sticky-session": "*"
+    "sticky-session": "*",
+    "angular-resource": "*"
   },
   "engines": {
     "node": ">=6.1.0"
