@@ -3,6 +3,8 @@ node_modules/
 app/
 core/client/lib/
 core/client/build/
+core/client/pages/sample/assets/stylesheets/*/*.map
+core/client/pages/sample/assets/stylesheets/*/*.css
 uploads/
 temp/
 .DS_Store
