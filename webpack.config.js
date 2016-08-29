@@ -28,10 +28,6 @@ config.output = {
     chunkFilename: "[name].js"
 };
 
-config.resolveUrlLoader = {
-
-};
-
 config.module = {
     preLoaders: [],
     loaders: [{
