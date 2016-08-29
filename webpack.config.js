@@ -38,7 +38,10 @@ config.module = {
         test: /\.ejs$/, loader: 'ejs-loader?variable=data'
     }, {
         test: /\.scss$/,
-        loaders: ['style', 'css', 'resolve-url', 'sass?sourceMap']
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
+    }, {
+        test: /\.css$/,
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader")
     }, {
         test: /\.js$/,
         loader: 'babel',
