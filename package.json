@@ -55,10 +55,11 @@
     "html-minifier": "^3.0.2"
   },
   "dependencies": {
-    "angular-translate": "^2.11.1",
     "angular": "^1.5.8",
     "angular-cookies": "^1.5.8",
     "angular-module-cookies": "^1.2.19",
+    "angular-resource": "*",
+    "angular-translate": "^2.11.1",
     "angular-ui-router": "^0.3.1",
     "app-root-path": "*",
     "async": "*",
@@ -99,6 +100,7 @@
     "passport-local": "*",
     "passport-twitter": "*",
     "request": "*",
+    "resolve-url-loader": "^1.6.0",
     "sequelize": "*",
     "sequelize-definer": "*",
     "serve-favicon": "*",
@@ -113,8 +115,7 @@
     "sg-sender": "*",
     "sg-sequelize-error-handler": "*",
     "sg-upload-manager": "*",
-    "sticky-session": "*",
-    "angular-resource": "*"
+    "sticky-session": "*"
   },
   "engines": {
     "node": ">=6.1.0"
