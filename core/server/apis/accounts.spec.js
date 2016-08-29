@@ -17,7 +17,7 @@ describe('Email Accounts Api Tests', function () {
 
     var emailUserParam2 = JSON.parse(JSON.stringify(emailUserParam));
     emailUserParam2.uid = 'gozillacj2@naver.com';
-    emailUserParam.nick = 'email2';
+    emailUserParam.nick = '';
 
     var normalUserParam = JSON.parse(JSON.stringify(usersPost.defaults));
     normalUserParam.type = STD.user.signUpTypeNormalId;

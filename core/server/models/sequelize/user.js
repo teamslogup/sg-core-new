@@ -55,7 +55,7 @@ module.exports = {
         },
         'nick': {
             'type': Sequelize.STRING,
-            'allowNull': false,
+            'allowNull': true,
             'unique': true
         },
         'role': {
@@ -121,6 +121,11 @@ module.exports = {
         }
     },
     options: {
+        'indexes': [{
+            unique: true,
+            'SPATIAL': true,
+            fields: ['nick']
+        }],
         'timestamps': true,
         'charset': 'utf8',
         'createdAt': false,

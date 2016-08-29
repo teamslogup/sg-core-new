@@ -132,7 +132,7 @@ post.createUser = function () {
             apass: req.body.apass,
             provider: req.body.provider,
             secret: req.body.secret,
-            nick: req.body.nick || '',
+            nick: req.body.nick || null,
             gender: req.body.gender,
             birth: birth,
             country: req.body.country || req.country,

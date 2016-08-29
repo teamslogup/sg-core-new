@@ -7,7 +7,7 @@ module.exports = {
     "email": tester.type.STRING_ALLOW_NULL,
     "phoneNum": tester.type.STRING_ALLOW_NULL,
     "name": tester.type.STRING_ALLOW_NULL,
-    "nick": tester.type.STRING,
+    "nick": tester.type.STRING_ALLOW_NULL,
     "role": tester.type.ENUM + STD.user.enumRoles,
     "gender": tester.type.ENUM_ALLOW_NULL + STD.user.enumGenders,
     "birth": tester.type.DATE_ALLOW_NULL,
