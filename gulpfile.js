@@ -56,7 +56,7 @@ gulp.task('injection', ['webpack'], () => {
 
     return src.pipe(inject(source))
         .pipe(injectString.replace('sg-lib.js', "sg-lib.js?v=" + corePackage.version))
-        .pipe(injectString.replace('/dist/', ""))
+        .pipe(injectString.replace('\"/dist/', "\""))
         .pipe(injectString.replace('sg-' + jsName + '.js', "sg-" + jsName + ".js?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
         .pipe(injectString.replace('sg-' + jsName + '.css', "sg-" + jsName + ".css?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
         .pipe(gulp.dest('./' + getRootType() + '/server/views/dist'));
