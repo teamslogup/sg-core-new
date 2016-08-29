@@ -1,9 +1,9 @@
-import UsersResources from './services/core.users.constants';
+import usersResources from './services/core.users.constants';
 import User from './services/core.users.model';
 import usersManager from './services/core.users.manager';
 
 export default angular.module("core.users", [])
-    .constant("UsersResources", UsersResources)
+    .constant("usersResources", usersResources)
     .factory("User", User)
     .service("usersManager", usersManager)
     .name;
