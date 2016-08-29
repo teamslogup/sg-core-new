@@ -33,7 +33,7 @@ config.module = {
     loaders: [{
         test: /\.ejs$/, loader: 'ejs-loader?variable=data'
     }, {
-        test: /\.scss$/,
+        test: /\.scss|.css$/,
         loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
     }, {
         test: /\.js$/,
