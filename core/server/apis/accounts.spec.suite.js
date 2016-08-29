@@ -146,6 +146,26 @@ Account.prototype.loginPhone = function (callback) {
         });
 };
 
+Account.prototype.loginPhoneId = function (callback) {
+    var self = this;
+    request(app).post(url.session)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.signUpTypePhoneId,
+            uid: self.fixture.uid,
+            secret: self.fixture.secret
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
+            self.data = res.body;
+            tester.do(resform.user, self.data);
+            callback();
+        });
+};
+
 Account.prototype.loginEmail = function (callback) {
     var self = this;
     request(app).post(url.session)
