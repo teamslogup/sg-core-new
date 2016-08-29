@@ -28,13 +28,17 @@ config.output = {
     chunkFilename: "[name].js"
 };
 
+config.resolveUrlLoader = {
+
+};
+
 config.module = {
     preLoaders: [],
     loaders: [{
         test: /\.ejs$/, loader: 'ejs-loader?variable=data'
     }, {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract("style-loader", "css-loader!sass-loader")
+        loaders: ['style', 'css', 'resolve-url', 'sass?sourceMap']
     }, {
         test: /\.js$/,
         loader: 'babel',
