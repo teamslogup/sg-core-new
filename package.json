@@ -100,7 +100,6 @@
     "passport-local": "*",
     "passport-twitter": "*",
     "request": "*",
-    "resolve-url-loader": "^1.6.0",
     "sequelize": "*",
     "sequelize-definer": "*",
     "serve-favicon": "*",
