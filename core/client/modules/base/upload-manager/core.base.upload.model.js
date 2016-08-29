@@ -1,10 +1,5 @@
-import angular from 'angular';
+Upload.$inject = ['$resource'];
 
-angular
-    .module('core.base')
-    .factory('Upload', Upload);
-
-/* @ngInject */
-function Upload($resource) {
+export default function Upload ($resource) {
     return $resource('/api/etc/upload', {}, {});
 }
