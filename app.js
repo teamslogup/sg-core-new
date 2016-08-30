@@ -33,6 +33,7 @@ var server = https(app);
 
 passport();
 
+console.log('database info : ', config.db);
 sequelize.sync({force: config.db.force}).then(function (err) {
     if (env === 'production') {
         if (server.isUseHttps) {
