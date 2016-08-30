@@ -1,4 +1,4 @@
-User.$inject = ['$resource'];
+User.$inject = ['$resource', 'usersResources'];
 
 export default function User($resource, usersResources) {
     return $resource(usersResources.USERS + '/:id', {
