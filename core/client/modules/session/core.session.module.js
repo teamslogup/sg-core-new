@@ -3,7 +3,7 @@ import users from '../users/core.users.module';
 
 import routing from './config/core.session.route';
 import SessionCtrl from './controllers/core.session.controller';
-import sessionResources from './services/core.session.constants';
+import sessionResources from './services/core.session.constant';
 import Session from './services/core.session.model';
 import Pass from './services/core.session.pass.model';
 import SenderEmail from './services/core.session.sender-email.model';
