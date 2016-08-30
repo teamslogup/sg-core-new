@@ -1,4 +1,4 @@
-Session.$inject = ['$resource'];
+Session.$inject = ['$resource', 'sessionResources'];
 
 export default function Session($resource, sessionResources) {
     return $resource(sessionResources.SESSION, {}, {
