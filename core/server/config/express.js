@@ -116,7 +116,7 @@ module.exports = function (sequelize) {
 
     if (process.env.NODE_ENV === 'production' && META.std.flag.isUseRedis) {
         sessionSettings.store = new RedisStore({
-            'redis-url': CONFIG.db.redis
+            'host': CONFIG.db.redis
         });
     }
 
