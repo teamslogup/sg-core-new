@@ -1,5 +1,3 @@
-var UsersResources = {
+export default UsersResources = {
     USERS: '/api/accounts/users'
-};
-
-export default UsersResources
+}
