@@ -1,5 +1,3 @@
-SessionCtrl.$inject = ['$scope', '$rootScope', '$location', '$filter'];
-
 export default function SessionCtrl($scope, $rootScope, $location, $filter, sessionManager, errorHandler, metaManager, oauthManager) {
     var translate = $filter('translate');
     var vm = $scope.vm = {};
