@@ -1,0 +1,33 @@
+#sg-input-pass-bar-wrap {
+  position: relative;
+  width: 100%;
+  #sg-input-pass-bar {
+    position: relative;
+    width: 25%;
+    border-radius: 4px;
+    transition: width .3s, margin .3s;
+  }
+  #sg-input-pass-bar.red {
+    height: 10px;
+    margin-top: 10px;
+    background-color: red;
+  }
+  #sg-input-pass-bar.orange {
+    width: 50%;
+    height: 10px;
+    margin-top: 10px;
+    background-color: orange;
+  }
+  #sg-input-pass-bar.green {
+    width: 75%;
+    height: 10px;
+    margin-top: 10px;
+    background-color: green;
+  }
+  #sg-input-pass-bar.blue {
+    width: 100%;
+    height: 10px;
+    margin-top: 10px;
+    background-color: blue;
+  }
+}
