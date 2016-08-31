@@ -38,7 +38,6 @@
     "merge-stream": "^1.0.0",
     "minimist": "^1.2.0",
     "mocha": "*",
-    "node-sass": "^3.8.0",
     "sass-loader": "^4.0.0",
     "should": "*",
     "split-by-name-webpack-plugin": "0.0.3",
@@ -115,7 +114,8 @@
     "sg-sender": "*",
     "sg-sequelize-error-handler": "*",
     "sg-upload-manager": "*",
-    "sticky-session": "*"
+    "sticky-session": "*",
+    "node-sass": "^3.8.0"
   },
   "engines": {
     "node": ">=6.1.0"

@@ -15,3 +15,4 @@ app/server/views/main-development.ejs
 app/server/views/admin-production.ejs
 app/server/views/admin-development.ejs
 /dist/
+npm-debug.log
