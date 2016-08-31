@@ -96,7 +96,8 @@ var standards = {
         "birth": "birth",
         "name": "name",
         "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
-        "deletedUserStoringDay": 10
+        "deletedUserStoringDay": 10,
+        "quiescenceUserPivotDay": 365
     },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.

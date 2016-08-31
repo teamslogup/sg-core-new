@@ -5,6 +5,7 @@ var resource = filePath[filePath.length - 1];
 var top = require('./' + resource + '.top.js');
 var get = require('./' + resource + '.get.js');
 var post = require('./' + resource + '.post.js');
+var put = require('./' + resource + '.put.js');
 var del = require('./' + resource + '.del.js');
 
 var express = require('express');
@@ -43,6 +44,38 @@ var api = {
                 apiCreator.run();
 
                 
+            }
+            else {
+                return params;
+            }
+        };
+    },
+    put: function (isOnlyParams) {
+        return function (req, res, next) {
+
+            var params = {
+                acceptable: [],
+                essential: [],
+                resettable: [],
+                explains: {},
+                title: '로그인된 유저 정보 얻기 (최종 접속일 갱신)',
+                state: 'staging'
+            };
+
+            if (!isOnlyParams) {
+                var apiCreator = new HAPICreator(req, res, next);
+
+                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.validator(
+                    params.acceptable,
+                    params.essential,
+                    params.resettable
+                ));
+                apiCreator.add(put.updateAndGetUser());
+                apiCreator.add(put.supplement());
+                apiCreator.run();
+
+
             }
             else {
                 return params;
@@ -122,6 +155,7 @@ var api = {
 };
 
 router.get('/' + resource, api.get());
+router.put('/' + resource, api.put());
 router.post('/' + resource, api.post());
 router.delete('/' + resource, api.delete());
 
