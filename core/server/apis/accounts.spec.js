@@ -56,6 +56,19 @@ describe('Email Accounts Api Tests', function () {
         emailUser.signup(done);
     });
 
+    it('should load user', function (done) {
+        emailUser.getUserSession(function() {
+            var updatedAt1 = emailUser.getData('updatedAt');
+            setTimeout(function() {
+                emailUser.getUserSession(function() {
+                    var updatedAt2 = emailUser.getData('updatedAt');
+                    updatedAt2.should.greaterThan(updatedAt1);
+                    done();
+                });
+            }, 100);
+        });
+    });
+
     it('should verify email', function (done) {
         emailUser.verifyEmail(STD.user.authEmailSignup, done);
     });

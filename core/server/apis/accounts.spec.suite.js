@@ -34,6 +34,17 @@ function Account(fixture) {
 
 util.inherits(Account, Super);
 
+Account.prototype.getUserSession = function (callback) {
+    var self = this;
+    request(app).put(url.session)
+        .set("Cookie", self.cookie)
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            self.data = res.body;
+            callback();
+        });
+};
+
 Account.prototype.loadUser = function (callback) {
     var self = this;
     request(app).get(url.users + "/" + self.getData('id'))
