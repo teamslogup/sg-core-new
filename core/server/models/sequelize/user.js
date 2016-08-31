@@ -118,6 +118,11 @@ module.exports = {
         'deletedAt': {
             'type': Sequelize.DATE,
             'allowNull': true
+        },
+        'passUpdatedAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true,
+            'defaultValue': MICRO.now()
         }
     },
     options: {
@@ -422,8 +427,9 @@ module.exports = {
             'changePassword': function (pass, callback) {
                 var loadedUser = null;
                 var self = this;
-                this.updateAttributes({
-                    secret: self.createHashPassword(pass)
+                self.updateAttributes({
+                    secret: self.createHashPassword(pass),
+                    passUpdatedAt: MICRO.now()
                 }).then(function (user) {
                     if (user) {
                         loadedUser = user;
@@ -437,7 +443,7 @@ module.exports = {
                     }
                 });
             },
-            'createRandomPassword': function() {
+            'createRandomPassword': function () {
                 var length = STD.user.minSecretLength;
                 var pass = "";
                 for (var i = 0; i < length; ++i) {
@@ -501,11 +507,11 @@ module.exports = {
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'getUserFields': function () {
-                var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail'];
+                var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt'];
                 return fields;
             },
             'getFullUserFields': function () {
-                var fields = ['id', 'email', 'phoneNum', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'agreedPhoneNum'];
+                var fields = ['id', 'email', 'phoneNum', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'agreedPhoneNum', 'passUpdatedAt'];
                 return fields;
             },
             /**
@@ -981,7 +987,7 @@ module.exports = {
                             'ip': req.refinedIP,
                             'session': req.sessionID
                         };
-                        req.models.LoginHistory.createLoginHistory(user.id, history, function(status, data) {
+                        req.models.LoginHistory.createLoginHistory(user.id, history, function (status, data) {
                             if (status == 200) {
                                 req.login(user, function (err) {
                                     loginCallback(err, callback);
