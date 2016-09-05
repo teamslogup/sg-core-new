@@ -17,7 +17,7 @@ function extending() {
         if (str === '') return false;
         var versionArr = str.split(".");
         if (versionArr.length == 3) {
-            if (Number(versionArr[0]) > -1&& Number(versionArr[1])  > -1 && Number(versionArr[2]) > -1) {
+            if (Number(versionArr[0]) > -1 && Number(versionArr[1]) > -1 && Number(versionArr[2]) > -1) {
                 return true;
             }
         }
@@ -185,15 +185,14 @@ function extending() {
         if (!maxCnt) maxCnt = 1;
         if (str === '') return false;
         var arr = str.split(',');
-        if (arr.length > maxCnt || arr.length < minLen) {
+        if (arr.length > maxCnt) {
             return false;
         } else {
             for (var i = 0; i < arr.length; ++i) {
                 //trim
                 arr[i] = arr[i].replace(/^\s*|\s*$/g, "");
                 arr[i] = arr[i].toLowerCase();
-                //check image
-                var result = arr[i].length <= maxLen;
+                var result = arr[i].length <= maxLen && arr[i].length >= minLen;
                 if (!result) break;
             }
         }
