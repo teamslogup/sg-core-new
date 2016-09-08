@@ -21,6 +21,13 @@ config.entry = {
     'sg-admin': './app/client/pages/admin/app.admin.module.js'
 };
 
+config.resolve = {
+    modulesDirectories: [
+        path.resolve('./app/node_modules'),
+        path.resolve('./node_modules')
+    ]
+};
+
 config.output = {
     publicPath: __dirname,
     path: path.resolve(__dirname, "./dist"),
