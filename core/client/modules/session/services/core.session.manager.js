@@ -1,7 +1,9 @@
-export default function sessionManager(Session, usersManager, metaManager, SenderEmail, Pass) {
+export default function sessionManager(Session, SocialSession, usersManager, metaManager, SenderEmail, Pass) {
     var currentSession = window.session || null;
     this.session = (currentSession.id && currentSession) || {};
     this.isLoggedIn = isLoggedIn;
+    this.socialLogin = socialLogin;
+    this.loginWithPhone = loginWithPhone;
     this.loginWithNormalId = loginWithNormalId;
     this.loginWithPhone = loginWithPhone;
     this.loginWithEmail = loginWithEmail;
@@ -39,6 +41,23 @@ export default function sessionManager(Session, usersManager, metaManager, Sende
 
     function isLoggedIn() {
         return currentSession && currentSession.id ? true : false;
+    }
+
+
+    function socialLogin(provider, pid, accessToken, callback) {
+        var body = {
+            provider: provider,
+            pid: pid,
+            accessToken: accessToken
+        };
+        var self = this;
+        var socialSession = new SocialSession(body);
+        socialSession.$save(function (data) {
+            currentSession = self.session = data;
+            callback(200, data);
+        }, function (data) {
+            callback(data.status, data.data);
+        });
     }
 
     function loginWithNormalId(uid, secret, callback) {
