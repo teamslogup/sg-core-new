@@ -2,6 +2,7 @@ export default function sessionManager(Session, usersManager, metaManager, Sende
     var currentSession = window.session || null;
     this.session = (currentSession.id && currentSession) || {};
     this.isLoggedIn = isLoggedIn;
+    this.loginWithNormalId = loginWithNormalId;
     this.loginWithPhone = loginWithPhone;
     this.loginWithEmail = loginWithEmail;
     this.logout = logout;
@@ -38,6 +39,22 @@ export default function sessionManager(Session, usersManager, metaManager, Sende
 
     function isLoggedIn() {
         return currentSession && currentSession.id ? true : false;
+    }
+
+    function loginWithNormalId(uid, secret, callback) {
+        var body = {
+            type: metaManager.std.user.signUpTypeNormalId,
+            uid: uid,
+            secret: secret
+        };
+        var self = this;
+        var session = new Session(body);
+        session.$save(function (data) {
+            currentSession = self.session = data;
+            callback(200, data);
+        }, function (data) {
+            callback(data.status, data.data);
+        });
     }
 
     function loginWithPhone(phoneNumber, authNum, callback) {
