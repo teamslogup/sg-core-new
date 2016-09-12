@@ -44,7 +44,19 @@ post.removeAllSessions = function () {
                 'uid': req.providerUserProfile.uid
             }, [{
                 model: req.models.User,
-                as: 'user'
+                as: 'user',
+                include: [{
+                    model: sequelize.models.Profile,
+                    as: 'profile'
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
+                }]
             }],
             function (status, data) {
                 if (status == 200) {

@@ -1030,7 +1030,7 @@ module.exports = {
                             as: 'user',
                             include: [{
                                 model: sequelize.models.Profile,
-                                as: profileKey
+                                as: profile
                             }, {
                                 model: sequelize.models.Provider,
                                 as: 'providers',
