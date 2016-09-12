@@ -46,16 +46,16 @@ post.removeAllSessions = function () {
                 model: req.models.User,
                 as: 'user',
                 include: [{
-                    model: sequelize.models.Profile,
+                    model: req.models.Profile,
                     as: 'profile'
                 }, {
-                    model: sequelize.models.Provider,
+                    model: req.models.Provider,
                     as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
+                    attributes: req.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.LoginHistory,
+                    model: req.models.LoginHistory,
                     as: 'loginHistories',
-                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
+                    attributes: req.models.LoginHistory.getLoginHistoryFields()
                 }]
             }],
             function (status, data) {
