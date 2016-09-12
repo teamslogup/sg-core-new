@@ -29,9 +29,10 @@ module.exports = {
         var rootUri = 'http://kapi.kakao.com/v1/user/access_token_info';
         var option = {
             method: 'GET',
-            uri: rootUri + secret,
+            uri: rootUri,
             headers: {
-                'Authorization': "Bearer " + secret
+                'Authorization': "Bearer " + secret,
+                'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'
             }
         };
         request(option, function (error, response, body) {
