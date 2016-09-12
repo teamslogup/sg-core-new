@@ -1027,7 +1027,19 @@ module.exports = {
                             'uid': providerData.uid
                         }, [{
                             model: sequelize.models.User,
-                            as: 'user'
+                            as: 'user',
+                            include: [{
+                                model: sequelize.models.Profile,
+                                as: profileKey
+                            }, {
+                                model: sequelize.models.Provider,
+                                as: 'providers',
+                                attributes: sequelize.models.Provider.getProviderFields()
+                            }, {
+                                model: sequelize.models.LoginHistory,
+                                as: 'loginHistories',
+                                attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
+                            }]
                         }],
                         function (status, data) {
                             if (status == 200) {

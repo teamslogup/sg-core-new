@@ -64,6 +64,10 @@ module.exports = {
             "key": "",
             "retry": 20
         },
+        "fcm": {
+            token: "",
+            id: ""
+        },
         "email": {
             "host": "",
             "port": 587,

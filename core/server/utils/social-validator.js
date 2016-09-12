@@ -26,7 +26,7 @@ module.exports = {
         if (process.env.NODE_ENV == "test") {
             return callback(200);
         }
-        var rootUri = 'http://kapi.kakao.com/v1/user/access_token_info';
+        var rootUri = 'https://kapi.kakao.com/v1/user/access_token_info';
         var option = {
             method: 'GET',
             uri: rootUri,
