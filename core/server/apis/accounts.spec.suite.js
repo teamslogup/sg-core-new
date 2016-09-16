@@ -73,6 +73,42 @@ Account.prototype.sendPhoneAuth = function (callback) {
         });
 };
 
+Account.prototype.sendFindIdPhoneAuth = function (callback) {
+    var self = this;
+    request(app).post(url.senderPhone)
+        .send({
+            phoneNum: self.getFixture('uid'),
+            type: STD.user.authPhoneFindId
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
+            self.authToken = res.body;
+            callback();
+        });
+};
+
+Account.prototype.findId = function (callback) {
+    var self = this;
+    request(app).post(url.authPhone)
+        .send({
+            token: self.authToken,
+            type: STD.user.authPhoneFindId
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.have.property('userId');
+            if (res.header['set-cookie']) {
+                self.cookie = res.header['set-cookie'][0];
+            }
+            res.body.userId.should.be.exactly(self.getData('aid'));
+            callback();
+        });
+};
+
 Account.prototype.sendLoginPhoneAuth = function (callback) {
     var self = this;
     request(app).post(url.senderPhone)
@@ -163,8 +199,8 @@ Account.prototype.loginPhoneId = function (callback) {
         .set("Cookie", self.cookie)
         .send({
             type: STD.user.signUpTypePhoneId,
-            uid: self.fixture.uid,
-            secret: self.fixture.secret
+            uid: self.fixture.aid,
+            secret: self.fixture.apass
         })
         .end(function (err, res) {
             res.status.should.exactly(200);

@@ -7,14 +7,15 @@ var url = APP_CONFIG.rootUrl + "/" + APP_CONFIG.apiName + '/accounts/auth-email?
 var appDir = require('app-root-path').path;
 appDir = path.resolve(appDir, "./core/server/views/email");
 
-module.exports = {
 
+function makeAuthEmailUrl(redirects, auth) {
+    return url + auth.token + "&type=" + auth.type + "&successRedirect=" + (redirects.successRedirect || "") + "&errorRedirect=" + (redirects.errorRedirect || "");
+}
+
+module.exports = {
     email: {
-        signup: function (req, user, callback) {
-            console.log(url + user.auth.token);
-            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
-                return callback(null);
-            }
+        signup: function (req, redirects, auth, user, callback) {
+            console.log(url + auth.token);
             var welcomeMsg = meta.langs[req.language].welcome;
             req.sendNoti.email(user.email, "SignUp", {
                 subject: user.nick + welcomeMsg,
@@ -22,75 +23,92 @@ module.exports = {
                 name: 'signup',
                 params: {
                     nick: user.nick,
-                    url: url + user.auth.token,
-                    expiredAt: user.auth.expiredAt
-                }
-            }, callback);
-        },
-        adding: function (req, auth, callback) {
-            console.log(url + auth.token);
-            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
-                return callback(null);
-            }
-            var addingMsg = meta.langs[req.language].adding;
-            req.sendNoti.email(auth.key, "Adding", {
-                subject: addingMsg,
-                dir: appDir,
-                name: 'adding',
-                params: {
-                    url: url + auth.token,
+                    url: makeAuthEmailUrl(redirects, auth),
                     expiredAt: auth.expiredAt
                 }
-            }, callback);
+            }, function(err) {
+                if (err) {
+                    callback(503, req.emailErrorRefiner(err));
+                } else {
+                    callback(204);
+                }
+            });
         },
-        findPass: function (req, auth, callback) {
-            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
-                return callback(null);
-            }
+        findPass: function (req, redirects, auth, callback) {
             var newPassMsg = meta.langs[req.language].newPassExplain;
             req.sendNoti.email(auth.key, "FindPass", {
                 subject: newPassMsg,
                 dir: appDir,
                 name: 'find-pass',
                 params: {
-                    url: url + user.auth.token,
+                    url: makeAuthEmailUrl(redirects, auth) + "&email=" + auth.key,
                     expiredAt: auth.expiredAt
                 }
-            }, callback);
+            }, function(err) {
+                if (err) {
+                    callback(503, req.emailErrorRefiner(err));
+                } else {
+                    callback(204);
+                }
+            });
         },
-        newPass: function (req, redirect, auth, callback) {
-            if (!CONFIG.sender || !CONFIG.sender.email || !CONFIG.sender.email.host) {
-                return callback(null);
-            }
-            var newPassMsg = meta.langs[req.language].newPassExplain;
-            req.sendNoti.email(auth.key, "NewPass", {
-                subject: newPassMsg,
+        adding: function (req, redirects, auth, callback) {
+            console.log(url + auth.token);
+            var addingMsg = meta.langs[req.language].adding;
+            req.sendNoti.email(auth.key, "Adding", {
+                subject: addingMsg,
                 dir: appDir,
-                name: 'new-pass',
+                name: 'adding',
                 params: {
-                    url: url + user.auth.token,
+                    url: makeAuthEmailUrl(redirects, auth),
                     expiredAt: auth.expiredAt
                 }
-            }, callback);
+            }, function (err) {
+                if (err) {
+                    callback(503, req.emailErrorRefiner(err));
+                } else {
+                    callback(204);
+                }
+            });
+        },
+        findId: function (req, redirects, user, callback) {
+            var findIdTitleMsg = meta.langs[req.language].findIdTitleExplain;
+            req.sendNoti.email(user.email, "FindId", {
+                subject: findIdTitleMsg,
+                dir: appDir,
+                name: 'find-id',
+                params: {
+                    userId: user.aid
+                }
+            }, function (err) {
+                if (err) {
+                    callback(503, req.emailErrorRefiner(err));
+                } else {
+                    callback(204);
+                }
+            });
         }
     },
     sms: {
         sendAuth: function (req, phoneNum, token, callback) {
-
             var MAGIC = req.meta.std.magic;
             var lang = req.meta.langs[req.language];
             var msg = lang.smsAuthExplain;
             var min = req.meta.std.user.expiredPhoneTokenMinutes;
-
             msg = msg.replace(MAGIC.authNum, token);
             msg = msg.replace(MAGIC.minute, min);
-
             console.log(phoneNum, token, msg);
             if (req.sendNoti.sms) {
-                req.sendNoti.sms(phoneNum, msg, null, callback);
+                req.sendNoti.sms(phoneNum, msg, null, function(err) {
+                    if (err) {
+                        callback(err.status, err);
+                    } else {
+                        callback(204);
+                    }
+                });
             }
             else {
-                callback(null);
+                callback(204);
             }
         },
         newPass: function (req, phoneNum, pass, callback) {
@@ -100,10 +118,16 @@ module.exports = {
             msg = msg.replace(MAGIC.pass, pass);
             console.log(phoneNum, msg);
             if (req.sendNoti.sms) {
-                req.sendNoti.sms(phoneNum, msg, null, callback);
+                req.sendNoti.sms(phoneNum, msg, null,  function(err) {
+                    if (err) {
+                        callback(err.status, err);
+                    } else {
+                        callback(204);
+                    }
+                });
             }
             else {
-                callback(null);
+                callback(204);
             }
         }
     }

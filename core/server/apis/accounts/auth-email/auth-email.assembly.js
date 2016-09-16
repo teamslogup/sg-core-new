@@ -19,12 +19,15 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['token', 'type'],
+                acceptable: ['token', 'type', 'successRedirect', 'errorRedirect', 'email'],
                 essential: ['token', 'type'],
                 resettable: [],
                 explains: {
                     'token': 'email token',
-                    'type': '인증 타입, ' + [STD.user.authEmailSignup, STD.user.authEmailAdding].join(", ")
+                    'email': "findPass의 경우 redirect될 때 필요한 이메일 authEmailFindPass의 경우 필수값임.",
+                    'type': '인증 타입, ' + [STD.user.authEmailSignup, STD.user.authEmailFindPass, STD.user.authEmailAdding].join(", "),
+                    'successRedirect': '인증 성공 후 리다이렉트될 경로, 혹은 비밀번호찾기 화면의 경로',
+                    'errorRedirect': '인증 실패 후 리다이렉트될 경로'
                 },
                 title: '이메일연동벨리데이션',
                 state: 'staging'

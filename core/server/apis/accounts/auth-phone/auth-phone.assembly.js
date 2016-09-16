@@ -23,11 +23,11 @@ var api = {
                 essential: ['type', 'token'],
                 resettable: [],
                 explains: {
-                    'type': STD.user.authPhoneAdding + ", " + STD.user.authPhoneFindPass,
+                    'type': [STD.user.authPhoneAdding, STD.user.authPhoneFindPass, STD.user.authPhoneFindId].join(", "),
                     'token': '인증번호'
                 },
                 response: resforms.user,
-                title: '전화번호 연동',
+                title: '전화번호 연동, 전화번호로 비번찾기',
                 state: 'staging'
             };
 
@@ -40,9 +40,10 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(post.getUser());
+                apiCreator.add(post.checkAuth());
                 apiCreator.add(post.updateUser());
                 apiCreator.add(post.sendPassword());
+                apiCreator.add(post.removeAuth());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
             }

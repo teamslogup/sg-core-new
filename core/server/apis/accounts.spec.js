@@ -179,6 +179,22 @@ describe('Email Accounts Api Tests', function () {
         phoneIdUser.signup(done);
     });
 
+    it('should logout phone user', function (done) {
+        phoneIdUser.logout(done);
+    });
+
+    it('should send auth number for find id', function (done) {
+        phoneIdUser.sendFindIdPhoneAuth(done);
+    });
+
+    it('should find id', function (done) {
+        phoneIdUser.findId(done);
+    });
+
+    it('should login phone user', function (done) {
+        phoneIdUser.loginPhoneId(done);
+    });
+
     it('should remove phone', function (done) {
         phoneIdUser.removePhone(done);
     });
