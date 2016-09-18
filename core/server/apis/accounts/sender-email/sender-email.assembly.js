@@ -18,12 +18,14 @@ var api = {
         return function(req, res, next) {
 
             var params = {
-                acceptable: ['type', 'email'],
+                acceptable: ['type', 'email', 'successRedirect', 'errorRedirect'],
                 essential: ['type', 'email'],
                 resettable: [],
                 explains : {
                     'type': '이메일 발송 타입 ' + STD.user.enumAuthEmailTypes.join(", "),
-                    'email': '이메일'
+                    'email': '이메일',
+                    'successRedirect': '인증 성공 후 리다이렉트될 경로',
+                    'errorRedirect': '인증 실패 후 리다이렉트될 경로'
                 },
                 title: '타입별 이메일 전송자',
                 state: 'staging'
@@ -38,8 +40,9 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(post.checkAlreadySignUp());
-                apiCreator.add(post.checkAndAddEmail());
+                apiCreator.add(post.additionalValidate());
+                apiCreator.add(post.loadEmailUser());
+                apiCreator.add(post.upsertAuth());
                 apiCreator.add(post.sendEmailAuth());
                 apiCreator.add(post.supplement());
                 apiCreator.run();

@@ -259,7 +259,7 @@ module.exports = {
              * @param {responseCallback} callback - 응답콜백
              * @todo testing
              */
-            'verifyEmail': function (token, type, callback) {
+            'verifyAuth': function (token, type, callback) {
 
                 var isSuccess = false;
                 var self = this;
@@ -314,44 +314,6 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (isSuccess) {
                         callback(200, self);
-                    }
-                });
-            },
-            /**
-             * 비번찾기나 가입인증을 위해 단순히 인증테이블만 upsert하는 경우,
-             * @param email
-             * @param type
-             * @param callback
-             */
-            'upsertAuth': function (email, type, callback) {
-                var self = this;
-                var updatedUser = null;
-                sequelize.transaction(function (t) {
-                    return sequelize.models.User.findOne({
-                        where: {
-                            email: email
-                        },
-                        transaction: t
-                    }).then(function (user) {
-                        updatedUser = user;
-                        return sequelize.models.Auth.upsert({
-                            type: type,
-                            key: email
-                        }, {transaction: t}).then(function () {
-                            return sequelize.models.Auth.findOne({
-                                where: {
-                                    type: type,
-                                    key: email
-                                },
-                                transaction: t
-                            }).then(function (auth) {
-                                updatedUser['auth'] = auth;
-                            });
-                        });
-                    });
-                }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (updatedUser && updatedUser.auth) {
-                        callback(200, updatedUser);
                     }
                 });
             },

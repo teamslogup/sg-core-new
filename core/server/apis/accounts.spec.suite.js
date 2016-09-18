@@ -8,7 +8,7 @@ var META = require('../../../bridge/metadata/index');
 var STD = META.std;
 var resform = require('../resforms');
 var Super = require('./super.spec.suite');
-
+var querystring = require('querystring');
 
 var url = {
     users: "/api/accounts/users",
@@ -30,6 +30,8 @@ function Account(fixture) {
     fixture.token = (Math.random() * 100000000) % 100000000 + 123412;
     Account.super_.call(this, fixture);
     this.authToken = '';
+    this.successRedirect = 'http://naver.com';
+    this.errorRedirect = 'http://daum.net';
 }
 
 util.inherits(Account, Super);
@@ -163,8 +165,8 @@ Account.prototype.loginPhoneId = function (callback) {
         .set("Cookie", self.cookie)
         .send({
             type: STD.user.signUpTypePhoneId,
-            uid: self.fixture.uid,
-            secret: self.fixture.secret
+            uid: self.fixture.aid,
+            secret: self.fixture.apass
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
@@ -321,7 +323,9 @@ Account.prototype.changePassword = function (pass, callback) {
     request(app).put(url.pass)
         .set("Cookie", self.cookie)
         .send({
-            newPass: pass
+            token: self.getFixture('secret'),
+            newPass: pass,
+            type: STD.user.linkIdPassNormal
         })
         .end(function (err, res) {
             res.status.should.exactly(204);
@@ -477,6 +481,68 @@ Account.prototype.sendAddingEmailAuth = function (email, callback) {
         });
 };
 
+Account.prototype.sendFindIdEmailAuth = function (callback) {
+    var self = this;
+    request(app).post(url.senderEmail)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.authEmailFindId,
+            email: self.getData('aid')
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            res.body.should.be.exactly(self.getData('aid'));
+            callback();
+        });
+};
+
+Account.prototype.setNewPass = function (newPass, callback) {
+    var self = this;
+    request(app).post(url.senderEmail)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.authEmailFindPass,
+            email: self.getData('aid'),
+            successRedirect: self.successRedirect,
+            errorRedirect: self.errorRedirect
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+
+            var query = querystring.stringify({
+                type: STD.user.authEmailFindPass,
+                email: self.getData('email'),
+                successRedirect: self.successRedirect,
+                errorRedirect: self.errorRedirect,
+                token: self.authToken
+            });
+            request(app).get(url.authEmail + '?' + query)
+                .set("Cookie", self.cookie)
+                .end(function (err, res) {
+                    res.status.should.exactly(200);
+                    res.body.should.have.property('email', self.getData('email'));
+                    res.body.should.have.property('token', self.authToken);
+
+                    request(app).put(url.pass)
+                        .set("Cookie", self.cookie)
+                        .send({
+                            type: STD.user.linkIdPassEmail,
+                            email: self.getData('aid'),
+                            newPass: newPass,
+                            token: self.authToken
+                        })
+                        .end(function (err, res) {
+                            res.status.should.exactly(204);
+                            self.setFixture('secret', newPass);
+                            callback();
+                        });
+                });
+        });
+};
+
 Account.prototype.sendSignupEmailAuth = function (callback) {
     var self = this;
     request(app).post(url.senderEmail)
@@ -490,6 +556,65 @@ Account.prototype.sendSignupEmailAuth = function (callback) {
             res.body.should.be.an.String;
             self.authToken = res.body;
             callback();
+        });
+};
+
+Account.prototype.findIdAsPhone = function (callback) {
+    var self = this;
+    request(app).post(url.senderPhone)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.authPhoneFindId,
+            phoneNum: self.getData('phoneNum')
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+
+            request(app).post(url.authPhone)
+                .set("Cookie", self.cookie)
+                .send({
+                    type: STD.user.authPhoneFindId,
+                    token: self.authToken
+                })
+                .end(function (err, res) {
+                    res.status.should.exactly(200);
+                    res.body.should.be.exactly(self.getData('aid'));
+                    callback();
+                });
+        });
+};
+
+Account.prototype.findPassAsPhone = function (callback) {
+    var self = this;
+    request(app).post(url.senderPhone)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.authPhoneFindPass,
+            phoneNum: self.getData('phoneNum')
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+
+            request(app).post(url.authPhone)
+                .set("Cookie", self.cookie)
+                .send({
+                    type: STD.user.authPhoneFindPass,
+                    token: self.authToken
+                })
+                .end(function (err, res) {
+                    res.status.should.exactly(200);
+                    res.body.should.be.an.String;
+                    if (self.getFixture('apass')) {
+                        self.setFixture('apass', res.body);
+                    } else {
+                        self.setFixture('secret', res.body);
+                    }
+                    callback();
+                });
         });
 };
 
