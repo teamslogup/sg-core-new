@@ -27,6 +27,7 @@ module.exports = {
                     expiredAt: auth.expiredAt
                 }
             }, function(err) {
+                if (process.env.NODE_ENV == 'test') return callback(204);
                 if (err) {
                     callback(503, req.emailErrorRefiner(err));
                 } else {
@@ -45,6 +46,7 @@ module.exports = {
                     expiredAt: auth.expiredAt
                 }
             }, function(err) {
+                if (process.env.NODE_ENV == 'test') return callback(204);
                 if (err) {
                     callback(503, req.emailErrorRefiner(err));
                 } else {
@@ -64,6 +66,7 @@ module.exports = {
                     expiredAt: auth.expiredAt
                 }
             }, function (err) {
+                if (process.env.NODE_ENV == 'test') return callback(204);
                 if (err) {
                     callback(503, req.emailErrorRefiner(err));
                 } else {
@@ -81,6 +84,7 @@ module.exports = {
                     userId: user.aid
                 }
             }, function (err) {
+                if (process.env.NODE_ENV == 'test') return callback(204);
                 if (err) {
                     callback(503, req.emailErrorRefiner(err));
                 } else {

@@ -11,9 +11,6 @@ post.validate = function () {
         req.check('type', '400_3').isEnum([USER.authPhoneAdding, USER.authPhoneFindPass, USER.authPhoneFindId]);
         req.check('token', '400_13').len(SMS.authNumLength, SMS.authNumLength);
         req.utils.common.checkError(req, res, next);
-        if (!req.isAuthenticated() && req.body.type == USER.authEmailAdding) {
-            return res.hjson(req, next, 403);
-        }
         next();
     };
 };
@@ -67,12 +64,28 @@ post.updateUser = function () {
                     return res.hjson(req, next, status, data);
                 }
             });
-        } else if (req.body.type == USER.authPhoneFindPass) {
+        } else if (req.body.type == USER.authPhoneFindId || req.body.type == USER.authPhoneFindPass) {
+            req.models.User.findUserByPhoneNumber(req.loadedAuth.key, function (status, data) {
+                if (status == 200 && data.aid) {
+                    req.user = data;
+                    next();
+                } else {
+                    res.hjson(req, next, 404);
+                }
+            });
+        }
+    };
+};
+
+post.updateNewPass = function () {
+    return function (req, res, next) {
+        var USER = req.meta.std.user;
+        if (req.body.type == USER.authPhoneFindPass) {
             var t = false;
-            req.newPass = req.user.createHashPassword(req.user.createRandomPassword());
+            req.newPass = req.user.createRandomPassword();
 
             req.user.updateAttributes({
-                secret: req.newPass
+                secret: req.user.createHashPassword(req.newPass)
             }).then(function (user) {
                 t = true;
                 req.user = user;
@@ -83,25 +96,17 @@ post.updateUser = function () {
                     next();
                 }
             });
-        } else if (req.body.type == USER.authPhoneFindId) {
-            req.models.User.findUserByPhoneNumber(req.loadedAuth.key, function (status, data) {
-                if (status == 200 && data.aid) {
-                    return res.hjson(req, next, 200, {
-                        userId: data.aid
-                    });
-                } else {
-                    res.hjson(req, next, 404);
-                }
-            });
+        } else {
+            next();
         }
-    };
+    }
 };
 
 post.sendPassword = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
         if (req.body.type == USER.authPhoneFindPass) {
-            req.coreUtils.notification.sms.newPass(req, req.body.phoneNum, req.newPass, function (status, data) {
+            req.coreUtils.notification.sms.newPass(req, req.user.phoneNum, req.newPass, function (status, data) {
             });
             next();
         } else {
@@ -122,7 +127,10 @@ post.supplement = function () {
     return function (req, res, next) {
         if (process.env.NODE_ENV == "test") {
             var USER = req.meta.std.user;
-            if (req.body.type == USER.authPhoneFindPass) {
+            if (req.body.type == USER.authPhoneFindId) {
+                return res.hjson(req, next, 200, req.user.aid);
+            }
+            else if (req.body.type == USER.authPhoneFindPass) {
                 return res.hjson(req, next, 200, req.newPass);
             } else {
                 return res.hjson(req, next, 200, req.user.toSecuredJSON());

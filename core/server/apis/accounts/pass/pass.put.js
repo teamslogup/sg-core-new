@@ -20,6 +20,10 @@ put.validate = function () {
             });
         }
 
+        if (!req.isAuthenticated() && req.body.type == USER.linkIdPassNormal) {
+            return res.hjson(req, next, 403);
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -35,14 +39,16 @@ put.checkToken = function () {
                 type: USER.authEmailFindPass,
                 key: req.body.email,
                 token: req.body.token
-            }, null, function(status, data) {
+            }, null, function (status, data) {
                 if (status == 200) {
                     var now = new Date();
                     if (data.expiredAt < now || data.token.toString() != req.body.token.toString()) {
-                        data.delete(function(status, data){});
+                        data.delete(function (status, data) {
+                        });
                         return res.hjson(req, next, 403);
                     }
                     req.loadedAuth = data;
+                    next();
                 } else {
                     res.hjson(req, next, status, data);
                 }
@@ -50,16 +56,28 @@ put.checkToken = function () {
         }
         // 일반 비번 변경인 경우
         else {
-            // 일반 비번 변경의 경우 반드시 로그인이 되어 있어야 한다.
-            if (!req.isAuthenticated()) {
-                return res.hjson(req, next, 403);
+            if (req.user.authenticate(req.body.token)) {
+                next();
             } else {
-                if (req.user.authenticate(req.body.token)) {
+                return res.hjson(req, next, 403);
+            }
+        }
+    };
+};
+
+put.loadUser = function () {
+    return function (req, res, next) {
+        if (req.body.type == req.meta.std.user.linkIdPassEmail) {
+            req.models.User.findUserByEmail(req.body.email, function (status, data) {
+                if (status == 200) {
+                    req.user = data;
                     next();
                 } else {
-                    return res.hjson(req, next, 403);
+                    res.hjson(req, next, status, data);
                 }
-            }
+            });
+        } else {
+            next();
         }
     };
 };
@@ -77,11 +95,16 @@ put.changePassword = function () {
     };
 };
 
-put.removeAuth = function() {
+put.removeAuth = function () {
     return function (req, res, next) {
-        req.loadedAuth.delete(function(status, data){
+        var USER = req.meta.std.user;
+        if (req.body.type == USER.linkIdPassEmail) {
+            req.loadedAuth.delete(function (status, data) {
+                next();
+            });
+        } else {
             next();
-        });
+        }
     };
 };
 

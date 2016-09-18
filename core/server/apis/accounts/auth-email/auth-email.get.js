@@ -6,18 +6,28 @@ get.validate = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
         req.check('token', '400_17').len(1, 2000);
-        req.check('type', '400_3').isEnum([USER.authEmailSignup, USER.authEmailAdding]);
+        req.query.token = decodeURIComponent(req.query.token);
 
-        req.check('successRedirect', '400_3').len(1, 500);
-        req.check('errorRedirect', '400_3').len(1, 500);
+        req.check('type', '400_3').isEnum([USER.authEmailSignup, USER.authEmailAdding, USER.authEmailFindPass]);
+
+        if (req.query.successRedirect !== undefined) {
+            req.query.successRedirect = decodeURIComponent(req.query.successRedirect);
+            req.check('successRedirect', '400_3').len(1, 500);
+        }
+        if (req.query.errorRedirect !== undefined) {
+            req.query.errorRedirect = decodeURIComponent(req.query.errorRedirect);
+            req.check('errorRedirect', '400_3').len(1, 500);
+        }
+        if (req.query.email !== undefined) {
+            req.query.email = decodeURIComponent(req.query.email);
+            req.check('email', '400_1').isEmail();
+        }
 
         if (req.query.type == USER.authEmailFindPass && req.query.email === undefined) {
             return res.hjson(req, next, 400, {
                 code: '400_14'
             });
         }
-
-        req.query.token = decodeURIComponent(req.query.token);
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -41,9 +51,12 @@ get.consent = function () {
         }
 
         // 비번찾기가 아니라면 이메일 가입 및 연동을 완료한다
-        if (!type == USER.authEmailFindPass) {
+        if (type != USER.authEmailFindPass) {
             req.user.verifyAuth(req.query.token, req.query.type, function (status, body) {
-                if (status == 200) return next();
+                if (status == 200) {
+                    req.user = body;
+                    return next();
+                }
 
                 var verifyStatus = status;
                 var verifyBody = body;
@@ -97,15 +110,13 @@ get.supplement = function () {
         var type = req.query.type;
 
         // 비번 찾기가 아니라면
-        if (!type == USER.authEmailFindPass) {
+        if (type != USER.authEmailFindPass) {
             if (!req.query.successRedirect || process.env.NODE_ENV == 'test') {
                 return res.hjson(req, next, 200, req.user);
             }
-
             res.status(200);
             res.redirect(req.query.successRedirect);
         }
-        // 비번찾기일 경우
         else {
             if (!req.query.successRedirect || process.env.NODE_ENV == 'test') {
                 return res.hjson(req, next, 200, {

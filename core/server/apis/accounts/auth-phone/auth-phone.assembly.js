@@ -42,6 +42,7 @@ var api = {
                 apiCreator.add(post.validate());
                 apiCreator.add(post.checkAuth());
                 apiCreator.add(post.updateUser());
+                apiCreator.add(post.updateNewPass());
                 apiCreator.add(post.sendPassword());
                 apiCreator.add(post.removeAuth());
                 apiCreator.add(post.supplement());

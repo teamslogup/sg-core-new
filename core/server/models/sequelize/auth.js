@@ -53,7 +53,7 @@ module.exports = {
             fields: ['userId', 'type']
         }],
         'paranoid': false,
-        'instanceMethods': {
+        'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
             /**
              * 해당 인스턴스의 정보를 통해 토큰 값 설정.
              * @returns {*|string}
@@ -69,7 +69,7 @@ module.exports = {
             'createExpiredDate': function () {
                 return sequelize.models.Auth.createExpiredDate(this.type);
             }
-        },
+        }),
         'hooks': {
             /**
              * 객체가 디비에 삽입되기전 토큰과 만기일자를 자동으로 설정 해주는 훅.
@@ -119,7 +119,7 @@ module.exports = {
             'createExpiredDate': function (type) {
                 var now = new Date();
                 var min;
-                if (type == STD.user.signUpTypeEmail) {
+                if (type.toLowerCase().indexOf('email') != -1) {
                     min = STD.user.expiredEmailTokenMinutes;
                 } else {
                     min = STD.user.expiredPhoneTokenMinutes;

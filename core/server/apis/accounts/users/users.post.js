@@ -177,7 +177,7 @@ post.sendEmailAuth = function () {
         var FLAG = req.meta.std.flag;
 
         if (req.body.type == USER.signUpTypeEmail && !FLAG.isAutoVerifiedEmail) {
-            req.coreUtils.notification.email.signup(req, req.createdUser.auth, req.createdUser, function (status, data) {
+            req.coreUtils.notification.email.signup(req, {},req.createdUser.auth, req.createdUser, function (status, data) {
                 // if (status == 503) return res.hjson(req, next, 503, err);
                 next();
             });

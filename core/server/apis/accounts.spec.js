@@ -89,6 +89,22 @@ describe('Email Accounts Api Tests', function () {
         emailUser.loginEmail(done);
     });
 
+    it('should send find id email auth', function (done) {
+        emailUser.sendFindIdEmailAuth(done);
+    });
+
+    it('should logout user', function (done) {
+        emailUser.logout(done);
+    });
+
+    it('should send find pass email auth', function (done) {
+        emailUser.setNewPass('1234qwer', done);
+    });
+
+    it('should login email user', function (done) {
+        emailUser.loginEmail(done);
+    });
+
     it('should remove account', function (done) {
         emailUser.removeAccount(done);
     });
@@ -179,16 +195,16 @@ describe('Email Accounts Api Tests', function () {
         phoneIdUser.signup(done);
     });
 
+    it('should find id as phone', function (done) {
+        phoneIdUser.findIdAsPhone(done);
+    });
+
     it('should logout phone user', function (done) {
         phoneIdUser.logout(done);
     });
 
-    it('should send auth number for find id', function (done) {
-        phoneIdUser.sendFindIdPhoneAuth(done);
-    });
-
-    it('should find id', function (done) {
-        phoneIdUser.findId(done);
+    it('should find pass as phone', function (done) {
+        phoneIdUser.findPassAsPhone(done);
     });
 
     it('should login phone user', function (done) {
@@ -264,7 +280,7 @@ describe('Email Accounts Api Tests', function () {
         socialUser.loginSocial(done);
     });
 
-    it('should send adding email', function (done) {
+    it('should fail to send adding email', function (done) {
         socialUser.sendAddingEmailAuthFail(emailUser.getData('email'), done);
     });
 

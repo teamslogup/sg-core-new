@@ -4,7 +4,6 @@ var resource = filePath[filePath.length - 1];
 
 var top = require('./' + resource + '.top.js');
 var put = require('./' + resource + '.put.js');
-var post = require('./' + resource + '.post.js');
 
 var express = require('express');
 var router = new express.Router();
@@ -42,6 +41,7 @@ var api = {
                 ));
                 apiCreator.add(put.validate());
                 apiCreator.add(put.checkToken());
+                apiCreator.add(put.loadUser());
                 apiCreator.add(put.changePassword());
                 apiCreator.add(put.removeAuth());
                 apiCreator.add(put.supplement());
@@ -55,7 +55,6 @@ var api = {
 };
 
 router.put('/' + resource, api.put());
-router.post('/' + resource, api.post());
 
 module.exports.router = router;
 module.exports.api = api;

@@ -10,8 +10,8 @@ post.validate = function () {
         req.check('type', '400_3').isEnum(USER.enumAuthEmailTypes);
         req.check('email', '400_1').isEmail();
 
-        req.check('successRedirect', '400_3').len(1, 500);
-        req.check('errorRedirect', '400_3').len(1, 500);
+        if (req.body.successRedirect !== undefined) req.check('successRedirect', '400_3').len(1, 500);
+        if (req.body.errorRedirect !== undefined) req.check('errorRedirect', '400_3').len(1, 500);
 
         req.utils.common.checkError(req, res, next);
         next();
@@ -21,6 +21,7 @@ post.validate = function () {
 post.additionalValidate = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
+        var type = req.body.type;
 
         // 이메일 연동 / 가입 인증을 할때는 반드시 로그인을 한 상태여야 한다.
         if (!req.isAuthenticated() &&
@@ -97,7 +98,7 @@ post.upsertAuth = function () {
                 type: req.body.type
             }, function (status, data) {
                 if (status == 200) {
-                    req.auth = data.auth;
+                    req.auth = data;
                     next();
                 } else if (status == 404) {
                     res.hjson(req, next, 404, {code: '404_10'});
@@ -149,7 +150,7 @@ post.sendEmailAuth = function () {
             req.coreUtils.notification.email.signup(req, {
                 successRedirect: req.body.successRedirect,
                 errorRedirect: req.body.errorRedirect
-            },req.auth, req.loadedUser, function (status, data) {
+            }, req.auth, req.loadedUser, function (status, data) {
                 if (status == 204) {
                     next();
                 } else {
@@ -164,8 +165,13 @@ post.sendEmailAuth = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
+        var USER = req.meta.std.user;
         if (process.env.NODE_ENV == 'test') {
-            res.hjson(req, next, 200, req.auth.token);
+            if (req.body.type == USER.authEmailFindId) {
+                res.hjson(req, next, 200, req.loadedUser.aid);
+            } else {
+                res.hjson(req, next, 200, req.auth.token);
+            }
         } else {
             res.hjson(req, next, 204);
         }
