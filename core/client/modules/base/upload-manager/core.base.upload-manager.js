@@ -7,7 +7,7 @@ export default function uploadManager (fileUploader, Upload, Image, coreBaseUplo
         fileUploader.upload('file', {
             folder: folder
         }, files, coreBaseUploadResources.IMAGES).then(function(data) {
-            callback(201, data.data.list[0]);
+            callback(201, data.data);
         }).catch(function(err) {
             callback(err.status, err.data)
         });

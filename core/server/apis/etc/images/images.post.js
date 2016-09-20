@@ -77,8 +77,8 @@ post.getImages = function () {
 post.supplement = function () {
     return function (req, res, next) {
         var ret = {
-            list: req.fileNames,
-            size: req.fileNames.length,
+            names: req.fileNames,
+            length: req.fileNames.length,
             images: req.images
         };
 
