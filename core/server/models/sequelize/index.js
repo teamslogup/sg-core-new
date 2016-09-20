@@ -14,6 +14,9 @@ var Image = require('./image');
 var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
 var LoginHistory = require('./login-history');
+var Notification = require('./notification');
+var NotificationBox = require('./notification-box');
+var UserNotification = require('./user-notification');
 
 var models = {
     User: User,
@@ -30,7 +33,10 @@ var models = {
     Image: Image,
     ExtinctUser: ExtinctUser,
     Terms: Terms,
-    LoginHistory: LoginHistory
+    LoginHistory: LoginHistory,
+    Notification: Notification,
+    NotificationBox: NotificationBox,
+    UserNotification: UserNotification
 };
 
 module.exports = models;

@@ -18,26 +18,27 @@ const META = require('../../../../../bridge/metadata');
 const STD = META.std;
 
 var api = {
-    get : function(isOnlyParams) {
-        return function(req, res, next) {
+    get: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: [],
                 essential: [],
                 resettable: [],
-                explains : {
-                    'id': '데이터를 얻을 리소스의 id'
+                explains: {
+                    'key': '데이터를 얻을 리소스의 key'
                 },
                 role: STD.role.account,
-                param: 'id',
-                title: '단일 얻기',
-                state: 'design'
+                param: 'key',
+                response: resforms.notification,
+                title: '노티피케이션 단일 얻기',
+                state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.loggedInRole(STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -47,42 +48,34 @@ var api = {
                 apiCreator.add(get.setParam());
                 apiCreator.add(get.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
             }
         };
     },
-    gets : function(isOnlyParams) {
-        return function(req, res, next) {
+    gets: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
-                acceptable: ['last', 'size', 'userId'],
+                acceptable: ['type', 'isStored', 'isOption'],
                 essential: [],
                 resettable: [],
-                explains : {
-                    'userId': '유저별 필터링',
-                    'last': '마지막 데이터',
-                    'size': '몇개 로드할지에 대한 사이즈'
+                explains: {
+                    'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'isStored': 'notification-box에 저장할지 여부',
+                    'isOption': '유저 switch option에 표시할 지 여부'
                 },
-                response: {
-                    users: [{
-                        name: 'hwarang',
-                        birth: 1987,
-                        role: 'admin'
-                    }]
-                },
+                response: {rows:[resforms.notification]},
                 role: STD.role.account,
-                title: '',
-                state: 'design'
+                title: '노티피케이션 전체 얻기',
+                state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.loggedInRole(STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -92,36 +85,40 @@ var api = {
                 apiCreator.add(gets.setParam());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
             }
         };
     },
-    post : function(isOnlyParams) {
-        return function(req, res, next) {
+    post: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
-                acceptable: ['body'],
-                essential: ['body'],
+                acceptable: ['type', 'key', 'title', 'body', 'data', 'img', 'isStored', 'isOption', 'description'],
+                essential: ['type', 'key', 'title', 'body', 'data', 'img', 'isStored', 'isOption', 'description'],
                 resettable: [],
-                explains : {
-                    body: '바디'
+                explains: {
+                    'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'key': 'notification을 구분하는 유일한 키값',
+                    'title': 'notification title',
+                    'body': 'notification body',
+                    'data': 'notification title',
+                    'img': 'notification 이미지 url, 안드로이드에서만 가능',
+                    'isStored': 'notification-box에 저장할지 여부',
+                    'isOption': '유저 switch option에 표시할 지 여부',
+                    'description': 'notification이 왔을때 바로 보이는 설명 문구'
                 },
-                defaults: {
-                    body: '디폴트내용'
-                },
-                response: {},
-                title: '',
-                state: 'design'
+                defaults: {},
+                response: resforms.notification,
+                title: '노티피케이션 등록',
+                state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleSupervisor));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -131,86 +128,88 @@ var api = {
                 apiCreator.add(post.setParam());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
             }
         };
     },
-    put : function(isOnlyParams) {
-        return function(req, res, next) {
+    put: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
-                acceptable: ['body'],
-                essential: ['body'],
+                acceptable: ['type', 'title', 'body', 'data', 'img', 'isStored', 'isOption', 'description'],
+                essential: ['type', 'title', 'body', 'data', 'img', 'isStored', 'isOption', 'description'],
                 resettable: [],
-                explains : {
-                    'body': '수정할 신고 내용',
-                    'id': '데이터 리소스의 id'
+                explains: {
+                    'key': 'notification을 구분하는 유일한 키값',
+                    'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'title': 'notification title',
+                    'body': 'notification body',
+                    'data': 'notification title',
+                    'img': 'notification 이미지 url, 안드로이드에서만 가능',
+                    'isStored': 'notification-box에 저장할지 여부',
+                    'isOption': '유저 switch option에 표시할 지 여부',
+                    'description': 'notification이 왔을때 바로 보이는 설명 문구'
                 },
-                param: 'id',
+                param: 'key',
+                response: resforms.notification,
                 role: STD.role.account,
-                title: '수정',
-                state: 'design'
+                title: '노티피케이션 수정',
+                state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleSupervisor));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.role.userIdChecker('params', 'id', STD.role.account));
                 apiCreator.add(put.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(put.updateReport());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
             }
         };
     },
-    delete : function(isOnlyParams) {
-        return function(req, res, next) {
+    delete: function (isOnlyParams) {
+        return function (req, res, next) {
             var params = {
                 acceptable: [],
                 essential: [],
                 resettable: [],
-                explains : {
-                    'id': '데이터 리소스의 id'
+                explains: {
+                    'key': 'notification을 구분하는 유일한 키값'
                 },
                 role: STD.role.account,
-                title: '제거',
-                param: 'id',
-                state: 'design'
+                title: '노티피케이션 제거',
+                param: 'key',
+                state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleSupervisor));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.role.userIdChecker('params', 'id', STD.role.account));
                 apiCreator.add(del.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(del.destroy());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
@@ -219,11 +218,11 @@ var api = {
     }
 };
 
-router.get('/' + resource + '/:id', api.get());
+router.get('/' + resource + '/:key', api.get());
 router.get('/' + resource, api.gets());
 router.post('/' + resource, api.post());
-router.put('/' + resource + '/:id', api.put());
-router.delete('/' + resource + '/:id', api.delete());
+router.put('/' + resource + '/:key', api.put());
+router.delete('/' + resource + '/:key', api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

@@ -1,19 +1,26 @@
 var gets = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
-var skins = require('./skins.js');
+var MICRO = require('microtime');
 
 gets.validate = function () {
     return function (req, res, next) {
+
+        req.check('userId', '400_12').isInt();
+
+        req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
 gets.setParam = function () {
     return function (req, res, next) {
-        skins.loadSkinNames(function (result, skins) {
-
-            req.data = skins;
+        var where = {};
+        where.userId = req.query.userId;
+        req.models.NotificationBox.findAllDataForQuery({
+            where: where
+        }, function (status, data) {
+            req.data = data;
             next();
         });
     };
@@ -24,7 +31,7 @@ gets.supplement = function () {
         var ret = {
             rows: req.data
         };
-        res.hjson(req, next, 200, req.data);
+        res.hjson(req, next, 200, ret);
     };
 };
 

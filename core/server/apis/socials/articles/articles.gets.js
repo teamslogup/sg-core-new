@@ -119,7 +119,7 @@ gets.supplement = function () {
         var ret = {
             board: req.board,
             categories: categories,
-            list: req.articles,
+            rows: req.articles,
             count: req.articleCount,
             last: Number(req.query.last) + req.articles.length - 1
         };

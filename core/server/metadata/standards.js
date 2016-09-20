@@ -11,6 +11,24 @@ var standards = {
         "enableProfileItems": ["nick", "gender", "birth", "language", "country", "comment", "pfImgId", "website", "role", "name"],
         "includeProfileItems": []
     },
+    "notification": {
+        "enumNotificationTypes": ["email", "push", "sms", "email+push"],
+        "notificationEmail": "email",
+        "notificationPush": "push",
+        "notificationEmailPush": "email+push",
+        "maxKeyLength": 100,
+        "minKeyLength": 1,
+        "maxTitleLength": 60,
+        "minTitleLength": 1,
+        "maxBodyLength": 60,
+        "minBodyLength": 1,
+        "maxDataLength": 60,
+        "minDataLength": 1,
+        "maxImgLength": 60,
+        "minImgLength": 1,
+        "maxDescriptionLength": 60,
+        "minDescriptionLength": 1
+    },
     "user": {
         "enumPhones": ["ios", "android"],
         "phoneIOS": "ios",

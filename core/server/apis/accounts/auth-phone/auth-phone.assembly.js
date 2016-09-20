@@ -78,7 +78,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
+                apiCreator.add(req.middles.role.userIdChecker('params', 'id', STD.role.account));
                 apiCreator.add(del.validate());
                 apiCreator.add(del.removePhone());
                 apiCreator.add(del.supplement());

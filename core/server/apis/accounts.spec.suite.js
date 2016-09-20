@@ -301,9 +301,9 @@ Account.prototype.loadAllExtincts = function (callback) {
         .set("Cookie", self.cookie)
         .end(function (err, res) {
             res.status.should.exactly(200);
-            res.body.should.have.property('list');
+            res.body.should.have.property('rows');
             res.body.list.length.should.greaterThan(0);
-            tester.do([resform.user], res.body.list);
+            tester.do([resform.user], res.body.rows);
             callback();
         });
 };

@@ -34,7 +34,7 @@ gets.setParam = function() {
 gets.supplement = function(){
     return function(req, res, next){
         var ret = {
-            list: req.data
+            rows: req.data
         };
         res.hjson(req, next, 200, req.data);
     };

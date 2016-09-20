@@ -443,7 +443,7 @@ var mixin = {
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (t) {
                         if (loadedData) {
-                            callback(204);
+                            callback(200, loadedData);
                         } else {
                             callback(404);
                         }

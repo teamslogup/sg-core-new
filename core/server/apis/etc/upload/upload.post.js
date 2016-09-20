@@ -17,8 +17,8 @@ post.supplement = function () {
     return function (req, res, next) {
 
         var ret = {
-            list: req.fileNames,
-            size: req.fileNames.length
+            rows: req.fileNames,
+            count: req.fileNames.length
         };
 
         res.hjson(req, next, 201, ret);
