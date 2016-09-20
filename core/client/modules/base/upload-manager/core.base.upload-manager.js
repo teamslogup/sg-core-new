@@ -1,24 +1,38 @@
-export default function uploadManager(fileUploader, Upload) {
-    this.uploadImage = uploadImage;
-    this.deleteImage = deleteImage;
+export default function uploadManager (fileUploader, Upload, Image, coreBaseUploadResources) {
+    this.uploadImages = uploadImages;
+    this.deleteImages = deleteImages;
+    this.findImageById = findImageById;
 
-    function uploadImage(files, folder, callback) {
+    function uploadImages (files, folder, callback) {
         fileUploader.upload('file', {
             folder: folder
-        }, files, '/api/etc/image').then(function(data) {
-            callback(201, data.data.list[0]);
+        }, files, coreBaseUploadResources.IMAGES).then(function(data) {
+            callback(201, data.data);
         }).catch(function(err) {
-            //console.log(err.status, err.data);
             callback(err.status, err.data)
         });
     }
 
-    function deleteImage(upload, callback) {
-        console.log(upload);
-        upload = new Upload(upload);
-        upload.$remove(function(data) {
+    function deleteImages (imageIdArray, folder, callback) {
+        var body = {
+            folder: folder,
+            imageIds: imageIdArray.join(","),
+            _method: 'DELETE'
+        };
+        body = new Image(body);
+        body.$save(function () {
+            callback(204);
+        }, function (data) {
+            callback(data.status, data.data);
+        });
+    }
+
+    function findImageById (imageId, callback) {
+        Image.get({
+            id: imageId
+        }, function (data) {
             callback(200, data);
-        }, function(data) {
+        }, function (data) {
             callback(data.status, data.data);
         });
     }

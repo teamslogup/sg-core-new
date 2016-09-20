@@ -4,11 +4,14 @@ import translate from 'angular-translate';
 import cookies from 'angular-cookies';
 import ngResource from 'angular-resource';
 import uiBootstrap from 'angular-ui-bootstrap';
+import 'angular-file-upload';
 
 import metaManager from './meta/core.base.meta.manager';
 import errorHandler from './error-handler/core.error.handler';
-// import Upload from './upload-manager/core.base.upload.model';
-// import uploadManager from './upload-manager/core.base.upload-manager';
+import coreBaseUploadResources from './upload-manager/core.base.upload.constant';
+import Upload from './upload-manager/core.base.upload.model';
+import Image from './upload-manager/core.base.image.model';
+import uploadManager from './upload-manager/core.base.upload-manager';
 
 export default angular.module("core.base", [
     coreCommon,
@@ -16,10 +19,13 @@ export default angular.module("core.base", [
     translate,
     cookies,
     ngResource,
-    uiBootstrap
+    uiBootstrap,
+    'angularFileUpload'
 ])
     .provider('metaManager', metaManager)
     .service('errorHandler', errorHandler)
-    // .factory('Upload', Upload)
-    // .service('uploadManager', uploadManager)
+    .constant('coreBaseUploadResources', coreBaseUploadResources)
+    .factory('Upload', Upload)
+    .factory('Image', Image)
+    .service('uploadManager', uploadManager)
     .name;
