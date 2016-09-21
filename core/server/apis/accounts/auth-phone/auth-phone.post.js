@@ -125,8 +125,8 @@ post.removeAuth = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
+        var USER = req.meta.std.user;
         if (process.env.NODE_ENV == "test") {
-            var USER = req.meta.std.user;
             if (req.body.type == USER.authPhoneFindId) {
                 return res.hjson(req, next, 200, req.user.aid);
             }
@@ -135,8 +135,13 @@ post.supplement = function () {
             } else {
                 return res.hjson(req, next, 200, req.user.toSecuredJSON());
             }
+        } else {
+            if (req.body.type == USER.authPhoneFindId) {
+                return res.hjson(req, next, 200, req.user.aid);
+            } else {
+                return res.hjson(req, next, 204);
+            }
         }
-        res.hjson(req, next, 204);
     };
 };
 

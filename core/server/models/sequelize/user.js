@@ -992,7 +992,7 @@ module.exports = {
                             as: 'user',
                             include: [{
                                 model: sequelize.models.Profile,
-                                as: profile
+                                as: profileKey
                             }, {
                                 model: sequelize.models.Provider,
                                 as: 'providers',
