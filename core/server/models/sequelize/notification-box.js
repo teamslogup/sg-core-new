@@ -23,6 +23,10 @@ module.exports = {
             asReverse: 'notifications',
             allowNull: false
         },
+        'data': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
         'view': {
             'type': Sequelize.BOOLEAN,
             'allowNull': false
