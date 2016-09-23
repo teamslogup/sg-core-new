@@ -5,7 +5,7 @@ export default function sessionManager(Session, SocialSession, usersManager, met
     this.socialLogin = socialLogin;
     this.loginWithPhone = loginWithPhone;
     this.loginWithNormalId = loginWithNormalId;
-    this.loginWithPhone = loginWithPhone;
+    this.loginWithPhoneId = loginWithPhoneId;
     this.loginWithEmail = loginWithEmail;
     this.logout = logout;
     this.signup = signup;
@@ -63,6 +63,22 @@ export default function sessionManager(Session, SocialSession, usersManager, met
     function loginWithNormalId(uid, secret, callback) {
         var body = {
             type: metaManager.std.user.signUpTypeNormalId,
+            uid: uid,
+            secret: secret
+        };
+        var self = this;
+        var session = new Session(body);
+        session.$save(function (data) {
+            currentSession = self.session = data;
+            callback(200, data);
+        }, function (data) {
+            callback(data.status, data.data);
+        });
+    }
+
+    function loginWithPhoneId(uid, secret, callback) {
+        var body = {
+            type: metaManager.std.user.signUpTypePhoneId,
             uid: uid,
             secret: secret
         };
