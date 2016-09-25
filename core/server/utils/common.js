@@ -58,12 +58,13 @@ module.exports = {
          *  }
          * }
          */
+        var self = this;
         return function (options, callback) {
             var apiResource = options.resource;
             var method = options.method;
             var params = options.params;
             var requestData = options.data;
-            var api = this.getAPI(apiResource);
+            var api = self.getAPI(apiResource);
             if (api) {
                 if (api[method]) {
                     var tempCallback = req.callback;
