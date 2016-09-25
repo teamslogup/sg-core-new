@@ -51,7 +51,7 @@ module.exports = {
         'deletedAt': {
             'type': Sequelize.DATE,
             'allowNull': true
-        },
+        }
     },
     options: {
         'timestamps': true,

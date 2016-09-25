@@ -70,7 +70,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'searchField', 'last', 'size', 'country', 'type', 'sort'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'offset', 'country', 'type', 'sort'],
                 essential: [],
                 resettable: [],
                 explains: {
@@ -78,6 +78,7 @@ var api = {
                     searchField: '검색할 항목 ' + STD.notice.enumFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
+                    offset: '몇번째 부터 로드 할지',
                     country: '국가 필터, 없으면 전체',
                     type: '유형 필터 ' + STD.notice.enumNoticeTypes.join(", "),
                     sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", ")

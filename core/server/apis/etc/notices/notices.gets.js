@@ -22,6 +22,12 @@ gets.validate = function () {
         req.check('last', '400_18').isMicroTimestamp();
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
 
+        if(req.query.offset !== undefined){
+            req.check('offset', '400_5').isInt();
+        } else {
+            req.query.offset = 0;
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -32,7 +38,7 @@ gets.setParam = function () {
         var size = req.query.size;
         var last = req.query.last;
 
-        req.models.Notice.findAllNotices(req.query.searchItem, req.query.searchField, last, size, req.query.country, req.query.type, req.query.sort, function (status, data) {
+        req.models.Notice.findAllNotices(req.query.searchItem, req.query.searchField, last, size, req.query.country, req.query.type, req.query.sort, req.query.offset, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();

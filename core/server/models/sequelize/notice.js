@@ -57,19 +57,38 @@ module.exports = {
             'referenceKey': 'id',
             'as': 'smallImage',
             'allowNull': true
+        },
+        'createdAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'updatedAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
+        'deletedAt': {
+            'type': Sequelize.DATE,
+            'allowNull': true
         }
     },
     options: {
+        'timestamps': true,
         'charset': 'utf8',
+        'createdAt': false,
+        'updatedAt': false,
         indexes: [{
             fields: ['type'],
             name: 'notice_type'
         }],
         'paranoid': true,
-        'hooks': {},
+        'hooks': {
+            'beforeCreate': mixin.options.hooks.microCreatedAt,
+            'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
+            'beforeUpdate': mixin.options.hooks.microUpdatedAt
+        },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllNotices': function (searchItem, searchField, last, size, country, type, sort, callback) {
+            'findAllNotices': function (searchItem, searchField, last, size, country, type, sort, offset, callback) {
 
                 var where = {};
 
@@ -99,6 +118,7 @@ module.exports = {
 
                 var query = {
                     'limit': parseInt(size),
+                    'offset': parseInt(offset),
                     'where': where,
                     'order': [['createdAt', sort]],
                     'include': [{
@@ -113,7 +133,19 @@ module.exports = {
                     }]
                 };
 
-                sequelize.models.Notice.findAllDataForQuery(query, callback);
+                // sequelize.models.Notice.findAllDataForQuery(query, callback);
+
+                sequelize.models.Notice.findAndCountAll(query).then(function (data) {
+                    if (data.rows.length > 0) {
+                        return data;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data) {
+                        callback(200, data);
+                    }
+                });
             }
 
         })
