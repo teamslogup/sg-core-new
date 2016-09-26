@@ -1,6 +1,6 @@
 export default function sessionManager(Session, SocialSession, usersManager, metaManager, SenderEmail, Pass) {
     var currentSession = window.session || null;
-    this.session = (currentSession.id && currentSession) || {};
+    this.session = (currentSession.id && currentSession) || null;
     this.isLoggedIn = isLoggedIn;
     this.socialLogin = socialLogin;
     this.loginWithPhone = loginWithPhone;
@@ -12,6 +12,7 @@ export default function sessionManager(Session, SocialSession, usersManager, met
     this.getSession = getSession;
     this.sendFindPassEmail = sendFindPassEmail;
     this.changePassWithToken = changePassWithToken;
+    this.deleteUser = deleteUser;
 
     function sendFindPassEmail(email, callback) {
         var body = {
@@ -152,6 +153,16 @@ export default function sessionManager(Session, SocialSession, usersManager, met
         usersManager.signup(body, function (status, data) {
             if (status == 201) {
                 currentSession = self.session = data;
+            }
+            callback(status, data);
+        });
+    }
+
+    function deleteUser(id, callback) {
+        var self = this;
+        usersManager.deleteUser({id: id}, function (status, data) {
+            if (status == 204) {
+                currentSession = self.session = null;
             }
             callback(status, data);
         });

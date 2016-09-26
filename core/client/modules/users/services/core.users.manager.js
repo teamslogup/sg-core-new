@@ -3,6 +3,7 @@ export default function usersManager(User) {
     this.findUserById = findUserById;
     this.updateUserById = updateUserById;
     this.signup = signup;
+    this.deleteUser = deleteUser;
 
     function updateUserById(user, callback) {
         var where = {id: user.id};
@@ -43,6 +44,16 @@ export default function usersManager(User) {
         var user = new User(body);
         user.$save(function (data) {
             callback(201, data);
+        }, function (data) {
+            callback(data.status, data.data);
+        });
+    }
+
+    function deleteUser(user, callback) {
+        user = new User(user);
+        user.$remove(function (data, status) {
+            console.log(status, data);
+            callback(204, data);
         }, function (data) {
             callback(data.status, data.data);
         });
