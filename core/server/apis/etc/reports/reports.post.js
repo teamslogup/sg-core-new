@@ -39,7 +39,6 @@ post.setParam = function () {
                 req.instance = data;
                 next();
             } else {
-                req.utils.common.refineError(data, 'nick', '400_1');
                 return res.hjson(req, next, status, data);
             }
         });
