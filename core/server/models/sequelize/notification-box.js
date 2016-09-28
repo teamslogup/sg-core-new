@@ -4,8 +4,10 @@
  */
 
 var Sequelize = require('sequelize');
+var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
+var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
@@ -29,7 +31,8 @@ module.exports = {
         },
         'view': {
             'type': Sequelize.BOOLEAN,
-            'allowNull': false
+            'allowNull': false,
+            'defaultValue': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -56,6 +59,8 @@ module.exports = {
             'beforeUpdate': mixin.options.hooks.microUpdatedAt
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
-        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {})
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+
+        })
     }
 };

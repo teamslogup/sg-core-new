@@ -5,30 +5,28 @@ var logger = new Logger(__filename);
 put.validate = function () {
     return function (req, res, next) {
 
-        req.check('userId', '400_12').isInt();
-        req.check('notificationId', '400_12').isInt();
-
-        req.check('switch', '400_20').isBoolean();
-        req.sanitize('switch').toBoolean();
+        if (req.body.id !== undefined) req.check('id', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
-put.updateReport = function () {
+put.updateNotificationBox = function () {
     return function (req, res, next) {
+        var where = {
+            userId: req.user.id
+        };
+        if (req.body.id !== undefined) {
+            where.id = req.body.id;
+        }
 
-        req.models.UserNotification.upsertData({
-            userId: req.body.userId,
-            notificationId: req.body.notificationId,
-            switch: req.body.switch
+        req.models.NotificationBox.updateDataWithQuery({
+            where: where
         }, {
-            userId: req.body.userId,
-            notificationId: req.body.notificationId
+            view: true
         }, function (status, data) {
             if (status == 200) {
-                req.data = data;
                 next();
             } else {
                 res.hjson(req, next, status, data);
@@ -39,7 +37,7 @@ put.updateReport = function () {
 
 put.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.data);
+        res.hjson(req, next, 204);
     };
 };
 

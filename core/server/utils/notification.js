@@ -13,6 +13,51 @@ function makeAuthEmailUrl(redirects, auth) {
 }
 
 module.exports = {
+    all: {
+        sendPush: function(req, user, notification, data, callback) {
+            var notificationBox = req.models.NotificationBox.build({
+                userId: user.id,
+                notificationId: notification.id,
+                data: data
+            });
+            notificationBox.create(function(status, data) {
+                if (status == 200) {
+                    var histories = user.loginHistories;
+                    histories.forEach(function (history) {
+                        req.sendNoti.fcm(history.token, notification.title, data || notification.data, function(err) {
+                            if (err) {
+                                callback(500, err);
+                            } else {
+                                callback(204);
+                            }
+                        });
+                    });
+                } else {
+                    callback(status, data);
+                }
+            });
+        },
+        sendEmail: function(req, user, notification, title, body, callback) {
+            req.sendNoti.email(user.email, "SignUp", {
+                    subject: title,
+                    dir: appDir,
+                    name: 'common',
+                    params: {
+                        body: body
+                    }
+                }, function(err) {
+                if (process.env.NODE_ENV == 'test') return callback(204);
+                if (err) {
+                    callback(503, req.emailErrorRefiner(err));
+                } else {
+                    callback(204);
+                }
+            });
+        },
+        sendSMS: function(req, user, notification, title, body, callback) {
+
+        }
+    },
     email: {
         signup: function (req, redirects, auth, user, callback) {
             console.log(url + auth.token);

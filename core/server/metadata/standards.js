@@ -12,6 +12,11 @@ var standards = {
         "includeProfileItems": []
     },
     "notification": {
+        "enumForms": ["notice", "event", "emergency", "application"],
+        "formNotice": "notice",
+        "formEvent": "event",
+        "formEmergency": "emergency",
+        "formApplication": "application",
         "enumNotificationTypes": ["email", "push", "sms", "email+push"],
         "notificationEmail": "email",
         "notificationPush": "push",

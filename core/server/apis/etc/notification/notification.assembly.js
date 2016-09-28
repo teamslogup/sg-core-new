@@ -12,9 +12,9 @@ var del = require('./' + resource + '.del.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-var resforms = require('../../../resforms');
+var resforms = require('../../../resforms/index');
 
-const META = require('../../../../../bridge/metadata');
+const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
 
 var api = {

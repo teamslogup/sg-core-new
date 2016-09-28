@@ -52,8 +52,6 @@ var api = {
                 apiCreator.add(get.setParam());
                 apiCreator.add(get.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;
@@ -235,8 +233,6 @@ var api = {
                 apiCreator.add(del.destroy());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

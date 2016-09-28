@@ -4,14 +4,15 @@ var resource = filePath[filePath.length - 1];
 
 var top = require('./' + resource + '.top.js');
 var gets = require('./' + resource + '.gets.js');
+var put = require('./' + resource + '.put.js');
 var del = require('./' + resource + '.del.js');
 
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-var resforms = require('../../../resforms');
+var resforms = require('../../../resforms/index');
 
-const META = require('../../../../../bridge/metadata');
+const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
 
 var api = {
@@ -45,6 +46,41 @@ var api = {
                 apiCreator.add(gets.setParam());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
+            }
+            else {
+                return params;
+            }
+        };
+    },
+    put : function(isOnlyParams) {
+        return function(req, res, next) {
+
+            var params = {
+                acceptable: ['id'],
+                essential: [],
+                resettable: [],
+                explains : {
+                },
+                role: STD.role.account,
+                title: '노티피케이션 읽음표시, id가 있을경우 해당 id만 읽음표시',
+                state: 'design'
+            };
+
+            if (!isOnlyParams) {
+                var apiCreator = new HAPICreator(req, res, next);
+
+                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.validator(
+                    params.acceptable,
+                    params.essential,
+                    params.resettable
+                ));
+                apiCreator.add(put.validate());
+                apiCreator.add(put.updateNotificationBox());
+                apiCreator.add(put.supplement());
+                apiCreator.run();
+
+
             }
             else {
                 return params;
@@ -90,6 +126,7 @@ var api = {
 };
 
 router.get('/' + resource, api.gets());
+router.put('/' + resource, api.put());
 router.delete('/' + resource, api.delete());
 
 module.exports.router = router;

@@ -6,7 +6,6 @@
 var Sequelize = require('sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
-var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
@@ -17,12 +16,12 @@ module.exports = {
             asReverse: 'reports',
             allowNull: false
         },
-        'notificationId': {
-            reference: 'Notification',
-            referenceKey: 'id',
-            as: 'notification',
-            asReverse: 'notifications',
-            allowNull: false
+        'type': {
+            'type': Sequelize.ENUM,
+            'allowNull': false,
+            'values': STD.notification.enumForms,
+            'defaultValue': STD.notification.formApplication,
+            'comment': "노티피케이션의 형태, application 모드가 아닌 경우 유저 내에서 노티를 받을지 결정할 수 있음, 또한 user-noticiation테이블의 application모드에서만 isStored가 작동함"
         },
         'switch': {
             'type': Sequelize.BOOLEAN,
@@ -44,7 +43,7 @@ module.exports = {
     options: {
         "indexes": [{
             unique: true,
-            fields: ['userId', 'notificationId']
+            fields: ['userId', 'type']
         }],
         'timestamps': true,
         'charset': 'utf8',

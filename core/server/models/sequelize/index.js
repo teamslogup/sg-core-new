@@ -17,6 +17,7 @@ var LoginHistory = require('./login-history');
 var Notification = require('./notification');
 var NotificationBox = require('./notification-box');
 var UserNotification = require('./user-notification');
+var UserPublicNotification = require('./user-public-notification');
 
 var models = {
     User: User,
@@ -36,7 +37,8 @@ var models = {
     LoginHistory: LoginHistory,
     Notification: Notification,
     NotificationBox: NotificationBox,
-    UserNotification: UserNotification
+    UserNotification: UserNotification,
+    UserPublicNotification: UserPublicNotification
 };
 
 module.exports = models;

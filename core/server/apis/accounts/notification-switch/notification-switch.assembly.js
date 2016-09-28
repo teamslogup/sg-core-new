@@ -42,7 +42,9 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(gets.validate());
-                apiCreator.add(gets.setParam());
+                apiCreator.add(gets.getNotification());
+                apiCreator.add(gets.getUserNotification());
+                apiCreator.add(gets.getUserPublicNotification());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
             }
@@ -55,13 +57,14 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId', 'notificationId', 'switch'],
-                essential: ['userId', 'notificationId', 'switch'],
+                acceptable: ['userId', 'notificationId', 'switch', 'type'],
+                essential: ['userId', 'notificationId', 'switch', 'type'],
                 resettable: [],
                 explains: {
                     'userId': '유저 아이디',
-                    'notificationId': "노티피케이션 아이디",
-                    'switch': '온오프 여부'
+                    'notificationId': "노티피케이션 아이디, type이 appication일 경우만 가능함.",
+                    'switch': '온오프 여부',
+                    'type': "노티피케이션 형태 " + STD.notification.enumForms.join(", ")
                 },
                 response: resforms.notification,
                 role: STD.role.account,
