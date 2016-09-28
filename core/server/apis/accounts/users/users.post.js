@@ -18,11 +18,15 @@ post.validate = function () {
         if (type == USER.signUpTypeEmail) {
             req.check('uid', '400_1').isEmail();
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
-        } else if (type == USER.signUpTypePhone || type == USER.signUpTypePhoneId) {
+        } else if (type == USER.signUpTypePhone || type == USER.signUpTypePhoneId || type == USER.signUpTypePhoneEmail) {
             req.check('uid', '400_3').len(5, 15);
             req.check('secret', '400_51').len(SMS.authNumLength, SMS.authNumLength);
-            if (req.body.aid !== undefined && req.body.apass !== undefined) {
-                req.check('aid', '400_55').isId(USER.minIdLength, USER.maxIdLength);
+            if ((type == USER.signUpTypePhoneId || type == USER.signUpTypePhoneEmail) && (req.body.aid !== undefined && req.body.apass !== undefined)) {
+                if (type == USER.signUpTypePhoneEmail) {
+                    req.check('aid', '400_1').isEmail();
+                } else {
+                    req.check('aid', '400_55').isId(USER.minIdLength, USER.maxIdLength);
+                }
                 req.check('apass', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
             }
             // 둘 중에 하나만 있을 경우 필수 요청 값 에러 출력.
