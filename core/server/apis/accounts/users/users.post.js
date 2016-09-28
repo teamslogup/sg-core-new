@@ -124,6 +124,8 @@ post.checkSocialProvider = function () {
 post.createUser = function () {
     return function (req, res, next) {
 
+        var USER = req.meta.std.user;
+
         var birth = null;
         if (req.body.birthYear !== undefined && req.body.birthMonth !== undefined && req.body.birthDay !== undefined) {
             birth = req.utils.common.makeBirthString(req.body.birthYear, req.body.birthMonth, req.body.birthDay);
@@ -145,6 +147,10 @@ post.createUser = function () {
             agreedEmail: req.body.agreedEmail,
             agreedPhoneNum: req.body.agreedPhoneNum
         };
+
+        if (req.body.type == USER.signUpTypePhoneEmail) {
+            data.email = req.body.aid;
+        }
 
         data.history = {
             platform: req.body.platform || null,

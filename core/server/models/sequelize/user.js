@@ -787,10 +787,10 @@ module.exports = {
                             createdUser = user;
                             var history = data.history;
 
-                            var signUpType = STD.user.signUpTypePhone;
-                            if (data.aid && data.apass) {
-                                signUpType = STD.user.signUpTypePhoneId;
-                            }
+                            // var signUpType = STD.user.signUpTypePhone;
+                            // if (data.aid && data.apass) {
+                            //     signUpType = STD.user.signUpTypePhoneId;
+                            // }
 
                             return sequelize.models.LoginHistory.upsert({
                                 userId: user.id,
