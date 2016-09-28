@@ -61,7 +61,7 @@ module.exports = {
         var self = this;
         return function (options, callback) {
             var apiResource = options.resource;
-            var method = options.method;
+            var method = options.method && options.method.toLowerCase();
             var params = options.params;
             var requestData = options.data;
             var api = self.getAPI(apiResource);
@@ -90,6 +90,8 @@ module.exports = {
                         callback(status, data);
                     };
                     api[method]()(req, res, next);
+                } else {
+                    callback(404);
                 }
             } else {
                 callback(404);

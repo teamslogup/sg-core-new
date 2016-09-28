@@ -7,9 +7,9 @@ post.validate = function () {
     return function (req, res, next) {
         const USER = req.meta.std.user;
         const SMS = req.meta.std.sms;
-        req.check('type', '400_3').isEnum([USER.signUpTypeEmail, USER.signUpTypePhone, USER.signUpTypePhoneId, USER.signUpTypeNormalId]);
+        req.check('type', '400_3').isEnum([USER.signUpTypeEmail, USER.signUpTypePhone, USER.signUpTypePhoneId, USER.signUpTypeNormalId, USER.signUpTypePhoneEmail]);
 
-        if (req.body.type == USER.signUpTypeEmail) {
+        if (req.body.type == USER.signUpTypeEmail || req.body.type == USER.signUpTypePhoneEmail) {
             req.check('uid', '400_1').isEmail();
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         } else if (req.body.type == USER.signUpTypePhone) {
@@ -36,7 +36,8 @@ post.getUser = function () {
         // 이메일을 통한 로그인일 경우.
         if (req.body.type == USER.signUpTypeEmail ||
             req.body.type == USER.signUpTypePhoneId ||
-            req.body.type == USER.signUpTypeNormalId) {
+            req.body.type == USER.signUpTypeNormalId ||
+            req.body.type == USER.signUpTypePhoneEmail) {
 
             // body의 aid or email, secret 필드를 통해서 인증을 시도한다.
             req.body.aid = req.body.uid;
