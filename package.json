@@ -119,7 +119,7 @@
     "sticky-session": "*"
   },
   "engines": {
-    "node": ">=6.1.0"
+    "node": ">=4.6.0"
   },
   "scripts": {
     "build-dev": "gulp build --ejs ./core/server/views/sample.ejs --env development | gulp build --ejs ./app/server/views/main.ejs --env development | gulp build --ejs ./app/server/views/admin.ejs --env development",
