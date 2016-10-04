@@ -13,8 +13,8 @@ module.exports = {
         'userId': {
             reference: 'User',
             referenceKey: 'id',
-            as: 'author',
-            asReverse: 'reports',
+            as: 'user',
+            asReverse: 'userNotifications',
             allowNull: false
         },
         'notificationId': {
@@ -57,6 +57,10 @@ module.exports = {
             'beforeUpdate': mixin.options.hooks.microUpdatedAt
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
-        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {})
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            getUserNotificationFields: function() {
+                return ['notificationId', 'switch'];
+            }
+        })
     }
 };

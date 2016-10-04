@@ -38,11 +38,11 @@ module.exports = {
         },
         'data': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'img': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'isStored': {
             'type': Sequelize.BOOLEAN,
@@ -54,11 +54,11 @@ module.exports = {
             'type': Sequelize.BOOLEAN,
             'allowNull': false,
             'defaultValue': true,
-            'comment': "formApplication form일때 user-notification에 switch로 옵션을 조절할 지 여"
+            'comment': "formApplication form일때 user-notification에 switch로 옵션을 조절할 지 여부"
         },
         'description': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'form': {
             'type': Sequelize.ENUM,

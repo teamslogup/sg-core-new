@@ -20,6 +20,7 @@ var standards = {
         "enumNotificationTypes": ["email", "push", "sms", "email+push"],
         "notificationEmail": "email",
         "notificationPush": "push",
+        "notificationSms": "sms",
         "notificationEmailPush": "email+push",
         "maxKeyLength": 100,
         "minKeyLength": 1,
@@ -32,7 +33,16 @@ var standards = {
         "maxImgLength": 60,
         "minImgLength": 1,
         "maxDescriptionLength": 60,
-        "minDescriptionLength": 1
+        "minDescriptionLength": 1,
+        "notiApply": {
+            "type": "push",
+            "key": "notiNameApply",
+            "title": "notiNameApplyTitle",
+            "body": "notiNameApplyBody",
+            "isStored": true,
+            "isOption": true,
+            "form": "application"
+        }
     },
     "user": {
         "enumPhones": ["ios", "android"],
