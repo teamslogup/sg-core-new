@@ -603,7 +603,7 @@ module.exports = {
                     delete data.uid;
                     this.createUserWithEmail(data, callback);
                 }
-                else if (data.type == STD.user.signUpTypePhone || data.type == STD.user.signUpTypePhoneId) {
+                else if (data.type == STD.user.signUpTypePhone || data.type == STD.user.signUpTypePhoneId || data.type == STD.user.signUpTypePhoneEmail) {
                     data.phoneNum = data.uid;
                     delete data.provider;
                     delete data.uid;
