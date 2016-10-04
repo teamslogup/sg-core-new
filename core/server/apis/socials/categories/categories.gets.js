@@ -35,7 +35,7 @@ gets.loadBoardAndCategories = function () {
 gets.supplement = function () {
     return function (req, res, next) {
         var ret = {
-            list: req.data.categories
+            rows: req.data.categories
         };
         res.hjson(req, next, 200, req.data.categories);
     };

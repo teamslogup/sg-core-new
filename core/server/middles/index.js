@@ -4,6 +4,7 @@ module.exports.connect = function (config) {
             s3: require('./s3')(config),
             session: require('./session')(),
             upload: require('./upload')(),
+            notification: require('./notification')(),
             validator: require('./validator')(),
             role: require('./role')()
         };

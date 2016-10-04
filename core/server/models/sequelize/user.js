@@ -24,6 +24,7 @@ var STD = require('../../../../bridge/metadata/standards');
 var ENV = require('../../../../bridge/config/env');
 var async = require('async');
 
+
 module.exports = {
     fields: {
         'aid': {
@@ -468,6 +469,28 @@ module.exports = {
             }
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            'getUserInclude': function() {
+                return [{
+                    model: sequelize.models.Profile,
+                    as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
+                }, {
+                    model: sequelize.models.UserNotification,
+                    as: 'userNotifications',
+                    attributes: sequelize.models.UserNotification.getUserNotificationFields()
+                }, {
+                    model: sequelize.models.UserPublicNotification,
+                    as: 'userPublicNotifications',
+                    attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
+                }]
+            },
             'getUserFields': function () {
                 var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt'];
                 return fields;
@@ -531,18 +554,7 @@ module.exports = {
              * @param {responseCallback} callback - 응답콜백
              */
             'findUserById': function (id, callback) {
-                this.findDataIncludingById(id, [{
-                    model: sequelize.models.Profile,
-                    as: profileKey
-                }, {
-                    model: sequelize.models.Provider,
-                    as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
-                }, {
-                    model: sequelize.models.LoginHistory,
-                    as: 'loginHistories',
-                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
-                }], callback);
+                this.findDataIncludingById(id, sequelize.models.User.getUserInclude(), callback);
             },
             /**
              * 번호로 유저 찾기
@@ -551,18 +563,7 @@ module.exports = {
              */
             'findUserByPhoneNumber': function (phoneNum, callback) {
                 var where = {phoneNum: phoneNum};
-                sequelize.models.User.findDataIncluding(where, [{
-                    model: sequelize.models.Profile,
-                    as: profileKey
-                }, {
-                    model: sequelize.models.Provider,
-                    as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
-                }, {
-                    model: sequelize.models.LoginHistory,
-                    as: 'loginHistories',
-                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
-                }], callback);
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getUserInclude(), callback);
             },
             /**
              * 이메일로 유저 찾기
@@ -571,18 +572,7 @@ module.exports = {
              */
             'findUserByEmail': function (email, callback) {
                 var where = {email: email};
-                sequelize.models.User.findDataIncluding(where, [{
-                    model: sequelize.models.Profile,
-                    as: profileKey
-                }, {
-                    model: sequelize.models.Provider,
-                    as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
-                }, {
-                    model: sequelize.models.LoginHistory,
-                    as: 'loginHistories',
-                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
-                }], callback);
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getUserInclude(), callback);
             },
             /**
              * AID로 유저 찾기
@@ -591,18 +581,7 @@ module.exports = {
              */
             'findUserByAid': function (aid, callback) {
                 var where = {aid: aid};
-                sequelize.models.User.findDataIncluding(where, [{
-                    model: sequelize.models.Profile,
-                    as: profileKey
-                }, {
-                    model: sequelize.models.Provider,
-                    as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
-                }, {
-                    model: sequelize.models.LoginHistory,
-                    as: 'loginHistories',
-                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
-                }], callback);
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getUserInclude(), callback);
             },
             /**
              * 범용 유저생성
@@ -624,7 +603,7 @@ module.exports = {
                     delete data.uid;
                     this.createUserWithEmail(data, callback);
                 }
-                else if (data.type == STD.user.signUpTypePhone || data.type == STD.user.signUpTypePhoneId || data.type == STD.user.signUpTypePhoneEmail) {
+                else if (data.type == STD.user.signUpTypePhone || data.type == STD.user.signUpTypePhoneId) {
                     data.phoneNum = data.uid;
                     delete data.provider;
                     delete data.uid;
@@ -787,10 +766,10 @@ module.exports = {
                             createdUser = user;
                             var history = data.history;
 
-                            // var signUpType = STD.user.signUpTypePhone;
-                            // if (data.aid && data.apass) {
-                            //     signUpType = STD.user.signUpTypePhoneId;
-                            // }
+                            var signUpType = STD.user.signUpTypePhone;
+                            if (data.aid && data.apass) {
+                                signUpType = STD.user.signUpTypePhoneId;
+                            }
 
                             return sequelize.models.LoginHistory.upsert({
                                 userId: user.id,
@@ -990,18 +969,7 @@ module.exports = {
                         }, [{
                             model: sequelize.models.User,
                             as: 'user',
-                            include: [{
-                                model: sequelize.models.Profile,
-                                as: profileKey
-                            }, {
-                                model: sequelize.models.Provider,
-                                as: 'providers',
-                                attributes: sequelize.models.Provider.getProviderFields()
-                            }, {
-                                model: sequelize.models.LoginHistory,
-                                as: 'loginHistories',
-                                attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
-                            }]
+                            include: sequelize.models.User.getUserInclude()
                         }],
                         function (status, data) {
                             if (status == 200) {
@@ -1040,18 +1008,7 @@ module.exports = {
                         where: {
                             id: id
                         },
-                        include: [{
-                            model: sequelize.models.Profile,
-                            as: profileKey
-                        }, {
-                            model: sequelize.models.Provider,
-                            as: 'providers',
-                            attributes: sequelize.models.Provider.getProviderFields()
-                        }, {
-                            model: sequelize.models.LoginHistory,
-                            as: 'loginHistories',
-                            attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
-                        }]
+                        include: sequelize.models.User.getUserInclude()
                     };
 
                     return self.find(query).then(function (data) {

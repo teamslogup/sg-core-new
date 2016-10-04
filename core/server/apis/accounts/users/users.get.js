@@ -12,6 +12,7 @@ get.validate = function () {
 
 get.getUser = function () {
     return function (req, res, next) {
+
         req.models.User.findUserById(req.params.id, function(status, data) {
             if (status == 200) {
                 req.loadedUser = data;

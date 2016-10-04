@@ -69,7 +69,7 @@ var api = {
                     'size': '몇개 로드할지에 대한 사이즈'
                 },
                 response: {
-                    list: [resforms.user]
+                    rows: [resforms.user]
                 },
                 role: role,
                 title: '탈퇴한 유저 목록 불러오기',

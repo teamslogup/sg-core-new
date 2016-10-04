@@ -60,7 +60,7 @@ gets.loadComments = function () {
 gets.supplement = function(){
     return function(req, res, next){
         var ret = {
-            list: req.comments
+            rows: req.comments
         };
         res.hjson(req, next, 200, req.comments);
     };

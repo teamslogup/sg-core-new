@@ -107,6 +107,7 @@ post.validate = function () {
 post.checkSocialProvider = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
+
         if (req.body.type == USER.signUpTypeSocial) {
             req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.uid, req.body.secret, function(status, data) {
                 if (status == 200) {
@@ -190,6 +191,12 @@ post.sendEmailAuth = function () {
             req.coreUtils.notification.email.signup(req, {},req.createdUser.auth, req.createdUser, function (status, data) {
                 // if (status == 503) return res.hjson(req, next, 503, err);
                 next();
+            });
+
+            req.coreUtils.notification.all.sendNotification(req, req.user, req.notification, {
+                noticeId: 10
+            }, function(status, data) {
+
             });
         }
         else {

@@ -71,7 +71,7 @@ var api = {
                     orderBy: '정렬 기준 필드' + STD.user.enumOrders.join(", "),
                     sort: '정렬 순서' + STD.common.enumSortTypes.join(", ")
                 },
-                response: {list: [resforms.user]},
+                response: {rows: [resforms.user]},
                 title: '유저 리스트 얻기',
                 state: 'staging'
             };

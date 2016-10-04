@@ -165,7 +165,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
+                apiCreator.add(req.middles.role.userIdChecker('params', 'id', STD.role.account));
                 apiCreator.add(put.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(put.updateReport());
@@ -203,7 +203,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.role.userIdChecker(STD.role.account));
+                apiCreator.add(req.middles.role.userIdChecker('params', 'id', STD.role.account));
                 apiCreator.add(del.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(del.destroy());
