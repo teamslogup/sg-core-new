@@ -44,6 +44,11 @@ var standards = {
             "form": "application"
         }
     },
+    "notificationBox": {
+        "defaultLoadingLength": 8,
+        "enumOrders": ["createdAt"],
+        "defaultOrderBy": "createdAt"
+    },
     "user": {
         "enumPhones": ["ios", "android"],
         "phoneIOS": "ios",

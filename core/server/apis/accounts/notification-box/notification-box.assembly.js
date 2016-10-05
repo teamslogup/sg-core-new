@@ -20,13 +20,13 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId'],
+                acceptable: ['userId', 'last', 'size', 'offset'],
                 essential: ['userId'],
                 resettable: [],
                 explains: {
                     'userId': 'userId'
                 },
-                response: {rows:[resforms.notification]},
+                response: {rows: [resforms.notification]},
                 role: STD.role.account,
                 title: '노티피케이션 알림내용 전체 얻기',
                 state: 'development'
@@ -52,15 +52,14 @@ var api = {
             }
         };
     },
-    put : function(isOnlyParams) {
-        return function(req, res, next) {
+    put: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: ['id'],
                 essential: [],
                 resettable: [],
-                explains : {
-                },
+                explains: {},
                 role: STD.role.account,
                 title: '노티피케이션 읽음표시, id가 있을경우 해당 id만 읽음표시',
                 state: 'design'
@@ -106,7 +105,7 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleSupervisor));
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,

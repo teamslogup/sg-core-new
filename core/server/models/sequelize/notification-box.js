@@ -60,7 +60,44 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            'getNotificationBoxInclude': function () {
+                return [{
+                    model: sequelize.models.Notification,
+                    as: 'notification'
+                }]
+            },
+            'findNotificationBoxesByOptions': function (options, callback) {
 
+                var where = {};
+
+                where.createdAt = {
+                    '$lt': options.last
+                };
+
+                where.userId = options.userId;
+
+                sequelize.transaction(function (t) {
+                    return sequelize.models.NotificationBox.findAndCountAll({
+                        'offset': parseInt(options.offset),
+                        'limit': parseInt(options.size),
+                        'where': where,
+                        'order': [[options.orderBy, options.sort]],
+                        'include': sequelize.models.NotificationBox.getNotificationBoxInclude(),
+                        'transaction': t
+                    }).then(function (data) {
+                        if (data.rows.length > 0) {
+                            return data;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data) {
+                        callback(200, data);
+                    }
+                });
+            }
         })
     }
 };
