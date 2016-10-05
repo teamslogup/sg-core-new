@@ -4,7 +4,7 @@ var logger = new Logger(__filename);
 
 get.validate = function () {
     return function (req, res, next) {
-        req.check('key', '400_3').isEnum(['email', 'phoneNum', 'nick']);
+        req.check('key', '400_3').isEnum(['email', 'phoneNum', 'nick', 'aid']);
         req.query.value = decodeURIComponent(req.query.value);
         req.utils.common.checkError(req, res, next);
         next();
@@ -28,8 +28,10 @@ get.checkUnique = function () {
                     code = '409_2';
                 } else if (key == 'phoneNum') {
                     code = '409_1';
-                } else {
+                } else if (key == 'nick') {
                     code = '409_3';
+                } else if (key == 'aid') {
+                    code = '400_55';
                 }
 
                 return res.hjson(req, next, 409, {

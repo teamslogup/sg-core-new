@@ -22,7 +22,7 @@ var api = {
                 essential: ['key', 'value'],
                 resettable: [],
                 explains : {
-                    key: 'email, phoneNum, nick',
+                    key: 'email, phoneNum, nick, aid',
                     value: '실제 유일성 검사할 값'
                 },
                 title: '유일한 값 인지 확인.',
