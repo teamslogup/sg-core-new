@@ -25,13 +25,13 @@ get.checkUnique = function () {
                 var key = req.query.key;
                 var code;
                 if (key == 'email') {
-                    code = '409_2';
+                    code = '409_5';
                 } else if (key == 'phoneNum') {
                     code = '409_1';
                 } else if (key == 'nick') {
                     code = '409_3';
                 } else if (key == 'aid') {
-                    code = '400_55';
+                    code = '409_2';
                 }
 
                 return res.hjson(req, next, 409, {
