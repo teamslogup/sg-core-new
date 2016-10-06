@@ -18,6 +18,7 @@ var Notification = require('./notification');
 var NotificationBox = require('./notification-box');
 var UserNotification = require('./user-notification');
 var UserPublicNotification = require('./user-public-notification');
+var UserImage = require('./user-image');
 
 var models = {
     User: User,
@@ -38,7 +39,8 @@ var models = {
     Notification: Notification,
     NotificationBox: NotificationBox,
     UserNotification: UserNotification,
-    UserPublicNotification: UserPublicNotification
+    UserPublicNotification: UserPublicNotification,
+    UserImage: UserImage
 };
 
 module.exports = models;
