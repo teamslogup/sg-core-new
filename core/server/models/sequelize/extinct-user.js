@@ -17,7 +17,7 @@ var crypto = require('crypto');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
-var MICRO = require('microtime');
+var MICRO = require('microtime-nodejs');
 
 module.exports = {
     fields: {

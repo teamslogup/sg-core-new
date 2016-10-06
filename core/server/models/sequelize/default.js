@@ -12,7 +12,7 @@
 
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
-var MICRO = require('microtime');
+var MICRO = require('microtime-nodejs');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');

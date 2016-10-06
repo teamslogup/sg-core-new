@@ -8,7 +8,7 @@ var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
 var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
-var MICRO = require('microtime');
+var MICRO = require('microtime-nodejs');
 
 var mixin = {
     'options': {

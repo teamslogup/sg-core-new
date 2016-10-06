@@ -1,7 +1,7 @@
 var gets = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
-var micro = require('microtime');
+var micro = require('microtime-nodejs');
 
 gets.validate = function () {
     return function (req, res, next) {

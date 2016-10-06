@@ -16,7 +16,7 @@ var crypto = require('crypto');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
-var MICRO = require('microtime');
+var MICRO = require('microtime-nodejs');
 
 const profileKey = "profile";
 

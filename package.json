@@ -87,7 +87,7 @@
     "gm": "*",
     "helmet": "^2.1.2",
     "method-override": "*",
-    "microtime": "*",
+    "microtime-nodejs": "*",
     "mobile-detect": "*",
     "moment": "^2.14.1",
     "mongoose": "*",

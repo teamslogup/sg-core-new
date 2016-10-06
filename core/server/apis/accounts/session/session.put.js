@@ -1,7 +1,7 @@
 var put = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
-var MICRO = require('microtime');
+var MICRO = require('microtime-nodejs');
 
 put.updateAndGetUser = function () {
     return function (req, res, next) {

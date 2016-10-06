@@ -1,7 +1,7 @@
 var gets = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
-var MICRO = require('microtime');
+var MICRO = require('microtime-nodejs');
 gets.validate = function(){
     return function(req, res, next){
         var COMMON = req.meta.std.common;
