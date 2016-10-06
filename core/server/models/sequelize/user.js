@@ -469,7 +469,7 @@ module.exports = {
             }
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'getUserInclude': function() {
+            'getIncludeUser': function () {
                 return [{
                     model: sequelize.models.Profile,
                     as: profileKey
@@ -489,6 +489,10 @@ module.exports = {
                     model: sequelize.models.UserPublicNotification,
                     as: 'userPublicNotifications',
                     attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
+                }, {
+                    model: sequelize.models.UserImage,
+                    as: 'userImages',
+                    include: sequelize.models.UserImage.getIncludeUserImage()
                 }]
             },
             'getUserFields': function () {
@@ -554,7 +558,7 @@ module.exports = {
              * @param {responseCallback} callback - 응답콜백
              */
             'findUserById': function (id, callback) {
-                this.findDataIncludingById(id, sequelize.models.User.getUserInclude(), callback);
+                this.findDataIncludingById(id, sequelize.models.User.getIncludeUser(), callback);
             },
             /**
              * 번호로 유저 찾기
@@ -563,7 +567,7 @@ module.exports = {
              */
             'findUserByPhoneNumber': function (phoneNum, callback) {
                 var where = {phoneNum: phoneNum};
-                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getUserInclude(), callback);
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
             },
             /**
              * 이메일로 유저 찾기
@@ -572,7 +576,7 @@ module.exports = {
              */
             'findUserByEmail': function (email, callback) {
                 var where = {email: email};
-                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getUserInclude(), callback);
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
             },
             /**
              * AID로 유저 찾기
@@ -581,7 +585,7 @@ module.exports = {
              */
             'findUserByAid': function (aid, callback) {
                 var where = {aid: aid};
-                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getUserInclude(), callback);
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
             },
             /**
              * 범용 유저생성
@@ -969,7 +973,7 @@ module.exports = {
                         }, [{
                             model: sequelize.models.User,
                             as: 'user',
-                            include: sequelize.models.User.getUserInclude()
+                            include: sequelize.models.User.getIncludeUser()
                         }],
                         function (status, data) {
                             if (status == 200) {
@@ -1008,7 +1012,7 @@ module.exports = {
                         where: {
                             id: id
                         },
-                        include: sequelize.models.User.getUserInclude()
+                        include: sequelize.models.User.getIncludeUser()
                     };
 
                     return self.find(query).then(function (data) {

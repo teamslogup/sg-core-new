@@ -42,22 +42,7 @@ post.removeAllSessions = function () {
         req.models.Provider.findDataIncluding({
                 'type': req.providerUserProfile.provider,
                 'uid': req.providerUserProfile.uid
-            }, [{
-                model: req.models.User,
-                as: 'user',
-                include: [{
-                    model: req.models.Profile,
-                    as: 'profile'
-                }, {
-                    model: req.models.Provider,
-                    as: 'providers',
-                    attributes: req.models.Provider.getProviderFields()
-                }, {
-                    model: req.models.LoginHistory,
-                    as: 'loginHistories',
-                    attributes: req.models.LoginHistory.getLoginHistoryFields()
-                }]
-            }],
+            }, req.models.User.getIncludeUser(),
             function (status, data) {
                 if (status == 200) {
                     req.loadedUser = data.user;
