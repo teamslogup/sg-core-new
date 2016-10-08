@@ -13,6 +13,9 @@ import Upload from './upload-manager/core.base.upload.model';
 import Image from './upload-manager/core.base.image.model';
 import uploadManager from './upload-manager/core.base.upload-manager';
 
+import AlertDialogCtrl from './alert-dialog/controllers/core.alert-dialog.controller';
+import alertDialogService from './alert-dialog/services/core.alert-dialog.service';
+
 export default angular.module("core.base", [
     coreCommon,
     uiRouter,
@@ -28,4 +31,6 @@ export default angular.module("core.base", [
     .factory('Upload', Upload)
     .factory('Image', Image)
     .service('uploadManager', uploadManager)
+    .controller('AlertDialogCtrl', AlertDialogCtrl)
+    .service('AlertDialog', alertDialogService)
     .name;
