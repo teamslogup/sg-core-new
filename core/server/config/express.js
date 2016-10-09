@@ -114,9 +114,15 @@ module.exports = function (sequelize) {
         cookie: { maxAge : 3600000 }
     };
 
-    if (process.env.NODE_ENV === 'production' && META.std.flag.isUseRedis) {
+    if (META.std.flag.isUseRedis) {
+        var urlObj = url.parse(CONFIG.db.redis);
+        var auth = urlObj.auth;
+        var auth = (auth && auth.split(":")) || null;
+        console.log('redis info', urlObj);
         sessionSettings.store = new RedisStore({
-            'host': CONFIG.db.redis
+            'host': urlObj.hostname,
+            'port': urlObj.port,
+            'pass': auth && auth[0] || null
         });
     }
 
