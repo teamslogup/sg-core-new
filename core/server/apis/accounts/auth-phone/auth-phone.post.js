@@ -128,7 +128,7 @@ post.supplement = function () {
         var USER = req.meta.std.user;
         if (process.env.NODE_ENV == "test") {
             if (req.body.type == USER.authPhoneFindId) {
-                return res.hjson(req, next, 200, req.user.aid);
+                return res.hjson(req, next, 200, {aid: req.user.aid});
             }
             else if (req.body.type == USER.authPhoneFindPass) {
                 return res.hjson(req, next, 200, req.newPass);

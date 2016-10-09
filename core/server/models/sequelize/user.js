@@ -409,13 +409,14 @@ module.exports = {
             'createRandomPassword': function () {
                 var length = STD.user.minSecretLength;
                 var pass = "";
-                for (var i = 0; i < length; ++i) {
+                for (var i = 0; i < length - 1; ++i) {
                     if ((Math.random() * 100000) % 2 == 0) {
                         pass += (Math.random() * 100000) % 10;
                     } else {
                         pass += String.fromCharCode(((Math.random() * 100000) % 26) + 97);
                     }
                 }
+                pass += Math.floor((Math.random() * 100000)) % 10;
                 return pass;
             },
             /**

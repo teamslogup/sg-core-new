@@ -491,8 +491,8 @@ Account.prototype.sendFindIdEmailAuth = function (callback) {
         })
         .end(function (err, res) {
             res.status.should.exactly(200);
-            res.body.should.be.an.String;
-            res.body.should.be.exactly(self.getData('aid'));
+            res.body.aid.should.be.an.String;
+            res.body.aid.should.be.exactly(self.getData('aid'));
             callback();
         });
 };
@@ -580,7 +580,7 @@ Account.prototype.findIdAsPhone = function (callback) {
                 })
                 .end(function (err, res) {
                     res.status.should.exactly(200);
-                    res.body.should.be.exactly(self.getData('aid'));
+                    res.body.aid.should.be.exactly(self.getData('aid'));
                     callback();
                 });
         });

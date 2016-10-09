@@ -168,7 +168,7 @@ post.supplement = function () {
         var USER = req.meta.std.user;
         if (process.env.NODE_ENV == 'test') {
             if (req.body.type == USER.authEmailFindId) {
-                res.hjson(req, next, 200, req.loadedUser.aid);
+                res.hjson(req, next, 200, {aid:req.loadedUser.aid});
             } else {
                 res.hjson(req, next, 200, req.auth.token);
             }
