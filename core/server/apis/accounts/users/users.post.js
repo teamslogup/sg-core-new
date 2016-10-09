@@ -192,12 +192,6 @@ post.sendEmailAuth = function () {
                 // if (status == 503) return res.hjson(req, next, 503, err);
                 next();
             });
-
-            req.coreUtils.notification.all.sendNotification(req, req.user, req.notification, {
-                noticeId: 10
-            }, function(status, data) {
-
-            });
         }
         else {
             next();
