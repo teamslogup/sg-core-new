@@ -111,7 +111,9 @@ module.exports = function (sequelize) {
         name : 'slogupSessionId',
         saveUninitialized: true,
         resave: true,
-        cookie: { maxAge : 3600000 }
+        cookie: {
+            path: '/', httpOnly: true, secure: false, maxAge: CONFIG.app.sessionExpiredSeconds
+        }
     };
 
     if (META.std.flag.isUseRedis) {
@@ -122,7 +124,8 @@ module.exports = function (sequelize) {
         sessionSettings.store = new RedisStore({
             'host': urlObj.hostname,
             'port': urlObj.port,
-            'pass': auth && auth[0] || null
+            'pass': auth && auth[0] || null,
+            'ttl': CONFIG.app.sessionExpiredSeconds
         });
     }
 

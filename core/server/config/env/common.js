@@ -11,7 +11,9 @@ module.exports = {
         "apiName": "api",
         "rootUrl": "http://localhost:3001",
         "isServerChecking": false,
-        "deletedUserPrefix": "deletedUser0323"
+        "deletedUserPrefix": "deletedUser0323",
+        "sessionExpiredSeconds": 60 * 60 * 24 * 100
+        // "sessionExpiredSeconds": 10
     },
     "db": {
         "off": false,
