@@ -24,7 +24,7 @@ post.supplement = function () {
 
         var msg = langs.uploadSuccess;
         var funcId = req.query.CKEditorFuncNum;
-        var url = req.meta.std.cdn.rootUrl + "/" + req.meta.std.file.folderArticle + "/" + req.fileNames[0];
+        var url = req.meta.std.cdn.rootUrl + req.meta.std.file.folderArticle + "/" + req.fileNames[0];
 
         res.send("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('" + funcId + "', '" + url + "', '" + msg + "')</script>");
     };
