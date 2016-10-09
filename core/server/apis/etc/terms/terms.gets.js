@@ -7,9 +7,9 @@ gets.validate = function(){
         var COMMON = req.meta.std.common;
         var TERMS = req.meta.std.terms;
         if (req.query.orderBy === undefined) req.query.orderBy = TERMS.defaultOrderBy;
-        if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
+        if (req.query.sort === undefined) req.query.sort = COMMON.ASC;
         if (req.query.last === undefined) req.query.last = MICRO.now();
-        if (req.query.size === undefined) req.query.size = 1;
+        if (req.query.size === undefined) req.query.size = 12;
 
         if (req.query.searchItem !== undefined) req.check("searchItem", "400_8").len(COMMON.minSearchLength, COMMON.maxSearchLength);
         if (req.query.searchField !== undefined) req.check("searchField", "400_3").isEnum(TERMS.enumSearchFields);
