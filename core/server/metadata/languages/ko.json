@@ -133,6 +133,13 @@
   "KR": "한국",
   "visible": "인증",
   "anony": "익명",
-  "password": "비밀번호"
+  "password": "비밀번호",
+  "authorized": "인증",
+  "unauthorized": "비인증",
+  "requireTitle": "제목을 입력해주세요.",
+  "requireBody": "내용을 입력해주세요.",
+  "requireType": "타입을 선택해주세요.",
+  "requireCountry": "국가를 선택해주세요.",
+  "dashboard": "대쉬보드"
 }
 

@@ -193,7 +193,8 @@ var standards = {
         "noticeTypeWhat": "what",
         "noticeTypeEvent": "event",
         "noticeTypePopup": "popup",
-        "enumFields": ["title", "body"]
+        "enumFields": ["title", "body"],
+        "enumCountries": ["KR"]
     },
     "board": {
         "minSlugLength": 1,
@@ -202,7 +203,8 @@ var standards = {
     "image": {
         "enumOrders": ["orderCreate", "orderUpdate"],
         "orderCreate": "orderCreate",
-        "orderUpdate": "orderUpdate"
+        "orderUpdate": "orderUpdate",
+        "enumAuthorized": ["all", "authorized", "unauthorized"]
     },
     "magic": {
         "reset": ":RESET:",
