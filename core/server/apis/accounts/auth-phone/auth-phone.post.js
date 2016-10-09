@@ -117,7 +117,7 @@ post.sendPassword = function () {
 
 post.removeAuth = function () {
     return function (req, res, next) {
-        req.loadedAuth.delete(function(status, data) {
+        req.loadedAuth.delete(function (status, data) {
             next();
         });
     }
@@ -137,7 +137,7 @@ post.supplement = function () {
             }
         } else {
             if (req.body.type == USER.authPhoneFindId) {
-                return res.hjson(req, next, 200, req.user.aid);
+                return res.hjson(req, next, 200, {aid: req.user.aid});
             } else {
                 return res.hjson(req, next, 204);
             }
