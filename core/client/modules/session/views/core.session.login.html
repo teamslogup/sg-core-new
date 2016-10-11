@@ -6,7 +6,6 @@
                 <hr>
                 <form name="form" data-ng-submit="vm.login(form)" novalidate>
                     <div class="sg-session-input-group" data-ng-class="{'sg-has-error': vm.isInvalid(form.email)}">
-                        <!--<label for="email" class="col-sm-4 control-label">{{ 'email' | translate }}</label>-->
                         <div class="sg-session-input-wrap">
                             <input type="email"
                                    name="email"
@@ -23,7 +22,6 @@
                         </span>
                     </div>
                     <div class="sg-session-input-group" data-ng-class="{'sg-has-error': vm.isInvalid(form.pass)}">
-                        <!--<label for="pass" class="col-sm-4 control-label">{{ 'pass' | translate }}</label>-->
                         <div class="sg-session-input-wrap">
                             <input type="password"
                                    data-ng-model="vm.form.pass"
@@ -35,7 +33,7 @@
                                    placeholder="{{ 'pass' | translate }}"
                                    data-ng-required="true">
                         </div>
-                        <span class="sg-help-block" data-ng-show="vm.isInvalid(form.pass)">
+                        <span class="sg-session-alert-message" data-ng-show="vm.isInvalid(form.pass)">
                             {{ vm.getFormError(form.pass.$error) | translate }}
                         </span>
                     </div>
