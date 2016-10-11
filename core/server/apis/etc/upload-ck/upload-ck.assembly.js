@@ -23,7 +23,7 @@ var api = {
 
             var params = {
                 acceptable: ['CKEditor', 'CKEditorFuncNum', 'langCode'],
-                essential: [],
+                essential: ['CKEditor', 'CKEditorFuncNum', 'langCode'],
                 resettable: [],
                 explains : {
                     'CKEditor': '에디터이름',
