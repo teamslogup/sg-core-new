@@ -5,7 +5,7 @@
                 <h2>{{ 'login' | translate }}</h2>
                 <hr>
                 <form name="form" data-ng-submit="vm.login(form)" novalidate>
-                    <div data-ng-class="{'sg-has-error': vm.isInvalid(form.email)}">
+                    <div class="sg-session-input-group" data-ng-class="{'sg-has-error': vm.isInvalid(form.email)}">
                         <!--<label for="email" class="col-sm-4 control-label">{{ 'email' | translate }}</label>-->
                         <div class="sg-session-input-wrap">
                             <input type="email"
@@ -22,7 +22,7 @@
                             {{ vm.getFormError(form.email.$error) | translate }}
                         </span>
                     </div>
-                    <div class="form-group" data-ng-class="{'sg-has-error': vm.isInvalid(form.pass)}">
+                    <div class="sg-session-input-group" data-ng-class="{'sg-has-error': vm.isInvalid(form.pass)}">
                         <!--<label for="pass" class="col-sm-4 control-label">{{ 'pass' | translate }}</label>-->
                         <div class="sg-session-input-wrap">
                             <input type="password"
