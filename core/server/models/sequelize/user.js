@@ -492,7 +492,10 @@ module.exports = {
                 }, {
                     model: sequelize.models.UserImage,
                     as: 'userImages',
-                    include: sequelize.models.UserImage.getIncludeUserImage()
+                    include: [{
+                        model: sequelize.models.Image,
+                        as: 'image'
+                    }]
                 }]
             },
             'getUserFields': function () {
@@ -551,6 +554,81 @@ module.exports = {
                 }];
 
                 sequelize.models.User.findAllDataForQuery(query, callback);
+            },
+            /**
+             * 생성일자가 last 보다 먼저인 유저 size 만큼 찾기
+             * @param {Object} last - 찾을 유저 생성일자 조건
+             * @param {Object} size - 찾을 유저 수
+             * @param {responseCallback} callback - 응답콜백
+             */
+            'findAndCountUsersByOption': function (searchItem, searchField, last, size, order, sort, callback) {
+                var where = {};
+                var order;
+                var include;
+
+                if (searchField && searchItem) {
+                    where[searchField] = {
+                        '$like': '%' + searchItem + '%'
+                    };
+                } else if (searchItem) {
+                    if (STD.user.enumSearchFields.length > 0) where.$or = [];
+                    for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
+                        var body = {};
+                        body[STD.user.enumSearchFields[i]] = {
+                            '$like': '%' + searchItem + '%'
+                        };
+                        where.$or.push(body);
+                    }
+                }
+
+                if (order == STD.user.orderUpdate) {
+                    where.updatedAt = {
+                        '$lt': last
+                    };
+                    order = [['updatedAt', sort]];
+                } else {
+                    where.createdAt = {
+                        '$lt': last
+                    };
+                    order = [['createdAt', sort]];
+                }
+
+                include = sequelize.models.User.getIncludeUser();
+
+                var loadedUser;
+                var loadedCount;
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.User.findAll({
+                        'order': order,
+                        'limit': parseInt(size),
+                        'where': where,
+                        'include': include,
+                        'transaction': t
+                    }).then(function (user) {
+                        loadedUser = user;
+
+                        return sequelize.models.User.count({
+                            'where': where
+                        });
+                    }).then(function (count) {
+                        loadedCount = count;
+
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+
+                    if (isSuccess) {
+                        var result = {
+                            count: loadedCount,
+                            rows: loadedUser
+                        };
+
+                        callback(200, result);
+                    }
+                });
             },
             /**
              * 아이디로 유저 찾기
