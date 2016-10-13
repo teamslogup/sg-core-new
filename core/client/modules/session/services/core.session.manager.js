@@ -144,6 +144,7 @@ export default function sessionManager(Session, SocialSession, usersManager, met
             currentSession = self.session = data;
             callback(200, data);
         }, function (data) {
+            currentSession = self.session = null;
             callback(data.status, data.data);
         });
     }
