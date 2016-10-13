@@ -109,8 +109,8 @@
   "DESC": "내림차순",
   "ASC": "오름차순",
   "all": "전체",
-  "solved": "해결",
-  "unsolved": "미해결",
+  "solved": "답변완료",
+  "unsolved": "답변대기",
   "name": "이름",
   "title": "제목",
   "body": "내용",
@@ -140,6 +140,19 @@
   "requireBody": "내용을 입력해주세요.",
   "requireType": "타입을 선택해주세요.",
   "requireCountry": "국가를 선택해주세요.",
-  "dashboard": "대쉬보드"
+  "dashboard": "대쉬보드",
+  "editMode": "수정모드",
+  "viewMode": "일반모드",
+  "close": "닫기",
+  "exit": "나가기",
+  "complete": "완료",
+  "notificationSetting": "노티피케이션 수신설정",
+  "smsNotification": "문자알림",
+  "emailNotification": "메일알림",
+  "pushNotification": "푸시알림",
+  "invalidId": "아이디가 존재하지 않습니다.",
+  "invalidPassword": "잘못된 비밀번호 입니다.",
+  "marketingAgreedSetting": "마케팅 수신동의",
+  "phone": "핸드폰"
 }
 

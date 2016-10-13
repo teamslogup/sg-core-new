@@ -1,13 +1,10 @@
-export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog, metaManager) {
-    var vm = null;
-    if ($scope.vm !== undefined) {
-        vm = $scope.vm;
-    } else {
-        vm = $scope.vm = {};
-    }
+export default function NoticesCtrl($scope, $sce, $filter, noticesManager, AlertDialog, loadingHandler, metaManager) {
+
+    var LOADING = metaManager.std.loading;
 
     $scope.isNoticeCreateVisible = false;
-    $scope.isNoticeEditVisible = false;
+    $scope.isNoticeEditMode = false;
+    $scope.isNoticeDetailVisible = false;
 
     $scope.params = {};
     $scope.form = {};
@@ -19,7 +16,6 @@ export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog
 
     $scope.noticeCountries = metaManager.std.notice.enumCountries;
 
-    vm.loading = false;
     $scope.more = false;
 
     $scope.showNoticeCreate = function () {
@@ -33,20 +29,38 @@ export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog
         $scope.form = {};
     };
 
-    $scope.showNoticeEdit = function (index) {
+    $scope.showNoticeDetail = function (index) {
         $scope.currentIndex = index;
         $scope.form = {
             title: $scope.noticeList[index].title,
             body: $scope.noticeList[index].body,
             type: $scope.noticeList[index].type,
-            country: $scope.noticeList[index].country,
+            country: $scope.noticeList[index].country
         };
-        $scope.isNoticeEditVisible = true;
+        $scope.isNoticeDetailVisible = true;
     };
 
-    $scope.hideNoticeEdit = function () {
-        $scope.isNoticeEditVisible = false;
+    $scope.hideNoticeDetail = function () {
+        $scope.isNoticeDetailVisible = false;
         $scope.form = {};
+        $scope.exitEditMode();
+    };
+
+    $scope.$on('$locationChangeStart', function (event, next, current) {
+        if (next != current) {
+            if($scope.isNoticeDetailVisible) {
+                event.preventDefault();
+                $scope.hideNoticeDetail();
+            }
+        }
+    });
+
+    $scope.startEditMode = function () {
+        $scope.isNoticeEditMode = true;
+    };
+
+    $scope.exitEditMode = function () {
+        $scope.isNoticeEditMode = false;
     };
 
     $scope.isFormValidate = function () {
@@ -83,7 +97,7 @@ export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog
         if ($scope.isFormValidate()) {
             var body = angular.copy($scope.form);
 
-            vm.loading = true;
+            loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
             noticesManager.createNotice(body, function (status, data) {
                 if (status == 201) {
                     $scope.noticeList.unshift(data);
@@ -91,7 +105,7 @@ export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog
                 } else {
                     AlertDialog.alertError(status, data);
                 }
-                vm.loading = false;
+                loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
             });
         }
 
@@ -104,67 +118,60 @@ export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog
         if ($scope.isFormValidate()) {
             var body = angular.copy($scope.form);
 
-            vm.loading = true;
+            loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
             noticesManager.updateNoticeById(notice.id, body, function (status, data) {
                 if (status == 200) {
                     $scope.noticeList[$scope.currentIndex] = data;
-                    $scope.hideNoticeEdit();
+                    $scope.hideNoticeDetail();
                 } else {
                     AlertDialog.alertError(status, data);
                 }
-                vm.loading = false;
+                loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
             });
         }
 
     };
 
     $scope.findNotices = function () {
-        if (vm.session && vm.session.id) {
+        $scope.noticeListTotal = 0;
+        $scope.noticeList = [];
 
-            $scope.noticeListTotal = 0;
-            $scope.noticeList = [];
+        $scope.params.last = undefined;
 
-            $scope.params.last = undefined;
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findNotices');
+        noticesManager.findNotices($scope.params, function (status, data) {
+            if (status == 200) {
+                $scope.noticeListTotal = data.count;
+                $scope.noticeList = $scope.noticeList.concat(data.rows);
+                $scope.more = $scope.noticeListTotal > $scope.noticeList.length;
+            } else if (status == 404) {
+                $scope.more = false;
+            } else {
+                AlertDialog.alertError(status, data);
+            }
 
-            vm.loading = true;
-            noticesManager.findNotices($scope.params, function (status, data) {
-                if (status == 200) {
-                    $scope.noticeListTotal = data.count;
-                    $scope.noticeList = $scope.noticeList.concat(data.rows);
-                    $scope.more = $scope.noticeListTotal > $scope.noticeList.length;
-                } else if (status == 404) {
-                    $scope.more = false;
-                } else {
-                    AlertDialog.alertError(status, data);
-                }
-
-                vm.loading = false;
-            });
-        }
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findNotices');
+        });
     };
 
     $scope.findNoticesMore = function () {
+        if ($scope.noticeList.length > 0) {
+            $scope.params.last = $scope.noticeList[$scope.noticeList.length - 1].createdAt;
+        }
 
-        if (vm.session && vm.session.id) {
-
-            if ($scope.noticeList.length > 0) {
-                $scope.params.last = $scope.noticeList[$scope.noticeList.length - 1].createdAt;
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findNoticesMore');
+        noticesManager.findNotices($scope.params, function (status, data) {
+            if (status == 200) {
+                $scope.noticeList = $scope.noticeList.concat(data.rows);
+                $scope.more = $scope.noticeListTotal > $scope.noticeList.length;
+            } else if (status == 404) {
+                $scope.more = false;
+            } else {
+                AlertDialog.alertError(status, data);
             }
 
-            vm.loading = true;
-            noticesManager.findNotices($scope.params, function (status, data) {
-                if (status == 200) {
-                    $scope.noticeList = $scope.noticeList.concat(data.rows);
-                    $scope.more = $scope.noticeListTotal > $scope.noticeList.length;
-                } else if (status == 404) {
-                    $scope.more = false;
-                } else {
-                    AlertDialog.alertError(status, data);
-                }
-
-                vm.loading = false;
-            });
-        }
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findNoticesMore');
+        });
     };
 
     $scope.findNotices();
@@ -174,4 +181,8 @@ export default function NoticesCtrl($scope, $filter, noticesManager, AlertDialog
             $scope.findNotices();
         }
     }, true);
+
+    $scope.trustAsHtml = function(string) {
+        return $sce.trustAsHtml(string);
+    };
 }

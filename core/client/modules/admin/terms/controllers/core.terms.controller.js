@@ -1,10 +1,6 @@
-export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, metaManager) {
-    var vm = null;
-    if ($scope.vm !== undefined) {
-        vm = $scope.vm;
-    } else {
-        vm = $scope.vm = {};
-    }
+export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, loadingHandler, metaManager) {
+
+    var LOADING = metaManager.std.loading;
 
     $scope.isTermsCreateVisible = false;
     $scope.isTermsEditVisible = false;
@@ -16,8 +12,8 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
     $scope.termsListTotal = 0;
 
     $scope.selectedTerms = undefined;
+    $scope.activeId = undefined;
 
-    vm.loading = false;
     $scope.more = false;
 
     $scope.showTermsCreate = function () {
@@ -81,7 +77,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
         if ($scope.isFormValidate()) {
             var body = angular.copy($scope.form);
 
-            vm.loading = true;
+            loadingHandler.startLoading(LOADING.spinnerKey, 'createTerms');
             termsManager.createTerms(body, function (status, data) {
                 if (status == 201) {
                     $scope.termsList.unshift(data);
@@ -89,7 +85,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
                 } else {
                     AlertDialog.alertError(status, data);
                 }
-                vm.loading = false;
+                loadingHandler.endLoading(LOADING.spinnerKey, 'createTerms');
             });
         }
 
@@ -102,7 +98,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
         if ($scope.isFormValidate()) {
             var body = angular.copy($scope.form);
 
-            vm.loading = true;
+            loadingHandler.startLoading(LOADING.spinnerKey, 'updateTermsById');
             termsManager.updateTermsById(terms.id, body, function (status, data) {
                 if (status == 200) {
                     $scope.termsList[$scope.currentIndex] = data;
@@ -110,21 +106,28 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
                 } else {
                     AlertDialog.alertError(status, data);
                 }
-                vm.loading = false;
+                loadingHandler.endLoading(LOADING.spinnerKey, 'updateTermsById');
             });
         }
 
     };
 
-    $scope.findTermsById = function (id) {
-        vm.loading = true;
+    $scope.findTermsById = function (id, isVersionId) {
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findTermsById');
         termsManager.findTermsById(id, function (status, data) {
             if (status == 200) {
+
+                if(!isVersionId){
+                    $scope.activeId = id;
+                }
+
+                $scope.activeVersionId = id;
+
                 $scope.selectedTerms = data;
             } else {
                 AlertDialog.alertError(status, data);
             }
-            vm.loading = false;
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTermsById');
         });
     };
 
@@ -135,7 +138,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
 
         $scope.params.last = undefined;
 
-        vm.loading = true;
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findTerms');
         termsManager.findTerms($scope.params, function (status, data) {
             if (status == 200) {
                 $scope.termsListTotal = data.count;
@@ -147,7 +150,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
                 AlertDialog.alertError(status, data);
             }
 
-            vm.loading = false;
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTerms');
         });
     };
 
@@ -157,7 +160,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
             $scope.params.last = $scope.termsList[$scope.termsList.length - 1].createdAt;
         }
 
-        vm.loading = true;
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findTermsMore');
         termsManager.findTerms($scope.params, function (status, data) {
             if (status == 200) {
                 $scope.termsList = $scope.termsList.concat(data.rows);
@@ -168,7 +171,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, me
                 AlertDialog.alertError(status, data);
             }
 
-            vm.loading = false;
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTermsMore');
         });
     };
 
