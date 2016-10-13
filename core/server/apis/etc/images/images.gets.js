@@ -6,6 +6,7 @@ gets.validate = function () {
     return function (req, res, next) {
         var COMMON = req.meta.std.common;
         var IMAGE = req.meta.std.image;
+        var FILE = req.meta.std.file;
         
         if (req.query.last === undefined) req.query.last = MICRO.now();
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
@@ -23,6 +24,15 @@ gets.validate = function () {
         req.check('orderBy', '400_28').isEnum(IMAGE.enumOrders);
         req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
 
+        if (req.query.folder !== undefined) {
+            req.check('folder', '400_12').isEnum(FILE.enumFolders);
+        }
+
+        if (req.query.authorized !== undefined) {
+            req.check('authorized', '400_12').isBoolean();
+            req.sanitize('authorized').toBoolean();
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -30,12 +40,9 @@ gets.validate = function () {
 
 gets.getImages = function () {
     return function (req, res, next) {
+
         req.models.Image.findImagesByOption(
-            req.query.authorId,
-            req.query.last,
-            req.query.size,
-            req.query.orderBy,
-            req.query.sort,
+            req.query,
             function (status, data) {
                 if (status == 200) {
                     req.images = data;
@@ -50,11 +57,7 @@ gets.getImages = function () {
 
 gets.supplement = function () {
     return function (req, res, next) {
-        var temp = [];
-        for (var i = 0; i < req.images.length; i++) {
-            temp.push(req.images[i].dataValues);
-        }
-        res.hjson(req, next, 200, temp);
+        res.hjson(req, next, 200, req.images);
     };
 };
 

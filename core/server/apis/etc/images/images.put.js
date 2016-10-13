@@ -15,8 +15,8 @@ put.updateImage = function () {
         var update = {
             authorized: req.body.authorized
         };
-        req.models.Image.updateDataById(req.params.id, update, function (status, data) {
-            if (status == 204) {
+        req.models.Image.updateDataByIdAndReturnData(req.params.id, update, function (status, data) {
+            if (status == 200) {
                 req.image = data;
                 next();
             } else {

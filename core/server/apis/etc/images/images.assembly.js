@@ -62,15 +62,17 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['authorId', 'last', 'size', 'orderBy', 'sort'],
+                acceptable: ['authorId', 'last', 'size', 'orderBy', 'sort', 'folder', 'authorized'],
                 essential: [],
                 resettable: [],
                 explains: {
                     authorId: '작성자 id',
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    orderBy: '정렬 옵션' + IMAGE.enumOrders.join(", "),
-                    sort: '정렬 순서' + COMMON.enumSortTypes.join(", ")
+                    orderBy: '정렬 옵션 ex) ' + IMAGE.enumOrders.join(", "),
+                    sort: '정렬 순서 ex) ' + COMMON.enumSortTypes.join(", "),
+                    folder: '폴더명 ex) ' + FILE.enumFolders.join(", "),
+                    authorized: '인증, 비인증 여부'
                 },
                 response: {
 

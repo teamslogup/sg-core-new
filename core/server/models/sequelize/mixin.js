@@ -190,6 +190,28 @@ var mixin = {
             },
 
             /**
+             * 여러 데이터를 조회
+             * @param query
+             * @param callback
+             */
+            'findAndCountAllForQuery': function (query, callback) {
+                var t = false;
+                var loadedData = null;
+                this.findAndCountAll(query).then(function (data) {
+                    t = true;
+                    loadedData = data;
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (t) {
+                        if (loadedData && loadedData.rows.length > 0) {
+                            return callback(200, loadedData);
+                        } else {
+                            return callback(404);
+                        }
+                    }
+                });
+            },
+
+            /**
              * 여러 데이터를 조회하는데 블로그 형태를 통해 조회 (last값이 마지막 데이터의 생성날짜가옴.)
              * @param where
              * @param attributes
@@ -439,7 +461,7 @@ var mixin = {
                 var t = false;
                 this.update(update, selector).then(function (data) {
                     t = true;
-                    loadedData = data && data[0];
+                    loadedData = data && data[1][0];
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (t) {
                         if (loadedData) {
@@ -477,6 +499,36 @@ var mixin = {
                     }
                 });
             },
+
+            /**
+             * 아이디를 통해서 데이터 없데이트 후 객체 리턴
+             * @param id
+             * @param update
+             * @param callback - 성공시 200
+             */
+            'updateDataByIdAndReturnData': function (id, update, callback) {
+                var loadedData = null;
+                var t = false;
+                this.update(update, {
+                    where: {
+                        id: id
+                    }
+                }).then(function (data) {
+                    t = true;
+                    if(data && data[0] > 0){
+                        loadedData = data[1][0];
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (t) {
+                        if (loadedData) {
+                            callback(200, loadedData);
+                        } else {
+                            callback(404);
+                        }
+                    }
+                });
+            },
+
             /**
              * 아이디를 통해서 데이터 없데이트
              * @param key - 임의의 find에 필요한 키

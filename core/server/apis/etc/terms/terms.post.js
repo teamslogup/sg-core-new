@@ -9,7 +9,8 @@ post.validate = function () {
         var enumCountry = req.coreUtils.common.getCountryEnum(req);
         req.check("country", "400_3").isEnum(enumCountry);
         if (req.body.title !== undefined) req.check("title", "400_8").len(TERMS.minTitleLength, TERMS.maxTitleLength);
-        if (req.body.content !== undefined) req.check("content", "400_8").len(TERMS.minTitleLength, TERMS.maxTitleLength);
+        if (req.body.content !== undefined) req.check("content", "400_8").len(TERMS.minContentLength, TERMS.maxContentLength);
+        req.check("startDate", "400_5").isMicroTimestamp();
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -20,10 +21,11 @@ post.setParam = function () {
         var body = {
             authorId: req.user.id,
             type: req.body.type,
-            country: req.body.country
+            country: req.body.country,
+            startDate: req.body.startDate,
+            title: req.body.title,
+            content: req.body.content
         };
-        if (req.body.title !== undefined) body.title = req.body.title;
-        if (req.body.content !== undefined) body.content = req.body.content;
         var instance = req.models.Terms.build(body);
         instance.create(function(status, data) {
             if (status == 200) {

@@ -13,6 +13,13 @@ import Upload from './upload-manager/core.base.upload.model';
 import Image from './upload-manager/core.base.image.model';
 import uploadManager from './upload-manager/core.base.upload-manager';
 
+import loadingHandlerService from './loading-handler/services/core.loading-handler.service';
+import LoadingHandlerCtrl from './loading-handler/controllers/core.loading-handler.controller';
+
+import alertDialogService from './alert-dialog/services/core.alert-dialog.service';
+import AlertDialogCtrl from './alert-dialog/controllers/core.alert-dialog.controller';
+
+
 export default angular.module("core.base", [
     coreCommon,
     uiRouter,
@@ -28,4 +35,8 @@ export default angular.module("core.base", [
     .factory('Upload', Upload)
     .factory('Image', Image)
     .service('uploadManager', uploadManager)
+    .service('AlertDialog', alertDialogService)
+    .service('loadingHandler', loadingHandlerService)
+    .controller('AlertDialogCtrl', AlertDialogCtrl)
+    .controller('LoadingHandlerCtrl', LoadingHandlerCtrl)
     .name;

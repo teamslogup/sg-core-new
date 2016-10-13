@@ -180,7 +180,8 @@ var standards = {
         "maxReplyLength": 10000,
         "minNickLength": 1,
         "maxNickLength": 14,
-        "enumSearchFields": ["body", "nick", "email"]
+        "enumSearchFields": ["nick", "email", "body"],
+        "enumSolved": ["all", "solved", "unsolved"]
     },
     "notice": {
         "minTitleLength": 1,
@@ -193,7 +194,8 @@ var standards = {
         "noticeTypeWhat": "what",
         "noticeTypeEvent": "event",
         "noticeTypePopup": "popup",
-        "enumFields": ["title", "body"]
+        "enumFields": ["title", "body"],
+        "enumCountries": ["KR"]
     },
     "board": {
         "minSlugLength": 1,
@@ -202,7 +204,8 @@ var standards = {
     "image": {
         "enumOrders": ["orderCreate", "orderUpdate"],
         "orderCreate": "orderCreate",
-        "orderUpdate": "orderUpdate"
+        "orderUpdate": "orderUpdate",
+        "enumAuthorized": ["all", "authorized", "unauthorized"]
     },
     "magic": {
         "reset": ":RESET:",
@@ -308,6 +311,21 @@ var standards = {
     "role": {
         "account": "roleD",
         "report": "roleD"
+    },
+    "loading": {
+        "spinnerKey": "spinner"
+    },
+    "companyInfo": {
+        "minCompanyNameLength": 1,
+        "maxCompanyNameLength": 100,
+        "minRepresentativeLength": 1,
+        "maxRepresentativeLength": 100,
+        "minRegNumLength": 1,
+        "maxRegNumLength": 20,
+        "minPrivateInfoManagerLength": 1,
+        "maxPrivateInfoManagerLength": 100,
+        "minAddressLength": 1,
+        "maxAddressLength": 1000
     }
 };
 

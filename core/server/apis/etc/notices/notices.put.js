@@ -26,7 +26,7 @@ put.validate = function () {
 put.update = function () {
     return function (req, res, next) {
         var update = req.body;
-        req.models.Notice.updateDataById(req.params.id, update, function (status, data) {
+        req.models.Notice.updateDataByIdAndReturnData(req.params.id, update, function (status, data) {
             if (status == 200) {
                 req.report = data;
                 next();

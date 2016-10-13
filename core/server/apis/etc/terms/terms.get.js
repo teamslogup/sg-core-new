@@ -12,7 +12,7 @@ get.validate = function () {
 
 get.setParam = function () {
     return function (req, res, next) {
-        req.models.Terms.findDataById(req.params.id, function (status, data) {
+        req.models.Terms.findTermsById(req.params.id, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();

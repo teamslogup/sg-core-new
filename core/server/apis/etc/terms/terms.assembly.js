@@ -61,7 +61,7 @@ var api = {
         return function(req, res, next) {
 
             var params = {
-                acceptable: ["searchItem", "searchField", "orderBy", "sort", "last", "size", "type"],
+                acceptable: ["searchItem", "searchField", "orderBy", "sort", "last", "size", "type", "country"],
                 essential: [],
                 resettable: [],
                 explains: {
@@ -71,7 +71,8 @@ var api = {
                     "sort": "정렬 방식 " + STD.common.enumSortTypes.join(", "),
                     "last": "조회 기준 마지막 데이터 일자",
                     "size": "가져올 데이터 갯수",
-                    "type": "이용약관 유형 " + STD.terms.enumTypes.join(", ")
+                    "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
+                    "country": "국가 코드 KR"
                 },
                 defaults: {
 
@@ -107,14 +108,15 @@ var api = {
         return function(req, res, next) {
 
             var params = {
-                acceptable: ["type", "title", "content", "country"],
-                essential: ["type", "country"],
+                acceptable: ["type", "title", "content", "country", "startDate"],
+                essential: ["type", "title", "content", "country", "startDate"],
                 resettable: [],
                 explains: {
                     "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
                     "title": "이용약관 제목",
                     "content": "이용약관 내용",
-                    "country": "국가 코드 KR"
+                    "country": "국가 코드 KR",
+                    "startDate": "약관 적용일"
                 },
                 defaults: {
 

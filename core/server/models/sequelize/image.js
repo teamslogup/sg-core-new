@@ -1,4 +1,3 @@
-
 /**
  * 응답콜백
  * @callback responseCallback
@@ -60,7 +59,7 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'createImages': function(array, callback) {
+            'createImages': function (array, callback) {
                 var loadedImage = null;
                 sequelize.models.Image.bulkCreate(array, {individualHooks: true}).then(function (data) {
                     loadedImage = data;
@@ -70,57 +69,67 @@ module.exports = {
                     }
                 });
             },
-            'findImagesByObj': function(images, callback) {
+            'findImagesByObj': function (images, callback) {
                 var where = {
                     '$or': []
                 };
-                
-                for (var i=0; i<images.length; i++) {
+
+                for (var i = 0; i < images.length; i++) {
                     var body = {
-                        name: { '$eq': images[i].name }
+                        name: {'$eq': images[i].name}
                     };
                     where.$or.push(body);
                 }
-                
+
                 var query = {
                     'where': where
                 };
-                
+
                 sequelize.models.Image.findAllDataForQuery(query, function (status, data) {
                     callback(status, data);
                 });
             },
-            'findImagesByOption': function (authorId, last, size, orderBy, sort, callback) {
+            'findImagesByOption': function (options, callback) {
                 var where = {};
-                
-                if (authorId) {
+
+                if (options.authorId) {
                     where.authorId = authorId;
                 }
-                
+
                 var query = {
-                    'limit': parseInt(size),
+                    'limit': parseInt(options.size),
                     'where': where
                 };
-                
-                if (orderBy == STD.image.orderUpdate) {
+
+                if (options.orderBy == STD.image.orderUpdate) {
                     where.updatedAt = {
-                        '$lt': last
+                        '$lt': options.last
                     };
-                    query.order = [['updatedAt', sort]];
+                    query.order = [['updatedAt', options.sort]];
                 } else {
                     where.createdAt = {
-                        'lt': last
+                        'lt': options.last
                     };
-                    query.order = [['createdAt', sort]];
+                    query.order = [['createdAt', options.sort]];
                 }
-                
-                sequelize.models.Image.findAllDataForQuery(query, callback);
+
+                if (options.folder) {
+                    where.folder = options.folder;
+                }
+
+                if (options.authorized !== undefined) {
+                    where.authorized = options.authorized;
+                }
+
+                sequelize.models.Image.findAndCountAllForQuery(query, function (status, data) {
+                    callback(status, data);
+                });
             },
             'findImagesByIds': function (idArray, user, callback) {
                 var where = {
                     id: idArray
                 };
-                
+
                 if (user) {
                     if (user.role < STD.user.roleAdmin) {
                         where.authorId = user.id;
@@ -128,14 +137,14 @@ module.exports = {
                 } else {
                     return callback(403);
                 }
-                
-                sequelize.models.Image.findAllDataForQuery({ where: where }, function (status, data) {
+
+                sequelize.models.Image.findAllDataForQuery({where: where}, function (status, data) {
                     callback(status, data);
                 });
             },
             'deleteImagesByIds': function (idArray, callback) {
                 var loadedImage = null;
-                sequelize.models.Image.destroy({ where: { id: idArray }, cascade: true }).then(function (data) {
+                sequelize.models.Image.destroy({where: {id: idArray}, cascade: true}).then(function (data) {
                     loadedImage = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (loadedImage) {

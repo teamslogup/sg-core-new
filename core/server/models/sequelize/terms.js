@@ -1,4 +1,3 @@
-
 /**
  * 응답콜백
  * @callback responseCallback
@@ -22,8 +21,7 @@ module.exports = {
             'as': 'author'
         },
         'type': {
-            'type': Sequelize.ENUM,
-            'values': STD.terms.enumTypes,
+            'type': Sequelize.STRING,
             'defaultValue': STD.terms.defaultType,
             'allowNull': false
         },
@@ -38,6 +36,10 @@ module.exports = {
         'content': {
             'type': Sequelize.TEXT(STD.terms.contentDataType),
             'allowNull': true
+        },
+        'startDate': {
+            'type': Sequelize.BIGINT,
+            'allowNull': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -68,19 +70,17 @@ module.exports = {
             "findTermsByOptions": function (options, callback) {
                 var where = {};
                 var query = {
-                    "limit": parseInt(options.size),
                     "order": [[options.orderBy, options.sort]],
-                    "where": where
+                    "group": ['Terms.title'],
+                    "limit": parseInt(options.size),
+                    "where": where,
+                    "attributes": [[sequelize.fn('MAX', sequelize.col('Terms.id')), 'id'], [sequelize.fn('max', sequelize.col('Terms.title')), 'title']]
                 };
 
                 if (options.sort == STD.common.DESC) {
                     where[options.orderBy] = {
                         "$lt": options.last
                     };
-                } else {
-                    where[options.orderBy] = {
-                        "$gt": options.last
-                    }
                 }
 
                 if (options.searchItem && options.searchField) {
@@ -89,7 +89,7 @@ module.exports = {
                     };
                 } else if (options.searchItem) {
                     if (STD.terms.enumSearchFields.length > 0) where.$or = [];
-                    for (var i=0; i<STD.terms.enumSearchFields.length; i++) {
+                    for (var i = 0; i < STD.terms.enumSearchFields.length; i++) {
                         var body = {};
                         body[STD.terms.enumSearchFields[i]] = {
                             "$like": "%" + options.searchItem + "%"
@@ -97,11 +97,11 @@ module.exports = {
                         where.$or.push(body);
                     }
                 }
-                
+
                 if (options.type) {
                     where.type = options.type;
                 }
-                
+
                 if (options.user) {
                     if (options.user.role >= STD.user.roleAdmin) {
                         query.include = [{
@@ -110,12 +110,55 @@ module.exports = {
                         }];
                     }
                 }
-                
-                sequelize.models.Terms.findAllDataForQuery(query, callback);
+
+                sequelize.models.Terms.findAndCountAllForQuery(query, callback);
+            },
+            "findTermsById": function (id, callback) {
+
+                var terms;
+
+                sequelize.transaction(function (t) {
+                    return sequelize.models.Terms.findById(id, {
+                        'transaction': t
+                    }).then(function (data) {
+
+                        if (data) {
+                            terms = data;
+
+                            return sequelize.models.Terms.findAll({
+                                'where': {
+                                    'title': {
+                                        "$like": "%" + data.title + "%"
+                                    }
+                                },
+                                'order': [['createdAt', 'DESC']],
+                                'attributes': ['id', 'createdAt'],
+                                'transaction': t
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    }).then(function (data) {
+
+                        if (data) {
+                            terms.dataValues.versions = data;
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, terms);
+                    }
+                });
             },
             "deleteTerms": function (now, callback) {
                 var query = 'UPDATE Terms SET deletedAt = "' + now + '" WHERE id != (SELECT x.id FROM (SELECT MAX(t.id) AS id FROM Terms t) x)';
-                
+
                 var deleteTermsData = null;
                 sequelize.query(query).then(function () {
                     deleteTermsData = true;
