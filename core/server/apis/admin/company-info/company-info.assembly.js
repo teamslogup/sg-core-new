@@ -56,7 +56,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address'],
+                acceptable: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address', 'contact'],
                 essential: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address'],
                 resettable: [],
                 explains: {
@@ -64,7 +64,8 @@ var api = {
                     'representative': '대표자',
                     'regNum': '사업자등록번호',
                     'privateInfoManager': '개인정보보호관리자',
-                    'address': '회사주소'
+                    'address': '회사주소',
+                    'contact': '연락처'
                 },
                 defaults: {},
                 role: STD.user.roleAdmin,

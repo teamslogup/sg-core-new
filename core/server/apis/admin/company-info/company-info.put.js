@@ -11,6 +11,7 @@ put.validate = function () {
         req.check('regNum', '400_8').len(COMPANY_INFO.minRegNumLength, COMPANY_INFO.maxRegNumLength);
         req.check('privateInfoManager', '400_8').len(COMPANY_INFO.minPrivateInfoManagerLength, COMPANY_INFO.maxPrivateInfoManagerLength);
         req.check('address', '400_8').len(COMPANY_INFO.minAddressLength, COMPANY_INFO.maxAddressLength);
+        if (req.body.contact !== undefined) req.check('contact', '400_8').len(COMPANY_INFO.minContactLength, COMPANY_INFO.maxContactLength);
 
         req.utils.common.checkError(req, res, next);
         next();
@@ -20,7 +21,14 @@ put.validate = function () {
 put.setParam = function () {
     return function (req, res, next) {
 
-        var body = req.body;
+        var body = {
+            companyName: req.body.companyName,
+            representative: req.body.representative,
+            regNum: req.body.regNum,
+            privateInfoManager: req.body.privateInfoManager,
+            address: req.body.address
+        };
+        if (req.body.contact !== undefined) body.contact = req.body.contact;
         body.id = 1;
 
         req.models.CompanyInfo.upsertData(req.body, {

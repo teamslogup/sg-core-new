@@ -32,8 +32,12 @@ module.exports = {
             'allowNull': false
         },
         'address': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(1024),
             'allowNull': false
+        },
+        'contact': {
+            'type': Sequelize.STRING,
+            'allowNull': true
         }
     },
     options: {

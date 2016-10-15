@@ -325,7 +325,9 @@ var standards = {
         "minPrivateInfoManagerLength": 1,
         "maxPrivateInfoManagerLength": 100,
         "minAddressLength": 1,
-        "maxAddressLength": 1000
+        "maxAddressLength": 1000,
+        "minContactLength": 1,
+        "maxContactLength": 100
     }
 };
 
