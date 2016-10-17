@@ -142,7 +142,7 @@ var api = {
             var params = {
                 acceptable: ['body', 'reply', 'isSolved'],
                 essential: [],
-                resettable: [],
+                resettable: ['reply'],
                 explains : {
                     'body': '수정할 신고 내용',
                     'reply': '답변',
