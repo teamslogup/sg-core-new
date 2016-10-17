@@ -1,4 +1,5 @@
-export default function reportsManager (Report) {
+export default function reportsManager (Report, metaMaanger) {
+    var MAGIC = metaMaanger.std.magic;
     this.findReportById = findReportById;
     this.updateReportById = updateReportById;
     this.findReports = findReports;
@@ -7,6 +8,7 @@ export default function reportsManager (Report) {
 
     function updateReportById (id, report, callback) {
         var where = {id: id};
+        if (!report.reply) report.reply = MAGIC.reset;
         Report.update(where, report, function (data) {
             callback(200, data);
         }, function (data) {
