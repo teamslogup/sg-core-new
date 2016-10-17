@@ -58,11 +58,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['type', 'isStored', 'isOption'],
+                acceptable: ['type', 'form', 'isStored', 'isOption'],
                 essential: [],
                 resettable: [],
                 explains: {
                     'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'form': 'notification form ' + STD.notification.enumForms.join(", "),
                     'isStored': 'notification-box에 저장할지 여부',
                     'isOption': '유저 switch option에 표시할 지 여부'
                 },
