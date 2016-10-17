@@ -1166,6 +1166,118 @@ module.exports = {
                         callback(204);
                     }
                 });
+            },
+            'getUsersStatus': function (callback) {
+
+                //오늘 날짜 구하기
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = today.getMonth() + 1;
+                var day = today.getDate();
+
+                var usersStatus = {};
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.User.count({
+                        paranoid: false,
+                        transaction: t
+                    }).then(function (usersTotal) {
+                        usersStatus.usersTotal = usersTotal;
+
+                        return sequelize.models.User.count({
+                            where: {
+                                deletedAt: {
+                                    $not: null
+                                }
+                            },
+                            paranoid: false,
+                            transaction: t
+                        });
+
+                    }).then(function (usersDeleted) {
+                        usersStatus.usersDeletedTotal = usersDeleted;
+
+                        var query = 'SELECT count(day) as count FROM (SELECT ' +
+                            'YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, ' +
+                            'MONTH(FROM_UNIXTIME(createdAt/1000000)) as month, ' +
+                            'DAY(FROM_UNIXTIME(createdAt/1000000)) as day FROM Users) as Users ' +
+                            'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+
+                    }).then(function (data) {
+                        usersStatus.singUpToday = data[0].count;
+
+                        return sequelize.models.LoginHistory.count({
+                            transaction: t
+                        });
+
+                    }).then(function (count) {
+                        usersStatus.loginTotal = count;
+
+                        var query = 'SELECT count(day) as count FROM (SELECT ' +
+                            'YEAR(FROM_UNIXTIME(updatedAt/1000000)) as year, ' +
+                            'MONTH(FROM_UNIXTIME(updatedAt/1000000)) as month, ' +
+                            'DAY(FROM_UNIXTIME(updatedAt/1000000)) as day FROM LoginHistories) as LoginHistories ' +
+                            'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+
+                    }).then(function (data) {
+                        usersStatus.loginToday = data[0].count;
+
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, usersStatus);
+                    }
+                });
+
+            },
+            'getUsersStatusByMonth': function (year, months, callback) {
+
+                var usersStatusByMonth = {};
+
+                sequelize.transaction(function (t) {
+                    var query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                        '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                        'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY UsersByMonth.month ';
+
+                    return sequelize.query(query, {
+                        type: sequelize.QueryTypes.SELECT,
+                        raw: true
+                    }).then(function (createdUser) {
+                        usersStatusByMonth.createdUsers = createdUser;
+
+                        var query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                            'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY UsersByMonth.month ';
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+                    }).then(function (deletedUser) {
+                        usersStatusByMonth.deletedUsers = deletedUser;
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, usersStatusByMonth);
+                    }
+                });
+
+
             }
         })
     }

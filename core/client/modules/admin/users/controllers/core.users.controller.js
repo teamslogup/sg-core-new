@@ -1,4 +1,4 @@
-export default function UsersCtrl($scope, $filter, usersManager, AlertDialog, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, AlertDialog, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -13,6 +13,7 @@ export default function UsersCtrl($scope, $filter, usersManager, AlertDialog, lo
     var LOADING = metaManager.std.loading;
 
     $scope.isUserDetailVisible = false;
+    $scope.isUserDetailFirstTime = true;
     $scope.isUserEditMode = false;
 
     $scope.params = {};
@@ -20,6 +21,9 @@ export default function UsersCtrl($scope, $filter, usersManager, AlertDialog, lo
 
     $scope.userList = [];
     $scope.userListTotal = 0;
+
+    $scope.userEnumSearchFields = metaManager.std.user.enumSearchFields;
+    $scope.params.searchField = $scope.userEnumSearchFields[0];
 
     $scope.more = false;
 
@@ -48,6 +52,7 @@ export default function UsersCtrl($scope, $filter, usersManager, AlertDialog, lo
             agreedPhoneNum: user.agreedPhoneNum
         };
         $scope.isUserDetailVisible = true;
+        $scope.isUserDetailFirstTime = false;
     };
 
     $scope.hideUserDetail = function () {
@@ -57,7 +62,7 @@ export default function UsersCtrl($scope, $filter, usersManager, AlertDialog, lo
 
     $scope.$on('$locationChangeStart', function (event, next, current) {
         if (next != current) {
-            if($scope.isUserDetailVisible) {
+            if ($scope.isUserDetailVisible) {
                 event.preventDefault();
                 $scope.hideUserDetail();
             }
@@ -173,4 +178,73 @@ export default function UsersCtrl($scope, $filter, usersManager, AlertDialog, lo
             $scope.findUsers();
         }
     }, true);
+
+    //Notification
+
+    $scope.findAllNotification = function () {
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotification');
+        notificationManager.findAllNotification({}, function (status, data) {
+            if (status == 200) {
+
+            } else if (status == 404) {
+
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotification');
+        });
+    };
+
+    //NotificationBox
+
+    $scope.findAllNotificationBox = function () {
+        $scope.notificationBoxListTotal = 0;
+        $scope.notificationBoxList = [];
+
+        $scope.params.last = undefined;
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotificationBox');
+        notificationBoxManager.findAllNotificationBox($scope.params, function (status, data) {
+            if (status == 200) {
+                $scope.notificationBoxListTotal = data.count;
+                $scope.notificationBoxList = $scope.notificationBoxList.concat(data.rows);
+                $scope.more = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
+            } else if (status == 404) {
+                $scope.more = false;
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationBox');
+        });
+    };
+
+    $scope.notificationBoxList = [];
+    $scope.notificationBoxListTotal = 0;
+
+    $scope.notificationBoxMore = false;
+
+    $scope.findNotificationBoxMore = function () {
+
+        if ($scope.notificationBoxList.length > 0) {
+            $scope.params.last = $scope.notificationBoxList[$scope.notificationBoxList.length - 1].createdAt;
+        }
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findNotificationBoxMore');
+        notificationBoxManager.findAllNotificationBox($scope.params, function (status, data) {
+            if (status == 200) {
+                $scope.notificationBoxList = $scope.notificationBoxList.concat(data.rows);
+                $scope.notificationBoxMore = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
+            } else if (status == 404) {
+                $scope.notificationBoxMore = false;
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findNotificationBoxMore');
+        });
+    };
+
 }

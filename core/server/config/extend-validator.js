@@ -227,6 +227,9 @@ function extending() {
             return false;
         } else {
             for (var i = 0; i < arr.length; ++i) {
+                //trim
+                arr[i] = arr[i].replace(/^\s*|\s*$/g, "");
+
                 if (!Number(arr[i])) {
                     return false;
                 }
@@ -234,6 +237,35 @@ function extending() {
         }
         return true;
     });
+
+    expressValidator.validator.extend('isMonthArray', function (str, minCnt, maxCnt) {
+        if (!minCnt) minCnt = 1;
+        if (!maxCnt) maxCnt = 1;
+        if (str === '') return false;
+        var arr = str.split(',');
+
+        //배열에 들어갈 최소, 최대 갯수 체크
+        if (arr.length > maxCnt || arr.length < minCnt) {
+            return false;
+        } else {
+            for (var i = 0; i < arr.length; ++i) {
+                //trim
+                arr[i] = arr[i].replace(/^\s*|\s*$/g, "");
+
+                //Number가 아닌경우 false
+                if (!Number(arr[i])) {
+                    return false;
+                }
+
+                //Month가 아닌경우 false
+                if (str < 1 || str > 12) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    });
+
 }
 
 module.exports = extending;

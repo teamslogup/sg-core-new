@@ -1,20 +1,25 @@
 export default function NoticesCtrl($scope, $sce, $filter, noticesManager, AlertDialog, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
+    var NOTICE = metaManager.std.notice;
 
     $scope.isNoticeCreateVisible = false;
     $scope.isNoticeEditMode = false;
     $scope.isNoticeDetailVisible = false;
+    $scope.isNoticeDetailFirstTime = true;
 
     $scope.params = {};
     $scope.form = {};
 
     $scope.noticeList = [];
     $scope.noticeListTotal = 0;
-    $scope.noticeTypes = metaManager.std.notice.enumNoticeTypes;
+    $scope.noticeTypes = NOTICE.enumNoticeTypes;
     $scope.params.type = $scope.noticeTypes[0];
 
-    $scope.noticeCountries = metaManager.std.notice.enumCountries;
+    $scope.noticeCountries = NOTICE.enumCountries;
+
+    $scope.noticeSearchFields = NOTICE.enumFields;
+    $scope.params.searchField = $scope.noticeSearchFields[0];
 
     $scope.more = false;
 
@@ -22,6 +27,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
         $scope.form.type = $scope.noticeTypes[0];
         $scope.form.country = $scope.noticeCountries[0];
         $scope.isNoticeCreateVisible = true;
+        $scope.isNoticeDetailFirstTime = false;
     };
 
     $scope.hideNoticeCreate = function () {
@@ -38,6 +44,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
             country: $scope.noticeList[index].country
         };
         $scope.isNoticeDetailVisible = true;
+        $scope.isNoticeDetailFirstTime = false;
     };
 
     $scope.hideNoticeDetail = function () {

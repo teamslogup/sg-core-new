@@ -153,6 +153,19 @@
   "invalidId": "아이디가 존재하지 않습니다.",
   "invalidPassword": "잘못된 비밀번호 입니다.",
   "marketingAgreedSetting": "마케팅 수신동의",
-  "phone": "핸드폰"
+  "phone": "핸드폰",
+  "typeKeywords": "검색어를 입력하세요.",
+  "notice": "공지사항",
+  "faq": "자주묻는질문",
+  "what": "소개",
+  "event": "이벤트",
+  "popup": "팝업공지",
+  "createdAt": "작성일",
+  "companyName": "회사이름",
+  "representative": "대표",
+  "regNum": "사업자등록번호",
+  "privateInfoManager": "개인정보책임자",
+  "companyAddress": "회사주소",
+  "companyPhoneNum": "회사전화번호"
 }
 

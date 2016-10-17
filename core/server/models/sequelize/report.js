@@ -92,7 +92,7 @@ module.exports = {
                 var query = {
                     'limit': parseInt(options.size),
                     'where': where,
-                    'order':[['createdAt', options.sort]],
+                    'order': [['createdAt', options.sort]],
                     'include': sequelize.models.Report.getReportInclude()
                 };
 
@@ -110,6 +110,72 @@ module.exports = {
             },
             'findReportById': function (id, callback) {
                 sequelize.models.Report.findDataById(id, callback);
+            },
+            'getReportsStatus': function (callback) {
+
+                var reportsStatus = {};
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.Report.count({
+                        transaction: t
+                    }).then(function (reportsTotal) {
+                        reportsStatus.total = reportsTotal;
+
+                        return sequelize.models.Report.count({
+                            where: {
+                                isSolved: true
+                            },
+                            transaction: t
+                        });
+
+                    }).then(function (reportsSolved) {
+                        reportsStatus.solved = reportsSolved;
+
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, reportsStatus);
+                    }
+                });
+
+            },
+            'getReportsStatusByMonth': function (year, months, callback) {
+
+                var reportsStatusByMonth = {};
+
+                sequelize.transaction(function (t) {
+                    var query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
+                        '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Reports) as ReportsByMonth ' +
+                        'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY ReportsByMonth.month ';
+
+                    return sequelize.query(query, {
+                        type: sequelize.QueryTypes.SELECT,
+                        raw: true
+                    }).then(function (createdUser) {
+                        reportsStatusByMonth.createdReports = createdUser;
+
+                        var query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Reports) as ReportsByMonth ' +
+                            'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY ReportsByMonth.month ';
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+                    }).then(function (deletedReports) {
+                        reportsStatusByMonth.deletedReports = deletedReports;
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, reportsStatusByMonth);
+                    }
+                });
+
             }
         })
     }
