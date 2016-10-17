@@ -12,6 +12,10 @@ gets.validate = function () {
             req.check('type', '400_3').isEnum(NOTIFICATION.enumNotificationTypes);
         }
 
+        if (req.query.form !== undefined) {
+            req.check('form', '400_3').isEnum(NOTIFICATION.enumForms);
+        }
+
         if (req.query.isStored !== undefined) {
             req.check('isStored', '400_20').isBoolean();
             req.sanitize('isStored').toBoolean();
@@ -33,12 +37,17 @@ gets.setParam = function () {
         if (req.query.isStored !== undefined) where.isStored = req.query.isStored;
         if (req.query.isOption !== undefined) where.isOption = req.query.isOption;
         if (req.query.type !== undefined) where.type = req.query.type;
+        if (req.query.form !== undefined) where.form = req.query.form;
 
-        req.models.Test.findAllDataForQuery({
+        req.models.Notification.findAllDataForQuery({
             where: where
         }, function (status, data) {
-            req.data = data;
-            next();
+            if (status == 200) {
+                req.data = data;
+                next();
+            } else {
+                res.hjson(req, next, status, data);
+            }
         });
     };
 };
