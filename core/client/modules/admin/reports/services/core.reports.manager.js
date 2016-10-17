@@ -1,5 +1,5 @@
-export default function reportsManager (Report, metaMaanger) {
-    var MAGIC = metaMaanger.std.magic;
+export default function reportsManager (Report, metaManager) {
+    var MAGIC = metaManager.std.magic;
     this.findReportById = findReportById;
     this.updateReportById = updateReportById;
     this.findReports = findReports;
