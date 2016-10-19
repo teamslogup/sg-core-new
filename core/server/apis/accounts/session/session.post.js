@@ -2,6 +2,7 @@ var post = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var passport = require('passport');
+var UAParser = require('ua-parser-js');
 
 post.validate = function () {
     return function (req, res, next) {
@@ -24,6 +25,27 @@ post.validate = function () {
             // req.check('uid', '400_55').isId(USER.minIdLength, USER.maxIdLength);
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         }
+
+        if (req.body.platform !== undefined) {
+            req.check('platform', '400_8').len(1, 1000);
+        }
+
+        if (req.body.device !== undefined) {
+            req.check('device', '400_8').len(1, 1000);
+        }
+
+        if (req.body.browser !== undefined) {
+            req.check('browser', '400_8').len(1, 1000);
+        }
+
+        if (req.body.version !== undefined) {
+            req.check('version', '400_8').len(1, 1000);
+        }
+
+        if (req.body.token !== undefined) {
+            req.check('token', '400_8').len(1, 1000);
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -112,15 +134,9 @@ post.removeAllSessions = function () {
 post.logInUser = function () {
     return function (req, res, next) {
 
-        var data = {
-            'platform': req.body.platform,
-            'device': req.body.device,
-            'version': req.body.version,
-            'token': req.body.token,
-            'ip': req.refinedIP,
-            'session': req.sessionID
-        };
-        req.models.LoginHistory.createLoginHistory(req.loadedUser.id, data, function (status, data) {
+        var loginHistory = req.models.LoginHistory.parseLoginHistory(req, req.body);
+
+        req.models.LoginHistory.createLoginHistory(req.loadedUser.id, loginHistory, function (status, data) {
             if (status == 200) {
                 req.login(req.loadedUser, function (err) {
                     if (err) {

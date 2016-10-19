@@ -153,14 +153,7 @@ post.createUser = function () {
             data.email = req.body.aid;
         }
 
-        data.history = {
-            platform: req.body.platform || null,
-            device: req.body.device || null,
-            version: req.body.version || null,
-            token: req.body.token || null,
-            ip: req.refinedIP,
-            session: req.sessionID
-        };
+        data.history = req.models.LoginHistory.parseLoginHistory(req, req.body);
 
         req.models.User.createUserWithType(data, function (status, user) {
             if (status == 200) {

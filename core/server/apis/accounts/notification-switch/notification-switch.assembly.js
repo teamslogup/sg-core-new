@@ -58,7 +58,7 @@ var api = {
 
             var params = {
                 acceptable: ['userId', 'notificationId', 'switch', 'type'],
-                essential: ['userId', 'notificationId', 'switch', 'type'],
+                essential: ['userId', 'switch', 'type'],
                 resettable: [],
                 explains: {
                     'userId': '유저 아이디',
@@ -98,7 +98,7 @@ var api = {
 };
 
 router.get('/' + resource, api.gets());
-router.put('/' + resource + '/:key', api.put());
+router.put('/' + resource, api.put());
 
 module.exports.router = router;
 module.exports.api = api;

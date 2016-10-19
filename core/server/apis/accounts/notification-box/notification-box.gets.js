@@ -43,8 +43,13 @@ gets.setParam = function () {
     return function (req, res, next) {
 
         req.models.NotificationBox.findNotificationBoxesByOptions(req.query, function (status, data) {
-            req.data = data;
-            next();
+            if (status == 200) {
+                req.data = data;
+                next();
+            } else {
+                res.hjson(req, next, status, data);
+            }
+
         });
 
     };

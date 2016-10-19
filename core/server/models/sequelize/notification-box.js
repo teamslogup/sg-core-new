@@ -85,7 +85,7 @@ module.exports = {
                         'include': sequelize.models.NotificationBox.getNotificationBoxInclude(),
                         'transaction': t
                     }).then(function (data) {
-                        if (data.rows.length > 0) {
+                        if (data && data.rows.length > 0) {
                             return data;
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);

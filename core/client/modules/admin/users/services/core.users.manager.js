@@ -5,10 +5,9 @@ export default function usersManager(User, AdminUser) {
     this.signup = signup;
     this.deleteUser = deleteUser;
 
-    function updateUserById(user, callback) {
-        var where = {id: user.id};
-        delete user.id;
-        User.update(where, user, function (data) {
+    function updateUserById(id, data, callback) {
+        var where = {id: id};
+        User.update(where, data, function (data) {
             callback(200, data);
         }, function (data) {
             callback(data.status, data.data);

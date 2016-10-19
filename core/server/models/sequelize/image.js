@@ -151,6 +151,39 @@ module.exports = {
                         callback(204, loadedImage);
                     }
                 });
+            },
+            'getImagesStatus': function (callback) {
+
+                var imagesStatus = {};
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.Image.count({
+                        paranoid: false,
+                        transaction: t
+                    }).then(function (imagesTotal) {
+                        imagesStatus.total = imagesTotal;
+
+                        return sequelize.models.Image.count({
+                            where: {
+                                authorized: false
+                            },
+                            paranoid: false,
+                            transaction: t
+                        });
+
+                    }).then(function (imagesUnauthorized) {
+                        imagesStatus.unauthorized = imagesUnauthorized;
+
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, imagesStatus);
+                    }
+                });
+
             }
         })
     }

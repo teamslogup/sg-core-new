@@ -16,8 +16,19 @@ var MICRO = require('microtime-nodejs');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var UAParser = require('ua-parser-js');
 
 var STD = require('../../../../bridge/metadata/standards');
+
+var loginHistoryTypes = STD.user.enumSignUpTypes.concat(STD.user.enumProviders);
+
+for (var i = 0; i < loginHistoryTypes.length; ++i) {
+    if (loginHistoryTypes[i] == STD.user.signUpTypeSocial) {
+        break;
+    }
+}
+
+loginHistoryTypes.splice(i, 1);
 
 module.exports = {
     'fields': {
@@ -29,11 +40,20 @@ module.exports = {
             'onDelete': 'cascade',
             'allowNull': false
         },
+        'type': {
+            'type': Sequelize.ENUM,
+            'values': loginHistoryTypes,
+            'allowNull': false
+        },
         'platform': {
             'type': Sequelize.STRING,
             'allowNull': true
         },
         'device': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'browser': {
             'type': Sequelize.STRING,
             'allowNull': true
         },
@@ -80,19 +100,58 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             getLoginHistoryFields: function () {
-                var fields = ['id', 'platform', 'device', 'version', 'token'];
+                var fields = ['id', 'type', 'platform', 'device', 'browser', 'version', 'token', 'ip', 'updatedAt', 'createdAt'];
                 return fields;
             },
-            createLoginHistory: function(id, data, callback) {
+            parseLoginHistory: function (req, body) {
+
+                var parser = new UAParser();
+                var ua = req.headers['user-agent'];
+                var result = parser.setUA(ua).getResult();
+
+                if(body.platform === undefined){
+                    req.body.platform = result.os.name;
+                }
+
+                if(body.device === undefined){
+                    req.body.device = result.device.model;
+                }
+
+                if(body.browser === undefined){
+                    req.body.browser = result.browser.name;
+                }
+
+                var data = {
+                    'platform': body.platform,
+                    'device': body.device,
+                    'browser': body.browser,
+                    'version': body.version,
+                    'token': body.token,
+                    'ip': req.refinedIP,
+                    'session': req.sessionID
+                };
+
+                if (body.provider) {
+                    data.type = body.provider;
+                } else {
+                    data.type = body.type;
+                }
+
+                return data;
+            },
+            createLoginHistory: function (id, data, callback) {
                 if (!data.ip || !data.session) return callback(500);
                 var update = {
+                    type: data.type,
+                    device: data.device || '',
                     platform: data.platform || "",
+                    browser: data.browser || "",
                     version: data.version || "",
                     ip: data.ip,
                     createdAt: MICRO.now(),
                     updatedAt: MICRO.now(),
                     userId: id,
-                    device: data.device || '',
+
                     token: data.token || '',
                     session: data.session
                 };
@@ -107,12 +166,12 @@ module.exports = {
 
                 this.upsertData(update, query, callback);
             },
-            removeLoginHistory: function(sessionId, callback) {
+            removeLoginHistory: function (sessionId, callback) {
                 this.destroyData({
                     session: sessionId
                 }, false, callback)
             },
-            removeAllLoginHistory: function(userId, callback) {
+            removeAllLoginHistory: function (userId, callback) {
                 var self = this;
                 var loadedData = null;
 

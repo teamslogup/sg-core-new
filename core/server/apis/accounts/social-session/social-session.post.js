@@ -2,6 +2,7 @@ var post = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var passport = require('passport');
+var UAParser = require('ua-parser-js');
 
 post.validate = function () {
     return function (req, res, next) {
@@ -9,7 +10,27 @@ post.validate = function () {
         req.check('provider', '400_3').isEnum(USER.enumProviders);
         req.check('pid', '400_8').len(1, 200);
         req.check('accessToken', '400_8').len(1, 1000);
-        
+
+        if (req.body.platform !== undefined) {
+            req.check('platform', '400_8').len(1, 1000);
+        }
+
+        if (req.body.device !== undefined) {
+            req.check('device', '400_8').len(1, 1000);
+        }
+
+        if (req.body.browser !== undefined) {
+            req.check('browser', '400_8').len(1, 1000);
+        }
+
+        if (req.body.version !== undefined) {
+            req.check('version', '400_8').len(1, 1000);
+        }
+
+        if (req.body.token !== undefined) {
+            req.check('token', '400_8').len(1, 1000);
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -17,7 +38,7 @@ post.validate = function () {
 
 post.getUser = function () {
     return function (req, res, next) {
-        req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.pid, req.body.accessToken, function(status, data) {
+        req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.pid, req.body.accessToken, function (status, data) {
             if (status == 200) {
                 next();
             } else {
@@ -69,7 +90,10 @@ post.removeAllSessions = function () {
 
 post.logInUser = function () {
     return function (req, res, next) {
-        req.models.User.checkAccountForProvider(req, req.loadedUser, req.providerUserProfile, function (status, data) {
+
+        var loginHistory = req.models.LoginHistory.parseLoginHistory(req, req.body);
+
+        req.models.User.checkAccountForProvider(req, req.loadedUser, req.providerUserProfile, loginHistory, function (status, data) {
             if (status == 200) {
                 next();
             } else {

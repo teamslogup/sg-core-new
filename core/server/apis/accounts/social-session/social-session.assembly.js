@@ -20,7 +20,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['provider', 'pid', 'accessToken', 'platform', 'device', 'version', 'token'],
+                acceptable: ['provider', 'pid', 'accessToken', 'platform', 'device', 'browser', 'version', 'token'],
                 essential: ['provider', 'pid', 'accessToken'],
                 resettable: [],
                 explains: {

@@ -188,8 +188,8 @@ var standards = {
         "maxTitleLength": 30,
         "minBodyLength": 1,
         "maxBodyLength": 100000,
-        "enumNoticeTypes": ["normal", "faq", "what", "event", "popup"],
-        "noticeTypeNormal": "normal",
+        "enumNoticeTypes": ["notice", "faq", "what", "event", "popup"],
+        "noticeTypeNormal": "notice",
         "noticeTypeFaq": "faq",
         "noticeTypeWhat": "what",
         "noticeTypeEvent": "event",
@@ -327,7 +327,12 @@ var standards = {
         "minAddressLength": 1,
         "maxAddressLength": 1000,
         "minContactLength": 1,
-        "maxContactLength": 100
+        "maxContactLength": 100,
+    },
+    "dashboardInfo": {
+        "minMonthArrayLength": 1,
+        "maxMonthArrayLength": 10,
+        "defaultMonthsLength": 5
     }
 };
 

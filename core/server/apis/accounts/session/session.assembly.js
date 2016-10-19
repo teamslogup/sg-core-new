@@ -43,7 +43,7 @@ var api = {
                 apiCreator.add(get.getUser());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
@@ -86,11 +86,11 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['type', 'uid', 'secret', 'platform', 'device', 'version', 'token'],
+                acceptable: ['type', 'uid', 'secret', 'platform', 'device', 'browser', 'version', 'token'],
                 essential: ['type', 'uid', 'secret'],
                 resettable: [],
                 explains: {
-                    'type': '로그인 방식 ' + STD.user.signUpTypeEmail + ", " + STD.user.signUpTypePhone + ", " + STD.user.signUpTypePhoneId + ", " + STD.user.signUpTypeNormalId +  ", " + STD.user.signUpTypePhoneEmail,
+                    'type': '로그인 방식 ' + STD.user.signUpTypeEmail + ", " + STD.user.signUpTypePhone + ", " + STD.user.signUpTypePhoneId + ", " + STD.user.signUpTypeNormalId + ", " + STD.user.signUpTypePhoneEmail,
                     'uid': '이메일 혹은 번호와 같은 유저의 식별 아이디',
                     'secret': '비밀번호 혹은 인증번호',
                     'platform': 'OS 및 버전',
@@ -117,7 +117,7 @@ var api = {
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;

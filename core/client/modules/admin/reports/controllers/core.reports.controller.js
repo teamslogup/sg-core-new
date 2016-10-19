@@ -3,6 +3,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
     var LOADING = metaManager.std.loading;
 
     $scope.isReportDetailVisible = false;
+    $scope.isReportDetailFirstTime = true;
 
     $scope.params = {};
     $scope.form = {};
@@ -27,6 +28,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
             isSolved: true
         };
         $scope.isReportDetailVisible = true;
+        $scope.isReportDetailFirstTime = false;
     };
 
     $scope.hideReportDetail = function () {
@@ -47,7 +49,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
 
         var isValidate = true;
 
-        if ($scope.form.reply === undefined || $scope.form.reply === '') {
+        if ($scope.form.reply === undefined || $scope.form.reply === null || $scope.form.reply === '') {
             isValidate = false;
             AlertDialog.show('', $filter('translate')('requireBody'), '', true);
             return isValidate;
