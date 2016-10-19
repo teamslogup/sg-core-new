@@ -111,6 +111,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(post.parseUserAgent());
                 apiCreator.add(post.getUser());
                 apiCreator.add(post.removeAllSessions());
                 apiCreator.add(post.logInUser());

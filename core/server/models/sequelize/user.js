@@ -729,6 +729,8 @@ module.exports = {
                             var history = data.history;
                             return sequelize.models.LoginHistory.upsert({
                                 userId: user.id,
+                                type: history.type,
+                                browser: history.browser,
                                 platform: history.platform,
                                 device: history.device,
                                 version: history.version,
@@ -771,6 +773,8 @@ module.exports = {
 
                             return sequelize.models.LoginHistory.upsert({
                                 userId: user.id,
+                                type: history.type,
+                                browser: history.browser,
                                 platform: history.platform,
                                 device: history.device,
                                 version: history.version,
@@ -856,6 +860,8 @@ module.exports = {
 
                             return sequelize.models.LoginHistory.upsert({
                                 userId: user.id,
+                                type: history.type,
+                                browser: history.browser,
                                 platform: history.platform,
                                 device: history.device,
                                 version: history.version,
@@ -951,6 +957,8 @@ module.exports = {
 
                                 return sequelize.models.LoginHistory.upsert({
                                     userId: user.id,
+                                    type: history.type,
+                                    browser: history.browser,
                                     platform: history.platform,
                                     device: history.device,
                                     version: history.version,
@@ -978,12 +986,12 @@ module.exports = {
              * @param providerData
              * @param callback
              */
-            checkAccountForProvider: function (req, loadedUser, providerData, callback) {
+            checkAccountForProvider: function (req, loadedUser, providerData, loginHistory, callback) {
 
                 // 회원가입일 경우에 true플래그가 되며 회원가입이 아닐경우에만 (false) history를 추가한다.
                 var isSignup = false;
 
-                function login(req, user, callback) {
+                function login(req, user, loginHistory, callback) {
 
                     function loginCallback(err, callback) {
                         var bSearched = false;
@@ -1003,15 +1011,7 @@ module.exports = {
                     }
 
                     if (!isSignup) {
-                        var history = {
-                            'platform': req.body.platform,
-                            'device': req.body.device,
-                            'version': req.body.version,
-                            'token': req.body.token,
-                            'ip': req.refinedIP,
-                            'session': req.sessionID
-                        };
-                        req.models.LoginHistory.createLoginHistory(user.id, history, function (status, data) {
+                        req.models.LoginHistory.createLoginHistory(user.id, loginHistory, function (status, data) {
                             if (status == 200) {
                                 req.login(user, function (err) {
                                     loginCallback(err, callback);
@@ -1056,7 +1056,7 @@ module.exports = {
                         }],
                         function (status, data) {
                             if (status == 200) {
-                                login(req, data.user, callback);
+                                login(req, data.user, loginHistory, callback);
                             }
                             else {
                                 // 가입되어 있지 않음
@@ -1073,7 +1073,7 @@ module.exports = {
                         }
                     );
                 } else {
-                    login(req, loadedUser, callback);
+                    login(req, loadedUser, loginHistory, callback);
                 }
             },
             destroyUser: function (id, callback) {
