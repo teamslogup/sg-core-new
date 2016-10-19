@@ -8,6 +8,7 @@ import AdminUser from './services/core.admin-users.model';
 import usersManager from './services/core.users.manager';
 import notificationManager from './services/core.notification.manager';
 import notificationBoxManager from './services/core.notification-box.manager';
+import notificationSwitchManager from './services/core.notification-switch.manager';
 import UsersCtrl from './controllers/core.users.controller';
 
 export default angular.module("core.users", [])
@@ -21,5 +22,6 @@ export default angular.module("core.users", [])
     .service("usersManager", usersManager)
     .service("notificationManager", notificationManager)
     .service("notificationBoxManager", notificationBoxManager)
+    .service("notificationSwitchManager", notificationSwitchManager)
     .controller("UsersCtrl", UsersCtrl)
     .name;

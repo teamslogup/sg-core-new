@@ -1,4 +1,4 @@
-export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, AlertDialog, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, AlertDialog, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -10,7 +10,10 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         vm.CDN = metaManager.std.cdn;
     }
 
+    var NOTIFICATION = metaManager.std.notification;
     var LOADING = metaManager.std.loading;
+
+    $scope.currentPage = 1;
 
     $scope.isUserDetailVisible = false;
     $scope.isUserDetailFirstTime = true;
@@ -27,8 +30,9 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     $scope.more = false;
 
-    $scope.showUserDetail = function (user) {
-        $scope.currentUser = user;
+    $scope.showUserDetail = function (index) {
+        $scope.currentUserIndex = index;
+        $scope.currentUser = $scope.userList[index];
 
         for (var i = 0; i < $scope.currentUser.providers.length; i++) {
             if ($scope.currentUser.providers[i].type == 'facebook') {
@@ -39,20 +43,24 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         }
 
         $scope.form = {
-            nick: user.nick,
-            name: user.name,
-            gender: user.gender,
-            birthYear: user.birthYear,
-            birthMonth: user.birthMonth,
-            birthDay: user.birthDay,
-            country: user.country,
-            language: user.language,
-            role: user.role,
-            agreedEmail: user.agreedEmail,
-            agreedPhoneNum: user.agreedPhoneNum
+            nick: $scope.currentUser.nick,
+            name: $scope.currentUser.name,
+            gender: $scope.currentUser.gender,
+            birthYear: $scope.currentUser.birthYear,
+            birthMonth: $scope.currentUser.birthMonth,
+            birthDay: $scope.currentUser.birthDay,
+            country: $scope.currentUser.country,
+            language: $scope.currentUser.language,
+            role: $scope.currentUser.role,
+            agreedEmail: $scope.currentUser.agreedEmail,
+            agreedPhoneNum: $scope.currentUser.agreedPhoneNum
         };
         $scope.isUserDetailVisible = true;
         $scope.isUserDetailFirstTime = false;
+
+        $scope.findAllNotification($scope.currentUser.id);
+        $scope.findAllNotificationBox($scope.currentUser.id);
+
     };
 
     $scope.hideUserDetail = function () {
@@ -81,34 +89,18 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
         var isValidate = true;
 
-        if ($scope.form.title === undefined || $scope.form.title === '') {
+        if ($scope.form.nick === undefined || $scope.form.nick === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireTitle'), '', true);
-            return isValidate;
-        }
-
-        if ($scope.form.body === undefined || $scope.form.body === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireBody'), '', true);
-            return isValidate;
-        }
-        if ($scope.form.type === undefined || $scope.form.type === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireType'), '', true);
-            return isValidate;
-        }
-        if ($scope.form.country === undefined || $scope.form.country === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireCountry'), '', true);
+            AlertDialog.show('', $filter('translate')('requireNick'), '', true);
             return isValidate;
         }
 
         return isValidate;
     };
 
-    $scope.updateUser = function () {
+    $scope.updateUser = function (index) {
 
-        var user = $scope.userList[$scope.currentIndex];
+        var user = $scope.userList[index];
 
         if ($scope.isFormValidate()) {
             var body = angular.copy($scope.form);
@@ -116,8 +108,16 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             loadingHandler.startLoading(LOADING.spinnerKey, 'updateUserById');
             usersManager.updateUserById(user.id, body, function (status, data) {
                 if (status == 200) {
-                    $scope.userList[$scope.currentIndex] = data;
-                    $scope.hideUserEdit();
+                    $scope.userList[index].nick = body.nick;
+                    $scope.userList[index].name = body.name;
+                    $scope.userList[index].gender = body.gender;
+                    $scope.userList[index].birth = body.birthYear + ' ' + body.birthMonth + ' ' + body.birthDay;
+                    $scope.userList[index].country = body.country;
+                    $scope.userList[index].language = body.language;
+                    $scope.userList[index].role = body.role;
+                    $scope.userList[index].agreedEmail = body.agreedEmail;
+                    $scope.userList[index].agreedPhoneNum = body.agreedPhoneNum;
+                    $scope.hideUserDetail();
                 } else {
                     AlertDialog.alertError(status, data);
                 }
@@ -181,11 +181,34 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     //Notification
 
-    $scope.findAllNotification = function () {
+    $scope.notifications = [];
+    $scope.notificationSwitchs = {};
 
+    var notificationEnumForm = NOTIFICATION.enumForms;
+
+    for (var i = 0; i < notificationEnumForm.length; i++) {
+        if (notificationEnumForm[i] == NOTIFICATION.formApplication) {
+            notificationEnumForm.splice(i, 1);
+        }
+    }
+
+    $scope.notificationPublicSwitchs = {};
+    for (var i = 0; i < notificationEnumForm.length; i++) {
+        $scope.notificationPublicSwitchs[notificationEnumForm[i]] = true;
+    }
+
+    $scope.findAllNotification = function (userId) {
         loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotification');
         notificationManager.findAllNotification({}, function (status, data) {
             if (status == 200) {
+
+                $scope.notifications = data.rows;
+
+                for (var i = 0; i < $scope.notifications.length; i++) {
+                    $scope.notificationSwitchs[$scope.notifications[i].key] = true;
+                }
+
+                $scope.findAllNotificationSwitch(userId);
 
             } else if (status == 404) {
 
@@ -193,26 +216,32 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                 AlertDialog.alertError(status, data);
             }
 
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotification');
         });
+        loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotification');
     };
 
     //NotificationBox
 
-    $scope.findAllNotificationBox = function () {
+    $scope.findAllNotificationBox = function (userId) {
         $scope.notificationBoxListTotal = 0;
         $scope.notificationBoxList = [];
 
         $scope.params.last = undefined;
+        $scope.params.userId = userId;
 
         loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotificationBox');
         notificationBoxManager.findAllNotificationBox($scope.params, function (status, data) {
             if (status == 200) {
                 $scope.notificationBoxListTotal = data.count;
                 $scope.notificationBoxList = $scope.notificationBoxList.concat(data.rows);
-                $scope.more = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
+
+                for (var i = 0; i < $scope.notificationBoxList.length; i++) {
+                    $scope.notificationBoxList[i].data = JSON.parse($scope.notificationBoxList[i].data);
+                }
+
+                $scope.notificationBoxMore = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
             } else if (status == 404) {
-                $scope.more = false;
+                $scope.notificationBoxMore = false;
             } else {
                 AlertDialog.alertError(status, data);
             }
@@ -245,6 +274,81 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findNotificationBoxMore');
         });
+    };
+
+    //NotificationSwitch
+
+    $scope.findAllNotificationSwitch = function (userId) {
+        var query = {
+            userId: userId
+        };
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotificationSwitch');
+        notificationSwitchManager.findAllNotificationSwitch(query, function (status, data) {
+            if (status == 200) {
+
+                for (var i = 0; i < data.application.length; i++) {
+                    if ($scope.notificationSwitchs.hasOwnProperty(data.application[i].notification.key)) {
+                        $scope.notificationSwitchs[data.application[i].notification.key] = data.application[i].switch;
+                    }
+                }
+
+                for (var i = 0; i < data.public.length; i++) {
+                    if ($scope.notificationPublicSwitchs.hasOwnProperty(data.public[i].type)) {
+                        $scope.notificationPublicSwitchs[data.public[i].type] = data.public[i].switch;
+                    }
+                }
+
+
+            } else if (status == 404) {
+
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationSwitch');
+        });
+    };
+
+    $scope.updateNotificationSwitchById = function (userId, notificationId, swit, type) {
+        var body = {
+            userId: userId,
+            notificationId: notificationId,
+            switch: swit,
+            type: type
+        };
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotificationSwitchById');
+        notificationSwitchManager.updateNotificationSwitchById(body, function (status, data) {
+            if (status == 200) {
+
+            } else if (status == 404) {
+
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotificationSwitchById');
+        });
+    };
+
+    $scope.deleteUser = function (index) {
+
+        AlertDialog.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+            var user = $scope.userList[index];
+
+            loadingHandler.startLoading(LOADING.spinnerKey, 'deleteUser');
+            usersManager.deleteUser(user, function (status, data) {
+                if (status == 200) {
+                    $scope.userList.splice(index, 1);
+                } else {
+                    AlertDialog.alertError(status, data);
+                }
+
+                loadingHandler.endLoading(LOADING.spinnerKey, 'deleteUser');
+            });
+        });
+
     };
 
 }

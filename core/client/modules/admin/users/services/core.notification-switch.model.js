@@ -8,7 +8,7 @@ export default function NotificationSwitch($resource, usersResources) {
             method: 'PUT'
         },
         query: {
-            isArray: true
+            isArray: false
         }
     });
 }

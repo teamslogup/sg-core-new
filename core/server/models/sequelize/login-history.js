@@ -16,6 +16,7 @@ var MICRO = require('microtime-nodejs');
 
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var UAParser = require('ua-parser-js');
 
 var STD = require('../../../../bridge/metadata/standards');
 
@@ -103,6 +104,22 @@ module.exports = {
                 return fields;
             },
             parseLoginHistory: function (req, body) {
+
+                var parser = new UAParser();
+                var ua = req.headers['user-agent'];
+                var result = parser.setUA(ua).getResult();
+
+                if(body.platform === undefined){
+                    req.body.platform = result.os.name;
+                }
+
+                if(body.device === undefined){
+                    req.body.device = result.device.model;
+                }
+
+                if(body.browser === undefined){
+                    req.body.browser = result.browser.name;
+                }
 
                 var data = {
                     'platform': body.platform,

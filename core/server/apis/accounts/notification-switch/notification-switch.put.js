@@ -6,7 +6,10 @@ put.validate = function () {
     return function (req, res, next) {
 
         req.check('userId', '400_12').isInt();
-        req.check('notificationId', '400_12').isInt();
+
+        if (req.body.notificationId !== undefined) {
+            req.check('notificationId', '400_12').isInt();
+        }
 
         req.check('switch', '400_20').isBoolean();
         req.sanitize('switch').toBoolean();

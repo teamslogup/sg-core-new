@@ -43,7 +43,9 @@ module.exports = function () {
                 language: req.language
             };
 
-            User.checkAccountForProvider(req, null, providerUserProfile, function (status, data) {
+            var loginHistory = req.models.LoginHistory.parseLoginHistory(req, req.body);
+
+            User.checkAccountForProvider(req, null, providerUserProfile, loginHistory, function (status, data) {
                 if (status == 200) {
                     done(null, data);
                 } else if (status == 301) {

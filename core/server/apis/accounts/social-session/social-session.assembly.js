@@ -20,7 +20,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['provider', 'pid', 'accessToken', 'platform', 'device', 'version', 'token'],
+                acceptable: ['provider', 'pid', 'accessToken', 'platform', 'device', 'browser', 'version', 'token'],
                 essential: ['provider', 'pid', 'accessToken'],
                 resettable: [],
                 explains: {
@@ -45,7 +45,6 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(post.parseUserAgent());
                 apiCreator.add(post.getUser());
                 apiCreator.add(post.removeAllSessions());
                 apiCreator.add(post.logInUser());

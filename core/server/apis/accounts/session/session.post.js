@@ -34,6 +34,10 @@ post.validate = function () {
             req.check('device', '400_8').len(1, 1000);
         }
 
+        if (req.body.browser !== undefined) {
+            req.check('browser', '400_8').len(1, 1000);
+        }
+
         if (req.body.version !== undefined) {
             req.check('version', '400_8').len(1, 1000);
         }
@@ -45,29 +49,6 @@ post.validate = function () {
         req.utils.common.checkError(req, res, next);
         next();
     };
-};
-
-post.parseUserAgent = function () {
-    return function (req, res, next) {
-
-        var parser = new UAParser();
-        var ua = req.headers['user-agent'];
-        var result = parser.setUA(ua).getResult();
-
-        if(req.body.platform === undefined){
-            req.body.platform = result.os.name;
-        }
-
-        if(req.body.device === undefined){
-            req.body.device = result.device.model;
-        }
-
-        if(req.body.browser === undefined){
-            req.body.browser = result.browser.name;
-        }
-
-        next();
-    }
 };
 
 post.getUser = function () {
