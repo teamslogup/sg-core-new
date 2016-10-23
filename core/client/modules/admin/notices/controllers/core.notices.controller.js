@@ -188,8 +188,4 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
             $scope.findNotices();
         }
     }, true);
-
-    $scope.trustAsHtml = function(string) {
-        return $sce.trustAsHtml(string);
-    };
 }

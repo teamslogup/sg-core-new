@@ -40,7 +40,6 @@ export default function notificationBoxManager(NotificationBox) {
     function deleteNotificationBox(notificationBox, callback) {
         notificationBox = new NotificationBox(notificationBox);
         notificationBox.$remove(function (data, status) {
-            console.log(status, data);
             callback(204, data);
         }, function (data) {
             callback(data.status, data.data);

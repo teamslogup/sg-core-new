@@ -1,4 +1,4 @@
-export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, AlertDialog, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, sessionRemoteManager, AlertDialog, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -27,6 +27,10 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     $scope.userEnumSearchFields = metaManager.std.user.enumSearchFields;
     $scope.params.searchField = $scope.userEnumSearchFields[0];
+
+    $scope.userEnumRoles = metaManager.std.user.enumRoles;
+    $scope.enumCountries = Object.keys(metaManager.local.countries);
+    $scope.enumLanguages = Object.keys(metaManager.local.languages);
 
     $scope.more = false;
 
@@ -194,7 +198,10 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     $scope.notificationPublicSwitchs = {};
     for (var i = 0; i < notificationEnumForm.length; i++) {
-        $scope.notificationPublicSwitchs[notificationEnumForm[i]] = true;
+        $scope.notificationPublicSwitchs[notificationEnumForm[i]] = {
+            switch: true,
+            type: notificationEnumForm[i]
+        };
     }
 
     $scope.findAllNotification = function (userId) {
@@ -205,7 +212,12 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                 $scope.notifications = data.rows;
 
                 for (var i = 0; i < $scope.notifications.length; i++) {
-                    $scope.notificationSwitchs[$scope.notifications[i].key] = true;
+                    $scope.notificationSwitchs[$scope.notifications[i].key] = {
+                        switch: true,
+                        key: $scope.notifications[i].key,
+                        notificationId: $scope.notifications[i].id
+                    };
+
                 }
 
                 $scope.findAllNotificationSwitch(userId);
@@ -234,10 +246,6 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             if (status == 200) {
                 $scope.notificationBoxListTotal = data.count;
                 $scope.notificationBoxList = $scope.notificationBoxList.concat(data.rows);
-
-                for (var i = 0; i < $scope.notificationBoxList.length; i++) {
-                    $scope.notificationBoxList[i].data = JSON.parse($scope.notificationBoxList[i].data);
-                }
 
                 $scope.notificationBoxMore = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
             } else if (status == 404) {
@@ -289,13 +297,13 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
                 for (var i = 0; i < data.application.length; i++) {
                     if ($scope.notificationSwitchs.hasOwnProperty(data.application[i].notification.key)) {
-                        $scope.notificationSwitchs[data.application[i].notification.key] = data.application[i].switch;
+                        $scope.notificationSwitchs[data.application[i].notification.key].switch = data.application[i].switch;
                     }
                 }
 
                 for (var i = 0; i < data.public.length; i++) {
                     if ($scope.notificationPublicSwitchs.hasOwnProperty(data.public[i].type)) {
-                        $scope.notificationPublicSwitchs[data.public[i].type] = data.public[i].switch;
+                        $scope.notificationPublicSwitchs[data.public[i].type].switch = data.public[i].switch;
                     }
                 }
 
@@ -307,28 +315,6 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationSwitch');
-        });
-    };
-
-    $scope.updateNotificationSwitchById = function (userId, notificationId, swit, type) {
-        var body = {
-            userId: userId,
-            notificationId: notificationId,
-            switch: swit,
-            type: type
-        };
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotificationSwitchById');
-        notificationSwitchManager.updateNotificationSwitchById(body, function (status, data) {
-            if (status == 200) {
-
-            } else if (status == 404) {
-
-            } else {
-                AlertDialog.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotificationSwitchById');
         });
     };
 
@@ -347,6 +333,65 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
                 loadingHandler.endLoading(LOADING.spinnerKey, 'deleteUser');
             });
+        });
+
+    };
+
+    $scope.updateAppNotificationSwitch = function (notificationSwitch) {
+
+        var body = {
+            userId: $scope.currentUser.id,
+            notificationId: notificationSwitch.notificationId,
+            switch: notificationSwitch.switch,
+            type: 'application'
+        };
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'updateAppNotificationSwitch');
+        notificationSwitchManager.updateNotificationSwitch(body, function (status, data) {
+            if (status == 200) {
+
+            } else {
+                notificationSwitch.switch = !notificationSwitch.switch;
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'updateAppNotificationSwitch');
+        });
+    };
+
+    $scope.updatePublicNotificationSwitch = function (notificationPublicSwitch) {
+
+        var body = {
+            userId: $scope.currentUser.id,
+            switch: notificationPublicSwitch.switch,
+            type: notificationPublicSwitch.type
+        };
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'updatePublicNotificationSwitch');
+        notificationSwitchManager.updateNotificationSwitch(body, function (status, data) {
+            if (status == 200) {
+
+            } else {
+                notificationPublicSwitch.switch = !notificationPublicSwitch.switch;
+                AlertDialog.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'updatePublicNotificationSwitch');
+        });
+    };
+
+    $scope.deleteSessionRemote = function (index) {
+
+        var loginHistory = $scope.currentUser.loginHistories[index];
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'deleteSessionRemote');
+        sessionRemoteManager.deleteSessionRemote(loginHistory, function (status, data) {
+            if (status == 200) {
+                $scope.currentUser.loginHistories.splice(index, 1);
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+            loadingHandler.endLoading(LOADING.spinnerKey, 'deleteSessionRemote');
         });
 
     };

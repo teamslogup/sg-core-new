@@ -19,6 +19,7 @@ del.logout = function () {
                 }
                 var sessionId = data.session;
                 req.sessionStore.destroy(sessionId, function(err) {
+
                     if (err) {
                         res.hjson(req, next, 500);
                     } else {

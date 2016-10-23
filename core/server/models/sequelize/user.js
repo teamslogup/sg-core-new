@@ -564,7 +564,6 @@ module.exports = {
              */
             'findAndCountUsersByOption': function (searchItem, searchField, last, size, order, sort, callback) {
                 var where = {};
-                var order;
                 var include;
 
                 if (searchField && searchItem) {
