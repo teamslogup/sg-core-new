@@ -23,7 +23,7 @@ export default function AlertDialogService($filter, sessionManager) {
 
     this.action = function () {
         this.vm.isDialogVisible = false;
-        if (this.closeCallback) {
+        if (this.actionCallback) {
             this.actionCallback();
         }
     };
@@ -39,7 +39,7 @@ export default function AlertDialogService($filter, sessionManager) {
         if (status == 401) {
             sessionManager.session = null;
             this.vm.session = sessionManager.session;
-            this.show('', '로그인이 해제되었습니다. 다시 로그인 하시겠습니까?', '로그인', true, function () {
+            this.show('', $filter('translate')('reLoginConfirm'), $filter('translate')('login'), true, function () {
                 this.vm.isLoginVisible = true;
                 this.vm.isContentVisible = true;
             }, function () {

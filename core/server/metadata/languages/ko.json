@@ -131,6 +131,8 @@
   "skin": "스킨",
   "US": "미국",
   "KR": "한국",
+  "en": "영어",
+  "ko": "한국어",
   "visible": "인증",
   "anony": "익명",
   "password": "비밀번호",
@@ -146,7 +148,10 @@
   "close": "닫기",
   "exit": "나가기",
   "complete": "완료",
-  "notificationSetting": "노티피케이션 수신설정",
+  "notificationSetting": "App 알림 설정",
+  "notificationPublicSetting": "Public 알림 설정",
+  "notiEvent": "이벤트 알림",
+  "notiNotice": "공지 알림",
   "smsNotification": "문자알림",
   "emailNotification": "메일알림",
   "pushNotification": "푸시알림",
@@ -170,7 +175,7 @@
   "userInfo": "유저정보",
   "notification": "메세지 알림",
   "notificationBox": "메세지 알림 박스",
-  "loginHistory": "로그인 히스토리",
+  "loginHistory": "로그인 기록",
   "defaultInfo": "기본정보",
   "socialSetting": "소셜연동",
   "facebook": "페이스북",
@@ -179,6 +184,14 @@
   "notRead": "읽지 않음",
   "disconnect": "연결 끊기",
   "firstLoginDate": "최초 접속 일시",
-  "resentLoginDate": "최근 접속 일시"
+  "resentLoginDate": "최근 접속 일시",
+  "empty": "없음",
+  "emptyLoginHistory": "등록된 로그인 기록이 없습니다.",
+  "emptyNotificationBox": "알림 내역이 없습니다.",
+  "emergency": "긴급공지",
+  "reLoginConfirm": "로그인이 해제되었습니다. 다시 로그인 하시겠습니까?",
+  "createTerms": "약관 생성",
+  "addVersion": "버전추가"
+
 }
 

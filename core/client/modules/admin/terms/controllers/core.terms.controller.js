@@ -4,6 +4,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
 
     $scope.isTermsCreateVisible = false;
     $scope.isTermsEditVisible = false;
+    $scope.isTermsCreateFirstTime = true;
 
     $scope.params = {};
     $scope.form = {};
@@ -16,10 +17,13 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
 
     $scope.more = false;
 
+    $scope.enumCountries = Object.keys(metaManager.local.countries);
+
     $scope.showTermsCreate = function () {
-        $scope.form.type = $scope.termsTypes[0];
-        $scope.form.country = $scope.termsCountries[0];
+        // $scope.form.type = $scope.termsTypes[0];
+        $scope.form.country =  $scope.enumCountries[0];
         $scope.isTermsCreateVisible = true;
+        $scope.isTermsCreateFirstTime = false;
     };
 
     $scope.hideTermsCreate = function () {
@@ -36,6 +40,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
             country: $scope.termsList[index].country,
         };
         $scope.isTermsEditVisible = true;
+        $scope.isTermsCreateFirstTime = false;
     };
 
     $scope.hideTermsEdit = function () {
@@ -112,15 +117,10 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
 
     };
 
-    $scope.findTermsById = function (id, isVersionId) {
+    $scope.findTermsById = function (id) {
         loadingHandler.startLoading(LOADING.spinnerKey, 'findTermsById');
         termsManager.findTermsById(id, function (status, data) {
             if (status == 200) {
-
-                if(!isVersionId){
-                    $scope.activeId = id;
-                }
-
                 $scope.activeVersionId = id;
 
                 $scope.selectedTerms = data;
@@ -141,9 +141,11 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
         loadingHandler.startLoading(LOADING.spinnerKey, 'findTerms');
         termsManager.findTerms($scope.params, function (status, data) {
             if (status == 200) {
-                $scope.termsListTotal = data.count;
+                $scope.termsListTotal = data.count.length;
                 $scope.termsList = $scope.termsList.concat(data.rows);
                 $scope.more = $scope.termsListTotal > $scope.termsList.length;
+
+                $scope.currentTerms =   $scope.termsList[0];
             } else if (status == 404) {
                 $scope.more = false;
             } else {
@@ -182,4 +184,14 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
             $scope.findTerms();
         }
     }, true);
+
+    $scope.$watch('currentTerms', function (newVal, oldVal) {
+        if (newVal != oldVal) {
+            $scope.findTermsById(newVal.id);
+        }
+    }, true);
+
+    $scope.selectTerms = function (terms) {
+        $scope.currentTerms  = terms;
+    };
 }

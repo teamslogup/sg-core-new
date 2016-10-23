@@ -79,7 +79,7 @@ module.exports = {
                 if (options.authorId !== undefined) where.authorId = options.authorId;
                 if (options.isSolved !== undefined) where.isSolved = options.isSolved;
 
-                if (options.searchField) {
+                if (options.searchItem && options.searchField) {
                     where[options.searchField] = {
                         '$like': "%" + options.searchItem + "%"
                     };

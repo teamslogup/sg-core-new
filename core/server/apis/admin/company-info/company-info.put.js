@@ -20,18 +20,26 @@ put.validate = function () {
 
 put.setParam = function () {
     return function (req, res, next) {
+        var MAGIC = req.meta.std.magic;
 
         var body = {
+            id: 1,
             companyName: req.body.companyName,
             representative: req.body.representative,
             regNum: req.body.regNum,
             privateInfoManager: req.body.privateInfoManager,
             address: req.body.address
         };
-        if (req.body.contact !== undefined) body.contact = req.body.contact;
-        body.id = 1;
 
-        req.models.CompanyInfo.upsertData(req.body, {
+        if (req.body.contact !== undefined) {
+            if (req.body.contact == MAGIC.reset) {
+                body.contact = null;
+            } else {
+                body.contact = req.body.contact;
+            }
+        }
+
+        req.models.CompanyInfo.upsertData(body, {
             where: {
                 id: 1
             }

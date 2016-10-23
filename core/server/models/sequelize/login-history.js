@@ -85,10 +85,10 @@ module.exports = {
         }
     },
     'options': {
-        indexes: [{
-            'unique': true,
-            fields: ['userId', 'device', 'token']
-        }],
+        // indexes: [{
+        //     'unique': true,
+        //     fields: ['userId', 'device', 'token', 'session']
+        // }],
         'timestamps': true,
         'charset': 'utf8',
         'paranoid': false,
@@ -109,15 +109,15 @@ module.exports = {
                 var ua = req.headers['user-agent'];
                 var result = parser.setUA(ua).getResult();
 
-                if(body.platform === undefined){
+                if (body.platform === undefined) {
                     req.body.platform = result.os.name;
                 }
 
-                if(body.device === undefined){
+                if (body.device === undefined) {
                     req.body.device = result.device.model;
                 }
 
-                if(body.browser === undefined){
+                if (body.browser === undefined) {
                     req.body.browser = result.browser.name;
                 }
 

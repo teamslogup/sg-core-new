@@ -45,7 +45,6 @@ module.exports = {
         'charset': 'utf8',
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-
         })
     }
 };

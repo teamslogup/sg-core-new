@@ -154,8 +154,8 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
         labels: ["5월", "6월", "7월", "8월", "9월", "10월", "11월"],
         series: ['가입자', '탈퇴자'],
         data: [
-            [65, 59, 80, 81, 56, 55, 40],
-            [28, 48, 40, 19, 86, 27, 90]
+            // [65, 59, 80, 81, 56, 55, 40],
+            // [28, 48, 40, 19, 86, 27, 90]
         ],
         onClick: function (points, evt) {
             console.log(points, evt);
@@ -182,8 +182,8 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
         labels: ["5월", "6월", "7월", "8월", "9월", "10월", "11월"],
         series: ['문의수', '답변수'],
         data: [
-            [80, 60, 80, 81, 40, 30, 66],
-            [55, 58, 40, 50, 45, 22, 48]
+            // [80, 60, 80, 81, 40, 30, 66],
+            // [55, 58, 40, 50, 45, 22, 48]
         ],
         datasetOverride: [{yAxisID: 'y-axis-1'}],
         options: {

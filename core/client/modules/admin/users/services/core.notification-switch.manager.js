@@ -1,13 +1,12 @@
 export default function notificationSwitchManager(NotificationSwitch) {
     this.findAllNotificationSwitch = findAllNotificationSwitch;
     this.findNotificationSwitchById = findNotificationSwitchById;
-    this.updateNotificationSwitchById = updateNotificationSwitchById;
+    this.updateNotificationSwitch = updateNotificationSwitch;
     this.deleteNotificationSwitch = deleteNotificationSwitch;
 
-    function updateNotificationSwitchById(notificationSwitch, callback) {
-        var where = {id: notificationSwitch.id};
-        delete notificationSwitch.id;
-        NotificationSwitch.update(where, notificationSwitch, function (data) {
+    function updateNotificationSwitch(notificationSwitch, callback) {
+
+        NotificationSwitch.update({}, notificationSwitch, function (data) {
             callback(200, data);
         }, function (data) {
             callback(data.status, data.data);
