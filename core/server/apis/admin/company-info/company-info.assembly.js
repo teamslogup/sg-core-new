@@ -58,7 +58,7 @@ var api = {
             var params = {
                 acceptable: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address', 'contact'],
                 essential: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address'],
-                resettable: [],
+                resettable: ['contact'],
                 explains: {
                     'companyName': '회사이름',
                     'representative': '대표자',
