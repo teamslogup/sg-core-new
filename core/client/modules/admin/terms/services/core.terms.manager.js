@@ -1,60 +1,136 @@
-export default function termsManager (Terms) {
+export default function termsManager(Terms, metaManager, loadingHandler, $filter) {
+
+    var LOADING = metaManager.std.loading;
+    var MAGIC = metaManager.std.magic;
+
     this.findTermsById = findTermsById;
     this.updateTermsById = updateTermsById;
     this.findTerms = findTerms;
     this.deleteTerms = deleteTerms;
     this.createTerms = createTerms;
 
-    function updateTermsById (id, Terms, callback) {
-        var where = {id: id};
-        Terms.update(where, Terms, function (data) {
-            callback(200, data);
-        }, function (data) {
-            callback(data.status, data.data);
-        });
+    function updateTermsById(id, terms, callback) {
+
+        if (isFormValidate(terms)) {
+
+            var body = {
+                title: terms.title,
+                body: terms.body,
+                type: terms.type,
+                language: terms.language,
+                startDate: $filter('toMicrotime')(terms.startDate)
+            };
+
+            loadingHandler.startLoading(LOADING.spinnerKey, 'updateTermsById');
+
+            var where = {id: id};
+            Terms.update(where, body, function (data) {
+                callback(200, data);
+                loadingHandler.endLoading(LOADING.spinnerKey, 'updateTermsById');
+            }, function (data) {
+                callback(data.status, data.data);
+                loadingHandler.endLoading(LOADING.spinnerKey, 'updateTermsById');
+            });
+
+        } else {
+            callback(400, {
+                code: "400_53"
+            });
+        }
+
     }
 
-    function findTermsById (termsId, callback) {
+    function findTermsById(termsId, callback) {
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findTermsById');
         Terms.get({
             id: termsId
         }, function (data) {
             callback(200, data);
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTermsById');
         }, function (data) {
             callback(data.status, data.data);
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTermsById');
         });
     }
 
-    function findTerms (data, callback) {
+    function findTerms(data, callback) {
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'findTerms');
+
         var query = {};
-        if (data.searchItem !== undefined) query.searchItem = data.searchItem;
-        if (data.searchField !== undefined) query.searchField = data.searchField;
-        if (data.last !== undefined) query.last = data.last;
-        if (data.size !== undefined) query.size = data.size;
-        if (data.country !== undefined) query.country = data.country;
         if (data.type !== undefined) query.type = data.type;
-        if (data.sort !== undefined) query.sort = data.sort;
+        if (data.language !== undefined) query.language = data.language;
+
         Terms.query(query, function (data) {
             callback(200, data);
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTerms');
         }, function (data) {
             callback(data.status, data.data);
+            loadingHandler.endLoading(LOADING.spinnerKey, 'findTerms');
         });
     }
 
-    function deleteTerms (terms, callback) {
+    function deleteTerms(terms, callback) {
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'deleteTerms');
+
         terms = new Terms(terms);
         terms.$remove(function (data) {
             callback(204);
+            loadingHandler.endLoading(LOADING.spinnerKey, 'deleteTerms');
         }, function (data) {
             callback(data.status, data.data);
+            loadingHandler.endLoading(LOADING.spinnerKey, 'deleteTerms');
         });
     }
 
-    function createTerms (body, callback) {
-        var terms = new Terms(body);
-        terms.$save(function (data) {
-            callback(201, data);
-        }, function (data) {
-            callback(data.status, data.data);
-        });
+    function createTerms(terms, callback) {
+        if (isFormValidate(terms)) {
+
+            var body = {
+                title: terms.title,
+                content: terms.content,
+                type: terms.type,
+                language: terms.language,
+                startDate: $filter('toMicrotime')(terms.startDate)
+            };
+
+            loadingHandler.startLoading(LOADING.spinnerKey, 'createTerms');
+            terms = new Terms(body);
+            terms.$save(function (data) {
+                callback(201, data);
+                loadingHandler.endLoading(LOADING.spinnerKey, 'createTerms');
+            }, function (data) {
+                callback(data.status, data.data);
+                loadingHandler.endLoading(LOADING.spinnerKey, 'createTerms');
+            });
+        } else {
+            callback(400, {
+                code: "400_53"
+            });
+        }
     }
+
+    function isFormValidate(terms) {
+
+        if (terms.title === undefined || terms.title === '') {
+            return false;
+        }
+        if (terms.content === undefined || terms.content === '') {
+            return false;
+        }
+        if (terms.type === undefined || terms.type === '') {
+            return false;
+        }
+        if (terms.language === undefined || terms.language === '') {
+            return false;
+        }
+        if (terms.startDate === undefined || terms.startDate === '') {
+            return false;
+        }
+
+        return true;
+    }
+
 }

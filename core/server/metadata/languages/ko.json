@@ -4,17 +4,14 @@
   "beforeMinute": ":MINUTE:분 전",
   "beforeHour": ":HOUR:시간 전",
   "before1Day": "어제",
-
   "welcome": "님 회원가입을 환영합니다.",
   "adding": "님 이메일을 연동중입니다.",
-
   "newPassExplain": "님 비밀번호 찾기를 진행 중입니다.",
   "findIdTitleExplain": "회원님의 아이디 정보입니다.",
   "connectAccount": "님 해당 버튼을 클릭하면 이메일 연동이 완료됩니다.",
   "smsAuthExplain": "인증번호 :AUTH_NUM: 입력해주세요 (:MINUTE:분 이내.)",
   "findPassExplain": "새로운 비밀번호는 :PASS:입니다. 로그인 후 바꿔주세요",
   "findIdExplain": "회원님의 아이디는 :ID: 입니다.",
-
   "findPass": "비밀번호찾기",
   "uploadSuccess": "업로드성공",
   "findPassWay": "이메일로 비밀번호 찾는 방법을 보내드렸어요.",
@@ -141,7 +138,7 @@
   "requireTitle": "제목을 입력해주세요.",
   "requireBody": "내용을 입력해주세요.",
   "requireType": "타입을 선택해주세요.",
-  "requireCountry": "국가를 선택해주세요.",
+  "requireLanguage": "국가를 선택해주세요.",
   "dashboard": "대쉬보드",
   "editMode": "수정모드",
   "viewMode": "일반모드",
@@ -191,7 +188,11 @@
   "emergency": "긴급공지",
   "reLoginConfirm": "로그인이 해제되었습니다. 다시 로그인 하시겠습니까?",
   "createTerms": "약관 생성",
-  "addVersion": "버전추가"
-
+  "addVersion": "버전추가",
+  "essential": "필수",
+  "optional": "선택",
+  "applyDate": "적용일",
+  "add": "추가",
+  "thisIsAppliedTerms": "현재 적용중인 약관입니다."
 }
 

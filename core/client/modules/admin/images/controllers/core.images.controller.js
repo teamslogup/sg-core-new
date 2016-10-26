@@ -16,6 +16,8 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
     $scope.form.folder = $scope.imageFolders[0];
     $scope.enumAuthorized = metaManager.std.image.enumAuthorized;
     $scope.isAuthorized = $scope.enumAuthorized[0];
+    $scope.enumSearchFields = metaManager.std.image.enumSearchFields;
+    $scope.form.searchField = metaManager.std.image.defaultSearchFields;
 
     $scope.more = false;
 

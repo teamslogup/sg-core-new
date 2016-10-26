@@ -62,7 +62,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['authorId', 'last', 'size', 'orderBy', 'sort', 'folder', 'authorized'],
+                acceptable: ['searchItem', 'searchField', 'authorId', 'last', 'size', 'orderBy', 'sort', 'folder', 'authorized'],
                 essential: [],
                 resettable: [],
                 explains: {

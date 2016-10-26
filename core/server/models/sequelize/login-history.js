@@ -85,10 +85,6 @@ module.exports = {
         }
     },
     'options': {
-        // indexes: [{
-        //     'unique': true,
-        //     fields: ['userId', 'device', 'token', 'session']
-        // }],
         'timestamps': true,
         'charset': 'utf8',
         'paranoid': false,

@@ -26,6 +26,8 @@ export default function imagesManager (Image) {
 
     function findImages (data, callback) {
         var query = {};
+        if (data.searchItem !== undefined) query.searchItem = data.searchItem;
+        if (data.searchField !== undefined) query.searchField = data.searchField;
         if (data.authorId !== undefined) query.authorId = data.authorId;
         if (data.last !== undefined) query.last = data.last;
         if (data.size !== undefined) query.size = data.size;

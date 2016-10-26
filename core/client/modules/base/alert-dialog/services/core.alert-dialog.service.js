@@ -1,6 +1,6 @@
-AlertDialogService.$inject = ['$filter', 'sessionManager'];
+AlertDialogService.$inject = ['$filter', 'sessionManager', '$rootScope'];
 
-export default function AlertDialogService($filter, sessionManager) {
+export default function AlertDialogService($filter, sessionManager, $rootScope) {
     this.vm = {};
     this.listenCallback = undefined;
     this.actionCallback = undefined;
@@ -46,6 +46,10 @@ export default function AlertDialogService($filter, sessionManager) {
                 this.vm.isLoginVisible = true;
                 this.vm.isContentVisible = false;
                 this.vm.goIndex();
+            });
+        } else if(status == 403 && data.code == "403_20") {
+            $rootScope.$broadcast("core.alert-dialog.callback", {
+                type: 'showAgreeTerms'
             });
         } else {
             this.show(status, this.translateError(status, data), '', true);

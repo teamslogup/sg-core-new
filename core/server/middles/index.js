@@ -6,7 +6,8 @@ module.exports.connect = function (config) {
             upload: require('./upload')(),
             notification: require('./notification')(),
             validator: require('./validator')(),
-            role: require('./role')()
+            role: require('./role')(),
+            terms: require('./terms')()
         };
         req.middles = middles;
         next();

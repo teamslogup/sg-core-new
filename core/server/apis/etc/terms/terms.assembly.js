@@ -16,8 +16,8 @@ const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
 
 var api = {
-    get : function(isOnlyParams) {
-        return function(req, res, next) {
+    get: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: [],
@@ -26,12 +26,8 @@ var api = {
                 explains: {
                     'id': '데이터를 얻을 리소스의 id'
                 },
-                defaults: {
-                    
-                },
-                response: {
-                    
-                },
+                defaults: {},
+                response: {},
                 param: 'id',
                 title: '단일 얻기',
                 state: 'development'
@@ -57,29 +53,19 @@ var api = {
             }
         };
     },
-    gets : function(isOnlyParams) {
-        return function(req, res, next) {
+    gets: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
-                acceptable: ["searchItem", "searchField", "orderBy", "sort", "last", "size", "type", "country"],
+                acceptable: ["type", "language"],
                 essential: [],
                 resettable: [],
                 explains: {
-                    "searchItem": "검색할 내용",
-                    "searchField": "검색할 필드 " + STD.terms.enumSearchFields.join(", "),
-                    "orderBy": "정렬 기준 " + STD.terms.enumOrderBys.join(", "),
-                    "sort": "정렬 방식 " + STD.common.enumSortTypes.join(", "),
-                    "last": "조회 기준 마지막 데이터 일자",
-                    "size": "가져올 데이터 갯수",
                     "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
-                    "country": "국가 코드 KR"
+                    "language": "언어 코드 ko"
                 },
-                defaults: {
-
-                },
-                response: {
-
-                },
+                defaults: {},
+                response: {},
                 title: '이용약관 조회',
                 state: 'development'
             };
@@ -104,26 +90,22 @@ var api = {
             }
         };
     },
-    post : function(isOnlyParams) {
-        return function(req, res, next) {
+    post: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
-                acceptable: ["type", "title", "content", "country", "startDate"],
-                essential: ["type", "title", "content", "country", "startDate"],
+                acceptable: ["type", "title", "content", "language", "startDate"],
+                essential: ["type", "title", "content", "language", "startDate"],
                 resettable: [],
                 explains: {
                     "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
                     "title": "이용약관 제목",
                     "content": "이용약관 내용",
-                    "country": "국가 코드 KR",
+                    "language": "언어 코드 ko",
                     "startDate": "약관 적용일"
                 },
-                defaults: {
-
-                },
-                response: {
-
-                },
+                defaults: {},
+                response: {},
                 role: STD.user.roleAdmin,
                 title: '이용약관 생성',
                 state: 'development'
@@ -151,22 +133,19 @@ var api = {
             }
         };
     },
-    delete : function(isOnlyParams) {
-        return function(req, res, next) {
+    delete: function (isOnlyParams) {
+        return function (req, res, next) {
             var params = {
                 acceptable: [],
                 essential: [],
                 resettable: [],
                 explains: {
-                    
+                    'id': '삭제할 id'
                 },
-                defaults: {
-
-                },
-                response: {
-
-                },
+                defaults: {},
+                response: {},
                 role: STD.user.roleAdmin,
+                param: 'id',
                 title: '이용약관 제거',
                 state: 'development'
             };
@@ -181,6 +160,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(del.validate());
                 apiCreator.add(del.destroy());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
@@ -197,7 +177,7 @@ var api = {
 router.get('/' + resource + '/:id', api.get());
 router.get('/' + resource, api.gets());
 router.post('/' + resource, api.post());
-router.delete('/' + resource, api.delete());
+router.delete('/' + resource + '/:id', api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

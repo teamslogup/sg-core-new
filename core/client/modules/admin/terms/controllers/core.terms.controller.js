@@ -3,7 +3,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
     var LOADING = metaManager.std.loading;
 
     $scope.isTermsCreateVisible = false;
-    $scope.isTermsEditVisible = false;
+    $scope.isTermsAddVersionVisible = false;
     $scope.isTermsCreateFirstTime = true;
 
     $scope.params = {};
@@ -17,11 +17,13 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
 
     $scope.more = false;
 
-    $scope.enumCountries = Object.keys(metaManager.local.countries);
+    $scope.enumType = metaManager.std.terms.enumTypes;
+    $scope.enumLanguages = Object.keys(metaManager.local.languages);
+    $scope.params.language = $scope.enumLanguages[0];
 
     $scope.showTermsCreate = function () {
-        // $scope.form.type = $scope.termsTypes[0];
-        $scope.form.country =  $scope.enumCountries[0];
+        $scope.form.type = $scope.enumType[0];
+        $scope.form.language = $scope.enumLanguages[0];
         $scope.isTermsCreateVisible = true;
         $scope.isTermsCreateFirstTime = false;
     };
@@ -31,149 +33,91 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
         $scope.form = {};
     };
 
-    $scope.showTermsEdit = function (index) {
-        $scope.currentIndex = index;
+    $scope.showTermsAddVersion = function () {
         $scope.form = {
-            title: $scope.termsList[index].title,
-            body: $scope.termsList[index].body,
-            type: $scope.termsList[index].type,
-            country: $scope.termsList[index].country,
+            title: $scope.currentTerms.title,
+            content: $scope.currentTerms.content,
+            type: $scope.currentTerms.type,
+            language: $scope.currentTerms.language
         };
-        $scope.isTermsEditVisible = true;
+        $scope.isTermsAddVersionVisible = true;
         $scope.isTermsCreateFirstTime = false;
     };
 
-    $scope.hideTermsEdit = function () {
-        $scope.isTermsEditVisible = false;
+    $scope.hideTermsAddVersion = function () {
+        $scope.isTermsAddVersionVisible = false;
         $scope.form = {};
     };
 
-    $scope.isFormValidate = function () {
-
-        var isValidate = true;
-
-        if ($scope.form.title === undefined || $scope.form.title === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireTitle'), '', true);
-            return isValidate;
-        }
-
-        if ($scope.form.body === undefined || $scope.form.body === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireBody'), '', true);
-            return isValidate;
-        }
-        if ($scope.form.type === undefined || $scope.form.type === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireType'), '', true);
-            return isValidate;
-        }
-        if ($scope.form.country === undefined || $scope.form.country === '') {
-            isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireCountry'), '', true);
-            return isValidate;
-        }
-
-        return isValidate;
-    };
-
     $scope.createTerms = function () {
+        var body = angular.copy($scope.form);
 
-        if ($scope.isFormValidate()) {
-            var body = angular.copy($scope.form);
-
-            loadingHandler.startLoading(LOADING.spinnerKey, 'createTerms');
-            termsManager.createTerms(body, function (status, data) {
-                if (status == 201) {
-                    $scope.termsList.unshift(data);
-                    $scope.hideTermsCreate();
-                } else {
-                    AlertDialog.alertError(status, data);
-                }
-                loadingHandler.endLoading(LOADING.spinnerKey, 'createTerms');
-            });
-        }
+        termsManager.createTerms(body, function (status, data) {
+            if (status == 201) {
+                $scope.termsList.unshift(data);
+                $scope.hideTermsCreate();
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+        });
 
     };
 
-    $scope.updateTerms = function () {
+    $scope.addVersion = function () {
+        var body = angular.copy($scope.form);
 
-        var terms = $scope.termsList[$scope.currentIndex];
+        termsManager.createTerms(body, function (status, data) {
+            if (status == 201) {
+                $scope.selectedTerms.versions.unshift(data);
+                $scope.hideTermsAddVersion();
+            } else {
+                AlertDialog.alertError(status, data);
+            }
+        });
+    };
 
-        if ($scope.isFormValidate()) {
-            var body = angular.copy($scope.form);
+    $scope.deleteVersion = function (terms) {
 
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateTermsById');
-            termsManager.updateTermsById(terms.id, body, function (status, data) {
-                if (status == 200) {
-                    $scope.termsList[$scope.currentIndex] = data;
-                    $scope.hideTermsEdit();
+        AlertDialog.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+            termsManager.deleteTerms(terms, function (status, data) {
+                if (status == 204) {
+                    if (terms.id == $scope.currentTerms.id) {
+                        $scope.findTerms();
+                    } else {
+                        $scope.findTermsById($scope.currentTerms.id);
+                    }
                 } else {
                     AlertDialog.alertError(status, data);
                 }
-                loadingHandler.endLoading(LOADING.spinnerKey, 'updateTermsById');
             });
-        }
-
+        });
     };
 
     $scope.findTermsById = function (id) {
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findTermsById');
         termsManager.findTermsById(id, function (status, data) {
             if (status == 200) {
                 $scope.activeVersionId = id;
-
                 $scope.selectedTerms = data;
             } else {
                 AlertDialog.alertError(status, data);
             }
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findTermsById');
         });
     };
 
     $scope.findTerms = function () {
 
-        $scope.termsListTotal = 0;
         $scope.termsList = [];
-
         $scope.params.last = undefined;
 
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findTerms');
         termsManager.findTerms($scope.params, function (status, data) {
             if (status == 200) {
-                $scope.termsListTotal = data.count.length;
-                $scope.termsList = $scope.termsList.concat(data.rows);
-                $scope.more = $scope.termsListTotal > $scope.termsList.length;
-
-                $scope.currentTerms =   $scope.termsList[0];
+                $scope.termsList = $scope.termsList.concat(data);
+                $scope.currentTerms = $scope.termsList[0];
             } else if (status == 404) {
-                $scope.more = false;
+                $scope.selectedTerms = undefined;
             } else {
                 AlertDialog.alertError(status, data);
             }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findTerms');
-        });
-    };
-
-    $scope.findTermsMore = function () {
-
-        if ($scope.termsList.length > 0) {
-            $scope.params.last = $scope.termsList[$scope.termsList.length - 1].createdAt;
-        }
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findTermsMore');
-        termsManager.findTerms($scope.params, function (status, data) {
-            if (status == 200) {
-                $scope.termsList = $scope.termsList.concat(data.rows);
-                $scope.more = $scope.termsListTotal > $scope.termsList.length;
-            } else if (status == 404) {
-                $scope.more = false;
-            } else {
-                AlertDialog.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findTermsMore');
         });
     };
 
@@ -185,13 +129,19 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
         }
     }, true);
 
-    $scope.$watch('currentTerms', function (newVal, oldVal) {
+    $scope.$watch('params.language', function (newVal, oldVal) {
         if (newVal != oldVal) {
+            $scope.findTerms();
+        }
+    }, true);
+
+    $scope.$watch('currentTerms', function (newVal, oldVal) {
+        if (newVal != oldVal && newVal !== null) {
             $scope.findTermsById(newVal.id);
         }
     }, true);
 
     $scope.selectTerms = function (terms) {
-        $scope.currentTerms  = terms;
+        $scope.currentTerms = terms;
     };
 }

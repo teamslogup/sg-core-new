@@ -12,6 +12,8 @@ var mixin = require('../../../../core/server/models/sequelize/mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var MICRO = require('microtime-nodejs');
+
 module.exports = {
     fields: {
         'authorId': {
@@ -21,17 +23,17 @@ module.exports = {
             'as': 'author'
         },
         'type': {
-            'type': Sequelize.STRING,
-            'defaultValue': STD.terms.defaultType,
-            'allowNull': false
-        },
-        'country': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.ENUM,
+            'values': STD.terms.enumTypes,
             'allowNull': false
         },
         'title': {
             'type': Sequelize.STRING,
             'allowNull': true
+        },
+        'language': {
+            'type': Sequelize.STRING,
+            'allowNull': false
         },
         'content': {
             'type': Sequelize.TEXT(STD.terms.contentDataType),
@@ -42,10 +44,6 @@ module.exports = {
             'allowNull': false
         },
         'createdAt': {
-            'type': Sequelize.BIGINT,
-            'allowNull': true
-        },
-        'updatedAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
         },
@@ -68,50 +66,75 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             "findTermsByOptions": function (options, callback) {
-                var where = {};
-                var query = {
-                    "order": [[options.orderBy, options.sort]],
-                    "group": ['Terms.title'],
-                    "limit": parseInt(options.size),
-                    "where": where,
-                    "attributes": [[sequelize.fn('MAX', sequelize.col('Terms.id')), 'id'], [sequelize.fn('max', sequelize.col('Terms.title')), 'title']]
-                };
 
-                if (options.sort == STD.common.DESC) {
-                    where[options.orderBy] = {
-                        "$lt": options.last
-                    };
-                }
+                var query = "SELECT * FROM (SELECT * FROM Terms ORDER BY Terms.startDate DESC) as terms " +
+                    "WHERE terms.startDate <= " + MICRO.now() + " AND terms.language = '" + options.language + "' " +
+                    "AND terms.deletedAt IS NULL " +
+                    "GROUP BY terms.title ORDER BY createdAt " + options.sort;
 
-                if (options.searchItem && options.searchField) {
-                    where[options.searchField] = {
-                        "$like": "%" + options.searchItem + "%"
-                    };
-                } else if (options.searchItem) {
-                    if (STD.terms.enumSearchFields.length > 0) where.$or = [];
-                    for (var i = 0; i < STD.terms.enumSearchFields.length; i++) {
-                        var body = {};
-                        body[STD.terms.enumSearchFields[i]] = {
-                            "$like": "%" + options.searchItem + "%"
-                        };
-                        where.$or.push(body);
+                sequelize.query(query).then(function (data) {
+                    if (data && data[0] && data[0].length > 0) {
+                        return data[0];
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
                     }
-                }
-
-                if (options.type) {
-                    where.type = options.type;
-                }
-
-                if (options.user) {
-                    if (options.user.role >= STD.user.roleAdmin) {
-                        query.include = [{
-                            "model": sequelize.models.User,
-                            "as": "author"
-                        }];
+                }).catch(errorHandler.catchCallback(callback)).done(function (terms) {
+                    if (terms) {
+                        callback(200, terms);
                     }
-                }
+                });
+            },
+            "findAppliedTermsByOptions": function (options, callback) {
 
-                sequelize.models.Terms.findAndCountAllForQuery(query, callback);
+                var terms;
+
+                sequelize.transaction(function (t) {
+                    return sequelize.models.Terms.findOne({
+                        'where': {
+                            'title': {
+                                $like: "%" + options.title + "%"
+                            },
+                            'startDate': {
+                                $lte: options.maxStartDate
+                            }
+                        },
+                        'order': [['startDate', 'DESC']],
+                        'transaction': t
+                    }).then(function (data) {
+
+                        if (data) {
+                            terms = data;
+
+                            return sequelize.models.Terms.findAll({
+                                'where': {
+                                    'title': {
+                                        "$like": "%" + data.title + "%"
+                                    }
+                                },
+                                'order': [['createdAt', 'DESC']],
+                                'attributes': ['id', 'createdAt'],
+                                'transaction': t
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    }).then(function (data) {
+
+                        if (data) {
+                            terms.dataValues.versions = data;
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, terms);
+                    }
+                });
             },
             "findTermsById": function (id, callback) {
 
