@@ -162,8 +162,9 @@ var standards = {
         "maxDepth": 2
     },
     "terms": {
-        "enumTypes": ["etc"],
-        "defaultType": "etc",
+        "enumTypes": ["essential", "optional"],
+        "typeEssential": "essential",
+        "typeOptional": "optional",
         "contentDataType": "long",
         "minContentLength": 2,
         "maxContentLength": 100000,
@@ -171,7 +172,8 @@ var standards = {
         "maxTitleLength": 40,
         "enumSearchFields": ["id", "title"],
         "enumOrderBys": ["createdAt", "updatedAt"],
-        "defaultOrderBy": "createdAt"
+        "defaultOrderBy": "createdAt",
+        "showAgreeTerms": "showAgreeTerms"
     },
     "report": {
         "minBodyLength": 1,
@@ -205,7 +207,9 @@ var standards = {
         "enumOrders": ["orderCreate", "orderUpdate"],
         "orderCreate": "orderCreate",
         "orderUpdate": "orderUpdate",
-        "enumAuthorized": ["all", "authorized", "unauthorized"]
+        "enumAuthorized": ["all", "authorized", "unauthorized"],
+        "enumSearchFields": ["id", "nick", "name"],
+        "defaultSearchFields": "nick"
     },
     "magic": {
         "reset": ":RESET:",

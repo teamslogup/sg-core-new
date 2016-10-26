@@ -55,7 +55,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
 
     $scope.$on('$locationChangeStart', function (event, next, current) {
         if (next != current) {
-            if($scope.isNoticeDetailVisible) {
+            if ($scope.isNoticeDetailVisible) {
                 event.preventDefault();
                 $scope.hideNoticeDetail();
             }
@@ -68,6 +68,17 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
 
     $scope.exitEditMode = function () {
         $scope.isNoticeEditMode = false;
+    };
+
+    $scope.currentOption = undefined;
+
+    $scope.showItemOption = function ($event, notice) {
+        $event.stopPropagation();
+        $scope.currentOption = notice.id;
+    };
+
+    $scope.hideItemOption = function () {
+        $scope.currentOption = undefined;
     };
 
     $scope.isFormValidate = function () {

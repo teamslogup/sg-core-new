@@ -3,10 +3,18 @@ var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var moment = require('moment');
 
+del.validate = function () {
+    return function (req, res, next) {
+        req.check('id', '400_12').isInt();
+        req.utils.common.checkError(req, res, next);
+        next();
+    };
+};
+
 del.destroy = function () {
     return function (req, res, next) {
-        var now = moment.utc(new Date()).format("YYYY-MM-DD HH:mm:ss");
-        req.models.Terms.deleteTerms(now, function (status, data) {
+        // var now = moment.utc(new Date()).format("YYYY-MM-DD HH:mm:ss");
+        req.models.Terms.destroyDataById(req.params.id, false, function (status, data) {
             if (status == 204) {
                 next();
             } else {

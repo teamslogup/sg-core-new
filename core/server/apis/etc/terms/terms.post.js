@@ -6,8 +6,8 @@ post.validate = function () {
     return function (req, res, next) {
         var TERMS = req.meta.std.terms;
         req.check("type", "400_3").isEnum(TERMS.enumTypes);
-        var enumCountry = req.coreUtils.common.getCountryEnum(req);
-        req.check("country", "400_3").isEnum(enumCountry);
+        var enumLanguage = req.coreUtils.common.getLanguageEnum(req);
+        req.check("language", "400_3").isEnum(enumLanguage);
         if (req.body.title !== undefined) req.check("title", "400_8").len(TERMS.minTitleLength, TERMS.maxTitleLength);
         if (req.body.content !== undefined) req.check("content", "400_8").len(TERMS.minContentLength, TERMS.maxContentLength);
         req.check("startDate", "400_5").isMicroTimestamp();
@@ -21,7 +21,7 @@ post.setParam = function () {
         var body = {
             authorId: req.user.id,
             type: req.body.type,
-            country: req.body.country,
+            language: req.body.language,
             startDate: req.body.startDate,
             title: req.body.title,
             content: req.body.content

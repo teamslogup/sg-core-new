@@ -1,7 +1,7 @@
-$alert-dialog-action-btn-color: #51c7b5;
+$alert-dialog-action-btn-color: #1fc9c6;
 $alert-dialog-action-btn-hover-color: #45a19f;
-$alert-dialog-action-btn-color: #6f8690;
-$alert-dialog-action-btn-hover-color: #3C535D;
+$alert-dialog-cancel-btn-color: #6f8690;
+$alert-dialog-cancel-btn-hover-color: #3C535D;
 
 $mobile-max-width: 425px;
 $sg-alert-dialog-container-top: 200px;
@@ -90,7 +90,9 @@ $sg-alert-dialog-container-top: 200px;
                 display: table;
 
                 &:after {
-                    @include after-clear();
+                    display: block;
+                    content: "";
+                    clear: both;
                 }
 
                 button {
@@ -115,10 +117,6 @@ $sg-alert-dialog-container-top: 200px;
                     }
                 }
 
-                .sg-alert-dialog-bottom-container-close-btn, .sg-alert-dialog-bottom-container-cancel-btn {
-                    margin-right: 12px;
-                }
-
                 .sg-alert-dialog-bottom-container-close-btn {
                     background-color: $alert-dialog-action-btn-color;
                     &:hover {
@@ -127,9 +125,10 @@ $sg-alert-dialog-container-top: 200px;
                 }
 
                 .sg-alert-dialog-bottom-container-cancel-btn {
-                    background-color: $alert-dialog-action-btn-color;
+                    margin-right: 12px;
+                    background-color: $alert-dialog-cancel-btn-color;
                     &:hover {
-                        background-color: $alert-dialog-action-btn-hover-color;
+                        background-color: $alert-dialog-cancel-btn-hover-color;
                     }
                 }
             }

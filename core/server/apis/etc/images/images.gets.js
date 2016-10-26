@@ -7,7 +7,9 @@ gets.validate = function () {
         var COMMON = req.meta.std.common;
         var IMAGE = req.meta.std.image;
         var FILE = req.meta.std.file;
-        
+
+        if (req.query.searchItem === undefined) req.query.searchItem = '';
+        if (req.query.searchField === undefined) req.query.searchField = '';
         if (req.query.last === undefined) req.query.last = MICRO.now();
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
         if (req.query.orderBy === undefined) req.query.orderBy = IMAGE.orderCreate;

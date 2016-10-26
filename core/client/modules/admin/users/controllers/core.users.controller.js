@@ -89,6 +89,18 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         $scope.isUserEditMode = false;
     };
 
+    $scope.currentOption = undefined;
+
+    $scope.showItemOption = function ($event, user) {
+        $event.stopPropagation();
+        $scope.currentOption = user.id;
+    };
+
+    $scope.hideItemOption = function () {
+        $scope.currentOption = undefined;
+    };
+
+
     $scope.isFormValidate = function () {
 
         var isValidate = true;

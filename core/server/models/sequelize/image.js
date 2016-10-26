@@ -91,14 +91,26 @@ module.exports = {
             },
             'findImagesByOption': function (options, callback) {
                 var where = {};
+                var userWhere = {};
 
                 if (options.authorId) {
-                    where.authorId = authorId;
+                    where.authorId = options.authorId;
+                }
+
+                if(options.searchItem && options.searchField) {
+                    userWhere[options.searchField] = {
+                        '$like': "%" + options.searchItem + "%"
+                    };
                 }
 
                 var query = {
                     'limit': parseInt(options.size),
-                    'where': where
+                    'where': where,
+                    'include': {
+                        model: sequelize.models.User,
+                        as: 'author',
+                        where: userWhere
+                    }
                 };
 
                 if (options.orderBy == STD.image.orderUpdate) {
