@@ -1,25 +1,33 @@
-export default function AlertDialogCtrl ($scope, AlertDialog) {
+export default function AlertDialogCtrl($scope, AlertDialog) {
     var vm = $scope.vm;
     AlertDialog.init(vm);
 
+    vm.isDialogVisible = false;
+    vm.alertTitle = '';
+    vm.alertMsg = '';
+    vm.isCloseBtnVisible = true;
+
     AlertDialog.listen(function (title, body, actionText, isCloseBtnVisible) {
-        $scope.alertTitle = title;
-        $scope.alertMsg = body;
-        $scope.isCloseBtnVisible = isCloseBtnVisible;
+        vm.isDialogVisible = true;
+        vm.alertTitle = title;
+        vm.alertMsg = body;
+        vm.isCloseBtnVisible = isCloseBtnVisible;
 
         if (actionText) {
-            $scope.alertAction = actionText;
+            vm.alertAction = actionText;
         } else {
-            $scope.alertAction = undefined;
+            vm.alertAction = undefined;
         }
 
     });
 
-    $scope.action = function () {
+    vm.action = function () {
+        vm.isDialogVisible = false;
         AlertDialog.action();
     };
 
-    $scope.closeDialog = function () {
+    vm.closeDialog = function () {
+        vm.isDialogVisible = false;
         AlertDialog.close();
     };
 }
