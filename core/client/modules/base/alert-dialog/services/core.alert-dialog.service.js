@@ -17,19 +17,16 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
     this.show = function (title, body, actionText, isCloseBtnVisible, actionCallback, closeCallback) {
         this.actionCallback = actionCallback;
         this.closeCallback = closeCallback;
-        this.vm.isDialogVisible = true;
         this.listenCallback(title, body, actionText, isCloseBtnVisible);
     };
 
     this.action = function () {
-        this.vm.isDialogVisible = false;
         if (this.actionCallback) {
             this.actionCallback();
         }
     };
 
     this.close = function () {
-        this.vm.isDialogVisible = false;
         if (this.closeCallback) {
             this.closeCallback();
         }
