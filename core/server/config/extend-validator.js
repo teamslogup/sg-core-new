@@ -4,7 +4,7 @@ function extending() {
 
     expressValidator.validator.extend('isMobilePhoneNum', function (str) {
         if (str === '') return false;
-        var reg = new RegExp("^[+]{1}821[0-9]{1,14}$");
+        var reg = new RegExp("^[+]{1}[0-9]{4,17}$");
         return reg.test(str);
     });
 
