@@ -2,6 +2,12 @@ var expressValidator = require('express-validator');
 
 function extending() {
 
+    expressValidator.validator.extend('isMobilePhoneNum', function (str) {
+        if (str === '') return false;
+        var reg = new RegExp("^[+]{1}821[0-9]{1,14}$");
+        return reg.test(str);
+    });
+
     expressValidator.validator.extend('isMicroTimestamp', function (str) {
         if (str === '') return false;
         if (Number(str)) {
