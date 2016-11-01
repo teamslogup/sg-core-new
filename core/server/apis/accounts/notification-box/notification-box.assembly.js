@@ -89,16 +89,13 @@ var api = {
     delete: function (isOnlyParams) {
         return function (req, res, next) {
             var params = {
-                acceptable: ['userId', 'notificationId'],
-                essential: ['userId'],
+                acceptable: [],
+                essential: [],
                 resettable: [],
-                explains: {
-                    'userId': '유저 아이디',
-                    'notificationId': 'notificationId, id가 없으면 전부 제거'
-                },
+                explains: {},
                 role: STD.role.account,
                 title: '노티피케이션 알림상자 제거',
-                param: 'key',
+                param: 'id',
                 state: 'development'
             };
 
@@ -126,7 +123,7 @@ var api = {
 
 router.get('/' + resource, api.gets());
 router.put('/' + resource, api.put());
-router.delete('/' + resource, api.delete());
+router.delete('/' + resource + '/:id', api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

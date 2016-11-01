@@ -34,7 +34,7 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedInRole(STD.role.account));
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
