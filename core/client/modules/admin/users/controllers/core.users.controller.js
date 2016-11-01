@@ -198,7 +198,9 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
     //Notification
 
     $scope.notifications = [];
+
     $scope.notificationSwitchs = {};
+    $scope.notificationPublicSwitchs = {};
 
     var notificationEnumForm = NOTIFICATION.enumForms;
 
@@ -208,7 +210,6 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         }
     }
 
-    $scope.notificationPublicSwitchs = {};
     for (var i = 0; i < notificationEnumForm.length; i++) {
         $scope.notificationPublicSwitchs[notificationEnumForm[i]] = {
             switch: true,
@@ -319,7 +320,6 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                     }
                 }
 
-
             } else if (status == 404) {
 
             } else {
@@ -355,7 +355,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             userId: $scope.currentUser.id,
             notificationId: notificationSwitch.notificationId,
             switch: notificationSwitch.switch,
-            type: 'application'
+            type: vm.NOTIFICATION.formApplication
         };
 
         loadingHandler.startLoading(LOADING.spinnerKey, 'updateAppNotificationSwitch');

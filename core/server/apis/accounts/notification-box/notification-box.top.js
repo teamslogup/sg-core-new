@@ -7,7 +7,8 @@ top.hasAuthorization = function() {
         if (req.user.role >= req.meta.std.user.roleAdmin) {
             return next();
         }
-        req.models.Test.findDataByAuthenticatedID(req.params.id, 'userId', req.user.id, function(status, data) {
+
+        req.models.NotificationBox.findDataByAuthenticatedId(req.params.id, 'userId', req.user.id, function(status, data) {
             if (status == 200) {
                 req.data = data;
                 next();
