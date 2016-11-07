@@ -71,17 +71,11 @@ gets.supplement = function () {
     return function (req, res, next) {
         var ret = {
             notification: req.notification,
-            application: req.userNotification,
-            public: req.userPublicNotification
+            application: req.userNotification || [],
+            public: req.userPublicNotification || []
         };
 
-        if ((!req.notification || req.notification.length == 0) &&
-            (!req.userNotification || req.userNotification.length == 0) &&
-            (!req.userPublicNotification || req.userPublicNotification.length == 0)) {
-            res.hjson(req, next, 404);
-        } else {
-            res.hjson(req, next, 200, ret);
-        }
+        res.hjson(req, next, 200, ret);
     };
 };
 
