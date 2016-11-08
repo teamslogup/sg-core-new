@@ -27,7 +27,7 @@ export default function usersManager(User, AdminUser) {
     function findAllUsers(data, callback) {
         AdminUser.query({
             searchItem: data.searchItem || '',
-            searchField: data.searchField || 'nick',
+            searchField: data.searchField || '',
             last: data.last || '',
             size: data.size || '',
             order: data.order || '',

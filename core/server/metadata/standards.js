@@ -243,7 +243,8 @@ var standards = {
         "loadTypePage": "page",
         "enumSortTypes": ["DESC", "ASC"],
         "DESC": "DESC",
-        "ASC": "ASC"
+        "ASC": "ASC",
+        "id": "id"
     },
     "file": {
         "enumFolders": ["user", "common", "bg", "article", "attach"],
