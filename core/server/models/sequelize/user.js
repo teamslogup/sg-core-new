@@ -571,16 +571,24 @@ module.exports = {
                 var include;
 
                 if (searchField && searchItem) {
-                    where[searchField] = {
-                        '$like': '%' + searchItem + '%'
-                    };
+                    if (searchField == STD.common.id) {
+                        where[searchField] = searchItem;
+                    } else {
+                        where[searchField] = {
+                            '$like': '%' + searchItem + '%'
+                        };
+                    }
                 } else if (searchItem) {
                     if (STD.user.enumSearchFields.length > 0) where.$or = [];
                     for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
                         var body = {};
-                        body[STD.user.enumSearchFields[i]] = {
-                            '$like': '%' + searchItem + '%'
-                        };
+                        if (STD.user.enumSearchFields[i] == STD.common.id) {
+                            body[STD.user.enumSearchFields[i]] = searchItem;
+                        } else {
+                            body[STD.user.enumSearchFields[i]] = {
+                                '$like': '%' + searchItem + '%'
+                            };
+                        }
                         where.$or.push(body);
                     }
                 }
