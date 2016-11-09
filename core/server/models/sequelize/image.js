@@ -97,10 +97,38 @@ module.exports = {
                     where.authorId = options.authorId;
                 }
 
-                if(options.searchItem && options.searchField) {
+                if (options.searchItem && options.searchField) {
                     userWhere[options.searchField] = {
                         '$like': "%" + options.searchItem + "%"
                     };
+                }
+
+                if (options.searchField && options.searchItem) {
+
+                    if (options.searchField == STD.common.id) {
+                        where[options.searchField] = options.searchItem;
+                    } else {
+                        where[options.searchField] = {
+                            '$like': options.searchItem + '%'
+                        };
+                    }
+
+                } else if (options.searchItem) {
+                    if (STD.image.enumSearchFields.length > 0) where.$or = [];
+
+                    for (var i = 0; i < STD.image.enumSearchFields.length; i++) {
+                        var body = {};
+
+                        if (STD.image.enumSearchFields[i] == STD.common.id) {
+                            body[STD.image.enumSearchFields[i]] = options.searchItem;
+                        } else {
+                            body[STD.image.enumSearchFields[i]] = {
+                                '$like': options.searchItem + '%'
+                            };
+                        }
+
+                        where.$or.push(body);
+                    }
                 }
 
                 var query = {

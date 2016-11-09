@@ -79,10 +79,32 @@ module.exports = {
                 if (options.authorId !== undefined) where.authorId = options.authorId;
                 if (options.isSolved !== undefined) where.isSolved = options.isSolved;
 
-                if (options.searchItem && options.searchField) {
-                    where[options.searchField] = {
-                        '$like': "%" + options.searchItem + "%"
-                    };
+                if (options.searchField && options.searchItem) {
+
+                    if (options.searchField == STD.common.id) {
+                        where[options.searchField] = options.searchItem;
+                    } else {
+                        where[options.searchField] = {
+                            '$like': options.searchItem + '%'
+                        };
+                    }
+
+                } else if (options.searchItem) {
+                    if (STD.report.enumSearchFields.length > 0) where.$or = [];
+
+                    for (var i = 0; i < STD.report.enumSearchFields.length; i++) {
+                        var body = {};
+
+                        if (STD.report.enumSearchFields[i] == STD.common.id) {
+                            body[STD.report.enumSearchFields[i]] = options.searchItem;
+                        } else {
+                            body[STD.report.enumSearchFields[i]] = {
+                                '$like': options.searchItem + '%'
+                            };
+                        }
+
+                        where.$or.push(body);
+                    }
                 }
 
                 where.createdAt = {

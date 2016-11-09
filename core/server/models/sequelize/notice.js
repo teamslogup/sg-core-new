@@ -95,17 +95,25 @@ module.exports = {
                 if (country) where.country = country;
                 if (type) where.type = type;
 
-                if (searchItem && searchField) {
-                    where[searchField] = {
-                        '$like': "%" + searchItem + "%"
-                    };
-                } else if (searchItem) {
-                    if (NOTICE.enumFields.length > 0) where.$or = [];
-                    for (var i = 0; i < NOTICE.enumFields.length; i++) {
-                        var body = {};
-                        body[NOTICE.enumFields[i]] = {
-                            '$like': '%' + searchItem + '%'
+                if (searchField && searchItem) {
+                    if (searchField == STD.common.id) {
+                        where[searchField] = searchItem;
+                    } else {
+                        where[searchField] = {
+                            '$like': searchItem + '%'
                         };
+                    }
+                } else if (searchItem) {
+                    if (STD.notice.enumFields.length > 0) where.$or = [];
+                    for (var i = 0; i < STD.user.enumFields.length; i++) {
+                        var body = {};
+                        if (STD.notice.enumFields[i] == STD.common.id) {
+                            body[STD.notice.enumFields[i]] = searchItem;
+                        } else {
+                            body[STD.notice.enumFields[i]] = {
+                                '$like': searchItem + '%'
+                            };
+                        }
                         where.$or.push(body);
                     }
                 }
