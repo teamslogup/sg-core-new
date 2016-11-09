@@ -42,7 +42,7 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -85,13 +85,12 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.session.hasAuthorization());
                 apiCreator.add(gets.validate());
                 apiCreator.add(gets.getImages());
                 apiCreator.add(gets.supplement());
@@ -179,8 +178,7 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.session.hasAuthorization());
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
