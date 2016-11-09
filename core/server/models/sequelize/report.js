@@ -70,7 +70,11 @@ module.exports = {
                 return [{
                     'model': sequelize.models.User,
                     'as': 'author',
-                    'attributes': sequelize.models.User.getUserFields()
+                    'attributes': sequelize.models.User.getUserFields(),
+                    'include': {
+                        'model': sequelize.models.UserImage,
+                        'as': 'userImages'
+                    }
                 }];
             },
             'findReportsByOptions': function (options, callback) {

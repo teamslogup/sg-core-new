@@ -1,13 +1,13 @@
-export default function AlertDialogCtrl($scope, AlertDialog) {
+export default function AlertDialogCtrl($scope, dialogHandler) {
     var vm = $scope.vm;
-    AlertDialog.init(vm);
+    dialogHandler.init(vm);
 
     vm.isDialogVisible = false;
     vm.alertTitle = '';
     vm.alertMsg = '';
     vm.isCloseBtnVisible = true;
 
-    AlertDialog.listen(function (title, body, actionText, isCloseBtnVisible) {
+    dialogHandler.listen(function (title, body, actionText, isCloseBtnVisible) {
         vm.isDialogVisible = true;
         vm.alertTitle = title;
         vm.alertMsg = body;
@@ -23,11 +23,11 @@ export default function AlertDialogCtrl($scope, AlertDialog) {
 
     vm.action = function () {
         vm.isDialogVisible = false;
-        AlertDialog.action();
+        dialogHandler.action();
     };
 
     vm.closeDialog = function () {
         vm.isDialogVisible = false;
-        AlertDialog.close();
+        dialogHandler.close();
     };
 }

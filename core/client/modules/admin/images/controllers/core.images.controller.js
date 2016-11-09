@@ -1,4 +1,4 @@
-export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, loadingHandler, metaManager) {
+export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -16,10 +16,40 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
     $scope.form.folder = $scope.imageFolders[0];
     $scope.enumAuthorized = metaManager.std.image.enumAuthorized;
     $scope.isAuthorized = $scope.enumAuthorized[0];
+
     $scope.enumSearchFields = metaManager.std.image.enumSearchFields;
+    $scope.enumSearchFieldsUser = metaManager.std.image.enumSearchFieldsUser;
+    $scope.enumSearchFields = $scope.enumSearchFields.concat($scope.enumSearchFieldsUser);
+
     $scope.form.searchField = metaManager.std.image.defaultSearchFields;
 
+    $scope.isImageDetailVisible = false;
+    $scope.currentImage;
+
     $scope.more = false;
+
+    function parseSearchItem(body) {
+
+        for (var i = 0; i < $scope.enumSearchFieldsUser.length; i++) {
+            if ($scope.enumSearchFieldsUser[i] == body.searchField) {
+                body.searchFieldUser = body.searchField;
+                body.searchItemUser = body.searchItem;
+                delete body.searchField;
+                delete body.searchItem;
+            }
+        }
+
+        return body;
+    }
+
+    $scope.showImageDetail = function (image) {
+        $scope.isImageDetailVisible = true;
+        $scope.currentImage = image;
+    };
+
+    $scope.hideImageDetail = function () {
+        $scope.isImageDetailVisible = false;
+    };
 
     $scope.toggleImageAuthorization = function ($index) {
         var image = $scope.imageList[$index];
@@ -33,7 +63,7 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
             if (status == 200) {
                 $scope.imageList[$index] = data;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
             loadingHandler.endLoading(LOADING.spinnerKey, 'updateImageById');
         });
@@ -42,13 +72,13 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
     $scope.deleteImage = function ($index) {
         var image = $scope.imageList[$index];
 
-        AlertDialog.show('', $filter('translate')('sureDelete'), '삭제', true, function () {
+        dialogHandler.show('', $filter('translate')('sureDelete'), '삭제', true, function () {
             loadingHandler.startLoading(LOADING.spinnerKey, 'deleteImage');
             imagesManager.deleteImage(image, function (status, data) {
                 if (status == 200) {
                     $scope.imageList = $scope.imageList.slice($index, 1);
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
                 loadingHandler.endLoading(LOADING.spinnerKey, 'deleteImage');
             });
@@ -75,8 +105,11 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
 
         toBooleanIsAuthorized();
 
+        var body = angular.copy($scope.form);
+        body = parseSearchItem(body);
+
         loadingHandler.startLoading(LOADING.spinnerKey, 'findImages');
-        imagesManager.findImages($scope.form, function (status, data) {
+        imagesManager.findImages(body, function (status, data) {
             if (status == 200) {
                 $scope.imageListTotal = data.count;
                 $scope.imageList = $scope.imageList.concat(data.rows);
@@ -84,7 +117,7 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findImages');
@@ -107,7 +140,7 @@ export default function ImagesCtrl($scope, $filter, imagesManager, AlertDialog, 
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findImagesMore');

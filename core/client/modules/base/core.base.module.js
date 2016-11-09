@@ -35,7 +35,7 @@ export default angular.module("core.base", [
     .factory('Upload', Upload)
     .factory('Image', Image)
     .service('uploadManager', uploadManager)
-    .service('AlertDialog', alertDialogService)
+    .service('dialogHandler', alertDialogService)
     .service('loadingHandler', loadingHandlerService)
     .controller('AlertDialogCtrl', AlertDialogCtrl)
     .controller('LoadingHandlerCtrl', LoadingHandlerCtrl)

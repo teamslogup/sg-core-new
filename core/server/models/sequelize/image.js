@@ -97,12 +97,7 @@ module.exports = {
                     where.authorId = options.authorId;
                 }
 
-                if (options.searchItem && options.searchField) {
-                    userWhere[options.searchField] = {
-                        '$like': "%" + options.searchItem + "%"
-                    };
-                }
-
+                //이미지 필드 검색
                 if (options.searchField && options.searchItem) {
 
                     if (options.searchField == STD.common.id) {
@@ -131,14 +126,43 @@ module.exports = {
                     }
                 }
 
+                //유저 필드 검색
+                if (options.searchFieldUser && options.searchItemUser) {
+
+                    if (options.searchFieldUser == STD.common.id) {
+                        userWhere[options.searchFieldUser] = options.searchItemUser;
+                    } else {
+                        userWhere[options.searchFieldUser] = {
+                            '$like': options.searchItemUser + '%'
+                        };
+                    }
+
+                } else if (options.searchItemUser) {
+                    if (STD.image.enumSearchFields.length > 0) userWhere.$or = [];
+
+                    for (var i = 0; i < STD.image.enumSearchFields.length; i++) {
+                        var body = {};
+
+                        if (STD.image.enumSearchFields[i] == STD.common.id) {
+                            body[STD.image.enumSearchFields[i]] = options.searchItemUser;
+                        } else {
+                            body[STD.image.enumSearchFields[i]] = {
+                                '$like': options.searchItemUser + '%'
+                            };
+                        }
+
+                        userWhere.$or.push(body);
+                    }
+                }
+
                 var query = {
                     'limit': parseInt(options.size),
                     'where': where,
                     'include': {
-                        model: sequelize.models.User,
+                    model: sequelize.models.User,
                         as: 'author',
                         where: userWhere
-                    }
+                }
                 };
 
                 if (options.orderBy == STD.image.orderUpdate) {

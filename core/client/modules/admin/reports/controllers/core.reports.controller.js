@@ -1,4 +1,4 @@
-export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog, loadingHandler, metaManager) {
+export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
 
@@ -51,7 +51,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
 
         if ($scope.form.reply === undefined || $scope.form.reply === null || $scope.form.reply === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireBody'), '', true);
+            dialogHandler.show('', $filter('translate')('requireBody'), '', true);
             return isValidate;
         }
 
@@ -69,7 +69,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
                     $scope.reportList[$scope.currentIndex] = data;
                     $scope.hideReportDetail();
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
                 loadingHandler.endLoading(LOADING.spinnerKey, 'updateReportById');
             });
@@ -105,7 +105,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findReports');
@@ -128,7 +128,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, AlertDialog
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findReportsMore');
