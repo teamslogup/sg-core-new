@@ -36,19 +36,12 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
 
     this.alertError = function (status, data) {
         if (status == 401) {
-            sessionManager.session = null;
-            this.vm.session = sessionManager.session;
-            this.show('', $filter('translate')('reLoginConfirm'), $filter('translate')('login'), true, function () {
-                this.vm.isLoginVisible = true;
-                this.vm.isContentVisible = true;
-            }, function () {
-                this.vm.isLoginVisible = true;
-                this.vm.isContentVisible = false;
-                this.vm.goIndex();
+            $rootScope.$broadcast("core.alert-dialog.callback", {
+                type: '401'
             });
         } else if(status == 403 && data.code == "403_20") {
             $rootScope.$broadcast("core.alert-dialog.callback", {
-                type: 'showAgreeTerms'
+                type: '403_20'
             });
         } else {
             this.show(status, this.translateError(status, data), '', true);
