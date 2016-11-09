@@ -132,11 +132,8 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
 
         toBooleanIsAuthorized();
 
-        var body = angular.copy($scope.form);
-        body = parseSearchItem(body);
-
         loadingHandler.startLoading(LOADING.spinnerKey, 'findImagesMore');
-        imagesManager.findImages(body, function (status, data) {
+        imagesManager.findImages($scope.form, function (status, data) {
             if (status == 200) {
                 $scope.imageList = $scope.imageList.concat(data.rows);
                 $scope.more = $scope.imageListTotal > $scope.imageList.length;
