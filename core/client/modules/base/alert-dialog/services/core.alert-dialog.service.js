@@ -17,7 +17,9 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
     this.show = function (title, body, actionText, isCloseBtnVisible, actionCallback, closeCallback) {
         this.actionCallback = actionCallback;
         this.closeCallback = closeCallback;
-        this.listenCallback(title, body, actionText, isCloseBtnVisible);
+        if (this.listenCallback) {
+            this.listenCallback(title, body, actionText, isCloseBtnVisible);
+        }
     };
 
     this.action = function () {
