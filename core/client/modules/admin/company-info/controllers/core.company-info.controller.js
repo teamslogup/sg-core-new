@@ -1,4 +1,4 @@
-export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, AlertDialog, loadingHandler, metaManager) {
+export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -29,7 +29,7 @@ export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, Ale
             if (status == 200) {
                 $scope.companyInfo = data;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findCompanyInfo');
@@ -44,7 +44,7 @@ export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, Ale
                 $scope.companyInfo = data;
                 $scope.hideCompanyInfoEdit();
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
         });
     };

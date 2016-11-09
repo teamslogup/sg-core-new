@@ -1,4 +1,4 @@
-export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager, AlertDialog, loadingHandler, metaManager) {
+export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -18,7 +18,7 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
                 setUserChart();
                 setReportChart();
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findDashboardInfo');

@@ -1,4 +1,4 @@
-export default function NoticesCtrl($scope, $sce, $filter, noticesManager, AlertDialog, loadingHandler, metaManager) {
+export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;
@@ -87,23 +87,23 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
 
         if ($scope.form.title === undefined || $scope.form.title === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireTitle'), '', true);
+            dialogHandler.show('', $filter('translate')('requireTitle'), '', true);
             return isValidate;
         }
 
         if ($scope.form.body === undefined || $scope.form.body === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireBody'), '', true);
+            dialogHandler.show('', $filter('translate')('requireBody'), '', true);
             return isValidate;
         }
         if ($scope.form.type === undefined || $scope.form.type === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireType'), '', true);
+            dialogHandler.show('', $filter('translate')('requireType'), '', true);
             return isValidate;
         }
         if ($scope.form.country === undefined || $scope.form.country === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireCountry'), '', true);
+            dialogHandler.show('', $filter('translate')('requireCountry'), '', true);
             return isValidate;
         }
 
@@ -121,7 +121,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
                     $scope.noticeList.unshift(data);
                     $scope.hideNoticeCreate();
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
                 loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
             });
@@ -142,7 +142,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
                     $scope.noticeList[$scope.currentIndex] = data;
                     $scope.hideNoticeDetail();
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
                 loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
             });
@@ -165,7 +165,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findNotices');
@@ -185,7 +185,7 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, Alert
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findNoticesMore');

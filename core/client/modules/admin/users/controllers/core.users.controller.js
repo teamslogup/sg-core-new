@@ -1,4 +1,4 @@
-export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, sessionRemoteManager, AlertDialog, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, sessionRemoteManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -107,7 +107,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
         if ($scope.form.nick === undefined || $scope.form.nick === '') {
             isValidate = false;
-            AlertDialog.show('', $filter('translate')('requireNick'), '', true);
+            dialogHandler.show('', $filter('translate')('requireNick'), '', true);
             return isValidate;
         }
 
@@ -135,7 +135,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                     $scope.userList[index].agreedPhoneNum = body.agreedPhoneNum;
                     $scope.hideUserDetail();
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
                 loadingHandler.endLoading(LOADING.spinnerKey, 'updateUserById');
             });
@@ -159,7 +159,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findAllUsers');
@@ -180,7 +180,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             } else if (status == 404) {
                 $scope.more = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findUsersMore');
@@ -238,7 +238,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             } else if (status == 404) {
 
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
         });
@@ -264,7 +264,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             } else if (status == 404) {
                 $scope.notificationBoxMore = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationBox');
@@ -290,7 +290,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             } else if (status == 404) {
                 $scope.notificationBoxMore = false;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findNotificationBoxMore');
@@ -323,7 +323,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             } else if (status == 404) {
 
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationSwitch');
@@ -332,7 +332,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     $scope.deleteUser = function (index) {
 
-        AlertDialog.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+        dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
             var user = $scope.userList[index];
 
             loadingHandler.startLoading(LOADING.spinnerKey, 'deleteUser');
@@ -340,7 +340,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                 if (status == 200) {
                     $scope.userList.splice(index, 1);
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
 
                 loadingHandler.endLoading(LOADING.spinnerKey, 'deleteUser');
@@ -364,7 +364,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
             } else {
                 notificationSwitch.switch = !notificationSwitch.switch;
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'updateAppNotificationSwitch');
@@ -385,7 +385,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
             } else {
                 notificationPublicSwitch.switch = !notificationPublicSwitch.switch;
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'updatePublicNotificationSwitch');
@@ -401,7 +401,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             if (status == 200) {
                 $scope.currentUser.loginHistories.splice(index, 1);
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
             loadingHandler.endLoading(LOADING.spinnerKey, 'deleteSessionRemote');
         });

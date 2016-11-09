@@ -28,6 +28,8 @@ export default function imagesManager (Image) {
         var query = {};
         if (data.searchItem !== undefined) query.searchItem = data.searchItem;
         if (data.searchField !== undefined) query.searchField = data.searchField;
+        if (data.searchItemUser !== undefined) query.searchItemUser = data.searchItemUser;
+        if (data.searchFieldUser !== undefined) query.searchFieldUser = data.searchFieldUser;
         if (data.authorId !== undefined) query.authorId = data.authorId;
         if (data.last !== undefined) query.last = data.last;
         if (data.size !== undefined) query.size = data.size;

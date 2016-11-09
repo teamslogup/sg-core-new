@@ -208,8 +208,9 @@ var standards = {
         "orderCreate": "orderCreate",
         "orderUpdate": "orderUpdate",
         "enumAuthorized": ["all", "authorized", "unauthorized"],
-        "enumSearchFields": ["id", "nick", "name"],
-        "defaultSearchFields": "nick"
+        "enumSearchFields": ["id"],
+        "enumSearchFieldsUser": ["nick", "name"],
+        "defaultSearchFields": "nick",
     },
     "magic": {
         "reset": ":RESET:",

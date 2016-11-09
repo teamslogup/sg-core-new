@@ -62,10 +62,14 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'searchField', 'authorId', 'last', 'size', 'orderBy', 'sort', 'folder', 'authorized'],
+                acceptable: ['searchItem', 'searchField', 'searchItemUser', 'searchFieldUser', 'authorId', 'last', 'size', 'orderBy', 'sort', 'folder', 'authorized'],
                 essential: [],
                 resettable: [],
                 explains: {
+                    searchItem: '검색할 내용',
+                    searchField: '검색할 필드' + STD.image.enumSearchFields.join(", "),
+                    searchItemUser: '검색할 내용 유저',
+                    searchFieldUser: '검색할 필드 유저' + STD.image.enumSearchFieldsUser.join(", "),
                     authorId: '작성자 id',
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',

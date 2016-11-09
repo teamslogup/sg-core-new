@@ -1,10 +1,11 @@
-export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, loadingHandler, metaManager) {
+export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
 
     $scope.isTermsCreateVisible = false;
     $scope.isTermsAddVersionVisible = false;
     $scope.isTermsCreateFirstTime = true;
+    $scope.isTermsAddVersionFirstTime = true;
 
     $scope.params = {};
     $scope.form = {};
@@ -41,7 +42,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
             language: $scope.currentTerms.language
         };
         $scope.isTermsAddVersionVisible = true;
-        $scope.isTermsCreateFirstTime = false;
+        $scope.isTermsAddVersionFirstTime = false;
     };
 
     $scope.hideTermsAddVersion = function () {
@@ -57,7 +58,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
                 $scope.termsList.unshift(data);
                 $scope.hideTermsCreate();
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
         });
 
@@ -71,14 +72,14 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
                 $scope.selectedTerms.versions.unshift(data);
                 $scope.hideTermsAddVersion();
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
         });
     };
 
     $scope.deleteVersion = function (terms) {
 
-        AlertDialog.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+        dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
             termsManager.deleteTerms(terms, function (status, data) {
                 if (status == 204) {
                     if (terms.id == $scope.currentTerms.id) {
@@ -87,7 +88,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
                         $scope.findTermsById($scope.currentTerms.id);
                     }
                 } else {
-                    AlertDialog.alertError(status, data);
+                    dialogHandler.alertError(status, data);
                 }
             });
         });
@@ -99,7 +100,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
                 $scope.activeVersionId = id;
                 $scope.selectedTerms = data;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
         });
     };
@@ -116,7 +117,7 @@ export default function TermsCtrl($scope, $filter, termsManager, AlertDialog, lo
             } else if (status == 404) {
                 $scope.selectedTerms = undefined;
             } else {
-                AlertDialog.alertError(status, data);
+                dialogHandler.alertError(status, data);
             }
         });
     };
