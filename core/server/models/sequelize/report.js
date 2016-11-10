@@ -119,22 +119,36 @@ module.exports = {
                     '$lt': options.last
                 };
 
-                var query = {
-                    'limit': parseInt(options.size),
-                    'where': where,
-                    'order': [['createdAt', options.sort]],
-                    'include': sequelize.models.Report.getReportInclude()
-                };
+                var reports = {};
 
-                sequelize.models.Report.findAndCountAll(query).then(function (data) {
-                    if (data.rows.length > 0) {
-                        return data;
-                    } else {
-                        throw new errorHandler.CustomSequelizeError(404);
-                    }
-                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                    if (data) {
-                        callback(200, data);
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.Report.findAll({
+                        'limit': parseInt(options.size),
+                        'where': where,
+                        'order': [['createdAt', options.sort]],
+                        'include': sequelize.models.Report.getReportInclude(),
+                        'transaction': t
+                    }).then(function (data) {
+                        if (data.length > 0) {
+                            reports.rows = data;
+                            return sequelize.models.Report.count({
+                                'where': where,
+                                'transaction': t
+                            });
+
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+                    }).then(function (count) {
+                        reports.count = count;
+
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, reports);
                     }
                 });
             },
