@@ -1,4 +1,14 @@
 export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandler, loadingHandler, metaManager) {
+    var vm = null;
+    if ($scope.vm !== undefined) {
+        vm = $scope.vm;
+    } else {
+        vm = $scope.vm = {};
+    }
+
+    if (vm.CDN === undefined) {
+        vm.CDN = metaManager.std.cdn;
+    }
 
     var LOADING = metaManager.std.loading;
 
