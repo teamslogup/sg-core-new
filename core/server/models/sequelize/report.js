@@ -73,7 +73,11 @@ module.exports = {
                     'attributes': sequelize.models.User.getUserFields(),
                     'include': {
                         'model': sequelize.models.UserImage,
-                        'as': 'userImages'
+                        'as': 'userImages',
+                        'include': {
+                            'model': sequelize.models.Image,
+                            'as': 'image'
+                        }
                     }
                 }];
             },
