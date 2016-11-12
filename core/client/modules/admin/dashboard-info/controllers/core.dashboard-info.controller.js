@@ -150,6 +150,38 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
         $scope.reportChart.data = data;
     }
 
+    $scope.loginChart = {
+        labels: ["5월", "6월", "7월", "8월", "9월", "10월", "11월"],
+        series: ['로그인수', '회원수'],
+        data: [
+            [65, 59, 80, 81, 56, 55, 40],
+            [28, 48, 40, 19, 86, 27, 90]
+        ],
+        onClick: function (points, evt) {
+            console.log(points, evt);
+        },
+        datasetOverride: [{yAxisID: 'y-axis-1'}],
+        options: {
+            scales: {
+                yAxes: [
+                    {
+                        id: 'y-axis-1',
+                        type: 'linear',
+                        display: true,
+                        position: 'left'
+                    }
+                ]
+            }
+        },
+        colors: ["#6d8fe4", "#dcdcdc"]
+    };
+
+    $scope.userAgeChart = {
+        labels: ["10대", "20대", "30대", "40대", "50대", "60대 이상"],
+        data: [65, 59, 80, 81, 56, 55],
+        colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d"]
+    };
+
     $scope.userChart = {
         labels: ["5월", "6월", "7월", "8월", "9월", "10월", "11월"],
         series: ['가입자', '탈퇴자'],
@@ -173,8 +205,8 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
                 ]
             }
         },
-        colors: ["#97bbcd",
-            "#BDBDBD"]
+        colors: ["#dcdcdc;",
+            "#ff8f8f;"]
     };
 
 
@@ -198,8 +230,8 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
                 ]
             }
         },
-        colors: ["#BDBDBD",
-            "#D43C4C"]
+        colors: ["#dcdcdc;",
+            "#41b1a0;"]
     };
 
 }
