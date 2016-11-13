@@ -43,6 +43,7 @@ var api = {
                 apiCreator.add(get.validate());
                 apiCreator.add(get.getUsersStatus());
                 apiCreator.add(get.getUsersStatusByMonth());
+                apiCreator.add(get.getUserAgeGroup());
                 apiCreator.add(get.getReportsStatus());
                 apiCreator.add(get.getReportsStatusByMonth());
                 apiCreator.add(get.getImagesStatus());

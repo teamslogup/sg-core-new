@@ -16,6 +16,7 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
             if (status == 200) {
                 $scope.dashboardInfo = data;
                 setUserChart();
+                setUserAgeChart();
                 setReportChart();
             } else {
                 dialogHandler.alertError(status, data);
@@ -24,8 +25,6 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
             loadingHandler.endLoading(LOADING.spinnerKey, 'findDashboardInfo');
         });
     };
-
-    $scope.findDashboardInfo();
 
     function getParams() {
         var today = new Date();
@@ -98,6 +97,43 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
 
         $scope.userChart.labels = labels;
         $scope.userChart.data = data;
+    };
+
+    function setUserAgeChart() {
+
+        var userAgeGroup = $scope.dashboardInfo.userAgeGroup;
+        var data = [0, 0, 0, 0, 0, 0, 0];
+
+        for (var i = 0; i < userAgeGroup.length; i++) {
+            switch (userAgeGroup[i].ageGroup) {
+                case null:
+                    data[6] += userAgeGroup[i].count;
+                    break;
+                case 0:
+                    data[0] += userAgeGroup[i].count;
+                    break;
+                case 10:
+                    data[0] += userAgeGroup[i].count;
+                    break;
+                case 20:
+                    data[1] += userAgeGroup[i].count;
+                    break;
+                case 30:
+                    data[2] += userAgeGroup[i].count;
+                    break;
+                case 40:
+                    data[3] += userAgeGroup[i].count;
+                    break;
+                case 50:
+                    data[4] += userAgeGroup[i].count;
+                    break;
+                default:
+                    data[5] += userAgeGroup[i].count;
+                    break;
+            }
+        }
+
+        $scope.userAgeChart.data = data;
     };
 
     function setReportChart() {
@@ -177,9 +213,16 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
     };
 
     $scope.userAgeChart = {
-        labels: ["10대", "20대", "30대", "40대", "50대", "60대 이상"],
+        labels: ["10대", "20대", "30대", "40대", "50대", "60대 이상", "미입력"],
         data: [65, 59, 80, 81, 56, 55],
-        colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d"]
+        colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d", "#ff9d9d"]
+    };
+
+    $scope.userGenderByAgeChart = {
+        labels: ["10대", "20대", "30대", "40대", "50대", "60대 이상"],
+        data: [[65, 59, 80, 81, 56, 55], [65, 59, 80, 81, 56, 55]],
+        series: ["여성", "남성"],
+        colors: ["#ff9d9d", "#a6c0ff"]
     };
 
     $scope.userChart = {
@@ -233,5 +276,7 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
         colors: ["#dcdcdc;",
             "#41b1a0;"]
     };
+
+    $scope.findDashboardInfo();
 
 }

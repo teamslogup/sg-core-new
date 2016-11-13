@@ -1288,6 +1288,27 @@ module.exports = {
                     }
                 });
 
+            },
+            'getUserAgeGroup': function (callback) {
+
+                var usersAgeGroup = {};
+
+                sequelize.transaction(function (t) {
+                    var query = "SELECT FLOOR((YEAR(NOW()) - YEAR(Users.birth) + 1)/10)*10 as ageGroup, COUNT(*) as count FROM Users GROUP BY ageGroup";
+
+                    return sequelize.query(query, {
+                        type: sequelize.QueryTypes.SELECT,
+                        raw: true
+                    }).then(function (data) {
+                        usersAgeGroup = data;
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, usersAgeGroup);
+                    }
+                });
 
             }
         })
