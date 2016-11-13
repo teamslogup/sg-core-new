@@ -13,6 +13,7 @@ var Profile = require('./profile');
 var Image = require('./image');
 var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
+var OptionalTerms = require('./optional-terms');
 var LoginHistory = require('./login-history');
 var Notification = require('./notification');
 var NotificationBox = require('./notification-box');
@@ -36,6 +37,7 @@ var models = {
     Image: Image,
     ExtinctUser: ExtinctUser,
     Terms: Terms,
+    OptionalTerms: OptionalTerms,
     LoginHistory: LoginHistory,
     Notification: Notification,
     NotificationBox: NotificationBox,
