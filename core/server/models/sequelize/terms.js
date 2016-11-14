@@ -67,8 +67,8 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             "findTermsByOptions": function (options, callback) {
 
-                var query = "SELECT * FROM (SELECT * FROM Terms ORDER BY Terms.startDate DESC) as terms " +
-                    "WHERE terms.startDate <= " + MICRO.now() + " AND terms.language = '" + options.language + "' " +
+                var query = "SELECT * FROM (SELECT * FROM Terms ORDER BY Terms.startDate DESC, Terms.createdAt DESC) as terms " +
+                    "WHERE terms.startDate <= " + MICRO.now() + " AND terms.language LIKE '%" + options.language + "%' " +
                     "AND terms.deletedAt IS NULL " +
                     "GROUP BY terms.title ORDER BY createdAt " + options.sort;
 

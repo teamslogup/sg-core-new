@@ -10,7 +10,9 @@ export default function toMicrotime() {
             if (!microtime) {
                 return "Error Time";
             }
-            microtime = Number(microtime.getTime() + '000');
+
+            var temp = microtime.getTime() + microtime.getTimezoneOffset() * 60 * 1000;
+            microtime = Number(temp + '000');
         } else {
             microtime = "Error Time";
         }
