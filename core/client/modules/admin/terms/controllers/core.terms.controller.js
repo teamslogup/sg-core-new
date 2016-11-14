@@ -95,16 +95,16 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
         });
     };
 
-    $scope.findTermsById = function (id) {
-        termsManager.findTermsById(id, function (status, data) {
-            if (status == 200) {
-                $scope.activeVersionId = id;
-                $scope.selectedTerms = data;
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-        });
-    };
+    // $scope.findTermsById = function (id) {
+    //     termsManager.findTermsById(id, function (status, data) {
+    //         if (status == 200) {
+    //             $scope.activeVersionId = id;
+    //             $scope.selectedTerms = data;
+    //         } else {
+    //             dialogHandler.alertError(status, data);
+    //         }
+    //     });
+    // };
 
     $scope.findTerms = function () {
 
@@ -113,10 +113,40 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
 
         termsManager.findTerms($scope.params, function (status, data) {
             if (status == 200) {
-                $scope.termsList = $scope.termsList.concat(data);
+                $scope.termsList = $scope.termsList.concat(data.rows);
                 $scope.currentTerms = $scope.termsList[0];
             } else if (status == 404) {
                 $scope.selectedTerms = undefined;
+            } else {
+                dialogHandler.alertError(status, data);
+            }
+        });
+    };
+
+    $scope.findTermsByTitle = function (title) {
+        var query = angular.copy($scope.params);
+        query.title = title;
+
+        termsManager.findTerms(query, function (status, data) {
+            if (status == 200) {
+                $scope.activeVersionId = data.selected.id;
+                $scope.selectedTerms = data.selected;
+                $scope.selectedTerms.versions = data.versions;
+            } else {
+                dialogHandler.alertError(status, data);
+            }
+        });
+    };
+
+    $scope.findTermsById = function (appliedId) {
+        var query = angular.copy($scope.params);
+        query.appliedId = appliedId;
+
+        termsManager.findTerms(query, function (status, data) {
+            if (status == 200) {
+                $scope.activeVersionId = data.selected.id;
+                $scope.selectedTerms = data.selected;
+                $scope.selectedTerms.versions = data.versions;
             } else {
                 dialogHandler.alertError(status, data);
             }
@@ -139,7 +169,13 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
 
     $scope.$watch('currentTerms', function (newVal, oldVal) {
         if (newVal != oldVal && newVal !== null) {
-            $scope.findTermsById(newVal.id);
+
+            if(newVal.appliedId !== null){
+                $scope.findTermsById(newVal.appliedId);
+            } else {
+                $scope.findTermsByTitle(newVal.title);
+            }
+
         }
     }, true);
 
