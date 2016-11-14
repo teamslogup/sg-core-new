@@ -7,6 +7,9 @@ gets.validate = function () {
         var COMMON = req.meta.std.common;
         var TERMS = req.meta.std.terms;
 
+        if (req.query.appliedId !== undefined) req.check("appliedId", "400_12").isInt();
+        if (req.query.title !== undefined) req.check("title", "400_8").len(TERMS.minTitleLength, TERMS.maxTitleLength);
+
         if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
         if (req.query.type !== undefined) req.check("type", "400_3").isEnum(TERMS.enumTypes);
         if (req.query.language !== undefined) {
@@ -21,19 +24,51 @@ gets.validate = function () {
 
 gets.setParam = function () {
     return function (req, res, next) {
-        var options = {
-            sort: req.query.sort,
-            language: req.query.language
-        };
 
-        req.models.Terms.findTermsByOptions(options, function (status, data) {
-            if (status == 200) {
-                req.data = data;
-                next();
-            } else {
-                return res.hjson(req, next, status, data);
-            }
-        });
+
+        //아이디가 있을 때
+        if (req.query.appliedId !== undefined) {
+
+            req.models.Terms.findTermsById(req.query.appliedId, function (status, data) {
+                if (status == 200) {
+                    req.data = data;
+                    next();
+                } else {
+                    return res.hjson(req, next, status, data);
+                }
+            });
+
+            //아이디가 없고 타이틀이 있을 때
+        } else if (req.query.title !== undefined) {
+
+            req.models.Terms.findTermsWithTitle(req.query.title, function (status, data) {
+                if (status == 200) {
+                    req.data = data;
+                    next();
+                } else {
+                    return res.hjson(req, next, status, data);
+                }
+            });
+
+            //아무것도 아닐 때 (처음 로딩)
+        } else {
+
+            var options = {
+                sort: req.query.sort,
+                language: req.query.language
+            };
+
+            req.models.Terms.findTermsByOptions(options, function (status, data) {
+                if (status == 200) {
+                    req.data = data;
+                    next();
+                } else {
+                    return res.hjson(req, next, status, data);
+                }
+            });
+
+        }
+
     };
 };
 

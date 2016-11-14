@@ -59,6 +59,8 @@ export default function termsManager(Terms, metaManager, loadingHandler, $filter
         loadingHandler.startLoading(LOADING.spinnerKey, 'findTerms');
 
         var query = {};
+        if (data.appliedId !== undefined) query.appliedId = data.appliedId;
+        if (data.title !== undefined) query.title = data.title;
         if (data.type !== undefined) query.type = data.type;
         if (data.language !== undefined) query.language = data.language;
 

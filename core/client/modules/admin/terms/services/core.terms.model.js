@@ -8,7 +8,7 @@ export default function Terms($resource, termsResources) {
             method: 'PUT'
         },
         query: {
-            isArray: true
+            isArray: false
         }
     })
 }

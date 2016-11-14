@@ -67,10 +67,10 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             "findTermsByOptions": function (options, callback) {
 
-                var query = "SELECT * FROM (SELECT * FROM Terms ORDER BY Terms.startDate DESC, Terms.createdAt DESC) as terms " +
-                    "WHERE terms.startDate <= " + MICRO.now() + " AND terms.language LIKE '%" + options.language + "%' " +
-                    "AND terms.deletedAt IS NULL " +
-                    "GROUP BY terms.title ORDER BY createdAt " + options.sort;
+                var query = "SELECT terms.type, terms.title, terms2.id as appliedId FROM (SELECT * FROM Terms ORDER BY Terms.startDate DESC, Terms.createdAt DESC) as terms " +
+                    "LEFT JOIN (SELECT id FROM Terms WHERE startDate <= " + MICRO.now() + ") as terms2 ON terms2.id = terms.id AND terms.language LIKE '%" + options.language + "%' " +
+                    "WHERE terms.deletedAt IS NULL " +
+                    "GROUP BY terms.title ORDER BY terms.createdAt " + options.sort;
 
                 sequelize.query(query).then(function (data) {
                     if (data && data[0] && data[0].length > 0) {
@@ -80,39 +80,34 @@ module.exports = {
                     }
                 }).catch(errorHandler.catchCallback(callback)).done(function (terms) {
                     if (terms) {
-                        callback(200, terms);
+                        var body = {
+                            rows: terms
+                        };
+                        callback(200, body);
                     }
                 });
             },
-            "findAppliedTermsByOptions": function (options, callback) {
+            "findTermsWithTitle": function (title, callback) {
 
-                var terms;
+                var terms = {};
 
                 sequelize.transaction(function (t) {
-                    return sequelize.models.Terms.findOne({
+
+                    return sequelize.models.Terms.findAll({
                         'where': {
                             'title': {
-                                $like: "%" + options.title + "%"
-                            },
-                            'startDate': {
-                                $lte: options.maxStartDate
+                                "$like": "%" + title + "%"
                             }
                         },
-                        'order': [['startDate', 'DESC']],
+                        'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
+                        'attributes': ['id', 'createdAt'],
                         'transaction': t
                     }).then(function (data) {
 
                         if (data) {
-                            terms = data;
+                            terms.versions = data;
 
-                            return sequelize.models.Terms.findAll({
-                                'where': {
-                                    'title': {
-                                        "$like": "%" + data.title + "%"
-                                    }
-                                },
-                                'order': [['createdAt', 'DESC']],
-                                'attributes': ['id', 'createdAt'],
+                            return sequelize.models.Terms.findById(data[data.length - 1].id, {
                                 'transaction': t
                             });
                         } else {
@@ -120,14 +115,8 @@ module.exports = {
                         }
 
                     }).then(function (data) {
-
-                        if (data) {
-                            terms.dataValues.versions = data;
-                            return true;
-                        } else {
-                            throw new errorHandler.CustomSequelizeError(404);
-                        }
-
+                        terms.selected = data;
+                        return true;
                     });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
@@ -138,15 +127,16 @@ module.exports = {
             },
             "findTermsById": function (id, callback) {
 
-                var terms;
+                var terms = {};
 
                 sequelize.transaction(function (t) {
+
                     return sequelize.models.Terms.findById(id, {
                         'transaction': t
                     }).then(function (data) {
 
                         if (data) {
-                            terms = data;
+                            terms.selected = data;
 
                             return sequelize.models.Terms.findAll({
                                 'where': {
@@ -158,6 +148,7 @@ module.exports = {
                                 'attributes': ['id', 'createdAt'],
                                 'transaction': t
                             });
+
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);
                         }
@@ -165,7 +156,7 @@ module.exports = {
                     }).then(function (data) {
 
                         if (data) {
-                            terms.dataValues.versions = data;
+                            terms.versions = data;
                             return true;
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);

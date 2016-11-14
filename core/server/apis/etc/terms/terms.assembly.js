@@ -57,7 +57,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ["type", "language"],
+                acceptable: ["appliedId", "title", "type", "language"],
                 essential: [],
                 resettable: [],
                 explains: {
