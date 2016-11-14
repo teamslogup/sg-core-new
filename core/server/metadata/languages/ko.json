@@ -195,6 +195,8 @@
   "add": "추가",
   "thisIsAppliedTerms": "현재 적용중인 약관입니다.",
   "content": "내용",
-  "appliedTerms": "적용 약관"
+  "appliedTerms": "적용 약관",
+  "termsManage": "약관 관리",
+  "isEssentialTerms": "는 필수 약관"
 }
 

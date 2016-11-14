@@ -4,8 +4,8 @@ var standards = {
         "staticsUrl": ""
     },
     "admin": {
-        "enumManagements": ["user", "photo", "board", "notice", "report", "notification", "chart"],
-        "enumAppManagements": []
+        "isUseModalAnimation": true,
+        "modalBackDrop": true
     },
     "profile": {
         "enableProfileItems": ["nick", "gender", "birth", "language", "country", "comment", "pfImgId", "website", "role", "name"],
@@ -173,7 +173,8 @@ var standards = {
         "enumSearchFields": ["id", "title"],
         "enumOrderBys": ["createdAt", "updatedAt"],
         "defaultOrderBy": "createdAt",
-        "showAgreeTerms": "showAgreeTerms"
+        "showAgreeTerms": "showAgreeTerms",
+        "modalSize": "md"
     },
     "report": {
         "minBodyLength": 1,
@@ -309,7 +310,8 @@ var standards = {
         "account": "accounts",
         "board": "boards",
         "profile": "profile",
-        "admin": "admin"
+        "admin": "admin",
+        "terms": "terms"
     },
     "cluster": {
         "defaultExecutionDelay": 1000
