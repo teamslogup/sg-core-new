@@ -1,0 +1,759 @@
+@media screen and (max-width: $web-container-size) {
+    #sg-terms-manage {
+        height: inherit;
+        .sg-terms-manage-container {
+            margin: auto;
+            padding: 0 0 50px 0;
+            height: inherit;
+
+            //@media screen and (min-width: $web-min-width) {
+            //    max-width: $web-container-size;
+            //    //padding: 50px 12px 50px 12px;
+            //    padding: 0;
+            //}
+
+            .sg-terms-manage-top {
+                display: none;
+            }
+
+            .sg-terms-manage-main {
+                background-color: white;
+                height: inherit;
+                @include after-clear();
+
+                .sg-terms-manage-main-left {
+                    height: inherit;
+                    display: none;
+
+                    //@media screen and (min-width: $web-min-width) {
+                    //    display: block;
+                    //    float: left;
+                    //
+                    //    background-color: #ebeef7;
+                    //    height: inherit;
+                    //}
+
+                    .sg-terms-manage-main-left-list {
+
+                        //@media screen and (min-width: $web-min-width) {
+                        //    width: 210px;
+                        //}
+
+                        @include after-clear();
+
+                        .sg-terms-manage-main-left-list-add {
+                            height: 42px;
+                            border-radius: 5px;
+                            background-color: $soft-blue;
+
+                            position: relative;
+                            margin: 14px 15px 30px 15px;
+                            text-align: center;
+                            color: white;
+                            line-height: 42px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            font-weight: 500;
+
+                            &:hover {
+                                background-color: $soft-blue-hover;
+                            }
+                        }
+
+                        .sg-terms-manage-main-left-list-item, .sg-terms-manage-main-left-list-item-active {
+                            float: left;
+
+                            //@media screen and (min-width: $web-min-width) {
+                            //    float: none;
+                            //}
+
+                            height: 40px;
+                            line-height: 40px;
+
+                            margin: 8px 15px;
+
+                            cursor: pointer;
+
+                            padding-left: 8px;
+                            padding-right: 8px;
+                            border-radius: 3px;
+
+                            font-size: 16px;
+                            font-weight: 300;
+
+                            color: #9b9fad;
+                        }
+
+                        .sg-terms-manage-main-left-list-item {
+                            &:hover {
+                                background-color: rgba(0, 0, 0, 0.1);
+                            }
+                        }
+
+                        .sg-terms-manage-main-left-list-item-active {
+                            color: #35334a;
+                            font-weight: 700;
+
+                        }
+                    }
+
+                }
+
+                .sg-terms-manage-main-right {
+
+                    $sg-terms-manage-main-right-padding-left-right: 24px;
+                    padding-bottom: 16px;
+
+                    //@media screen and (min-width: $web-min-width) {
+                    //    float: left;
+                    //    width: calc(100% - 210px);
+                    //}
+
+                    @include after-clear();
+
+                    .sg-terms-manage-main-right-top {
+                        @include after-clear();
+                        .sg-terms-manage-main-right-top-title {
+                            float: left;
+                            margin-top: 20px;
+                            padding-bottom: 12px;
+                            padding-left: 20px;
+                        }
+                        .sg-terms-manage-main-right-top-filter {
+                            float: right;
+
+                            position: relative;
+                            top: 22px;
+                            right: 20px;
+                            height: 26px;
+                        }
+                    }
+
+                    .sg-terms-manage-main-top {
+                        $sg-terms-manage-main-top-height: 50px;
+                        height: $sg-terms-manage-main-top-height;
+
+                        //@media screen and (min-width: $web-min-width) {
+                        //    display: none;
+                        //}
+
+                        @include after-clear();
+
+                        .sg-terms-manage-main-top-left {
+                            position: relative;
+                            float: left;
+                            width: calc(100% - 111px);
+                            .sg-terms-manage-main-top-left-select {
+                                width: 100%;
+                                background-color: #f1f3f8;
+                                border-radius: 0;
+                                height: $sg-terms-manage-main-top-height;
+
+                                padding-left: 18px;
+
+                                border: none;
+                            }
+                            //.sg-terms-manage-main-top-left-arrow {
+                            //    pointer-events: none;
+                            //
+                            //    top: 21px;
+                            //    right: 14px;
+                            //    width: 0;
+                            //    height: 0;
+                            //    position: absolute;
+                            //    border-left: 7px solid transparent;
+                            //    border-right: 7px solid transparent;
+                            //    border-top: 8px solid black;
+                            //}
+                        }
+
+                        .sg-terms-manage-main-top-right {
+                            float: left;
+                            height: inherit;
+                            .sg-terms-manage-main-top-right-btn {
+                                width: 111px;
+                                height: inherit;
+                                background-color: $soft-blue;
+
+                                color: white;
+                                text-align: center;
+                                line-height: $sg-terms-manage-main-top-height;
+
+                                cursor: pointer;
+
+                                background-image: url('/pages/admin/assets/images/ic_terms_create_20_2x.png');
+                                background-repeat: no-repeat;
+                                background-size: 20px;
+                                background-position: 14px center;
+                                padding-left: 22px;
+
+                                &:hover {
+                                    background-color: $soft-blue-hover;
+                                }
+                            }
+                        }
+                    }
+
+                    .sg-terms-manage-main-right-title {
+                        background-color: #e6edfe;
+                        height: 42px;
+                        line-height: 42px;
+                        padding: 0 $sg-terms-manage-main-right-padding-left-right;
+
+                        display: none;
+
+                        font-size: 16px;
+
+                        //@media screen and (min-width: $web-min-width) {
+                        //    display: block;
+                        //}
+                    }
+
+                    .sg-terms-manage-main-right-current-version {
+                        display: none;
+                    }
+
+                    .sg-terms-manage-main-right-versions {
+
+                        padding: 8px 16px;
+                        border-bottom: solid 1px #d5dbec;
+
+                        white-space: nowrap;
+                        overflow-x: auto;
+                        //
+                        //@media screen and (min-width: $web-min-width) {
+                        //    padding: 12px $sg-terms-manage-main-right-padding-left-right;
+                        //}
+
+                        @include after-clear();
+
+                        .sg-terms-manage-main-right-versions-add {
+                            position: relative;
+                            top: 0;
+
+                            float: left;
+
+                            width: 26px;
+                            height: 26px;
+                            border-radius: 50%;
+                            background-color: $soft-blue;
+                            border: solid 1px $soft-blue;
+
+                            &:hover {
+                                cursor: pointer;
+                                background-color: $soft-blue-hover;
+                            }
+
+                            @include after-clear();
+
+                            .sg-terms-manage-main-right-versions-add-ic {
+                                float: left;
+                                .sg-terms-manage-main-right-versions-add-ic-width {
+                                    width: 13px;
+                                    height: 1px;
+                                    background-color: white;
+                                    position: relative;
+                                    top: 12px;
+                                    left: 6px;
+                                }
+                                .sg-terms-manage-main-right-versions-add-ic-height {
+                                    width: 1px;
+                                    height: 13px;
+                                    background-color: white;
+                                    position: relative;
+                                    top: 5px;
+                                    left: 12px;
+                                }
+                            }
+
+                            span {
+                                display: none;
+                                padding-left: 25px;
+
+                                line-height: 26px;
+                                color: white;
+                                font-size: 14px;
+                                //
+                                //@media screen and (min-width: $web-min-width) {
+                                //    display: block
+                                //}
+                            }
+
+                        }
+
+                        .sg-terms-manage-main-right-versions-item, .sg-terms-manage-main-right-versions-item-active {
+                            position: relative;
+                            float: left;
+
+                            padding: 0 6px;
+                            color: #8d93a6;
+                            border-radius: 5px;
+
+                            font-size: 16px;
+                            font-weight: 300;
+
+                            cursor: pointer;
+
+                            margin-left: 8px;
+
+                            height: 26px;
+                            line-height: 22px;
+
+                            &:first-child {
+                                margin-left: 0;
+                            }
+                        }
+
+                        .sg-terms-manage-main-right-versions-item {
+                            &:hover {
+                                background-color: rgba(126, 134, 154, 0.1);
+                            }
+                        }
+
+                        .sg-terms-manage-main-right-versions-item-active {
+                            color: $soft-blue;
+                            font-weight: 700;
+                        }
+
+                    }
+
+                    .sg-terms-manage-main-right-date {
+                        height: 37px;
+                        line-height: 37px;
+                        background-color: rgba(#bfc3cf, 0.2);
+
+                        padding: 0 20px;
+                        border-bottom: 1px solid $pale-grey;
+
+                        @include after-clear();
+                        .sg-terms-manage-main-right-body-start-date {
+                            float: left;
+                            margin-right: 28px;
+                            .sg-terms-manage-main-right-body-start-date-title {
+                                display: inline-block;
+                                margin-right: 6px;
+
+                                font-size: 14px;
+                                font-weight: 400;
+
+                                color: #5a5f6e;
+
+                            }
+                            .sg-terms-manage-main-right-body-start-date-body {
+                                display: inline-block;
+
+                                font-size: 14px;
+                                font-weight: 300;
+                                color: #8d93a6;
+                            }
+
+                        }
+
+                        .sg-terms-manage-main-right-body-created-at {
+                            float: left;
+                            .sg-terms-manage-main-right-body-created-at-title {
+                                display: inline-block;
+                                margin-right: 6px;
+
+                                font-size: 14px;
+                                font-weight: 400;
+
+                                color: #5a5f6e;
+                            }
+                            .sg-terms-manage-main-right-body-created-at-body {
+                                display: inline-block;
+
+                                font-size: 14px;
+                                font-weight: 300;
+                                color: #8d93a6;
+                            }
+
+                        }
+
+                        .sg-terms-manage-main-right-applied {
+                            float: right;
+
+                            @include after-clear();
+                            .sg-terms-manage-main-right-applied-img {
+                                float: left;
+
+                                margin-top: 12px;
+                                margin-right: 8px;
+
+                                width: 12px;
+                                height: 12px;
+
+                                background-image: url('/pages/admin/assets/images/ic_terms_check_12_2x.png');
+                                background-repeat: no-repeat;
+                                background-size: 12px;
+                                background-position: center;
+                            }
+                            .sg-terms-manage-main-right-applied-text {
+                                display: none;
+                            }
+                        }
+                    }
+
+                    .sg-terms-manage-main-right-body {
+                        padding: 16px 16px;
+                        //
+                        //@media screen and (min-width: $web-min-width) {
+                        //    padding: $sg-terms-manage-main-right-padding-left-right $sg-terms-manage-main-right-padding-left-right;
+                        //}
+
+                        .sg-terms-manage-main-right-body-top {
+                            height: 40px;
+                            line-height: 40px;
+                            font-size: 14px;
+                            font-weight: 300;
+                            text-align: left;
+                            padding-left: 18px;
+                            border-radius: 3px;
+
+                            background-color: #dff0d8;
+                            color: #3c763d;
+
+                            margin-bottom: 18px;
+
+                        }
+
+                        .sg-terms-manage-main-right-body-content {
+                            font-size: 14px;
+                            font-weight: 300;
+
+                            color: #464646;
+                        }
+                    }
+
+                    .sg-terms-manage-main-right-delete {
+                        margin-right: 16px;
+                        float: right;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (min-width: $web-container-size) {
+    #sg-terms-manage {
+        $sg-terms-manage-margin: 14px;
+        .sg-terms-manage-container {
+            max-width: $web-container-size;
+
+            margin: auto;
+            padding: 50px 12px 50px 12px;
+
+            .sg-terms-manage-top {
+                border-bottom: 1px solid #d5dbec;
+                @include after-clear();
+                .sg-terms-manage-top-title {
+                    float: left;
+                }
+                .sg-terms-manage-top-hint {
+                    float: left;
+
+                    line-height: 40px;
+                    margin-left: 12px;
+                    color: #d4404e;
+
+                    span {
+                        font-family: monospace;
+                    }
+                }
+                .sg-terms-manage-top-filter {
+                    float: right;
+                }
+            }
+
+            .sg-terms-manage-main {
+                margin-top: $sg-terms-manage-margin;
+
+                @include after-clear();
+                .sg-terms-manage-main-left {
+                    float: left;
+
+                    min-height: 600px;
+                    width: 220px;
+                    border-radius: 5px;
+                    background-color: white;
+                    border: solid 1px $pale-grey;
+                    .sg-terms-manage-main-left-list {
+                        margin: 14px 8px;
+                        .sg-terms-manage-main-left-list-add {
+                            margin-bottom: $sg-terms-manage-margin;
+
+                            width: inherit;
+                            height: 40px;
+                            border-radius: 5px;
+                            background-color: $soft-blue;
+                            color: white;
+                            cursor: pointer;
+
+                            text-align: center;
+                            line-height: 40px;
+                            background-image: url('/pages/admin/assets/images/ic_terms_create_20_2x.png');
+                            background-repeat: no-repeat;
+                            background-size: 20px;
+                            background-position: 54px center;
+                            padding-left: 20px;
+
+                            &:hover {
+                                background-color: $soft-blue-hover;
+                            }
+                        }
+
+                        .sg-terms-manage-main-left-list-item, .sg-terms-manage-main-left-list-item-active {
+                            font-size: 14px;
+                            font-weight: 400;
+                            line-height: 42px;
+                            color: #8d93a6;
+                            cursor: pointer;
+
+                            padding-left: 14px;
+                            border-radius: 5px;
+
+                            &:hover {
+                                background-color: rgba(#7e869a, 0.1);
+                                color: #2e314d;
+                            }
+                        }
+
+                        .sg-terms-manage-main-left-list-item-active {
+                            background-color: rgba(#7e869a, 0.1);
+                            color: #2e314d;
+                        }
+
+                    }
+
+                }
+
+                .sg-terms-manage-main-right {
+                    float: left;
+                    min-height: 600px;
+
+                    width: calc(100% - 220px - 14px);
+                    margin-left: $sg-terms-manage-margin;
+
+                    border-radius: 5px;
+                    background-color: white;
+                    border: solid 1px $pale-grey;
+
+                    .sg-terms-manage-main-right-top {
+                        display: none;
+
+                    }
+
+                    .sg-terms-manage-main-top {
+                        display: none;
+                    }
+
+                    .sg-terms-manage-main-right-title {
+                        padding: 16px 20px;
+                        font-size: 18px;
+                        font-weight: 400;
+                        color: #1b1e33;
+
+                        border-bottom: 1px solid $pale-grey;
+                    }
+
+                    .sg-terms-manage-main-right-versions {
+                        padding: 12px 20px;
+                        border-bottom: 1px solid $pale-grey;
+
+                        @include after-clear();
+                        .sg-terms-manage-main-right-versions-add {
+                            float: left;
+
+                            position: relative;
+                            display: inline-block;
+
+                            height: 26px;
+                            width: 84px;
+                            border: solid 1px $soft-blue;
+
+                            top: 0;
+                            border-radius: 17px;
+
+                            color: #6d8fe4;
+                            line-height: 22px;
+
+                            margin-right: 6px;
+
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: $soft-blue;
+                                color: white;
+                                .sg-terms-manage-main-right-versions-add-ic {
+                                    .sg-terms-manage-main-right-versions-add-ic-width {
+                                        background-color: white;
+                                    }
+                                    .sg-terms-manage-main-right-versions-add-ic-height {
+                                        background-color: white;
+                                    }
+                                }
+                            }
+
+                            @include after-clear();
+
+                            .sg-terms-manage-main-right-versions-add-ic {
+                                float: left;
+                                .sg-terms-manage-main-right-versions-add-ic-width {
+                                    width: 11px;
+                                    height: 1px;
+                                    background-color: $soft-blue;
+                                    position: relative;
+                                    top: 12px;
+                                    left: 7px;
+                                }
+                                .sg-terms-manage-main-right-versions-add-ic-height {
+                                    width: 1px;
+                                    height: 11px;
+                                    background-color: $soft-blue;
+                                    position: relative;
+                                    top: 6px;
+                                    left: 12px;
+                                }
+                            }
+
+                            span {
+                                padding-left: 12px;
+                                font-size: 13px;
+                            }
+                        }
+
+                        .sg-terms-manage-main-right-versions-item, .sg-terms-manage-main-right-versions-item-active {
+                            position: relative;
+                            float: left;
+
+                            padding: 0 6px;
+                            color: #8d93a6;
+                            border-radius: 5px;
+
+                            font-size: 16px;
+                            font-weight: 300;
+
+                            cursor: pointer;
+
+                            margin-left: 8px;
+
+                            height: 26px;
+                            line-height: 22px;
+
+                            &:first-child {
+                                margin-left: 0;
+                            }
+                        }
+
+                        .sg-terms-manage-main-right-versions-item {
+                            &:hover {
+                                background-color: rgba(126, 134, 154, 0.1);
+                            }
+                        }
+
+                        .sg-terms-manage-main-right-versions-item-active {
+                            color: $soft-blue;
+                            font-weight: 700;
+                        }
+                    }
+
+                    .sg-terms-manage-main-right-date {
+                        height: 37px;
+                        line-height: 37px;
+                        background-color: rgba(#bfc3cf, 0.2);
+
+                        padding: 0 20px;
+                        border-bottom: 1px solid $pale-grey;
+
+                        @include after-clear();
+                        .sg-terms-manage-main-right-body-start-date {
+                            float: left;
+                            margin-right: 28px;
+                            .sg-terms-manage-main-right-body-start-date-title {
+                                display: inline-block;
+                                margin-right: 6px;
+
+                                font-size: 14px;
+                                font-weight: 400;
+
+                                color: #5a5f6e;
+
+                            }
+                            .sg-terms-manage-main-right-body-start-date-body {
+                                display: inline-block;
+
+                                font-size: 14px;
+                                font-weight: 300;
+                                color: #8d93a6;
+                            }
+
+                        }
+
+                        .sg-terms-manage-main-right-body-created-at {
+                            float: left;
+                            .sg-terms-manage-main-right-body-created-at-title {
+                                display: inline-block;
+                                margin-right: 6px;
+
+                                font-size: 14px;
+                                font-weight: 400;
+
+                                color: #5a5f6e;
+                            }
+                            .sg-terms-manage-main-right-body-created-at-body {
+                                display: inline-block;
+
+                                font-size: 14px;
+                                font-weight: 300;
+                                color: #8d93a6;
+                            }
+
+                        }
+
+                        .sg-terms-manage-main-right-applied {
+                            float: right;
+
+                            @include after-clear();
+                            .sg-terms-manage-main-right-applied-img {
+                                float: left;
+
+                                margin-top: 12px;
+                                margin-right: 8px;
+
+                                width: 12px;
+                                height: 12px;
+
+                                background-image: url('/pages/admin/assets/images/ic_terms_check_12_2x.png');
+                                background-repeat: no-repeat;
+                                background-size: 12px;
+                                background-position: center;
+                            }
+                            .sg-terms-manage-main-right-applied-text {
+                                float: left;
+
+                                color: #599968;
+                            }
+                        }
+                    }
+
+                    .sg-terms-manage-main-right-body {
+                        padding: 16px 16px;
+
+                        .sg-terms-manage-main-right-body-content {
+                            font-size: 12px;
+                            line-height: 20px;
+                            color: #1b1e33;
+                        }
+                    }
+
+                }
+
+            }
+
+        }
+    }
+}
+
+@import "terms-manage-create";
+@import "terms-manage-add-version";

@@ -67,10 +67,12 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             "findTermsByOptions": function (options, callback) {
 
-                var query = "SELECT terms.type, terms.title, terms2.id as appliedId FROM (SELECT * FROM Terms ORDER BY Terms.startDate DESC, Terms.createdAt DESC) as terms " +
-                    "LEFT JOIN (SELECT id FROM Terms WHERE startDate <= " + MICRO.now() + ") as terms2 ON terms2.id = terms.id AND terms.language LIKE '%" + options.language + "%' " +
-                    "WHERE terms.deletedAt IS NULL " +
-                    "GROUP BY terms.title ORDER BY terms.createdAt " + options.sort;
+                var query = "SELECT result.type, result.title, result.appliedId FROM (" +
+                    "SELECT terms.type, terms.title, terms2.id as appliedId, terms.createdAt FROM (SELECT * FROM Terms WHERE deletedAt IS NULL) as terms " +
+                    "LEFT JOIN (SELECT id, startDate FROM Terms WHERE startDate <= " + MICRO.now() + " AND deletedAt IS NULL) as terms2 ON terms2.id = terms.id " +
+                    "WHERE terms.language = '" + options.language + "' " +
+                    "ORDER BY terms2.startDate DESC, terms.createdAt DESC) " +
+                    "result GROUP BY result.title ORDER BY result.createdAt DESC";
 
                 sequelize.query(query).then(function (data) {
                     if (data && data[0] && data[0].length > 0) {
@@ -144,7 +146,7 @@ module.exports = {
                                         "$like": "%" + data.title + "%"
                                     }
                                 },
-                                'order': [['createdAt', 'DESC']],
+                                'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
                                 'attributes': ['id', 'createdAt'],
                                 'transaction': t
                             });
