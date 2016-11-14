@@ -1,0 +1,84 @@
+<div id="sg-terms-manage-add-version" ng-class="isTermsAddVersionVisible ? '' : 'sg-terms-manage-add-version-hide'"
+     ng-if="!isTermsAddVersionFirstTime">
+
+    <div class="sg-terms-manage-add-version-fake" ng-click="hideTermsAddVersion()">
+    </div>
+
+    <div ng-class="isTermsAddVersionVisible ? 'sg-terms-manage-add-version-container' : 'sg-terms-manage-add-version-container-hide'"
+         ng-if="!isTermsAddVersionFirstTime">
+
+        <!--<div class="sg-terms-manage-add-version-title sg-titles">-->
+            <!--{{'addVersion'|translate}}-->
+        <!--</div>-->
+
+        <div class="sg-terms-manage-add-version-close" ng-click="hideTermsAddVersion()">
+
+        </div>
+
+        <div class="sg-terms-manage-add-version-body">
+
+            <div class="sg-terms-manage-add-version-body-top">
+                <div class="sg-terms-manage-add-version-body-type">
+                    <div class="sg-terms-manage-add-version-titles">
+                        {{'type'| translate}}
+                    </div>
+                    <div class="sg-terms-manage-add-version-body-type-body">
+                        <select ng-model="form.type" class="sg-main-view-top-second-sort-btn sg-option" required>
+                            <option ng-repeat="x in enumType" value="{{x}}">{{x | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sg-terms-manage-add-version-body-language">
+                    <div class="sg-terms-manage-add-version-titles">
+                        {{'language'| translate}}
+                    </div>
+                    <div class="sg-terms-manage-add-version-body-language-body">
+                        <select ng-model="form.language" class="sg-main-view-top-second-sort-btn sg-option" required>
+                            <option ng-repeat="x in enumLanguages" value="{{x}}">{{x | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sg-terms-manage-add-version-body-title">
+                <div class="sg-terms-manage-add-version-titles">
+                    {{'title'| translate}}
+                </div>
+                <input ng-model="form.title" type="text" class="sg-terms-manage-add-version-body-title-body sg-input"
+                       placeholder="{{'title'|translate}}" required disabled>
+            </div>
+
+            <div class="sg-terms-manage-add-version-body-content">
+                <div class="sg-terms-manage-add-version-titles">
+                    {{'content'| translate}}
+                </div>
+                <div class="sg-terms-manage-add-version-body-content-body">
+                    <form>
+                        <textarea ck-editor ng-model="form.content" required></textarea>
+                    </form>
+                </div>
+            </div>
+
+            <div class="sg-terms-manage-add-version-body-start-date">
+                <div class="sg-terms-manage-add-version-titles">
+                    {{'applyDate'| translate}}
+                </div>
+                <input class="sg-input" type="text" calendar ng-model="form.startDate" id="startDate"
+                       start-date="datePicker.startDate" end-date="datePicker.endDate" autocomplete=off>
+            </div>
+
+        </div>
+
+        <div class="sg-terms-manage-add-version-bottom">
+            <button class="sg-terms-manage-add-version-bottom-create-btn sg-action-btn" ng-click="addVersion()">
+                {{'add'|translate}}
+            </button>
+            <!--<button class="sg-terms-manage-add-version-bottom-cancel-btn sg-cancel-btn" ng-click="hideTermsAddVersion()">-->
+                <!--{{'cancel'|translate}}-->
+            <!--</button>-->
+        </div>
+
+    </div>
+
+</div>

@@ -1,6 +1,7 @@
 export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
+    $scope.TERMS = metaManager.std.terms;
 
     $scope.isTermsCreateVisible = false;
     $scope.isTermsAddVersionVisible = false;
