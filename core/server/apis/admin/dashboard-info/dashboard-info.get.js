@@ -48,6 +48,19 @@ get.getUsersStatusByMonth = function () {
     };
 };
 
+get.getUserAgeGroup = function () {
+    return function (req, res, next) {
+        req.models.User.getUserAgeGroup(function (status, data) {
+            if (status == 200) {
+                req.data.userAgeGroup = data;
+                next();
+            } else {
+                req.hjson(req, next, status, data);
+            }
+        });
+    };
+};
+
 get.getReportsStatus = function () {
     return function (req, res, next) {
 

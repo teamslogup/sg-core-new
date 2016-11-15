@@ -508,25 +508,63 @@ var mixin = {
              */
             'updateDataByIdAndReturnData': function (id, update, callback) {
                 var loadedData = null;
-                var t = false;
                 this.update(update, {
                     where: {
                         id: id
                     }
                 }).then(function (data) {
                     t = true;
-                    if(data && data[0] > 0){
+                    if (data && data[0] > 0) {
                         loadedData = data[1][0];
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
                     }
-                }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (t) {
-                        if (loadedData) {
-                            callback(200, loadedData);
-                        } else {
-                            callback(404);
-                        }
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (loadedData) {
+                        callback(200, loadedData);
                     }
                 });
+            },
+
+            /**
+             * 아이디를 통해서 데이터 없데이트 후 객체 리턴
+             * @param id
+             * @param update
+             * @param callback - 성공시 200
+             */
+            'updateDataIncludingByIdAndReturnData': function (id, update, include, callback) {
+                var loadedData = null;
+                this.update(update, {
+                    where: {
+                        id: id
+                    }
+                }).then(function (data) {
+                    if (data && data[0] > 0) {
+
+                        this.find({
+                            where: {
+                                id: id
+                            },
+                            include: include
+                        });
+
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).then(function (data) {
+                    if (data) {
+                        loadedData = data;
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (loadedData) {
+                        callback(200, loadedData);
+                    }
+                });
+
             },
 
             /**

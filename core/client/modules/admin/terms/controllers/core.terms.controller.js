@@ -1,6 +1,10 @@
-export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, loadingHandler, metaManager) {
+export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
+    $scope.TERMS = metaManager.std.terms;
+    $scope.ADMIN = metaManager.std.admin;
+    $scope.termsManager = termsManager;
+    $scope.dialogHandler = dialogHandler;
 
     $scope.isTermsCreateVisible = false;
     $scope.isTermsAddVersionVisible = false;
@@ -18,64 +22,9 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
 
     $scope.more = false;
 
-    $scope.enumType = metaManager.std.terms.enumTypes;
+    $scope.enumTypes = metaManager.std.terms.enumTypes;
     $scope.enumLanguages = Object.keys(metaManager.local.languages);
     $scope.params.language = $scope.enumLanguages[0];
-
-    $scope.showTermsCreate = function () {
-        $scope.form.type = $scope.enumType[0];
-        $scope.form.language = $scope.enumLanguages[0];
-        $scope.isTermsCreateVisible = true;
-        $scope.isTermsCreateFirstTime = false;
-    };
-
-    $scope.hideTermsCreate = function () {
-        $scope.isTermsCreateVisible = false;
-        $scope.form = {};
-    };
-
-    $scope.showTermsAddVersion = function () {
-        $scope.form = {
-            title: $scope.currentTerms.title,
-            content: $scope.currentTerms.content,
-            type: $scope.currentTerms.type,
-            language: $scope.currentTerms.language
-        };
-        $scope.isTermsAddVersionVisible = true;
-        $scope.isTermsAddVersionFirstTime = false;
-    };
-
-    $scope.hideTermsAddVersion = function () {
-        $scope.isTermsAddVersionVisible = false;
-        $scope.form = {};
-    };
-
-    $scope.createTerms = function () {
-        var body = angular.copy($scope.form);
-
-        termsManager.createTerms(body, function (status, data) {
-            if (status == 201) {
-                $scope.termsList.unshift(data);
-                $scope.hideTermsCreate();
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-        });
-
-    };
-
-    $scope.addVersion = function () {
-        var body = angular.copy($scope.form);
-
-        termsManager.createTerms(body, function (status, data) {
-            if (status == 201) {
-                $scope.selectedTerms.versions.unshift(data);
-                $scope.hideTermsAddVersion();
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-        });
-    };
 
     $scope.deleteVersion = function (terms) {
 
@@ -94,17 +43,6 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
         });
     };
 
-    $scope.findTermsById = function (id) {
-        termsManager.findTermsById(id, function (status, data) {
-            if (status == 200) {
-                $scope.activeVersionId = id;
-                $scope.selectedTerms = data;
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-        });
-    };
-
     $scope.findTerms = function () {
 
         $scope.termsList = [];
@@ -112,10 +50,40 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
 
         termsManager.findTerms($scope.params, function (status, data) {
             if (status == 200) {
-                $scope.termsList = $scope.termsList.concat(data);
+                $scope.termsList = $scope.termsList.concat(data.rows);
                 $scope.currentTerms = $scope.termsList[0];
             } else if (status == 404) {
                 $scope.selectedTerms = undefined;
+            } else {
+                dialogHandler.alertError(status, data);
+            }
+        });
+    };
+
+    $scope.findTermsByTitle = function (title) {
+        var query = angular.copy($scope.params);
+        query.title = title;
+
+        termsManager.findTerms(query, function (status, data) {
+            if (status == 200) {
+                $scope.selectVersionId = data.selected.id;
+                $scope.selectedTerms = data.selected;
+                $scope.selectedTerms.versions = data.versions;
+            } else {
+                dialogHandler.alertError(status, data);
+            }
+        });
+    };
+
+    $scope.findTermsById = function (appliedId) {
+        var query = angular.copy($scope.params);
+        query.appliedId = appliedId;
+
+        termsManager.findTerms(query, function (status, data) {
+            if (status == 200) {
+                $scope.selectVersionId = data.selected.id;
+                $scope.selectedTerms = data.selected;
+                $scope.selectedTerms.versions = data.versions;
             } else {
                 dialogHandler.alertError(status, data);
             }
@@ -137,12 +105,72 @@ export default function TermsCtrl($scope, $filter, termsManager, dialogHandler, 
     }, true);
 
     $scope.$watch('currentTerms', function (newVal, oldVal) {
-        if (newVal != oldVal && newVal !== null) {
-            $scope.findTermsById(newVal.id);
+        if (newVal != oldVal) {
+            if ($scope.currentTerms) {
+                if ($scope.currentTerms.appliedId) {
+                    $scope.findTermsById($scope.currentTerms.appliedId);
+                } else {
+                    $scope.findTermsByTitle($scope.currentTerms.title);
+                }
+            }
         }
     }, true);
 
     $scope.selectTerms = function (terms) {
         $scope.currentTerms = terms;
     };
+
+    $scope.openCreateTerms = function (terms) {
+        if (terms) {
+            var query = angular.copy($scope.params);
+            if (terms.appliedId) {
+                query.appliedId = terms.appliedId;
+            } else {
+                query.title = terms.title;
+            }
+            termsManager.findTerms(query, function (status, data) {
+                if (status == 200) {
+                    openModal(data.selected);
+                } else {
+                    return dialogHandler.alertError(status, data);
+                }
+            });
+        } else {
+            openModal();
+        }
+    };
+
+    function openModal (terms) {
+        if (terms) {
+            delete terms.startDate;
+        }
+        var createInstance = $uibModal.open({
+            animation: $scope.ADMIN.isUseModalAnimation,
+            backdrop: $scope.ADMIN.modalBackDrop,
+            templateUrl: 'coreCreateTerms.html',
+            controller: 'CreateTermsCtrl',
+            size: $scope.TERMS.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                terms: function () {
+                    return terms;
+                }
+            }
+        });
+
+        createInstance.result.then(function (result) {
+            if (terms) {
+                $scope.selectVersionId = result.selected.id;
+                $scope.selectedTerms = result.selected;
+                $scope.selectedTerms.versions = result.versions;
+            } else {
+                $scope.termsList.unshift(result.selected);
+                $scope.currentTerms = result.selected;
+            }
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
 }

@@ -107,7 +107,7 @@ put.validate = function () {
     };
 };
 
-put.dataSet = function() {
+put.dataSet = function () {
     return function (req, res, next) {
         const MAGIC = req.meta.std.magic;
         var update = {};
@@ -145,12 +145,15 @@ put.dataSet = function() {
 
 put.updateUser = function () {
     return function (req, res, next) {
-        req.models.User.updateDataById(req.params.id, req.update, function(status, body) {
-            if (status == 500) {
+        req.models.User.updateDataByIdAndReturnData(req.params.id, req.update, function (status, body) {
+            if (status == 204) {
+                req.data = data;
+                next();
+            } else if (status == 500) {
                 logger.e(body);
                 return res.hjson(req, next, status, body);
             } else {
-                next();
+                return res.hjson(req, next, status, body);
             }
         });
     };
@@ -158,7 +161,7 @@ put.updateUser = function () {
 
 put.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 204);
+        res.hjson(req, next, 200, req.data);
     };
 };
 

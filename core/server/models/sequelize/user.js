@@ -100,10 +100,6 @@ module.exports = {
             'type': Sequelize.BOOLEAN,
             'allowNull': true
         },
-        'agreedTermsAt': {
-            'type': Sequelize.BIGINT,
-            'allowNull': true
-        },
         'profileId': {
             'reference': 'Profile',
             'referenceKey': 'id',
@@ -1087,7 +1083,20 @@ module.exports = {
                     login(req, loadedUser, loginHistory, callback);
                 }
             },
-            destroyUser: function (id, callback) {
+            destroyUserWithOtherInfo(id, callback) {
+                sequelize.models.User.destroyUser(id, function(t, callback2) {
+                    return sequelize.models.Report.findAll({
+                        where: {},
+                        transaction: t
+                    }).then(function(data) {
+                        console.log('destroyUserWithOtherInfo',data);
+                        return callback2(t);
+                    });
+                }, function(status, data) {
+                    callback(status, data);
+                });
+            },
+            destroyUser: function (id, transactionFuncs, callback) {
                 var isSuccess = false;
                 var self = this;
 
@@ -1146,6 +1155,21 @@ module.exports = {
                                     transaction: t
                                 }));
 
+                                function nextCallback(t, id, loadedData) {
+                                    // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
+                                    if (STD.user.deletedUserStoringDay > 0) {
+                                        var userDel = sequelize.models.ExtinctUser.build({
+                                            userId: id,
+                                            data: JSON.stringify(loadedData)
+                                        });
+                                        return userDel.save({transaction: t}).then(function () {
+                                            isSuccess = true;
+                                        });
+                                    } else {
+                                        isSuccess = true;
+                                    }
+                                }
+
                                 return Promise.all(historyTasks).then(function (devices) {
                                     return Promise.all(providerTasks).then(function (providers) {
                                         return loadedData.destroy({
@@ -1153,20 +1177,14 @@ module.exports = {
                                             cascade: true,
                                             transaction: t
                                         }).then(function (data) {
-                                            // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
-                                            if (STD.user.deletedUserStoringDay > 0) {
-                                                var userDel = sequelize.models.ExtinctUser.build({
-                                                    userId: id,
-                                                    data: JSON.stringify(loadedData)
-                                                });
-                                                return userDel.save({transaction: t}).then(function () {
-                                                    isSuccess = true;
+                                            if (transactionFuncs) {
+                                                return transactionFuncs(t, function(t) {
+                                                    return nextCallback(t, id, loadedData);
                                                 });
                                             } else {
-                                                isSuccess = true;
+                                                return nextCallback(t, id, loadedData);
                                             }
                                         });
-
                                     });
                                 });
                             }
@@ -1288,6 +1306,27 @@ module.exports = {
                     }
                 });
 
+            },
+            'getUserAgeGroup': function (callback) {
+
+                var usersAgeGroup = {};
+
+                sequelize.transaction(function (t) {
+                    var query = "SELECT FLOOR((YEAR(NOW()) - YEAR(Users.birth) + 1)/10)*10 as ageGroup, COUNT(*) as count FROM Users GROUP BY ageGroup";
+
+                    return sequelize.query(query, {
+                        type: sequelize.QueryTypes.SELECT,
+                        raw: true
+                    }).then(function (data) {
+                        usersAgeGroup = data;
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, usersAgeGroup);
+                    }
+                });
 
             }
         })

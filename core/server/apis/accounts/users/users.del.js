@@ -26,7 +26,18 @@ del.removeAllSessions = function () {
 
 del.destroyUser = function () {
     return function (req, res, next) {
-        req.models.User.destroyUser(req.params.id, function (status, data) {
+
+        // function sample(t, callback) {
+        //     return req.models.Report.destroy({
+        //         where: {id: 1},
+        //         transaction: t
+        //     }).then(function (data) {
+        //         console.log('Report.destroy', data);
+        //         callback(t);
+        //     });
+        // }
+
+        req.models.User.destroyUser(req.params.id, null, function (status, data) {
             if (status == 204) {
                 res.hjson(req, next, 204);
             } else {

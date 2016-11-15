@@ -2,6 +2,7 @@ var path = require('path');
 var filePath = path.resolve(__filename, '../').split('/');
 var resource = filePath[filePath.length - 1];
 
+var top = require('./' + resource + '.top.js');
 var gets = require('./' + resource + '.gets.js');
 var get = require('./' + resource + '.get.js');
 var post = require('./' + resource + '.post.js');
@@ -36,11 +37,13 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(top.hasAuthorization());
                 apiCreator.add(get.validate());
                 apiCreator.add(get.setParam());
                 apiCreator.add(get.supplement());
@@ -57,22 +60,20 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ["appliedId", "title", "type", "language"],
+                acceptable: [],
                 essential: [],
                 resettable: [],
-                explains: {
-                    "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
-                    "language": "언어 코드 ko"
-                },
+                explains: {},
                 defaults: {},
                 response: {},
-                title: '이용약관 조회',
+                title: '선택 이용약관 동의 조회',
                 state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -94,20 +95,16 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ["type", "title", "content", "language", "startDate"],
-                essential: ["type", "title", "content", "language", "startDate"],
+                acceptable: ["termsId"],
+                essential: ["termsId"],
                 resettable: [],
                 explains: {
-                    "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),
-                    "title": "이용약관 제목",
-                    "content": "이용약관 내용",
-                    "language": "언어 코드 ko",
-                    "startDate": "약관 적용일"
+                    "termsId": "이용약관 id",
                 },
                 defaults: {},
                 response: {},
                 role: STD.user.roleAdmin,
-                title: '이용약관 생성',
+                title: '선택 이용약관 동의 생성',
                 state: 'development'
             };
 
@@ -115,13 +112,13 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.session.hasAuthorization(STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(post.isOptionalTerms());
                 apiCreator.add(post.setParam());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
@@ -146,7 +143,7 @@ var api = {
                 response: {},
                 role: STD.user.roleAdmin,
                 param: 'id',
-                title: '이용약관 제거',
+                title: '선택 이용약관 동의 제거',
                 state: 'development'
             };
 
@@ -154,12 +151,12 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.session.hasAuthorization(STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(top.hasAuthorization());
                 apiCreator.add(del.validate());
                 apiCreator.add(del.destroy());
                 apiCreator.add(del.supplement());
