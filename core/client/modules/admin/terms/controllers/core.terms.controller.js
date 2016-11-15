@@ -132,6 +132,26 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
     };
 
     $scope.openCreateTerms = function (terms) {
+        if (terms) {
+            var query = angular.copy($scope.params);
+            if (terms.appliedId) {
+                query.appliedId = terms.appliedId;
+            } else {
+                query.title = terms.title;
+            }
+            termsManager.findTerms(query, function (status, data) {
+                if (status == 200) {
+                    openModal(data.selected);
+                } else {
+                    return dialogHandler.alertError(status, data);
+                }
+            });
+        } else {
+            openModal();
+        }
+    };
+
+    function openModal (terms) {
         var createInstance = $uibModal.open({
             animation: $scope.ADMIN.isUseModalAnimation,
             backdrop: $scope.ADMIN.modalBackDrop,
@@ -157,5 +177,5 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
         }, function () {
             console.log("cancel modal page");
         });
-    };
+    }
 }
