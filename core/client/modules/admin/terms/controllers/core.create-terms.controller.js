@@ -1,11 +1,16 @@
-export default function CreateTermsCtrl ($scope, $uibModalInstance, scope, termsManager) {
+export default function CreateTermsCtrl ($scope, $uibModalInstance, scope, terms) {
     var now = new Date();
     $scope.localNow = (new Date(now.getTime() + 24*60*60*1000)).toDateString();
 
     $scope.enumTypes = scope.enumTypes;
     $scope.enumLanguages = scope.enumLanguages;
 
-    $scope.form = {};
+    if (!terms) {
+        $scope.form = {};
+    } else {
+        $scope.form = terms;
+        $scope.terms = terms;
+    }
 
     $scope.form.type = $scope.enumTypes[0];
     $scope.form.language = $scope.enumLanguages[0];
