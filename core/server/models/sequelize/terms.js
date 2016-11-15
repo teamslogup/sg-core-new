@@ -41,8 +41,7 @@ module.exports = {
         },
         'startDate': {
             'type': Sequelize.BIGINT,
-            'allowNull': false,
-            'unique': true
+            'allowNull': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -59,6 +58,11 @@ module.exports = {
         'updatedAt': false,
         'paranoid': true,
         'charset': 'utf8',
+        indexes: [{
+            unique: true,
+            fields: ['title', 'startDate'],
+            name: 'terms_title_startDate'
+        }],
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
