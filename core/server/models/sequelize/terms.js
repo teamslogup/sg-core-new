@@ -41,7 +41,8 @@ module.exports = {
         },
         'startDate': {
             'type': Sequelize.BIGINT,
-            'allowNull': false
+            'allowNull': false,
+            'unique': true
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
