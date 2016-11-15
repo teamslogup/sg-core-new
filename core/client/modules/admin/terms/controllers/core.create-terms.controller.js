@@ -7,13 +7,24 @@ export default function CreateTermsCtrl ($scope, $uibModalInstance, scope, terms
 
     if (!terms) {
         $scope.form = {};
+        $scope.form.type = $scope.enumTypes[0];
+        $scope.form.language = $scope.enumLanguages[0];
     } else {
-        $scope.form = terms;
         $scope.terms = terms;
+        var query = angular.copy(scope.params);
+        if (terms.appliedId) {
+            query.appliedId = terms.appliedId;
+        } else {
+            query.title = terms.title;
+        }
+        scope.termsManager.findTerms(query, function (status, data) {
+            if (status == 200) {
+                $scope.form = data.selected;
+            } else {
+                $uibModalInstance.dismiss('cancel');
+            }
+        });
     }
-
-    $scope.form.type = $scope.enumTypes[0];
-    $scope.form.language = $scope.enumLanguages[0];
 
     $scope.create = function () {
         var body = angular.copy($scope.form);
