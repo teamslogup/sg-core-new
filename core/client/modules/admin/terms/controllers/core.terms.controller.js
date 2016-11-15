@@ -132,14 +132,6 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
     };
 
     $scope.openCreateTerms = function (terms) {
-        if (terms) {
-            $scope.form = {
-                title: $scope.currentTerms.title,
-                content: $scope.currentTerms.content,
-                type: $scope.currentTerms.type,
-                language: $scope.currentTerms.language
-            };
-        }
         var createInstance = $uibModal.open({
             animation: $scope.ADMIN.isUseModalAnimation,
             backdrop: $scope.ADMIN.modalBackDrop,
