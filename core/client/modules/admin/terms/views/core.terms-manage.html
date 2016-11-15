@@ -30,7 +30,7 @@
                     <p>{{ selectedTerms.title }} <span class="sg-core-monospace" data-ng-if="selectedTerms.type == TERMS.typeEssential">*</span></p>
                 </div>
                 <div class="sg-core-version-wrap">
-                    <button type="button" class="sg-core-button" data-ng-click="openAddVersion()">
+                    <button type="button" class="sg-core-button" data-ng-click="openCreateTerms(currentTerms)">
                         <i></i>
                         <i></i>
                         <span>{{ 'addVersion' | translate }}</span>
@@ -72,4 +72,3 @@
     </div>
 </div>
 <create-terms></create-terms>
-<add-terms-version></add-terms-version>

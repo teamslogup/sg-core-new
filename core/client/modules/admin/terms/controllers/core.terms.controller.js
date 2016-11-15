@@ -26,18 +26,18 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
     $scope.enumLanguages = Object.keys(metaManager.local.languages);
     $scope.params.language = $scope.enumLanguages[0];
 
-    $scope.addVersion = function () {
-        var body = angular.copy($scope.form);
-
-        termsManager.createTerms(body, function (status, data) {
-            if (status == 201) {
-                $scope.selectedTerms.versions.unshift(data);
-                $scope.hideTermsAddVersion();
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-        });
-    };
+    // $scope.addVersion = function () {
+    //     var body = angular.copy($scope.form);
+    //
+    //     termsManager.createTerms(body, function (status, data) {
+    //         if (status == 201) {
+    //             $scope.selectedTerms.versions.unshift(data);
+    //             $scope.hideTermsAddVersion();
+    //         } else {
+    //             dialogHandler.alertError(status, data);
+    //         }
+    //     });
+    // };
 
     $scope.deleteVersion = function (terms) {
 
@@ -131,7 +131,15 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
         $scope.currentTerms = terms;
     };
 
-    $scope.openCreateTerms = function () {
+    $scope.openCreateTerms = function (terms) {
+        if (terms) {
+            $scope.form = {
+                title: $scope.currentTerms.title,
+                content: $scope.currentTerms.content,
+                type: $scope.currentTerms.type,
+                language: $scope.currentTerms.language
+            };
+        }
         var createInstance = $uibModal.open({
             animation: $scope.ADMIN.isUseModalAnimation,
             backdrop: $scope.ADMIN.modalBackDrop,
@@ -141,33 +149,19 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
             resolve: {
                 scope: function () {
                     return $scope;
+                },
+                terms: function () {
+                    return terms;
                 }
             }
         });
 
         createInstance.result.then(function (result) {
-            $scope.termsList.unshift(result);
-        }, function () {
-            console.log("cancel modal page");
-        });
-    };
-
-    $scope.openAddVersion = function () {
-        var addInstance = $uibModal.open({
-            animation: $scope.ADMIN.isUseModalAnimation,
-            backdrop: $scope.ADMIN.modalBackDrop,
-            templateUrl: 'coreAddTermsVersion.html',
-            controller: 'AddTermsVersionCtrl',
-            size: $scope.TERMS.modalSize,
-            resolve: {
-                scope: function () {
-                    return $scope;
-                }
+            if (terms) {
+                $scope.selectedTerms.unshift(result);
+            } else {
+                $scope.termsList.unshift(result);
             }
-        });
-
-        addInstance.result.then(function (result) {
-            $scope.selectedTerms.versions.unshift(result);
         }, function () {
             console.log("cancel modal page");
         });
