@@ -333,7 +333,6 @@ Account.prototype.changePassword = function (pass, callback) {
         });
 };
 
-
 /**
  * account link methods.
  phone
@@ -613,6 +612,36 @@ Account.prototype.findPassAsPhone = function (callback) {
                     } else {
                         self.setFixture('secret', res.body);
                     }
+                    callback();
+                });
+        });
+};
+
+Account.prototype.changePhone = function (callback) {
+    var self = this;
+    var testPhone = "+82108998111111";
+    request(app).post(url.senderPhone)
+        .set("Cookie", self.cookie)
+        .send({
+            type: STD.user.authPhoneChange,
+            phoneNum: testPhone
+        })
+        .end(function (err, res) {
+            res.status.should.exactly(200);
+            res.body.should.be.an.String;
+            self.authToken = res.body;
+
+            request(app).post(url.authPhone)
+                .set("Cookie", self.cookie)
+                .send({
+                    type: STD.user.authPhoneChange,
+                    token: self.authToken
+                })
+                .end(function (err, res) {
+                    res.status.should.exactly(200);
+                    res.body.phoneNum.should.be.an.String;
+                    res.body.phoneNum.should.exactly(testPhone);
+                    self.setFixture('phoneNum', res.body.phoneNum);
                     callback();
                 });
         });

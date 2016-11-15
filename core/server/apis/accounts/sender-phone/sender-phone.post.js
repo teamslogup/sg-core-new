@@ -25,9 +25,10 @@ post.checkPhoneNumber = function () {
 
         req.models.User.findUserByPhoneNumber(req.body.phoneNum, function(status, data) {
 
-            // 연동이던 가입이던, 유저가 현재의 폰번호로 가입 / 연동한 이력이 없어야한다.
+            // 연동, 가입, 휴대폰번호변경은 번호가 없어야함
             if (req.body.type == USER.authPhoneSignup
-                || req.body.type == USER.authPhoneAdding) {
+                || req.body.type == USER.authPhoneAdding
+                || req.body.type == USER.authPhoneChange) {
                 // 유저가 없어야만 넘김.
                 if (status == 404) {
                     return next();

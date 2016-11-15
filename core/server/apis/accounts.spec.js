@@ -469,6 +469,17 @@ describe('Email Accounts Api Tests', function () {
         phoneUser.signup(done);
     });
 
+    it('should change phone number', function (done) {
+        phoneUser.changePhone(done);
+    });
+
+    it('should load changed phone user', function (done) {
+        phoneUser.loadUser(function() {
+            phoneUser.getData('phoneNum').should.exactly('+82108998111111');
+            done();
+        });
+    });
+
     it('should add email id and pass', function (done) {
         phoneUser.addNormalIdAndPass('abc12', '123qwe', done);
     });

@@ -43,8 +43,6 @@ var api = {
                 apiCreator.add(post.sendSMS());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
-
-                
             }
             else {
                 return params;

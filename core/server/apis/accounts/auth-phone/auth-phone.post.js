@@ -8,8 +8,16 @@ post.validate = function () {
     return function (req, res, next) {
         const SMS = req.meta.std.sms;
         const USER = req.meta.std.user;
-        req.check('type', '400_3').isEnum([USER.authPhoneAdding, USER.authPhoneFindPass, USER.authPhoneFindId]);
+        req.check('type', '400_3').isEnum([USER.authPhoneAdding, USER.authPhoneFindPass, USER.authPhoneFindId, USER.authPhoneChange]);
         req.check('token', '400_13').len(SMS.authNumLength, SMS.authNumLength);
+
+        if (req.body.type == USER.authPhoneAdding
+            || req.body.type == USER.authPhoneChange) {
+            if (!req.isAuthenticated()) {
+                return res.hjson(req, next, 403);
+            }
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -73,6 +81,8 @@ post.updateUser = function () {
                     res.hjson(req, next, 404);
                 }
             });
+        } else {
+            next();
         }
     };
 };
@@ -102,6 +112,28 @@ post.updateNewPass = function () {
     }
 };
 
+post.updatePhoneNumber = function () {
+    return function (req, res, next) {
+        var USER = req.meta.std.user;
+        if (req.body.type == USER.authPhoneChange) {
+            var t = false;
+            req.user.updateAttributes({
+                phoneNum: req.loadedAuth.key
+            }).then(function (user) {
+                t = true;
+            }).catch(errorHandler.catchCallback(function (status, data) {
+                return res.hjson(req, next, status, data);
+            })).done(function () {
+                if (t == true) {
+                    next();
+                }
+            });
+        } else {
+            next();
+        }
+    };
+};
+
 post.sendPassword = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
@@ -129,6 +161,9 @@ post.supplement = function () {
         if (process.env.NODE_ENV == "test") {
             if (req.body.type == USER.authPhoneFindId) {
                 return res.hjson(req, next, 200, {aid: req.user.aid});
+            }
+            else if (req.body.type == USER.authPhoneChange) {
+                return res.hjson(req, next, 200, {phoneNum: req.user.phoneNum});
             }
             else if (req.body.type == USER.authPhoneFindPass) {
                 return res.hjson(req, next, 200, req.newPass);
