@@ -100,7 +100,7 @@ module.exports = {
                             'title': title
                         },
                         'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
-                        'attributes': ['id', 'createdAt'],
+                        'attributes': ['id', 'startDate', 'createdAt'],
                         'transaction': t
                     }).then(function (data) {
 
@@ -143,7 +143,7 @@ module.exports = {
                                     'title': data.title
                                 },
                                 'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
-                                'attributes': ['id', 'createdAt'],
+                                'attributes': ['id', 'startDate', 'createdAt'],
                                 'transaction': t
                             });
 
@@ -186,7 +186,7 @@ module.exports = {
                                     'title': data.title
                                 },
                                 'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
-                                'attributes': ['id', 'createdAt'],
+                                'attributes': ['id', 'startDate', 'createdAt'],
                                 'transaction': t
                             });
 
