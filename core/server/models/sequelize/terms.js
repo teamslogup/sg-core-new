@@ -97,9 +97,7 @@ module.exports = {
 
                     return sequelize.models.Terms.findAll({
                         'where': {
-                            'title': {
-                                "$like": "%" + title + "%"
-                            }
+                            'title': title
                         },
                         'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
                         'attributes': ['id', 'createdAt'],
@@ -142,9 +140,7 @@ module.exports = {
 
                             return sequelize.models.Terms.findAll({
                                 'where': {
-                                    'title': {
-                                        "$like": "%" + data.title + "%"
-                                    }
+                                    'title': data.title
                                 },
                                 'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
                                 'attributes': ['id', 'createdAt'],
@@ -171,6 +167,50 @@ module.exports = {
                         callback(200, terms);
                     }
                 });
+            },
+            "createTerms": function (body, callback) {
+
+                var terms = {};
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.Terms.create(body, {
+                        'transaction': t
+                    }).then(function (data) {
+
+                        if (data) {
+                            terms.selected = data;
+
+                            return sequelize.models.Terms.findAll({
+                                'where': {
+                                    'title': data.title
+                                },
+                                'order': [['startDate', 'DESC'], ['createdAt', 'ASC']],
+                                'attributes': ['id', 'createdAt'],
+                                'transaction': t
+                            });
+
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    }).then(function (data) {
+
+                        if (data) {
+                            terms.versions = data;
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, terms);
+                    }
+                });
+
             },
             "deleteTerms": function (now, callback) {
                 var query = 'UPDATE Terms SET deletedAt = "' + now + '" WHERE id != (SELECT x.id FROM (SELECT MAX(t.id) AS id FROM Terms t) x)';
