@@ -26,19 +26,6 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
     $scope.enumLanguages = Object.keys(metaManager.local.languages);
     $scope.params.language = $scope.enumLanguages[0];
 
-    // $scope.addVersion = function () {
-    //     var body = angular.copy($scope.form);
-    //
-    //     termsManager.createTerms(body, function (status, data) {
-    //         if (status == 201) {
-    //             $scope.selectedTerms.versions.unshift(data);
-    //             $scope.hideTermsAddVersion();
-    //         } else {
-    //             dialogHandler.alertError(status, data);
-    //         }
-    //     });
-    // };
-
     $scope.deleteVersion = function (terms) {
 
         dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
@@ -118,11 +105,13 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
     }, true);
 
     $scope.$watch('currentTerms', function (newVal, oldVal) {
-        if (newVal != oldVal && newVal !== null) {
-            if(newVal.appliedId !== null){
-                $scope.findTermsById(newVal.appliedId);
-            } else {
-                $scope.findTermsByTitle(newVal.title);
+        if (newVal != oldVal) {
+            if ($scope.currentTerms) {
+                if ($scope.currentTerms.appliedId) {
+                    $scope.findTermsById($scope.currentTerms.appliedId);
+                } else {
+                    $scope.findTermsByTitle($scope.currentTerms.title);
+                }
             }
         }
     }, true);
@@ -152,6 +141,9 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
     };
 
     function openModal (terms) {
+        if (terms) {
+            delete terms.startDate;
+        }
         var createInstance = $uibModal.open({
             animation: $scope.ADMIN.isUseModalAnimation,
             backdrop: $scope.ADMIN.modalBackDrop,
@@ -170,9 +162,12 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
 
         createInstance.result.then(function (result) {
             if (terms) {
-                $scope.selectedTerms.unshift(result);
+                $scope.selectVersionId = result.selected.id;
+                $scope.selectedTerms = result.selected;
+                $scope.selectedTerms.versions = result.versions;
             } else {
-                $scope.termsList.unshift(result);
+                $scope.termsList.unshift(result.selected);
+                $scope.currentTerms = result.selected;
             }
         }, function () {
             console.log("cancel modal page");
