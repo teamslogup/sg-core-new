@@ -39,7 +39,7 @@
                          data-ng-repeat="item in selectedTerms.versions"
                          data-ng-click="findTermsById(item.id)"
                          data-ng-class="{'sg-selected': item.id == selectVersionId}">
-                        <p>ver.{{ $index }}</p>
+                        <p>{{ item.startDate | microTimeToDate }}</p>
                     </div>
                 </div>
                 <div class="sg-core-date-wrap" data-ng-class="{'sg-core-applied': selectVersionId == currentTerms.appliedId}">
