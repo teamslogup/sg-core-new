@@ -19,6 +19,7 @@ import LoadingHandlerCtrl from './loading-handler/controllers/core.loading-handl
 import alertDialogService from './alert-dialog/services/core.alert-dialog.service';
 import AlertDialogCtrl from './alert-dialog/controllers/core.alert-dialog.controller';
 
+import 'angularjs-datepicker';
 
 export default angular.module("core.base", [
     coreCommon,
@@ -27,7 +28,8 @@ export default angular.module("core.base", [
     cookies,
     ngResource,
     uiBootstrap,
-    'angularFileUpload'
+    'angularFileUpload',
+    '720kb.datepicker'
 ])
     .provider('metaManager', metaManager)
     .service('errorHandler', errorHandler)

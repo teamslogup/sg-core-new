@@ -6,9 +6,8 @@ import CreateTermsCtrl from './controllers/core.create-terms.controller';
 import createTerms from './directives/create-terms/core.create-terms';
 import routes from './config/core.terms.route';
 
-import 'angularjs-datepicker';
 
-export default angular.module("core.terms", ['720kb.datepicker'])
+export default angular.module("core.terms", [])
     .config(routes)
     .constant("termsResources", termsResources)
     .factory("Terms", Terms)
