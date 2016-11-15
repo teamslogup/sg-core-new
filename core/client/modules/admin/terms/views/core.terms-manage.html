@@ -19,7 +19,7 @@
                 </button>
                 <ul>
                     <li data-ng-repeat="item in termsList"
-                        data-ng-class="{'sg-core-selected': item.id == currentTerms.id}"
+                        data-ng-class="{'sg-core-selected': item.title == currentTerms.title}"
                         data-ng-click="selectTerms(item)">
                         <p>{{ item.title }} <span class="sg-core-monospace" data-ng-if="item.type == TERMS.typeEssential">*</span></p>
                     </li>
