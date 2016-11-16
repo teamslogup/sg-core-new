@@ -17,7 +17,7 @@ gets.validate = function () {
             req.check('searchFieldUser', '400_28').isEnum(IMAGE.enumSearchFieldsUser);
         }
         if (req.query.last === undefined) req.query.last = MICRO.now();
-        if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
+        if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingAdminLength;
         if (req.query.orderBy === undefined) req.query.orderBy = IMAGE.orderCreate;
         if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
 
