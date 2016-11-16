@@ -21,8 +21,6 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
     $scope.enumSearchFieldsUser = metaManager.std.image.enumSearchFieldsUser;
     $scope.enumSearchFields = $scope.enumSearchFields.concat($scope.enumSearchFieldsUser);
 
-    $scope.form.searchField = metaManager.std.image.defaultSearchFields;
-
     $scope.isImageDetailVisible = false;
     $scope.currentImage;
 
@@ -107,7 +105,6 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
 
         var body = angular.copy($scope.form);
         body = parseSearchItem(body);
-
         loadingHandler.startLoading(LOADING.spinnerKey, 'findImages');
         imagesManager.findImages(body, function (status, data) {
             if (status == 200) {
