@@ -160,4 +160,10 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
             $scope.findImages();
         }
     }, true);
+
+    $scope.$on("app.image.callback", function (event, args) {
+        if (args.type == 'delete') {
+            $scope.imageList.splice($scope.imageList.indexOf(args.data), 1);
+        }
+    });
 }
