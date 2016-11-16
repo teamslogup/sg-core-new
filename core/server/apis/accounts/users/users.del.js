@@ -13,7 +13,7 @@ del.validate = function () {
 
 del.removeAllSessions = function () {
     return function (req, res, next) {
-        req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.user.id, function(status, data) {
+        req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.user.id, function (status, data) {
             if (status == 204) {
                 next();
             }
@@ -39,11 +39,27 @@ del.destroyUser = function () {
 
         req.models.User.destroyUser(req.params.id, null, function (status, data) {
             if (status == 204) {
-                res.hjson(req, next, 204);
+                next();
             } else {
                 res.hjson(req, next, status, data);
             }
         });
+    };
+};
+
+del.deleteOptionalTerms = function () {
+    return function (req, res, next) {
+
+        req.models.OptionalTerms.deleteOptionalTermsByUserId(req.params.id, function (status, data) {
+            next();
+        });
+
+    };
+};
+
+del.supplement = function () {
+    return function (req, res, next) {
+        res.hjson(req, next, 204);
     };
 };
 

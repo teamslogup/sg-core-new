@@ -5,12 +5,15 @@ var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var path = require('path');
 var request = require('request');
+var micro = require('microtime-nodejs');
 
 post.validate = function () {
     return function (req, res, next) {
 
         var USER = req.meta.std.user;
         var SMS = req.meta.std.sms;
+        var OPTIONAL_TERMS = req.meta.std.optionalTerms;
+
         req.check('type', '400_3').isEnum(USER.enumSignUpTypes);
 
         var type = req.body.type;
@@ -99,6 +102,10 @@ post.validate = function () {
             req.check('token', '400_8').len(5, 500);
         }
 
+        if (req.body.optionalTerms !== undefined) {
+            req.check('optionalTerms', '400_12').isNumberIds(OPTIONAL_TERMS.maxOptionalTermsCount);
+        }
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -109,7 +116,7 @@ post.checkSocialProvider = function () {
         var USER = req.meta.std.user;
 
         if (req.body.type == USER.signUpTypeSocial) {
-            req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.uid, req.body.secret, function(status, data) {
+            req.models.Provider.checkAndRefreshToken(req.body.provider, req.body.uid, req.body.secret, function (status, data) {
                 if (status == 200) {
                     next();
                 } else {
@@ -146,7 +153,8 @@ post.createUser = function () {
             country: req.body.country || req.country,
             language: req.body.language || req.language,
             agreedEmail: req.body.agreedEmail,
-            agreedPhoneNum: req.body.agreedPhoneNum
+            agreedPhoneNum: req.body.agreedPhoneNum,
+            agreedTermsAt: micro.now()
         };
 
         if (req.body.type == USER.signUpTypePhoneEmail) {
@@ -175,13 +183,27 @@ post.createUser = function () {
     };
 };
 
+post.createOptionalTerms = function () {
+    return function (req, res, next) {
+
+        if (req.body.optionalTerms !== undefined) {
+            req.models.OptionalTerms.createOptionalTerms(req.createdUser.id, req.body.optionalTerms, function (status, data) {
+                next();
+            });
+        } else {
+            next();
+        }
+
+    };
+};
+
 post.sendEmailAuth = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
         var FLAG = req.meta.std.flag;
 
         if (req.body.type == USER.signUpTypeEmail && !FLAG.isAutoVerifiedEmail) {
-            req.coreUtils.notification.email.signup(req, {},req.createdUser.auth, req.createdUser, function (status, data) {
+            req.coreUtils.notification.email.signup(req, {}, req.createdUser.auth, req.createdUser, function (status, data) {
                 // if (status == 503) return res.hjson(req, next, 503, err);
                 next();
             });

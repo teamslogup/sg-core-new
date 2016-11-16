@@ -100,6 +100,10 @@ module.exports = {
             'type': Sequelize.BOOLEAN,
             'allowNull': true
         },
+        'agreedTermsAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
+        },
         'profileId': {
             'reference': 'Profile',
             'referenceKey': 'id',
