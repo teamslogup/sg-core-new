@@ -176,6 +176,9 @@ var standards = {
         "showAgreeTerms": "showAgreeTerms",
         "modalSize": "md"
     },
+    "optionalTerms": {
+        "maxOptionalTermsCount": 10
+    },
     "report": {
         "minBodyLength": 1,
         "maxBodyLength": 10000,

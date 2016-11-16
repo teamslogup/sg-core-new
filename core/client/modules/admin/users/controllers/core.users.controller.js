@@ -59,6 +59,8 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             agreedEmail: $scope.currentUser.agreedEmail,
             agreedPhoneNum: $scope.currentUser.agreedPhoneNum
         };
+        splitBirth($scope.currentUser.birth);
+
         $scope.isUserDetailVisible = true;
         $scope.isUserDetailFirstTime = false;
 
@@ -67,9 +69,19 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     };
 
+    function splitBirth(str) {
+
+        var date = str.split("-");
+
+        $scope.form.birthYear = Number(date[0]);
+        $scope.form.birthMonth= Number(date[1]);
+        $scope.form.birthDay = Number(date[2]);
+    }
+
     $scope.hideUserDetail = function () {
         $scope.isUserDetailVisible = false;
         $scope.form = {};
+        $scope.exitEditMode();
     };
 
     $scope.$on('$locationChangeStart', function (event, next, current) {
@@ -127,7 +139,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                     $scope.userList[index].nick = body.nick;
                     $scope.userList[index].name = body.name;
                     $scope.userList[index].gender = body.gender;
-                    $scope.userList[index].birth = body.birthYear + ' ' + body.birthMonth + ' ' + body.birthDay;
+                    $scope.userList[index].birth = data.birth;
                     $scope.userList[index].country = body.country;
                     $scope.userList[index].language = body.language;
                     $scope.userList[index].role = body.role;

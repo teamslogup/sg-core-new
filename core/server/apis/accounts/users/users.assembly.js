@@ -121,7 +121,8 @@ var api = {
                     'platform',
                     'device',
                     'version',
-                    'token'
+                    'token',
+                    'optionalTerms'
                 ],
                 essential: [
                     'type',
@@ -149,7 +150,8 @@ var api = {
                     'platform': 'OS 및 버전',
                     'device': '휴대폰 기종',
                     'version': '앱버전',
-                    'token': '푸시를 위한 디바이스토큰'
+                    'token': '푸시를 위한 디바이스토큰',
+                    'optionalTerms': '선택 약관 리스트'
                 },
                 defaults: {
                     'type': USER.signUpTypeEmail,
@@ -171,7 +173,8 @@ var api = {
                     'platform': 'iOS 10.0',
                     'device': 'iPhone 6s',
                     'version': '1.0.0',
-                    'token': '23kljflaksdjf23ijlrjlksdjflkasdjfsfad'
+                    'token': '23kljflaksdjf23ijlrjlksdjflkasdjfsfad',
+                    'optionalTerms': ''
                 },
                 response: resforms.user,
                 title: '일반회원가입',
@@ -189,6 +192,7 @@ var api = {
                 apiCreator.add(post.validate());
                 apiCreator.add(post.checkSocialProvider());
                 apiCreator.add(post.createUser());
+                apiCreator.add(post.createOptionalTerms());
                 apiCreator.add(post.sendEmailAuth());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
@@ -287,6 +291,8 @@ var api = {
                 apiCreator.add(del.validate());
                 apiCreator.add(del.removeAllSessions());
                 apiCreator.add(del.destroyUser());
+                apiCreator.add(del.deleteOptionalTerms());
+                apiCreator.add(del.supplement());
                 apiCreator.run();
             }
             else {

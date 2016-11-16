@@ -95,15 +95,14 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ["termsId"],
-                essential: ["termsId"],
+                acceptable: ["termsIds"],
+                essential: ["termsIds"],
                 resettable: [],
                 explains: {
-                    "termsId": "이용약관 id",
+                    "termsIds": "이용약관 id 배열 ,로 구분",
                 },
                 defaults: {},
                 response: {},
-                role: STD.user.roleAdmin,
                 title: '선택 이용약관 동의 생성',
                 state: 'development'
             };
@@ -118,7 +117,6 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(post.isOptionalTerms());
                 apiCreator.add(post.setParam());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
@@ -141,7 +139,6 @@ var api = {
                 },
                 defaults: {},
                 response: {},
-                role: STD.user.roleAdmin,
                 param: 'id',
                 title: '선택 이용약관 동의 제거',
                 state: 'development'

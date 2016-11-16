@@ -46,7 +46,7 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            "findOptionalTermsByOptions": function (userId, callback) {
+            'findOptionalTermsByOptions': function (userId, callback) {
 
                 var query = {
                     'where': {
@@ -71,6 +71,66 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function (data) {
                     if (data) {
                         callback(200, data);
+                    }
+                });
+
+            },
+            'createOptionalTerms': function (userId, termsIds, callback) {
+
+                var optionalTermsList = [];
+
+                termsIds = termsIds.split(',');
+                for (var i = 0; i < termsIds.length; i++) {
+                    var temp = {
+                        userId: userId,
+                        termsId: termsIds[i]
+                    };
+                    optionalTermsList.push(temp);
+                }
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.Terms.findAll({
+                        'where': {
+                            id: termsIds,
+                            type: STD.terms.typeOptional
+                        },
+                        'transaction': t
+                    }).then(function (termsArray) {
+                        if (termsArray.length == termsIds.length) {
+                            return sequelize.models.OptionalTerms.bulkCreate(optionalTermsList, {
+                                'individualHooks': true,
+                                'transaction': t
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404, {
+                                code: '404_12'
+                            });
+                        }
+                    }).then(function (optionalTerms) {
+
+                        if (optionalTerms) {
+                            return optionalTerms;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data) {
+                        callback(201, data);
+                    }
+                });
+
+            },
+            'deleteOptionalTermsByUserId': function (userId, callback) {
+
+                sequelize.models.OptionalTerms.destroy({where: {userId: userId}}).then(function () {
+                    return true;
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        return callback(204);
                     }
                 });
 
