@@ -45,8 +45,13 @@ export default function imagesManager (Image) {
     }
 
     function deleteImage (image, callback) {
-        image = new Image(image);
-        image.$remove(function (data) {
+        var body = {
+            folder: image.folder,
+            imageIds: image.id.toString(),
+            _method: 'DELETE'
+        };
+        image = new Image(body);
+        image.$save(function () {
             callback(204);
         }, function (data) {
             callback(data.status, data.data);
