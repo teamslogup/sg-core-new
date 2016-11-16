@@ -138,15 +138,15 @@ module.exports = {
                     }
 
                 } else if (options.searchItemUser) {
-                    if (STD.image.enumSearchFields.length > 0) userWhere.$or = [];
+                    if (STD.image.enumSearchFieldsUser.length > 0) userWhere.$or = [];
 
-                    for (var i = 0; i < STD.image.enumSearchFields.length; i++) {
+                    for (var i = 0; i < STD.image.enumSearchFieldsUser.length; i++) {
                         var body = {};
 
-                        if (STD.image.enumSearchFields[i] == STD.common.id) {
-                            body[STD.image.enumSearchFields[i]] = options.searchItemUser;
+                        if (STD.image.enumSearchFieldsUser[i] == STD.common.id) {
+                            body[STD.image.enumSearchFieldsUser[i]] = options.searchItemUser;
                         } else {
-                            body[STD.image.enumSearchFields[i]] = {
+                            body[STD.image.enumSearchFieldsUser[i]] = {
                                 '$like': options.searchItemUser + '%'
                             };
                         }
@@ -159,10 +159,10 @@ module.exports = {
                     'limit': parseInt(options.size),
                     'where': where,
                     'include': {
-                    model: sequelize.models.User,
+                        model: sequelize.models.User,
                         as: 'author',
                         where: userWhere
-                }
+                    }
                 };
 
                 if (options.orderBy == STD.image.orderUpdate) {
