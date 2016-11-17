@@ -158,6 +158,18 @@ post.logInUser = function () {
     };
 };
 
+post.loginCountUpsert = function () {
+    return function (req, res, next) {
+        var now = new Date((new Date()).getTime() + req.meta.std.timeZone);
+        req.models.LoginCount.upsertLoginCount(now, function (status, data) {
+            if (status != 204) {
+                logger.e(data);
+            }
+        });
+        next();
+    };
+};
+
 post.supplement = function () {
     return function (req, res, next) {
         res.hjson(req, next, 200, req.user.toSecuredJSON());

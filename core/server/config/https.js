@@ -11,12 +11,12 @@ module.exports = function (app) {
     server.http = http.createServer(app);
     if (STD.flag.isUseHttps) {
         var keyPath = __dirname + "/../../../app/server/config/ssl/key.pem",
-            certPath = __dirname + "/../../../app/server/config/ssl/cert.pem";
-        if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
+            csrPath = __dirname + "/../../../app/server/config/ssl/csr.pem";
+        if (fs.existsSync(keyPath) && fs.existsSync(csrPath)) {
             server.isUseHttps = true;
             server.https = https.createServer({
-                key: fs.readFileSync(keyPath),
-                cert: fs.readFileSync(certPath)
+                key: fs.readFileSync(keyPath, 'utf8'),
+                csr: fs.readFileSync(csrPath, 'utf8')
             }, app);
         }
     }
