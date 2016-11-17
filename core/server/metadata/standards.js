@@ -214,7 +214,7 @@ var standards = {
         "orderUpdate": "orderUpdate",
         "enumAuthorized": ["all", "authorized", "unauthorized"],
         "enumSearchFields": ["id"],
-        "enumSearchFieldsUser": ["nick", "name"],
+        "enumSearchFieldsUser": ["id", "nick", "name"],
         "defaultSearchFields": "nick",
     },
     "magic": {

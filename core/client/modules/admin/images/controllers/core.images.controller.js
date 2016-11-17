@@ -21,6 +21,9 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
     $scope.enumSearchFieldsUser = metaManager.std.image.enumSearchFieldsUser;
     $scope.enumSearchFields = $scope.enumSearchFields.concat($scope.enumSearchFieldsUser);
 
+    $scope.enumSearchFieldsUser.unshift('all');
+    $scope.form.searchFieldUser = $scope.enumSearchFieldsUser[0];
+
     $scope.isImageDetailVisible = false;
     $scope.currentImage;
 

@@ -139,7 +139,7 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
     function setReportChart() {
         var reportsStatusByMonth = $scope.dashboardInfo.reportsStatusByMonth;
         var createdReports = reportsStatusByMonth.createdReports;
-        var deletedReports = reportsStatusByMonth.deletedReports;
+        var solvedReports = reportsStatusByMonth.solvedReports;
 
         var labels = [];
         var data = [[], []];
@@ -167,15 +167,15 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
                 data[0].unshift(0);
             }
 
-            var deletedReportsNotMatched = true;
-            for (var k = 0; k < deletedReports.length; k++) {
-                if (deletedReports[k].month == currentMonth) {
-                    data[1].unshift(deletedReports[k].count);
-                    deletedReportsNotMatched = false;
+            var solvedReportsNotMatched = true;
+            for (var k = 0; k < solvedReports.length; k++) {
+                if (solvedReports[k].month == currentMonth) {
+                    data[1].unshift(solvedReports[k].count);
+                    solvedReportsNotMatched = false;
                 }
             }
 
-            if (deletedReportsNotMatched) {
+            if (solvedReportsNotMatched) {
                 data[1].unshift(0);
             }
 
@@ -215,7 +215,11 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
     $scope.userAgeChart = {
         labels: ["10대", "20대", "30대", "40대", "50대", "60대 이상", "미입력"],
         data: [65, 59, 80, 81, 56, 55],
-        colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d", "#ff9d9d"]
+        colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d", "#ff9d9d"],
+        options: {
+            responsive: false,
+            maintainAspectRatio: false
+        }
     };
 
     $scope.userGenderByAgeChart = {
