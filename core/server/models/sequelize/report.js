@@ -10,6 +10,8 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var micro = require('microtime-nodejs');
+
 module.exports = {
     fields: {
         'body': {
@@ -35,10 +37,14 @@ module.exports = {
             'type': Sequelize.STRING,
             'allowNull': true
         },
-        'isSolved': {
-            'type': Sequelize.BOOLEAN,
-            'allowNull': false,
-            'defaultValue': false
+        // 'isSolved': {
+        //     'type': Sequelize.BOOLEAN,
+        //     'allowNull': false,
+        //     'defaultValue': false
+        // },
+        'solvedAt': {
+            'type': Sequelize.BIGINT,
+            'allowNull': true
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -85,7 +91,9 @@ module.exports = {
                 var where = {};
 
                 if (options.authorId !== undefined) where.authorId = options.authorId;
-                if (options.isSolved !== undefined) where.isSolved = options.isSolved;
+                if (options.isSolved !== undefined) {
+                    where.solvedAt = options.isSolved ? micro.now() : false;
+                }
 
                 if (options.searchField && options.searchItem) {
 
@@ -168,7 +176,9 @@ module.exports = {
 
                         return sequelize.models.Report.count({
                             where: {
-                                isSolved: true
+                                solvedAt: {
+                                    $not: null
+                                }
                             },
                             transaction: t
                         });
@@ -197,20 +207,22 @@ module.exports = {
 
                     return sequelize.query(query, {
                         type: sequelize.QueryTypes.SELECT,
-                        raw: true
-                    }).then(function (createdUser) {
-                        reportsStatusByMonth.createdReports = createdUser;
+                        raw: true,
+                        transaction: t
+                    }).then(function (createdReport) {
+                        reportsStatusByMonth.createdReports = createdReport;
 
                         var query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Reports) as ReportsByMonth ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
                             'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY ReportsByMonth.month ';
 
                         return sequelize.query(query, {
                             type: sequelize.QueryTypes.SELECT,
-                            raw: true
+                            raw: true,
+                            transaction: t
                         });
                     }).then(function (deletedReports) {
-                        reportsStatusByMonth.deletedReports = deletedReports;
+                        reportsStatusByMonth.solvedReports = deletedReports;
                         return true;
                     });
 
