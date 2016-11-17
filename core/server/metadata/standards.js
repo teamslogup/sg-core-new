@@ -345,6 +345,9 @@ var standards = {
         "minMonthArrayLength": 1,
         "maxMonthArrayLength": 10,
         "defaultMonthsLength": 5
+    },
+    "dialog": {
+        "isUseAnimation": true
     }
 };
 

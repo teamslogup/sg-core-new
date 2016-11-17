@@ -1,6 +1,6 @@
 <div data-ng-controller="AlertDialogCtrl">
     <div class="sg-alert-dialog" ng-if="vm.isDialogVisible">
-        <div class="sg-alert-dialog-container">
+        <div class="sg-alert-dialog-container" data-ng-class="{'sg-alert-dialog-animation': vm.DIALOG.isUseAnimation}">
             <!--<div class="sg-alert-dialog-top">-->
             <!--<div class="sg-alert-dialog-top-text">{{alertTitle}}</div>-->
             <!--</div>-->
@@ -17,7 +17,8 @@
                             ng-if="vm.isCloseBtnVisible && vm.alertAction ">
                         취소
                     </button>
-                    <button class="sg-alert-dialog-bottom-container-action-btn" ng-click="vm.action()" ng-if="vm.alertAction">
+                    <button class="sg-alert-dialog-bottom-container-action-btn" ng-click="vm.action()"
+                            ng-if="vm.alertAction">
                         {{vm.alertAction}}
                     </button>
                 </div>

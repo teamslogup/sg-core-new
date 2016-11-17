@@ -1,5 +1,6 @@
-export default function AlertDialogCtrl($scope, dialogHandler) {
+export default function AlertDialogCtrl($scope, dialogHandler, metaManager) {
     var vm = $scope.vm;
+    vm.DIALOG = metaManager.std.dialog;
     dialogHandler.init(vm);
 
     vm.isDialogVisible = false;
