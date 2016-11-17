@@ -33,30 +33,32 @@ $sg-alert-dialog-container-top: 200px;
         background: white;
         box-shadow: 0 0 29.6px 10.4px rgba(4, 0, 0, 0.1);
 
-        animation-name: alertDialogAnimation;
-        -webkit-animation-name: alertDialogAnimation;
-        -moz-animation-name: alertDialogAnimation;
-        -o-animation-name: alertDialogAnimation;
+        &.sg-alert-dialog-animation {
+            animation-name: alertDialogAnimation;
+            -webkit-animation-name: alertDialogAnimation;
+            -moz-animation-name: alertDialogAnimation;
+            -o-animation-name: alertDialogAnimation;
 
-        animation-duration: .4s;
-        -webkit-animation-duration: .4s;
-        -moz-animation-duration: .4s;
-        -o-animation-duration: .4s;
+            animation-duration: .4s;
+            -webkit-animation-duration: .4s;
+            -moz-animation-duration: .4s;
+            -o-animation-duration: .4s;
 
-        animation-timing-function: ease-in-out;
-        -webkit-animation-timing-function: ease-in-out;
-        -moz-animation-timing-function: ease-in-out;
-        -o-animation-timing-function: ease-in-out;
+            animation-timing-function: ease-in-out;
+            -webkit-animation-timing-function: ease-in-out;
+            -moz-animation-timing-function: ease-in-out;
+            -o-animation-timing-function: ease-in-out;
 
-        animation-delay: 0s;
-        -webkit-animation-delay: 0s;
-        -moz-animation-delay: 0s;
-        -o-animation-delay: 0s;
+            animation-delay: 0s;
+            -webkit-animation-delay: 0s;
+            -moz-animation-delay: 0s;
+            -o-animation-delay: 0s;
 
-        animation-fill-mode: forwards;
-        -webkit-animation-fill-mode: forwards;
-        -moz-animation-fill-mode: forwards;
-        -o-animation-fill-mode: forwards;
+            animation-fill-mode: forwards;
+            -webkit-animation-fill-mode: forwards;
+            -moz-animation-fill-mode: forwards;
+            -o-animation-fill-mode: forwards;
+        }
 
         @media screen and (min-width: $mobile-max-width) {
             width: 400px;
