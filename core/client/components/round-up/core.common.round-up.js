@@ -5,7 +5,7 @@ export default function roundUp() {
             return Number(n) === n && n % 1 !== 0;
         }
 
-        var result = '';
+        var result = 0;
 
         if (input) {
             input = parseFloat(input);

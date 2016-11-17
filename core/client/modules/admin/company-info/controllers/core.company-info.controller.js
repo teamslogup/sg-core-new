@@ -11,7 +11,7 @@ export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, dia
     $scope.isCompanyInfoEditVisible = false;
 
     $scope.form = {};
-    $scope.companyInfo = undefined;
+    $scope.companyInfo = {};
 
     $scope.showCompanyInfoEdit = function () {
         $scope.isCompanyInfoEditVisible = true;
@@ -28,6 +28,8 @@ export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, dia
         companyInfoManager.findCompanyInfo(function (status, data) {
             if (status == 200) {
                 $scope.companyInfo = data;
+            } else if (status == 404) {
+
             } else {
                 dialogHandler.alertError(status, data);
             }

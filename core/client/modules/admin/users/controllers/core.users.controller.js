@@ -70,12 +70,13 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
     };
 
     function splitBirth(str) {
+        if(str){
+            var date = str.split("-");
 
-        var date = str.split("-");
-
-        $scope.form.birthYear = Number(date[0]);
-        $scope.form.birthMonth= Number(date[1]);
-        $scope.form.birthDay = Number(date[2]);
+            $scope.form.birthYear = Number(date[0]);
+            $scope.form.birthMonth= Number(date[1]);
+            $scope.form.birthDay = Number(date[2]);
+        }
     }
 
     $scope.hideUserDetail = function () {
