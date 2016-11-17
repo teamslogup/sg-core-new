@@ -16,7 +16,7 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
             if (status == 200) {
                 $scope.dashboardInfo = data;
                 setUserChart();
-                // setUserAgeChart();
+                setUserAgeChart();
                 setReportChart();
             } else {
                 dialogHandler.alertError(status, data);
