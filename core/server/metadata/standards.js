@@ -348,7 +348,11 @@ var standards = {
     },
     "dialog": {
         "isUseAnimation": true
-    }
+    },
+    "dashboard": {
+        "defaultCount": 1
+    },
+    "timeZone": 0
 };
 
 module.exports = standards;

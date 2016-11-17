@@ -21,6 +21,7 @@ var UserNotification = require('./user-notification');
 var UserPublicNotification = require('./user-public-notification');
 var UserImage = require('./user-image');
 var CompanyInfo = require('./company-info');
+var LoginCount = require('./login-count');
 
 var models = {
     User: User,
@@ -44,7 +45,8 @@ var models = {
     UserNotification: UserNotification,
     UserPublicNotification: UserPublicNotification,
     UserImage: UserImage,
-    CompanyInfo: CompanyInfo
+    CompanyInfo: CompanyInfo,
+    LoginCount: LoginCount
 };
 
 module.exports = models;
