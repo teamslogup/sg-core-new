@@ -3,6 +3,7 @@ export default function inputPass() {
         restrict: 'EA',
         templateUrl: 'components/input-pass/core.common.input-pass.html',
         scope: {
+            ngFlag: '=',
             ngModel: '=',
             minLength: '@',
             goodLength: '@',
@@ -23,6 +24,7 @@ export default function inputPass() {
                         scope.barClass = "sg-core-orange";
                         scope.inputClass = "sg-core-orange";
                         scope.inputClass = "sg-core-orange";
+                        scope.ngFlag = true;
                         if (enhance.test(newVal) || /^.*(?=.*\W).*$/.test(newVal)) {
                             scope.barClass = "sg-core-green";
                             scope.inputClass = "sg-core-green";
@@ -37,6 +39,7 @@ export default function inputPass() {
                         scope.barClass = "sg-core-red";
                         scope.inputClass = "sg-core-red";
                         scope.inputClass = "sg-core-red";
+                        scope.ngFlag = false;
                     }
                 } else {
                     scope.barClass = "";
