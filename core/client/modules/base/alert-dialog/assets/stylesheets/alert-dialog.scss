@@ -4,7 +4,6 @@ $alert-dialog-cancel-btn-color: #6f8690;
 $alert-dialog-cancel-btn-hover-color: #3C535D;
 
 $mobile-max-width: 425px;
-$sg-alert-dialog-container-top: 200px;
 
 .sg-alert-dialog {
     z-index: 2000;
@@ -17,10 +16,13 @@ $sg-alert-dialog-container-top: 200px;
 
     background-color: rgba(0, 0, 0, 0.5);
 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     .sg-alert-dialog-container {
         position: relative;
         overflow: hidden;
-        top: $sg-alert-dialog-container-top;
 
         margin-left: 8px;
         margin-right: 8px;
@@ -140,22 +142,22 @@ $sg-alert-dialog-container-top: 200px;
 
 @-webkit-keyframes alertDialogAnimation {
     from {
-        top: 0;
+        transform: translateY(-$sg-alert-dialog-container-top);
         opacity: 0
     }
     to {
-        top: $sg-alert-dialog-container-top;
+        transform: translateY(0);
         opacity: 1
     }
 }
 
 @keyframes alertDialogAnimation {
     from {
-        top: 0;
+        transform: translateY(-$sg-alert-dialog-container-top);
         opacity: 0
     }
     to {
-        top: $sg-alert-dialog-container-top;
+        transform: translateY(0px);
         opacity: 1
     }
 }
