@@ -52,6 +52,7 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             "upsertLoginCount": function (date, callback) {
+                var transaction = null;
                 var loginCount = null;
                 var body = {
                     year: date.getFullYear(),
@@ -68,7 +69,11 @@ module.exports = {
                     }
                     return sequelize.models.LoginCount.upsert(body);
                 }).then(function () {
-                    callback(204);
+                    transaction = true;
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (transaction) {
+                        callback(204);
+                    }
                 });
             }
         })
