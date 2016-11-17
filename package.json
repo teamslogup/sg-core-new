@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "angular": "^1.5.8",
+    "angular-chart.js": "^1.0.3",
     "angular-cookies": "^1.5.8",
     "angular-file-upload": "^2.3.4",
     "angular-module-cookies": "^1.2.19",
