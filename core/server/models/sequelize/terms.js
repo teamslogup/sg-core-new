@@ -12,7 +12,7 @@ var mixin = require('../../../../core/server/models/sequelize/mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
-var MICRO = require('microtime-nodejs');
+var micro = require('microtime-nodejs');
 
 module.exports = {
     fields: {
@@ -74,7 +74,7 @@ module.exports = {
 
                 var query = "SELECT result.type, result.title, result.appliedId FROM (" +
                     "SELECT terms.type, terms.title, terms2.id as appliedId, terms.createdAt FROM (SELECT * FROM Terms WHERE deletedAt IS NULL) as terms " +
-                    "LEFT JOIN (SELECT id, startDate FROM Terms WHERE startDate <= " + MICRO.now() + " AND deletedAt IS NULL) as terms2 ON terms2.id = terms.id " +
+                    "LEFT JOIN (SELECT id, startDate FROM Terms WHERE startDate <= " + micro.now() + " AND deletedAt IS NULL) as terms2 ON terms2.id = terms.id " +
                     "WHERE terms.language = '" + options.language + "' " +
                     "ORDER BY terms2.startDate DESC, terms.createdAt DESC) " +
                     "result GROUP BY result.title ORDER BY result.createdAt DESC";
@@ -217,17 +217,42 @@ module.exports = {
                 });
 
             },
-            "deleteTerms": function (now, callback) {
-                var query = 'UPDATE Terms SET deletedAt = "' + now + '" WHERE id != (SELECT x.id FROM (SELECT MAX(t.id) AS id FROM Terms t) x)';
+            "deleteTerms": function (id, callback) {
 
-                var deleteTermsData = null;
-                sequelize.query(query).then(function () {
-                    deleteTermsData = true;
-                }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (deleteTermsData) {
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.Terms.findById(id, {
+                        'transaction': t
+                    }).then(function (data) {
+
+                        if (data) {
+                            if (data.startDate > micro.now()) {
+                                return sequelize.models.Terms.destroy({
+                                    'where': {
+                                        id: id
+                                    },
+                                    'transaction': t
+                                });
+                            } else {
+                                throw new errorHandler.CustomSequelizeError(400, {
+                                    code: '400_59'
+                                });
+                            }
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404, {
+                                code: '404_11'
+                            });
+                        }
+
+                    }).then(function () {
+                        return true;
+                    })
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
                         callback(204);
                     }
                 });
+
             }
         })
     }
