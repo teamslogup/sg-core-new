@@ -8,20 +8,26 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
 
     vm.CDN = metaManager.std.cdn;
     var LOADING = metaManager.std.loading;
+    var COMMON = metaManager.std.common;
+    var IMAGE = metaManager.std.image;
 
     $scope.form = {};
     $scope.imageList = [];
     $scope.imageListTotal = 0;
-    $scope.imageFolders = metaManager.std.file.enumFolders;
+
+    $scope.imageFolders = angular.copy(metaManager.std.file.enumFolders);
+    $scope.imageFolders.unshift(COMMON.all);
     $scope.form.folder = $scope.imageFolders[0];
-    $scope.enumAuthorized = metaManager.std.image.enumAuthorized;
+
+    $scope.enumAuthorized = angular.copy(IMAGE.enumAuthorized);
+    $scope.enumAuthorized.unshift(COMMON.all);
     $scope.isAuthorized = $scope.enumAuthorized[0];
 
-    $scope.enumSearchFields = metaManager.std.image.enumSearchFields;
-    $scope.enumSearchFieldsUser = metaManager.std.image.enumSearchFieldsUser;
+    $scope.enumSearchFields = IMAGE.enumSearchFields;
+    $scope.enumSearchFieldsUser = angular.copy(IMAGE.enumSearchFieldsUser);
     $scope.enumSearchFields = $scope.enumSearchFields.concat($scope.enumSearchFieldsUser);
 
-    $scope.enumSearchFieldsUser.unshift('all');
+    $scope.enumSearchFieldsUser.unshift(COMMON.all);
     $scope.form.searchFieldUser = $scope.enumSearchFieldsUser[0];
 
     $scope.isImageDetailVisible = false;
@@ -52,8 +58,8 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
         $scope.isImageDetailVisible = false;
     };
 
-    $scope.toggleImageAuthorization = function ($index) {
-        var image = $scope.imageList[$index];
+    $scope.toggleImageAuthorization = function (index) {
+        var image = $scope.imageList[index];
 
         var body = {
             authorized: image.authorized ? false : true
@@ -62,7 +68,15 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
         loadingHandler.startLoading(LOADING.spinnerKey, 'updateImageById');
         imagesManager.updateImageById(image.id, body, function (status, data) {
             if (status == 200) {
-                $scope.imageList[$index] = data;
+                $scope.imageList[index] = data;
+
+                if ($scope.isAuthorized == IMAGE.authorized && body.authorized == false) {
+                    $scope.imageList.splice(index, 1);
+                }
+
+                if ($scope.isAuthorized == IMAGE.unauthorized && body.authorized == true) {
+                    $scope.imageList.splice(index, 1);
+                }
             } else {
                 dialogHandler.alertError(status, data);
             }

@@ -1,4 +1,6 @@
-export default function usersManager(User, AdminUser) {
+export default function usersManager(User, AdminUser, metaManager) {
+    var COMMON = metaManager.std.common;
+
     this.findAllUsers = findAllUsers;
     this.findUserById = findUserById;
     this.updateUserById = updateUserById;
@@ -25,14 +27,19 @@ export default function usersManager(User, AdminUser) {
     }
 
     function findAllUsers(data, callback) {
-        AdminUser.query({
-            searchItem: data.searchItem || '',
-            searchField: data.searchField || '',
-            last: data.last || '',
-            size: data.size || '',
-            order: data.order || '',
-            sorted: data.sorted || ''
-        }, function (data) {
+
+        var query = {};
+
+        if (data.searchItem !== undefined) query.searchItem = data.searchItem;
+        if (data.searchField !== undefined) query.searchField = data.searchField;
+        if (data.last !== undefined) query.last = data.last;
+        if (data.size !== undefined) query.size = data.size;
+        if (data.order !== undefined) query.order = data.order;
+        if (data.sorted !== undefined) query.sorted = data.sorted;
+        if (data.role !== undefined && data.role != COMMON.all) query.role = data.role;
+        if (data.gender !== undefined && data.gender != COMMON.all) query.gender = data.gender;
+
+        AdminUser.query(query, function (data) {
             callback(200, data);
         }, function (data) {
             callback(data.status, data.data);

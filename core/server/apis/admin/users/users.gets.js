@@ -20,6 +20,14 @@ gets.validate = function () {
         req.check('orderBy', '400_28').isEnum(USER.enumOrders);
         req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
 
+        if (req.query.role !== undefined) {
+            req.check('role', '400_28').isEnum(USER.enumRoles);
+        };
+
+        if (req.query.gender !== undefined) {
+            req.check('gender', '400_28').isEnum(USER.enumGenders);
+        };
+
         req.utils.common.checkError(req, res, next);
         next();
     };
@@ -28,12 +36,7 @@ gets.validate = function () {
 gets.getUsers = function () {
     return function (req, res, next) {
         req.models.User.findAndCountUsersByOption(
-            req.query.searchItem,
-            req.query.searchField,
-            req.query.last,
-            req.query.size,
-            req.query.orderBy,
-            req.query.sort,
+            req.query,
             function (status, data) {
                 if (status == 200) {
                     req.users = data;

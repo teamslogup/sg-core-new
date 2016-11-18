@@ -100,7 +100,7 @@ module.exports = {
                         where[searchField] = searchItem;
                     } else {
                         where[searchField] = {
-                            '$like': searchItem + '%'
+                            '$like': '%' + searchItem + '%'
                         };
                     }
                 } else if (searchItem) {
@@ -111,7 +111,7 @@ module.exports = {
                             body[STD.notice.enumFields[i]] = searchItem;
                         } else {
                             body[STD.notice.enumFields[i]] = {
-                                '$like': searchItem + '%'
+                                '$like': '%' +searchItem + '%'
                             };
                         }
                         where.$or.push(body);

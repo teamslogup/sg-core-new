@@ -104,7 +104,7 @@ module.exports = {
                         where[options.searchField] = options.searchItem;
                     } else {
                         where[options.searchField] = {
-                            '$like': options.searchItem + '%'
+                            '$like': '%' + options.searchItem + '%'
                         };
                     }
 
@@ -118,7 +118,7 @@ module.exports = {
                             body[STD.image.enumSearchFields[i]] = options.searchItem;
                         } else {
                             body[STD.image.enumSearchFields[i]] = {
-                                '$like': options.searchItem + '%'
+                                '$like': '%' + options.searchItem + '%'
                             };
                         }
 
@@ -133,7 +133,7 @@ module.exports = {
                         userWhere[options.searchFieldUser] = options.searchItemUser;
                     } else {
                         userWhere[options.searchFieldUser] = {
-                            '$like': options.searchItemUser + '%'
+                            '$like': '%' + options.searchItemUser + '%'
                         };
                     }
 
@@ -147,7 +147,7 @@ module.exports = {
                             body[STD.image.enumSearchFieldsUser[i]] = options.searchItemUser;
                         } else {
                             body[STD.image.enumSearchFieldsUser[i]] = {
-                                '$like': options.searchItemUser + '%'
+                                '$like': '%' + options.searchItemUser + '%'
                             };
                         }
 
