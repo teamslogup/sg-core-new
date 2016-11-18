@@ -188,7 +188,9 @@ var standards = {
         "minNickLength": 1,
         "maxNickLength": 14,
         "enumSearchFields": ["nick", "email", "body"],
-        "enumSolved": ["all", "solved", "unsolved"]
+        "enumSolved": ["solved", "unsolved"],
+        "solved":"solved",
+        "unsolved": "unsolved"
     },
     "notice": {
         "minTitleLength": 1,
@@ -212,7 +214,9 @@ var standards = {
         "enumOrders": ["orderCreate", "orderUpdate"],
         "orderCreate": "orderCreate",
         "orderUpdate": "orderUpdate",
-        "enumAuthorized": ["all", "authorized", "unauthorized"],
+        "enumAuthorized": ["authorized", "unauthorized"],
+        "authorized": "authorized",
+        "unauthorized": "unauthorized",
         "enumSearchFields": ["id"],
         "enumSearchFieldsUser": ["id", "nick", "name"],
         "defaultSearchFields": "nick",
@@ -250,7 +254,8 @@ var standards = {
         "enumSortTypes": ["DESC", "ASC"],
         "DESC": "DESC",
         "ASC": "ASC",
-        "id": "id"
+        "id": "id",
+        "all": "all"
     },
     "file": {
         "enumFolders": ["user", "common", "bg", "article", "attach"],
