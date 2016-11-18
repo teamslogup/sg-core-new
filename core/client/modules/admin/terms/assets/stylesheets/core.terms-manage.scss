@@ -169,6 +169,14 @@
             position: relative;
           }
         }
+        div.sg-core-button-wrap {
+          position: relative;
+          @include after-clear();
+          button.sg-core-button {
+            position: relative;
+            float: right;
+          }
+        }
       }
     }
   }

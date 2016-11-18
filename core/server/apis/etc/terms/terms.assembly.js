@@ -122,6 +122,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(post.validateStartDate());
                 apiCreator.add(post.setParam());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
