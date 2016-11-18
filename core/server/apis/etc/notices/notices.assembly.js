@@ -87,7 +87,7 @@ var api = {
                     "title": "공지사항 제목",
                     "body": "공지사항 내용",
                     "country": "KR",
-                    "type": "normal",
+                    "type": "notice",
                     "startDate": "2016-03-23",
                     "endDate": "2016-03-26",
                     "id": 1,
@@ -158,7 +158,7 @@ var api = {
                 },
                 defaults: {
                     country: 'KR',
-                    type: 'normal'
+                    type: 'notice'
                 },
                 role: STD.user.roleAdmin,
                 title: '공지쓰기',

@@ -140,7 +140,12 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
             noticesManager.updateNoticeById(notice.id, body, function (status, data) {
                 if (status == 200) {
                     $scope.noticeList[$scope.currentIndex] = data;
-                    $scope.hideNoticeDetail();
+
+                    if ($scope.params.type != body.type) {
+                        $scope.noticeList.splice($scope.currentIndex, 1);
+                    }
+
+                    $scope.exitEditMode();
                 } else {
                     dialogHandler.alertError(status, data);
                 }

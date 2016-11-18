@@ -12,6 +12,8 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
     var NOTIFICATION = metaManager.std.notification;
     var LOADING = metaManager.std.loading;
+    var USER = metaManager.std.user;
+    var COMMON = metaManager.std.common;
 
     $scope.currentPage = 1;
 
@@ -25,10 +27,19 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
     $scope.userList = [];
     $scope.userListTotal = 0;
 
-    $scope.userEnumSearchFields = metaManager.std.user.enumSearchFields;
+    $scope.userEnumSearchFields = USER.enumSearchFields;
     $scope.params.searchField = $scope.userEnumSearchFields[0];
 
-    $scope.userEnumRoles = metaManager.std.user.enumRoles;
+    $scope.userEnumRoles = angular.copy(USER.enumRoles);
+    $scope.userEnumRoles.unshift(COMMON.all);
+    $scope.params.role = COMMON.all;
+
+    $scope.userEnumGender = angular.copy(USER.enumGenders);
+    $scope.userEnumGender.unshift(COMMON.all);
+    $scope.params.gender = COMMON.all;
+
+    $scope.userDetailEnumGender = angular.copy(USER.enumGenders);
+
     $scope.enumCountries = Object.keys(metaManager.local.countries);
     $scope.enumLanguages = Object.keys(metaManager.local.languages);
 
@@ -146,7 +157,16 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                     $scope.userList[index].role = body.role;
                     $scope.userList[index].agreedEmail = body.agreedEmail;
                     $scope.userList[index].agreedPhoneNum = body.agreedPhoneNum;
-                    $scope.hideUserDetail();
+
+                    if ($scope.params.role != COMMON.all && $scope.params.role != body.role) {
+                        $scope.userList.splice(index, 1);
+                    }
+
+                    if ($scope.params.gender != COMMON.all && $scope.params.gender != body.gender) {
+                        $scope.userList.splice(index, 1);
+                    }
+
+                    $scope.exitEditMode();
                 } else {
                     dialogHandler.alertError(status, data);
                 }
@@ -420,5 +440,17 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         });
 
     };
+
+    $scope.$watch('params.role', function (newVal, oldVal) {
+        if (newVal != oldVal) {
+            $scope.findUsers();
+        }
+    }, true);
+
+    $scope.$watch('params.gender', function (newVal, oldVal) {
+        if (newVal != oldVal) {
+            $scope.findUsers();
+        }
+    }, true);
 
 }

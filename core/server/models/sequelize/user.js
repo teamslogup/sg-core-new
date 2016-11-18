@@ -566,43 +566,51 @@ module.exports = {
              * @param {Object} size - 찾을 유저 수
              * @param {responseCallback} callback - 응답콜백
              */
-            'findAndCountUsersByOption': function (searchItem, searchField, last, size, order, sort, callback) {
+            'findAndCountUsersByOption': function (options, callback) {
                 var where = {};
                 var include;
 
-                if (searchField && searchItem) {
-                    if (searchField == STD.common.id) {
-                        where[searchField] = searchItem;
+                if (options.searchField && options.searchItem) {
+                    if (options.searchField == STD.common.id) {
+                        where[options.searchField] = options.searchItem;
                     } else {
-                        where[searchField] = {
-                            '$like': searchItem + '%'
+                        where[options.searchField] = {
+                            '$like': '%' + options.searchItem + '%'
                         };
                     }
-                } else if (searchItem) {
+                } else if (options.searchItem) {
                     if (STD.user.enumSearchFields.length > 0) where.$or = [];
                     for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
                         var body = {};
                         if (STD.user.enumSearchFields[i] == STD.common.id) {
-                            body[STD.user.enumSearchFields[i]] = searchItem;
+                            body[STD.user.enumSearchFields[i]] = options.searchItem;
                         } else {
                             body[STD.user.enumSearchFields[i]] = {
-                                '$like': searchItem + '%'
+                                '$like': '%' + options.searchItem + '%'
                             };
                         }
                         where.$or.push(body);
                     }
                 }
 
-                if (order == STD.user.orderUpdate) {
+                if (options.role) {
+                    where.role = options.role;
+                }
+
+                if (options.gender) {
+                    where.gender = options.gender;
+                }
+
+                if (options.order == STD.user.orderUpdate) {
                     where.updatedAt = {
-                        '$lt': last
+                        '$lt': options.last
                     };
-                    order = [['updatedAt', sort]];
+                    options.order = [['updatedAt', options.sort]];
                 } else {
                     where.createdAt = {
-                        '$lt': last
+                        '$lt': options.last
                     };
-                    order = [['createdAt', sort]];
+                    options.order = [['createdAt', options.sort]];
                 }
 
                 include = sequelize.models.User.getIncludeUser();
@@ -613,8 +621,8 @@ module.exports = {
                 sequelize.transaction(function (t) {
 
                     return sequelize.models.User.findAll({
-                        'order': order,
-                        'limit': parseInt(size),
+                        'order': options.order,
+                        'limit': parseInt(options.size),
                         'where': where,
                         'include': include,
                         'transaction': t
@@ -1088,15 +1096,15 @@ module.exports = {
                 }
             },
             destroyUserWithOtherInfo(id, callback) {
-                sequelize.models.User.destroyUser(id, function(t, callback2) {
+                sequelize.models.User.destroyUser(id, function (t, callback2) {
                     return sequelize.models.Report.findAll({
                         where: {},
                         transaction: t
-                    }).then(function(data) {
-                        console.log('destroyUserWithOtherInfo',data);
+                    }).then(function (data) {
+                        console.log('destroyUserWithOtherInfo', data);
                         return callback2(t);
                     });
-                }, function(status, data) {
+                }, function (status, data) {
                     callback(status, data);
                 });
             },
@@ -1182,7 +1190,7 @@ module.exports = {
                                             transaction: t
                                         }).then(function (data) {
                                             if (transactionFuncs) {
-                                                return transactionFuncs(t, function(t) {
+                                                return transactionFuncs(t, function (t) {
                                                     return nextCallback(t, id, loadedData);
                                                 });
                                             } else {

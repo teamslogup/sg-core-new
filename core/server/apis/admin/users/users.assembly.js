@@ -21,16 +21,18 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'searchField', 'last', 'size', 'orderBy', 'sort'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'orderBy', 'sort', 'role', 'gender'],
                 essential: [],
                 resettable: [],
                 explains: {
                     searchItem: '검색할 내용',
-                    searchField: '검색할 필드' + STD.user.enumSearchFields.join(", "),
+                    searchField: '검색할 필드 ' + STD.user.enumSearchFields.join(", "),
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
-                    orderBy: '정렬 기준 필드' + STD.user.enumOrders.join(", "),
-                    sort: '정렬 순서' + STD.common.enumSortTypes.join(", ")
+                    orderBy: '정렬 기준 필드 ' + STD.user.enumOrders.join(", "),
+                    sort: '정렬 순서 ' + STD.common.enumSortTypes.join(", "),
+                    role: '유저 권한 ' + STD.user.enumRoles.join(", "),
+                    gender: '성별 ' + STD.user.enumGenders.join(", ")
                 },
                 response: {rows: [resforms.user]},
                 title: '유저 리스트 얻기',
