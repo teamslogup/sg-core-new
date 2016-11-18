@@ -31,10 +31,14 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
         dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
             termsManager.deleteTerms(terms, function (status, data) {
                 if (status == 204) {
-                    if (terms.id == $scope.currentTerms.id) {
-                        $scope.findTerms();
+                    if ($scope.currentTerms.appliedId) {
+                        $scope.findTermsById($scope.currentTerms.appliedId);
                     } else {
-                        $scope.findTermsById($scope.currentTerms.id);
+                        if ($scope.selectedTerms.versions.length > 1) {
+                            $scope.findTermsByTitle($scope.currentTerms.title);
+                        } else {
+                            $scope.findTerms();
+                        }
                     }
                 } else {
                     dialogHandler.alertError(status, data);

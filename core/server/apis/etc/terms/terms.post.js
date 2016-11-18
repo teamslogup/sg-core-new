@@ -1,6 +1,7 @@
 var post = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
+var micro = require('microtime-nodejs');
 
 post.validate = function () {
     return function (req, res, next) {
@@ -13,6 +14,18 @@ post.validate = function () {
         req.check("startDate", "400_18").isMicroTimestamp();
         req.utils.common.checkError(req, res, next);
         next();
+    };
+};
+
+post.validateStartDate = function () {
+    return function (req, res, next) {
+        if(req.body.startDate > micro.now()){
+            next();
+        } else {
+            res.hjson(req, next, 400, {
+                code: '400_60'
+            });
+        }
     };
 };
 

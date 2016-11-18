@@ -41,7 +41,7 @@ module.exports = {
         },
         'startDate': {
             'type': Sequelize.BIGINT,
-            'allowNull': false
+            'allowNull': true
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -227,7 +227,9 @@ module.exports = {
 
                         if (data) {
                             if (data.startDate > micro.now()) {
-                                return sequelize.models.Terms.destroy({
+                                return sequelize.models.Terms.update({
+                                    startDate: null
+                                }, {
                                     'where': {
                                         id: id
                                     },
@@ -245,8 +247,17 @@ module.exports = {
                         }
 
                     }).then(function () {
+
+                        return sequelize.models.Terms.destroy({
+                            'where': {
+                                id: id
+                            },
+                            'transaction': t
+                        });
+
+                    }).then(function () {
                         return true;
-                    })
+                    });
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(204);
