@@ -14,7 +14,7 @@ del.validate = function () {
 del.destroy = function () {
     return function (req, res, next) {
         // var now = moment.utc(new Date()).format("YYYY-MM-DD HH:mm:ss");
-        req.models.Terms.destroyDataById(req.params.id, false, function (status, data) {
+        req.models.Terms.deleteTerms(req.params.id, function (status, data) {
             if (status == 204) {
                 next();
             } else {
