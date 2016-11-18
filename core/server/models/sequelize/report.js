@@ -92,7 +92,9 @@ module.exports = {
 
                 if (options.authorId !== undefined) where.authorId = options.authorId;
                 if (options.isSolved !== undefined) {
-                    where.solvedAt = options.isSolved ? micro.now() : false;
+                    where.solvedAt = options.isSolved ? {
+                        $not: null
+                    } : null;
                 }
 
                 if (options.searchField && options.searchItem) {
@@ -101,7 +103,7 @@ module.exports = {
                         where[options.searchField] = options.searchItem;
                     } else {
                         where[options.searchField] = {
-                            '$like': options.searchItem + '%'
+                            '$like': '%' + options.searchItem + '%'
                         };
                     }
 
@@ -115,7 +117,7 @@ module.exports = {
                             body[STD.report.enumSearchFields[i]] = options.searchItem;
                         } else {
                             body[STD.report.enumSearchFields[i]] = {
-                                '$like': options.searchItem + '%'
+                                '$like': '%' + options.searchItem + '%'
                             };
                         }
 

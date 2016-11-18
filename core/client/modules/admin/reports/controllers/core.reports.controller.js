@@ -11,6 +11,8 @@ export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandl
     }
 
     var LOADING = metaManager.std.loading;
+    var COMMON = metaManager.std.common;
+    var REPORT = metaManager.std.report;
 
     $scope.isReportDetailVisible = false;
     $scope.isReportDetailFirstTime = true;
@@ -21,10 +23,11 @@ export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandl
 
     $scope.reportList = [];
     $scope.reportListTotal = 0;
-    $scope.reportEnumSearchFields = metaManager.std.report.enumSearchFields;
+    $scope.reportEnumSearchFields = REPORT.enumSearchFields;
     $scope.params.searchItem = '';
     $scope.params.searchField = $scope.reportEnumSearchFields[0];
-    $scope.reportEnumSolved = metaManager.std.report.enumSolved;
+    $scope.reportEnumSolved = angular.copy(REPORT.enumSolved);
+    $scope.reportEnumSolved.unshift(COMMON.all);
     $scope.isSolved = $scope.reportEnumSolved[0];
 
     $scope.more = false;
@@ -77,6 +80,11 @@ export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandl
             reportsManager.updateReportById($scope.currentReport.id, body, function (status, data) {
                 if (status == 200) {
                     $scope.reportList[$scope.currentIndex] = data;
+
+                    if ($scope.isSolved == REPORT.unsolved) {
+                        $scope.reportList.splice($scope.currentIndex, 1);
+                    }
+
                     $scope.hideReportDetail();
                 } else {
                     dialogHandler.alertError(status, data);
