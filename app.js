@@ -40,7 +40,8 @@ sequelize.sync({force: config.db.force}).then(function (err) {
             if (STD.flag.isUseCluster) {
                 cluster.startCluster(server.https);
             } else {
-                server.https.listen(config.app.port);
+                server.http.listen(config.app.port);
+                server.https.listen(config.app.httpsPort);
             }
         } else {
             if (STD.flag.isUseCluster) {

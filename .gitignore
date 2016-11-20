@@ -6,6 +6,7 @@ core/client/build/
 core/client/pages/sample/assets/stylesheets/*/*.map
 core/client/pages/sample/assets/stylesheets/*/*.css
 uploads/
+cs/
 temp/
 .DS_Store
 core/server/views/sample-production.ejs
