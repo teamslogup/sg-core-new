@@ -24,7 +24,7 @@ if (!args.ejs) {
 if (!args.env) {
     args.env = process.env.NODE_ENV = "development";
 } else {
-    process.env.NODE_ENV = args.env;
+    args.env = process.env.NODE_ENV;
 }
 
 function getJsName() {
