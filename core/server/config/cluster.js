@@ -90,7 +90,12 @@ module.exports = {
             });
 
         } else if (cluster.isWorker) {
-            var server = app.listen(config.app.port);
+            var server = null;
+            if (server.isUseHttps) {
+                server = app.listen(config.app.port);
+            } else {
+                server = app.listen(config.app.port);
+            }
 
             process.send({cmd: "workerStart", pid: cluster.worker.process.pid});
 

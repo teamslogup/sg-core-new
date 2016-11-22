@@ -362,7 +362,11 @@ var standards = {
         "text": "text",
         "image": "image",
         "media": "media"
-    }
+    },
+    "dashboard": {
+        "defaultCount": 1
+    },
+    "timeZone": 0
 };
 
 module.exports = standards;

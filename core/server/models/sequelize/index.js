@@ -24,6 +24,7 @@ var CompanyInfo = require('./company-info');
 var ChatHistory = require('./chat-history');
 var ChatRoom = require('./chat-room');
 var ChatRoomUser = require('./chat-room-user');
+var LoginCount = require('./login-count');
 
 var models = {
     User: User,
@@ -50,7 +51,8 @@ var models = {
     CompanyInfo: CompanyInfo,
     ChatHistory: ChatHistory,
     ChatRoom: ChatRoom,
-    ChatRoomUser: ChatRoomUser
+    ChatRoomUser: ChatRoomUser,
+    LoginCount: LoginCount
 };
 
 module.exports = models;

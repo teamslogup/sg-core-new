@@ -40,6 +40,7 @@ function getRootType() {
 }
 
 gulp.task('webpack', () => {
+    console.log('webpack');
     return gulp.src('')
         .pipe(webpack(require('./webpack.config.js')))
         .pipe(gulp.dest('dist'));
@@ -47,6 +48,7 @@ gulp.task('webpack', () => {
 
 gulp.task('injection', ['webpack'], () => {
     var url = args.ejs;
+    console.log('injection');
     var jsName = getJsName();
     var src = gulp.src(url);
     var source = gulp.src([
@@ -64,6 +66,7 @@ gulp.task('injection', ['webpack'], () => {
 
 gulp.task('rename', ['injection'], () => {
     var jsName = getJsName();
+    console.log('rename');
     return gulp.src("./" + getRootType() + "/server/views/dist/" + jsName + ".ejs")
         .pipe(rename("./" + jsName + "-" + args.env + ".ejs"))
         .pipe(gulp.dest("./" + getRootType() + "/server/views"));
@@ -71,11 +74,13 @@ gulp.task('rename', ['injection'], () => {
 
 gulp.task('clean', ["rename"], () => {
     var jsName = getJsName();
+    console.log('clean');
     return gulp.src("./" + getRootType() + "/server/views/dist/" + jsName + ".ejs")
         .pipe(clean({force: true}));
 });
 
 gulp.task('minify', ["clean"], () => {
+    console.log('minify');
     return gulp.src("./" + getRootType() + "/server/views/" + getJsName() + "-" + args.env + ".ejs")
         .pipe(gulpIf(args.env == 'production', htmlmin({collapseWhitespace: true})))
         .pipe(gulp.dest('./' + getRootType() + '/server/views'));
@@ -86,6 +91,7 @@ gulp.task('webpack-watch', ['minify'],  () => {
     if (args.env == 'development') {
         webpackconfig.watch = true;
     }
+    console.log('webpack-watch');
     return gulp.src('')
         .pipe(gulpIf(args.env == 'development', webpack(webpackconfig)))
         .pipe(gulp.dest('dist'));

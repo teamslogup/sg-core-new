@@ -3,6 +3,7 @@ var http = require('http'),
     fs = require('fs');
 
 var STD = require('../../../bridge/metadata/standards');
+var config = require('../../../bridge/config/env');
 
 module.exports = function (app) {
     var server = {
@@ -10,13 +11,13 @@ module.exports = function (app) {
     };
     server.http = http.createServer(app);
     if (STD.flag.isUseHttps) {
-        var keyPath = __dirname + "/../../../app/server/config/ssl/key.pem",
-            certPath = __dirname + "/../../../app/server/config/ssl/cert.pem";
+        var keyPath = __dirname + "/../../../app/server/config/ssl/" + config.app.keyFile,
+            certPath = __dirname + "/../../../app/server/config/ssl/" + config.app.crtFile;
         if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
             server.isUseHttps = true;
             server.https = https.createServer({
-                key: fs.readFileSync(keyPath),
-                cert: fs.readFileSync(certPath)
+                key: fs.readFileSync(keyPath, 'utf8'),
+                cert: fs.readFileSync(certPath, 'utf8')
             }, app);
         }
     }
