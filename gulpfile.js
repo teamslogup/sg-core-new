@@ -40,7 +40,6 @@ function getRootType() {
 }
 
 gulp.task('webpack', () => {
-    console.log('webpack');
     return gulp.src('')
         .pipe(webpack(require('./webpack.config.js')))
         .pipe(gulp.dest('dist'));

@@ -57,7 +57,7 @@ config.module = {
         loader: 'file?name=public/fonts/[name].[ext]'
     }]
 };
-
+config.watch = false;
 config.plugins = [
     new webpack.optimize.CommonsChunkPlugin('sg-lib.js'),
     new ExtractTextPlugin("[name].css", {
