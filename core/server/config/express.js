@@ -40,7 +40,32 @@ var CONFIG = require('../../../bridge/config/env'),
 require('../../../bridge/config/extend-validator')();
 var globalVariables = require('./ejs/index');
 
-module.exports = function (sequelize) {
+
+var sessionSettings = {
+    secret: CONFIG.app.secret,
+    name : 'slogupSessionId',
+    saveUninitialized: true,
+    resave: true,
+    cookie: {
+        path: '/', httpOnly: true, secure: false, maxAge: CONFIG.app.sessionExpiredSeconds
+    }
+};
+
+if (META.std.flag.isUseRedis) {
+    var urlObj = url.parse(CONFIG.db.redis);
+    var auth = urlObj.auth;
+    var auth = (auth && auth.split(":")) || null;
+    console.log('redis info', urlObj);
+    sessionSettings.store = new RedisStore({
+        'host': urlObj.hostname,
+        'port': urlObj.port,
+        'pass': auth && auth[0] || null,
+        'ttl': CONFIG.app.sessionExpiredSeconds
+    });
+}
+
+module.exports.sessionSetting = sessionSettings;
+module.exports.init = function (sequelize) {
 
     var stat = fs.existsSync(CONFIG.app.uploadFileDir);
     if (!stat) {
@@ -106,29 +131,6 @@ module.exports = function (sequelize) {
     }));
 
     app.use(cookieParser(CONFIG.app.secret));
-    var sessionSettings = {
-        secret: CONFIG.app.secret,
-        name : 'slogupSessionId',
-        saveUninitialized: true,
-        resave: true,
-        cookie: {
-            path: '/', httpOnly: true, secure: false, maxAge: CONFIG.app.sessionExpiredSeconds
-        }
-    };
-
-    if (META.std.flag.isUseRedis) {
-        var urlObj = url.parse(CONFIG.db.redis);
-        var auth = urlObj.auth;
-        var auth = (auth && auth.split(":")) || null;
-        console.log('redis info', urlObj);
-        sessionSettings.store = new RedisStore({
-            'host': urlObj.hostname,
-            'port': urlObj.port,
-            'pass': auth && auth[0] || null,
-            'ttl': CONFIG.app.sessionExpiredSeconds
-        });
-    }
-
     app.use(session(sessionSettings));
 
     app.use(flash());
@@ -173,7 +175,6 @@ module.exports = function (sequelize) {
 
     app.use(passport.initialize());
     app.use(passport.session());
-
 
     // security
 

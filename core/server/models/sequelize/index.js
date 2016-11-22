@@ -21,6 +21,9 @@ var UserNotification = require('./user-notification');
 var UserPublicNotification = require('./user-public-notification');
 var UserImage = require('./user-image');
 var CompanyInfo = require('./company-info');
+var ChatHistory = require('./chat-history');
+var ChatRoom = require('./chat-room');
+var ChatRoomUser = require('./chat-room-user');
 
 var models = {
     User: User,
@@ -44,7 +47,10 @@ var models = {
     UserNotification: UserNotification,
     UserPublicNotification: UserPublicNotification,
     UserImage: UserImage,
-    CompanyInfo: CompanyInfo
+    CompanyInfo: CompanyInfo,
+    ChatHistory: ChatHistory,
+    ChatRoom: ChatRoom,
+    ChatRoomUser: ChatRoomUser
 };
 
 module.exports = models;

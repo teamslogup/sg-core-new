@@ -1,4 +1,4 @@
-var coreExpress = require('../../core/server/config/express');
+var coreExpress = require('../../core/server/config/express').init;
 var CONFIG = require('./env');
 var fs = require('fs');
 var path = require('path');

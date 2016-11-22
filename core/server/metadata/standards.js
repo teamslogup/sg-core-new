@@ -141,7 +141,8 @@ var standards = {
         "isUseRedis": false,
         "isUseHttps": false,
         "isDuplicatedLogin": false,
-        "isUseCluster": false
+        "isUseCluster": false,
+        "isUseChat": true
     },
     "category": {
         "minNameLength": 1,
@@ -189,7 +190,7 @@ var standards = {
         "maxNickLength": 14,
         "enumSearchFields": ["nick", "email", "body"],
         "enumSolved": ["solved", "unsolved"],
-        "solved":"solved",
+        "solved": "solved",
         "unsolved": "unsolved"
     },
     "notice": {
@@ -353,6 +354,14 @@ var standards = {
     },
     "dialog": {
         "isUseAnimation": true
+    },
+    "chatRoom": {},
+    "chatRoomUser": {},
+    "chatHistory": {
+        "chatHistoryEnum": ['text', 'image', 'media'],
+        "text": "text",
+        "image": "image",
+        "media": "media"
     }
 };
 
