@@ -358,6 +358,8 @@ var standards = {
     "chatRoom": {},
     "chatRoomUser": {},
     "chatHistory": {
+        "minMessageLength": 1,
+        "maxMessageLength": 10000,
         "chatHistoryEnum": ['text', 'image', 'media'],
         "text": "text",
         "image": "image",

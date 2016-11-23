@@ -1,11 +1,11 @@
 var async = require('async');
-var MiddlewareBinder = function(socket, io, payload) {
+var MiddlewareBinder = function(socket, payload) {
 
     var funcs = [];
 
     this.add = function(func) {
         funcs.push(function (n) {
-            func(socket, io, payload, n);
+            func(socket, payload, n);
         });
     };
 

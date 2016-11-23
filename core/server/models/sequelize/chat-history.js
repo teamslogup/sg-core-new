@@ -75,6 +75,10 @@ module.exports = {
                     where.userId = options.userId
                 }
 
+                if (options.roomId !== undefined) {
+                    where.roomId = options.roomId
+                }
+
                 where.createdAt = {
                     '$lt': options.last
                 };
@@ -108,7 +112,7 @@ module.exports = {
                     }
                 });
 
-            },
+            }
         })
     }
 };

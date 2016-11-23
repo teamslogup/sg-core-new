@@ -128,7 +128,7 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
 
-                        chatRoomUser.reload(function () {
+                        chatRoomUser.reload().then(function () {
                             callback(200, chatRoomUser);
                         });
 

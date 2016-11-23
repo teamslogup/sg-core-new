@@ -28,7 +28,7 @@ var middles = {
 
     },
     isLoggedIn: function () {
-        return function (socket, io, payload, next) {
+        return function (socket, payload, next) {
             if (socket.request.session) {
 
                 next();
@@ -42,9 +42,7 @@ var middles = {
         }
     },
     createRoom: function () {
-        return function (socket, io, payload, next) {
-
-            // var roomId = body.roomId;
+        return function (socket, payload, next) {
 
             var body = {
                 name: ''
@@ -53,15 +51,15 @@ var middles = {
             var instance = sequelize.models.ChatRoom.build(body);
             instance.create(function (status, data) {
                 if (status == 200) {
-
                     var roomId = data.id;
 
-                    socket.join(roomId); //룸입장
-                    io.to(roomId).emit('join user', socket.id, socket.adapter.rooms[roomId], data);
+                    socket.join(roomId);
+                    socket.broadcast.to(roomId).emit('join_user', data);
+
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
                 } else {
-                    io.sockets.connected(socket.id).emit('request fail', status, data);
                     console.log(socket.id + ' fail to join');
+                    return socket.emit('request_fail', status, data);
                 }
 
                 next();
@@ -70,7 +68,7 @@ var middles = {
         }
     },
     joinRoom: function () {
-        return function (socket, io, payload, next) {
+        return function (socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -85,15 +83,13 @@ var middles = {
 
                     var roomId = body.roomId;
 
-                    socket.join(roomId); //룸입장
-                    io.to(roomId).emit('join user', socket.id, socket.adapter.rooms[roomId], data);
+                    socket.join(roomId);
+                    socket.broadcast.to(roomId).emit('join_user', data);
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 
                 } else {
-
-                    socket.emit('request fail', status, data);
                     console.log(socket.id + ' fail to join');
-
+                    return socket.emit('request_fail', status, data);
                 }
 
                 next();
@@ -103,7 +99,7 @@ var middles = {
         }
     },
     leaveRoom: function () {
-        return function (socket, io, payload, next) {
+        return function (socket, payload, next) {
 
             var roomId = payload.roomId;
 
@@ -116,11 +112,11 @@ var middles = {
                 console.log(status, data);
                 if (status == 204) {
                     socket.leave(roomId);//룸퇴장
-                    socket.broadcast.to(roomId).emit('leave user', socket.id, socket.adapter.rooms[roomId]);
+                    socket.broadcast.to(roomId).emit('leave_user', socket.id, socket.adapter.rooms[roomId]);
                     console.log('OUT ROOM LIST', socket.adapter.rooms[roomId]);
                 } else {
-                    socket.emit('request fail', status, data);
                     console.log(socket.id + ' fail to leave');
+                    return socket.emit('request_fail', status, data);
                 }
 
                 next();
@@ -129,10 +125,12 @@ var middles = {
         }
     },
     sendMessage: function () {
-        return function (socket, io, payload, next) {
+        return function (socket, payload, next) {
+
+            var user = socket.request.user;
 
             var body = {
-                userId: payload.userId,
+                userId: user.id,
                 roomId: payload.roomId,
                 message: payload.message,
                 type: payload.type
@@ -141,10 +139,11 @@ var middles = {
             var instance = sequelize.models.ChatHistory.build(body);
             instance.create(function (status, data) {
                 if (status == 200) {
-                    io.to(data.roomId).emit('chat message', socket.id, data.body);
+                    socket.emit('check_message', data);
+                    socket.broadcast.to(payload.roomId).emit('receive_message', data);
                 } else {
-                    socket.emit('request fail', status, data);
                     console.log(socket.id + ' fail to join');
+                    return socket.emit('request_fail', status, data);
                 }
 
                 next();
@@ -153,9 +152,9 @@ var middles = {
         }
     },
     onTyping: function () {
-        return function (socket, io, payload, next) {
+        return function (socket, payload, next) {
 
-            io.to(payload.roomId).emit("isTyping", {isTyping: payload.isTyping, person: socket.id});
+            socket.broadcast.to(payload.roomId).emit("is_typing", {isTyping: payload.isTyping, person: socket.id});
 
             next();
         }

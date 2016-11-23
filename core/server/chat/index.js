@@ -35,29 +35,27 @@ module.exports.init = function (io) {
 
     io.on('connection', function (socket) {
         console.log(socket.id + ' Client connected...');
-        console.log(socket.handshake);
         console.log('session', socket.request.session);
-        socket.on('createRoom', function (body) {
-            console.log('session', socket.request.session);
 
-            var joinBinder = new Binder(socket, io, body);
+        socket.on('createRoom', function (body) {
+            var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.createRoom());
             joinBinder.bind();
-
         });
 
         socket.on('joinRoom', function (body) {
-            console.log('session', socket.request.session);
-
-            var joinBinder = new Binder(socket, io, body);
+            var joinBinder = new Binder(socket, body);
+            joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.joinRoom());
             joinBinder.bind();
-
         });
 
         socket.on('leaveRoom', function (body) {
-            console.log('session', socket.request.session);
+            var joinBinder = new Binder(socket, body);
+            joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.leaveRoom());
+            joinBinder.bind();
         });
 
         socket.on('typing', function (isTyping, roomId) {
@@ -67,17 +65,24 @@ module.exports.init = function (io) {
                 roomId: roomId
             };
 
-            var joinBinder = new Binder(socket, io, body);
+            var joinBinder = new Binder(socket, body);
+            joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.onTyping());
             joinBinder.bind();
         });
 
-        socket.on('send message', function (body) {
+        socket.on('sendMessage', function (body) {
 
-            var joinBinder = new Binder(socket, io, body);
+            var joinBinder = new Binder(socket, body);
+            joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.sendMessage());
             joinBinder.bind();
 
+        });
+
+        socket.on('disconnect', function() {
+            console.log('disconnect');
+            socket.disconnect();
         });
 
     });
