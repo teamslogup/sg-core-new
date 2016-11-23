@@ -137,6 +137,8 @@
     "build-admin": "sudo gulp build --ejs ./app/server/views/admin.ejs --env production",
     "build-main": "sudo gulp build --ejs ./app/server/views/main.ejs --env production",
 
+    "build-dev":  "sudo gulp build --ejs ./app/server/views/main.ejs --env development | sudo gulp build --ejs ./app/server/views/admin.ejs --env development",
+
     "start": "sudo NODE_ENV=production pm2 start app",
     "log": "sudo pm2 logs app",
     "test": "sudo gulp test",
