@@ -125,10 +125,21 @@
     "node": ">=4.6.0"
   },
   "scripts": {
-    "build-dev": "gulp build --ejs ./core/server/views/sample.ejs --env development | gulp build --ejs ./app/server/views/main.ejs --env development | gulp build --ejs ./app/server/views/admin.ejs --env development",
-    "build": "gulp build --ejs ./core/server/views/sample.ejs --env production | gulp build --ejs ./app/server/views/main.ejs --env production | gulp build --ejs ./app/server/views/admin.ejs --env production",
-    "start": "NODE_ENV=production forever app.js",
-    "test": "gulp test",
+    "build-dev-sample": "sudo gulp build --ejs ./core/server/views/sample.ejs --env development",
+    "build-dev-admin": "sudo gulp build --ejs ./app/server/views/admin.ejs --env development",
+    "build-dev-main": "sudo gulp build --ejs ./app/server/views/main.ejs --env development",
+
+    "bs": "sudo gulp build --ejs ./core/server/views/sample.ejs --env development",
+    "ba": "sudo gulp build --ejs ./app/server/views/admin.ejs --env development",
+    "bm": "sudo gulp build --ejs ./app/server/views/main.ejs --env development",
+
+    "build-sample": "sudo gulp build --ejs ./core/server/views/sample.ejs --env production",
+    "build-admin": "sudo gulp build --ejs ./app/server/views/admin.ejs --env production",
+    "build-main": "sudo gulp build --ejs ./app/server/views/main.ejs --env production",
+
+    "start": "sudo NODE_ENV=production pm2 start app",
+    "log": "sudo pm2 logs app",
+    "test": "sudo gulp test",
     "update-webdriver": "node node_modules/grunt-protractor-runner/node_modules/protractor/bin/webdriver-manager update"
   },
   "private": true

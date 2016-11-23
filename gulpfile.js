@@ -91,7 +91,6 @@ gulp.task('webpack-watch', ['minify'],  () => {
     }
     return gulp.src('')
         .pipe(gulpIf(args.env == 'development', webpack(webpackconfig)))
-        // .pipe(webpack(webpackconfig))
         .pipe(gulp.dest('dist'));
 });
 
@@ -107,5 +106,4 @@ gulp.task('test-mocha', (cb) => {
 });
 
 gulp.task('build', ['webpack-watch']);
-// gulp.task('build', ['minify']);
 gulp.task('test', ['test-mocha']);
