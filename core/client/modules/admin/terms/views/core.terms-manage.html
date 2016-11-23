@@ -65,7 +65,7 @@
                     <div class="sg-core-body" data-ng-bind-html="selectedTerms.content | trustAsHtml"></div>
                 </div>
                 <div class="sg-core-button-wrap">
-                    <button type="button" class="sg-core-button" data-ng-click="deleteVersion(selectedTerms)">
+                    <button type="button" class="sg-core-button" data-ng-if="selectedTerms | returnDeleteDisabled" data-ng-click="deleteVersion(selectedTerms)">
                         {{ 'delete' | translate }}
                     </button>
                 </div>
