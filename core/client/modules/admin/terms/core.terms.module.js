@@ -4,6 +4,7 @@ import termsManager from './services/core.terms.manager';
 import TermsCtrl from './controllers/core.terms.controller';
 import CreateTermsCtrl from './controllers/core.create-terms.controller';
 import createTerms from './directives/create-terms/core.create-terms';
+import returnDeleteDisabled from './filters/core.terms.returnDeleteDisabled.filter';
 import routes from './config/core.terms.route';
 
 
@@ -15,4 +16,5 @@ export default angular.module("core.terms", [])
     .controller("TermsCtrl", TermsCtrl)
     .controller("CreateTermsCtrl", CreateTermsCtrl)
     .directive("createTerms", createTerms)
+    .filter("returnDeleteDisabled", returnDeleteDisabled)
     .name;

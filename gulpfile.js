@@ -9,7 +9,7 @@ const injectString = require('gulp-inject-string');
 const inject = require('gulp-inject');
 const htmlmin = require('gulp-html-minifier');
 const gulpIf = require('gulp-if');
-const args = require('get-gulp-args')();
+var args = require('get-gulp-args')();
 // const mocha = require('gulp-mocha');
 const mocha = require('gulp-spawn-mocha');
 var gulpsync = require('gulp-sync')(gulp);
@@ -27,6 +27,8 @@ if (!args.env) {
     process.env.NODE_ENV = args.env;
 }
 
+console.log(args.env);
+
 function getJsName() {
     var url = args.ejs;
     var pathArr = url.split("/");
@@ -40,7 +42,6 @@ function getRootType() {
 }
 
 gulp.task('webpack', () => {
-    console.log('webpack');
     return gulp.src('')
         .pipe(webpack(require('./webpack.config.js')))
         .pipe(gulp.dest('dist'));
@@ -48,7 +49,6 @@ gulp.task('webpack', () => {
 
 gulp.task('injection', ['webpack'], () => {
     var url = args.ejs;
-    console.log('injection');
     var jsName = getJsName();
     var src = gulp.src(url);
     var source = gulp.src([
@@ -78,6 +78,7 @@ gulp.task('clean', ["rename"], () => {
 });
 
 gulp.task('minify', ["clean"], () => {
+    console.log('args',args);
     return gulp.src("./" + getRootType() + "/server/views/" + getJsName() + "-" + args.env + ".ejs")
         .pipe(gulpIf(args.env == 'production', htmlmin({collapseWhitespace: true})))
         .pipe(gulp.dest('./' + getRootType() + '/server/views'));
@@ -87,12 +88,9 @@ gulp.task('webpack-watch', ['minify'],  () => {
     var webpackconfig = require('./webpack.config.js');
     if (args.env == 'development') {
         webpackconfig.watch = true;
-    } else {
-        webpackconfig.watch = false;
     }
     return gulp.src('')
-        // .pipe(gulpIf(args.env == 'development', webpack(webpackconfig)))
-        .pipe(webpack(webpackconfig))
+        .pipe(gulpIf(args.env == 'development', webpack(webpackconfig)))
         .pipe(gulp.dest('dist'));
 });
 
