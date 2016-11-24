@@ -130,7 +130,7 @@ function extending() {
         return true;
     });
 
-    expressValidator.validator.extend('onlyError', function () {
+    expressValidator.validator.extend('isOnlyError', function (str) {
         return false;
     });
 
