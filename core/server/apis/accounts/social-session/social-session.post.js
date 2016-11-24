@@ -100,6 +100,8 @@ post.logInUser = function () {
         req.models.User.checkAccountForProvider(req, req.loadedUser, req.providerUserProfile, loginHistory, function (status, data) {
             if (status == 200) {
                 next();
+            } else if (status == 301) {
+                res.hjson(req, next, 301);
             } else {
                 res.hjson(req, next, 403);
             }
