@@ -96,7 +96,7 @@ module.exports = function (sequelize) {
     app.use(function(req, res, next) {
         var contentType = req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type'];
         console.log("content-type: ", contentType);
-        console.log("req: ", req);
+        console.log("req: ", JSON.stringify(req));
         if (!contentType || contentType.indexOf("xml") == -1) {
             bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
                 bodyParser.urlencoded({extended: true})(req, res, function() {
