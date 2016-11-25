@@ -29,8 +29,8 @@ var express = require('express'),
     helmet = require('helmet'),
     expressSanitizer = require('express-sanitizer'),
     expressDefend = require('express-defend'),
-    blacklist = require('express-blacklist');
-
+    blacklist = require('express-blacklist'),
+    xmlParser = require('express-xml-bodyparser');
 var multiViews = require('multi-views');
 var bridgeUtils = require('../../../bridge/utils');
 var models = require('../../../bridge/models/sequelize');
@@ -93,10 +93,20 @@ module.exports = function (sequelize) {
     //app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
     app.use(languageParser(META.local));
-    app.use(bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion}));
-    app.use(bodyParser.urlencoded({
-        extended: true
-    }));
+    app.use(function(req, res, next) {
+        var contentType = req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type'];
+        if (!contentType || contentType.indexOf("xml") == -1) {
+            bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
+                bodyParser.urlencoded({extended: true})(req, res, function() {
+                    next();
+                });
+            });
+        } else {
+            xmlParser()(req, res, function() {
+                next();
+            });
+        }
+    });
     app.use(methodOverride(function (req, res) {
         if (req.body && typeof req.body === 'object' && '_method' in req.body) {
             var method = req.body._method;
