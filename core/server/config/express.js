@@ -106,7 +106,7 @@ module.exports = function (sequelize) {
         // } else {
         //
         // }
-        console.log("XML REQUEST");
+        console.log("XML REQUEST", new Date());
         xmlParser()(req, res, function() {
             next();
         });
