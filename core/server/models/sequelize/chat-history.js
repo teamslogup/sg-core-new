@@ -67,7 +67,31 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findChatHistoriesByOptions': function (options, callback) {
+            'createChatHistory': function (body, callback) {
+
+                return sequelize.models.ChatHistory.create(body, {
+                    'include': [{
+                        model: sequelize.models.User,
+                        as: 'user',
+                        attributes: sequelize.models.User.getUserFields(),
+                        include: {
+                            model: sequelize.models.UserImage,
+                            as: 'userImages',
+                            include: {
+                                model: sequelize.models.Image,
+                                as: 'image'
+                            }
+                        }
+                    }]
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data) {
+                        data.reload().then(function () {
+                            callback(200, data);
+                        });
+                    }
+                });
+            },
+            'findChatHistoriesByOptions': function (options, userId, callback) {
 
                 var where = {};
 
@@ -80,26 +104,43 @@ module.exports = {
                 }
 
                 where.createdAt = {
-                    '$lt': options.last
+                    '$and': [{
+                        '$lt': options.last
+                    }]
                 };
 
                 sequelize.transaction(function (t) {
 
-                    return sequelize.models.ChatHistory.findAll({
-                        'offset': parseInt(options.offset),
-                        'limit': parseInt(options.size),
-                        'where': where,
-                        'order': [[options.orderBy, options.sort]],
-                        'include': [{
-                            model: sequelize.models.User,
-                            as: 'user'
-                        }, {
-                            model: sequelize.models.ChatRoom,
-                            as: 'room'
-                        }],
+                    return sequelize.models.ChatRoomUser.findOne({
+                        'where': {
+                            userId: userId,
+                            roomId: options.roomId
+                        },
+                        'paranoid': false,
                         'transaction': t
                     }).then(function (data) {
-                        if (data.length > 0) {
+
+                        where.createdAt.$and.unshift({
+                            '$gt': data.createdAt
+                        });
+
+                        return sequelize.models.ChatHistory.findAndCountAll({
+                            'offset': parseInt(options.offset),
+                            'limit': parseInt(options.size),
+                            'where': where,
+                            'order': [[options.orderBy, options.sort]],
+                            'include': [{
+                                model: sequelize.models.User,
+                                as: 'user',
+                                attributes: sequelize.models.User.getUserFields()
+                            }, {
+                                model: sequelize.models.ChatRoom,
+                                as: 'room'
+                            }],
+                            'transaction': t
+                        });
+                    }).then(function (data) {
+                        if (data.rows.length > 0) {
                             return data;
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);

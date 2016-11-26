@@ -37,50 +37,62 @@ module.exports.init = function (io) {
         console.log(socket.id + ' Client connected...');
         console.log('session', socket.request.session);
 
-        socket.on('createRoom', function (body) {
+        socket.on(STD.chat.clientCreateRoom, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.createRoom());
             joinBinder.bind();
         });
 
-        socket.on('joinRoom', function (body) {
+        socket.on(STD.chat.clientJoinRoom, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.joinRoom());
             joinBinder.bind();
         });
 
-        socket.on('leaveRoom', function (body) {
+        socket.on(STD.chat.clientJoinAllRooms, function (body) {
+            var joinBinder = new Binder(socket, body);
+            joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.joinAllRoomsFromDB());
+            joinBinder.bind();
+        });
+
+        socket.on(STD.chat.clientLeaveRoom, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.leaveRoom());
             joinBinder.bind();
         });
 
-        socket.on('typing', function (isTyping, roomId) {
-
-            var body = {
-                isTyping: isTyping,
-                roomId: roomId
-            };
-
+        socket.on(STD.chat.clientTyping, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.onTyping());
             joinBinder.bind();
         });
 
-        socket.on('sendMessage', function (body) {
+        socket.on(STD.chat.clientSendMessage, function (body) {
 
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateSendMessage());
+            joinBinder.add(middles.checkPrivateChatRoomUser());
             joinBinder.add(middles.sendMessage());
             joinBinder.bind();
 
         });
 
-        socket.on('disconnect', function() {
+        socket.on(STD.chat.clientReadMessage, function (body) {
+
+            var joinBinder = new Binder(socket, body);
+            joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.readMessage());
+            joinBinder.bind();
+
+        });
+
+        socket.on('disconnect', function () {
             console.log('disconnect');
             socket.disconnect();
         });

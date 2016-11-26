@@ -259,12 +259,13 @@ var standards = {
         "all": "all"
     },
     "file": {
-        "enumFolders": ["user", "common", "bg", "article", "attach"],
+        "enumFolders": ["user", "common", "bg", "article", "attach", "chat"],
         "folderUser": "user",
         "folderCommon": "common",
         "folderArticle": "article",
         "folderAttach": "attach",
         "folderBg": "bg",
+        "folderChat": "chat",
         "minCount": 1,
         "maxCount": 20,
         "enumValidImageExtensions": ["jpg", "jpeg", "png", "gif"],
@@ -354,6 +355,25 @@ var standards = {
     },
     "dialog": {
         "isUseAnimation": true
+    },
+    "chat": {
+        "clientCreateRoom": "clientCreateRoom",
+        "clientJoinRoom": "clientJoinRoom",
+        "clientJoinAllRooms": "clientJoinAllRooms",
+        "clientLeaveRoom": "clientLeaveRoom",
+        "clientTyping": "clientTyping",
+        "clientSendMessage": "clientSendMessage",
+        "clientReadMessage": "clientReadMessage",
+        "serverJoinRoom": "serverJoinRoom",
+        "serverJoinUser": "serverJoinUser",
+        "serverJoinAllRooms": "serverJoinAllRooms",
+        "serverLeaveRoom": "serverLeaveRoom",
+        "serverLeaveUser": "serverLeaveUser",
+        "serverTyping": "serverTyping",
+        "serverCheckMessage": "serverCheckMessage",
+        "serverReceiveMessage": "serverReceiveMessage",
+        "serverReadMessage": "serverReadMessage",
+        "serverRequestFail": "serverRequestFail"
     },
     "chatRoom": {},
     "chatRoomUser": {},

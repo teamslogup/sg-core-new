@@ -17,6 +17,8 @@ var mixin = require('../../../../core/server/models/sequelize/mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var micro = require('microtime-nodejs');
+
 module.exports = {
     fields: {
         'userId': {
@@ -71,14 +73,11 @@ module.exports = {
                         {
                             model: sequelize.models.ChatRoomUser,
                             as: 'roomUsers',
+                            paranoid: false,
                             include: {
                                 model: sequelize.models.User,
                                 as: 'user',
-                                attributes: sequelize.models.User.getUserFields(),
-                                include: {
-                                    model: sequelize.models.UserImage,
-                                    as: 'userImages'
-                                }
+                                attributes: sequelize.models.User.getUserFields()
                             }
                         }
                     ]
@@ -96,7 +95,7 @@ module.exports = {
                             roomId: body.roomId
                         },
                         include: sequelize.models.ChatRoomUser.getIncludeChatRoomUser(),
-                        paranoid: true,
+                        paranoid: false,
                         transaction: t
                     }).then(function (data) {
 
@@ -104,7 +103,11 @@ module.exports = {
 
                             chatRoomUser = data;
 
-                            return sequelize.models.ChatRoomUser.update(body, {
+                            return sequelize.models.ChatRoomUser.update({
+                                userId: body.userId,
+                                roomId: body.roomId,
+                                deletedAt: null
+                            }, {
                                 where: {
                                     id: data.id
                                 },
@@ -140,22 +143,20 @@ module.exports = {
 
                 var where = {};
 
+                if (options.roomId !== undefined) {
+                    where.roomId = options.roomId
+                }
+
                 if (options.userId !== undefined) {
                     where.userId = options.userId
                 }
 
-                where.createdAt = {
-                    '$lt': options.last
-                };
-
                 sequelize.transaction(function (t) {
 
                     return sequelize.models.ChatRoomUser.findAll({
-                        'offset': parseInt(options.offset),
-                        'limit': parseInt(options.size),
                         'where': where,
-                        'order': [[options.orderBy, options.sort]],
                         'include': sequelize.models.ChatRoomUser.getIncludeChatRoomUser(),
+                        'paranoid': false,
                         'transaction': t
                     }).then(function (data) {
                         if (data.length > 0) {
@@ -172,7 +173,100 @@ module.exports = {
                 });
 
             },
-            'deleteChatRoomUser': function (where, callback) {
+            'deleteChatRoomUser': function (userId, roomId, callback) {
+                return sequelize.models.ChatRoomUser.destroy({
+                    where: {
+                        userId: userId,
+                        roomId: roomId
+                    }
+                }).then(function (data) {
+                    return true;
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        return callback(204);
+                    }
+                });
+            },
+            /**
+             * 상대방이 방을 나가있으면 해당 유저의 deleteAt을 지워서 다시 방에 초대한다.
+             * @param roomId
+             * @param sendUserId
+             * @param callback
+             */
+            'findOrUpdatePrivateChatRoomUser': function (roomId, sendUserId, callback) {
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.ChatRoomUser.findAll({
+                        'where': {
+                            roomId: roomId
+                        },
+                        'paranoid': false,
+                        'transaction': t
+                    }).then(function (data) {
+                        if (data.length > 0) {
+
+                            var indexToBeUpdated;
+
+                            for (var i = 0; i < data.length; i++) {
+                                if (data[i].userId != sendUserId && data[i].deletedAt) {
+                                    indexToBeUpdated = i;
+                                }
+                            }
+
+                            if (indexToBeUpdated !== undefined) {
+                                var chatRoomUser = data[indexToBeUpdated];
+                                chatRoomUser.setDataValue('createdAt', micro.now());
+                                chatRoomUser.setDataValue('deletedAt', null);
+                                return chatRoomUser.save({paranoid: false});
+                            } else {
+                                return true;
+                            }
+
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+                    }).then(function (data) {
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(204);
+                    }
+                });
+
+            },
+            'updateChatRoomUserUpdatedAt': function (userId, roomId, callback) {
+
+                var chatRoomUser;
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.ChatRoomUser.update({
+                        updatedAt: micro.now()
+                    }, {
+                        'where': {
+                            userId: userId,
+                            roomId: roomId
+                        },
+                        'paranoid': false,
+                        'transaction': t
+                    }).then(function (data) {
+
+                        if (data[0] > 0 || data[1][0]) {
+                            chatRoomUser = data[1][0];
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(400);
+                        }
+
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(204, chatRoomUser);
+                    }
+                });
 
             }
         })

@@ -4,6 +4,7 @@ import StaticLoader from './static-loader/core.common.static-loader';
 import errSrc from './err-src/core.common.err-src';
 import inputPass from './input-pass/core.common.input-pass';
 import toMicrotime from './to-microtime/core.common.to-microtime';
+import microTimeTo12hoursTime from './microtime-to-12hours-time/core.common.microtime-to-12hours-time';
 import microTimeToDate from './microtime-to-date/core.common.microtime-to-date';
 import trustAsHtml from './trust-as-html/core.common.trust-as-html';
 import roundUp from './round-up/core.common.round-up';
@@ -17,6 +18,7 @@ export default angular.module('core.common', [])
     .directive(errSrc)
     .directive('inputPass', inputPass)
     .filter('toMicrotime', toMicrotime)
+    .filter('microTimeTo12hoursTime', microTimeTo12hoursTime)
     .filter('microTimeToDate', microTimeToDate)
     .filter('trustAsHtml', trustAsHtml)
     .filter('roundUp', roundUp)
