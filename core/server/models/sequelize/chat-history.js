@@ -120,25 +120,30 @@ module.exports = {
                         'transaction': t
                     }).then(function (data) {
 
-                        where.createdAt.$and.unshift({
-                            '$gt': data.createdAt
-                        });
+                        if (data) {
+                            where.createdAt.$and.unshift({
+                                '$gt': data.createdAt
+                            });
 
-                        return sequelize.models.ChatHistory.findAndCountAll({
-                            'offset': parseInt(options.offset),
-                            'limit': parseInt(options.size),
-                            'where': where,
-                            'order': [[options.orderBy, options.sort]],
-                            'include': [{
-                                model: sequelize.models.User,
-                                as: 'user',
-                                attributes: sequelize.models.User.getUserFields()
-                            }, {
-                                model: sequelize.models.ChatRoom,
-                                as: 'room'
-                            }],
-                            'transaction': t
-                        });
+                            return sequelize.models.ChatHistory.findAndCountAll({
+                                'offset': parseInt(options.offset),
+                                'limit': parseInt(options.size),
+                                'where': where,
+                                'order': [[options.orderBy, options.sort]],
+                                'include': [{
+                                    model: sequelize.models.User,
+                                    as: 'user',
+                                    attributes: sequelize.models.User.getUserFields()
+                                }, {
+                                    model: sequelize.models.ChatRoom,
+                                    as: 'room'
+                                }],
+                                'transaction': t
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
                     }).then(function (data) {
                         if (data.rows.length > 0) {
                             return data;

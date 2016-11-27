@@ -211,7 +211,10 @@ module.exports = {
                     }).then(function (data) {
                         if (data && data[0]) {
                             chatRoom = data[0].room;
-                            return true;
+
+                            data[0].setDataValue('createdAt', micro.now());
+                            data[0].setDataValue('deletedAt', null);
+                            return data[0].save({paranoid: false});
                         } else {
 
                             return sequelize.models.ChatRoom.create({
@@ -237,11 +240,11 @@ module.exports = {
                                     'transaction': t
                                 });
 
-                            }).then(function (data) {
-                                return true;
                             });
                         }
-                    });
+                    }).then(function (data) {
+                        return true;
+                    })
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
