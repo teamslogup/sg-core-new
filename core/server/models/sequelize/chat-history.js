@@ -17,6 +17,8 @@ var mixin = require('../../../../core/server/models/sequelize/mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var micro = require('microtime-nodejs');
+
 module.exports = {
     fields: {
         'userId': {
@@ -69,24 +71,53 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'createChatHistory': function (body, callback) {
 
-                return sequelize.models.ChatHistory.create(body, {
-                    'include': [{
-                        model: sequelize.models.User,
-                        as: 'user',
-                        attributes: sequelize.models.User.getUserFields(),
-                        include: {
-                            model: sequelize.models.UserImage,
-                            as: 'userImages',
+                var chatHistory;
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.ChatHistory.create(body, {
+                        'include': [{
+                            model: sequelize.models.User,
+                            as: 'user',
+                            attributes: sequelize.models.User.getUserFields(),
                             include: {
-                                model: sequelize.models.Image,
-                                as: 'image'
+                                model: sequelize.models.UserImage,
+                                as: 'userImages',
+                                include: {
+                                    model: sequelize.models.Image,
+                                    as: 'image'
+                                }
                             }
-                        }
-                    }]
-                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                    if (data) {
-                        data.reload().then(function () {
-                            callback(200, data);
+                        }]
+                    }).then(function (data) {
+
+                        chatHistory = data;
+
+                        return sequelize.models.ChatRoomUser.update({
+                            updatedAt: micro.now()
+                        }, {
+                            'where': {
+                                userId: body.userId,
+                                roomId: body.roomId
+                            },
+                            'paranoid': false,
+                            'transaction': t
+                        }).then(function (data) {
+
+                            if (data[0] > 0 || data[1][0]) {
+                                return true;
+                            } else {
+                                throw new errorHandler.CustomSequelizeError(400);
+                            }
+
+                        });
+
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        chatHistory.reload().then(function () {
+                            callback(200, chatHistory);
                         });
                     }
                 });
