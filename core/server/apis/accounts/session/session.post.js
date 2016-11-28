@@ -172,7 +172,9 @@ post.loginCountUpsert = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.user.toSecuredJSON());
+        req.user.reload().then(function() {
+            res.hjson(req, next, 200, req.user.toSecuredJSON());
+        });
     };
 };
 
