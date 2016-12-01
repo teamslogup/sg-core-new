@@ -483,30 +483,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.UserNotification,
-                    as: 'userNotifications',
-                    attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                }, {
-                    model: sequelize.models.UserPublicNotification,
-                    as: 'userPublicNotifications',
-                    attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                }, {
-                    model: sequelize.models.UserImage,
-                    as: 'userImages',
-                    include: [{
-                        model: sequelize.models.Image,
-                        as: 'image'
-                    }]
-                }]
-            },
-            'getIncludeUserWithLoginHistory': function () {
-                return [{
-                    model: sequelize.models.Profile,
-                    as: profileKey
-                }, {
-                    model: sequelize.models.Provider,
-                    as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                    attributes: sequelize.models.LoginHistory.getLoginHistoryFields()
                 }, {
                     model: sequelize.models.UserNotification,
                     as: 'userNotifications',
