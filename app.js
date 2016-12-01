@@ -10,6 +10,7 @@ var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 var config = require('./bridge/config/env');
 var express = require('./bridge/config/express');
 var https = require('./core/server/config/https');
+var socketIo = require('./core/server/config/socket-io');
 var cluster = require('./core/server/config/cluster');
 var passport = require('./core/server/config/passport');
 var sequelize = require('./core/server/config/sequelize');
@@ -30,6 +31,7 @@ if (!stat) {
 
 var app = express(sequelize);
 var server = https(app);
+server = socketIo(server, app);
 
 passport();
 

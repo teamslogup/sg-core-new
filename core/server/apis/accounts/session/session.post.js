@@ -131,6 +131,20 @@ post.removeAllSessions = function () {
     };
 };
 
+// post.removeTrashSession = function() {
+//     return function (req, res, next) {
+//         var loginHistories = req.loadedUser.loginHistories;
+//
+//         loginHistories.forEach(function(history) {
+//             req.sessionStore.get(history.session, function (session) {
+//                 if (!session || session.id != req.loadedUser.id) {
+//                     req.models.LoginHistory.removeSessionById(session);
+//                 }
+//             });
+//         });
+//     };
+// };
+
 post.logInUser = function () {
     return function (req, res, next) {
 

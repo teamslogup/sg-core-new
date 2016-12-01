@@ -205,6 +205,8 @@
   "roleE": "SuperAdmin",
   "roleF": "UltraAdmin",
   "roleG": "God",
-  "roleS": "SlogUp"
+  "roleS": "SlogUp",
+  "AM": "오전",
+  "PM": "오후"
 }
 
