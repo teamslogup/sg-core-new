@@ -90,6 +90,7 @@
     "formidable": "*",
     "gm": "*",
     "helmet": "^2.1.2",
+    "iconv": "^2.2.1",
     "method-override": "*",
     "microtime-nodejs": "*",
     "mobile-detect": "*",
