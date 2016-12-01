@@ -67,13 +67,12 @@ config.plugins = [
 
 if (ENV == 'production') {
     config.plugins.push(
-        new webpack.NoErrorsPlugin(),
-        new webpack.optimize.DedupePlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: {
-                warnings: false
-            }
-        })
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compressor: {
+        //         warnings: false
+        //     }
+        // }),
+        new webpack.optimize.DedupePlugin()
     )
 } else {
     config.devtool = 'source-map';

@@ -34,7 +34,7 @@ post.validate = function () {
             }
             // 둘 중에 하나만 있을 경우 필수 요청 값 에러 출력.
             if (type == USER.signUpTypePhoneId && (req.body.aid === undefined || req.body.apass === undefined)) {
-                req.check('aid', '400_14').onlyError();
+                req.check('aid', '400_14').isOnlyError();
             }
         } else if (type == USER.signUpTypeSocial) {
             req.check('uid', '400_8').len(1, 200);

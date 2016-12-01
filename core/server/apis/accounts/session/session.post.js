@@ -131,6 +131,20 @@ post.removeAllSessions = function () {
     };
 };
 
+// post.removeTrashSession = function() {
+//     return function (req, res, next) {
+//         var loginHistories = req.loadedUser.loginHistories;
+//
+//         loginHistories.forEach(function(history) {
+//             req.sessionStore.get(history.session, function (session) {
+//                 if (!session || session.id != req.loadedUser.id) {
+//                     req.models.LoginHistory.removeSessionById(session);
+//                 }
+//             });
+//         });
+//     };
+// };
+
 post.logInUser = function () {
     return function (req, res, next) {
 
@@ -172,7 +186,9 @@ post.loginCountUpsert = function () {
 
 post.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.user.toSecuredJSON());
+        req.user.reload().then(function() {
+            res.hjson(req, next, 200, req.user.toSecuredJSON());
+        });
     };
 };
 
