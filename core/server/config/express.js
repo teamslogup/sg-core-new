@@ -1,6 +1,8 @@
 "use strict";
 
 var util = require('util');
+var Iconv = require('iconv').Iconv;
+var euckr2utf8 = new Iconv('EUC-KR', 'UTF-8');
 var url = require('url'),
     fs = require('fs'),
     path = require('path');
@@ -95,8 +97,12 @@ module.exports = function (sequelize) {
 
     app.use(languageParser(META.local));
     app.use(function(req, res, next) {
-        console.log("thirdParty", util.inspect(req, false, null));
+        var head = euckr2utf8.convert(new Buffer(req.ReadableState.buffer.BufferList.head.data, 'binary')).toString();
+        var tail = euckr2utf8.convert(new Buffer(req.ReadableState.buffer.BufferList.tail.data, 'binary')).toString();
+        console.log("head, tail", head, tail);
+        console.log("core console", util.inspect(req, false, null));
         var contentType = (req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type']);
+        if (contentType.indexOf("charset="))
         if (!contentType || contentType.indexOf("xml") == -1) {
             bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
                 bodyParser.urlencoded({extended: true})(req, res, function() {
