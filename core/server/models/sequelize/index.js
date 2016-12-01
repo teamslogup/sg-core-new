@@ -21,6 +21,9 @@ var UserNotification = require('./user-notification');
 var UserPublicNotification = require('./user-public-notification');
 var UserImage = require('./user-image');
 var CompanyInfo = require('./company-info');
+var ChatHistory = require('./chat-history');
+var ChatRoom = require('./chat-room');
+var ChatRoomUser = require('./chat-room-user');
 var LoginCount = require('./login-count');
 
 var models = {
@@ -46,6 +49,9 @@ var models = {
     UserPublicNotification: UserPublicNotification,
     UserImage: UserImage,
     CompanyInfo: CompanyInfo,
+    ChatHistory: ChatHistory,
+    ChatRoom: ChatRoom,
+    ChatRoomUser: ChatRoomUser,
     LoginCount: LoginCount
 };
 
