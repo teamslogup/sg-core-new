@@ -197,6 +197,34 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
         });
     };
 
+    $scope.deleteNotice = function (index) {
+
+        dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+
+            var notice = $scope.noticeList[index];
+
+            loadingHandler.startLoading(LOADING.spinnerKey, 'deleteNotice');
+            noticesManager.deleteNotice(notice, function (status, data) {
+
+                if (status == 204) {
+                    $scope.noticeList.splice(index, 1);
+                } else {
+                    dialogHandler.alertError(status, data);
+                }
+
+                loadingHandler.endLoading(LOADING.spinnerKey, 'deleteNotice');
+
+            });
+
+        });
+
+    };
+
+    $scope.showNoticeDetailAndStartEditMode = function (index) {
+        $scope.showNoticeDetail(index);
+        $scope.startEditMode();
+    };
+
     $scope.findNotices();
 
     $scope.$watch('params.type', function (newVal, oldVal) {

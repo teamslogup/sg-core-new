@@ -1,7 +1,7 @@
 var async = require('async');
 var sequelize = require('../../server/config/sequelize');
 
-var utils = require('./utils');
+var coreUtils = require('../utils');
 var STD = require('../../../bridge/metadata/standards');
 
 var middles = {
@@ -184,6 +184,7 @@ var middles = {
     sendMessage: function () {
         return function (socket, payload, next) {
 
+            var notification = socket.request.notification;
             var user = socket.request.user;
 
             var body = {
@@ -197,6 +198,11 @@ var middles = {
                 if (status == 200) {
                     socket.emit(STD.chat.serverCheckMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
+
+                    coreUtils.notification.all.sendNotification(data.user, notification, {
+                        user: user.nick
+                    });
+
                 } else {
                     console.log(socket.id + ' fail to join');
                     return socket.emit(STD.chat.serverRequestFail, status, data);
@@ -217,6 +223,7 @@ var middles = {
                 if (status == 204) {
                     socket.emit(STD.chat.serverReadMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReadMessage, data);
+
                 } else {
                     return socket.emit(STD.chat.serverRequestFail, status, data);
                 }
@@ -238,6 +245,20 @@ var middles = {
             });
 
             next();
+        }
+    },
+    loadNotification: function (key, options) {
+        return function (socket, payload, next) {
+
+            sequelize.models.Notification.loadNotification(key, options, function (status, data) {
+                if (status == 200) {
+                    socket.request.notification = data;
+                    next();
+                } else {
+                    return socket.emit(STD.chat.serverRequestFail, status, data);
+                }
+            });
+
         }
     }
 };

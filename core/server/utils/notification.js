@@ -1,12 +1,19 @@
 var meta = require('../../../bridge/metadata');
 var path = require('path');
 
+var STD = require('../../../bridge/metadata/standards');
 var CONFIG = require('../../../bridge/config/env');
 var APP_CONFIG = CONFIG.app;
 var url = APP_CONFIG.rootUrl + "/" + APP_CONFIG.apiName + '/accounts/auth-email?token=';
 var appDir = require('app-root-path').path;
 appDir = path.resolve(appDir, "./core/server/views/email");
 
+var sgSender = require('sg-sender');
+var sendNoti = sgSender.getSender(CONFIG.sender);
+var emailErrorRefiner = sgSender.emailErrorRefiner;
+var phoneErrorRefiner = sgSender.phoneErrorRefiner;
+
+var sequelize = require('../../server/config/sequelize');
 
 function makeAuthEmailUrl(redirects, auth) {
     return url + auth.token + "&type=" + auth.type + "&successRedirect=" + (redirects.successRedirect || "") + "&errorRedirect=" + (redirects.errorRedirect || "");
@@ -14,12 +21,13 @@ function makeAuthEmailUrl(redirects, auth) {
 
 module.exports = {
     all: {
-        sendNotification: function (req, user, notification, data, callback) {
-            var NOTIFICATION = req.meta.std.notification;
+        sendNotification: function (user, notification, data, callback) {
+            var NOTIFICATION = STD.notification;
+
             function sendPush(callback) {
                 var histories = user.loginHistories;
                 histories.forEach(function (history) {
-                    req.sendNoti.fcm(history.token, notification.title, data || notification.data, function (err) {
+                    sendNoti.fcm(history.token, notification.title, data || notification.data, function (err) {
                         if (err) {
                             if (callback) callback(500, err);
                         } else {
@@ -30,7 +38,7 @@ module.exports = {
             }
 
             function sendEmail(callback) {
-                req.sendNoti.email(user.email, "Notification", {
+                sendNoti.email(user.email, "Notification", {
                     subject: notification.title,
                     dir: appDir,
                     name: 'common',
@@ -40,7 +48,7 @@ module.exports = {
                 }, function (err) {
                     if (process.env.NODE_ENV == 'test') return callback(204);
                     if (err) {
-                        if (callback) callback(503, req.emailErrorRefiner(err));
+                        if (callback) callback(503, emailErrorRefiner(err));
                     } else {
                         if (callback) callback(204);
                     }
@@ -59,9 +67,9 @@ module.exports = {
 
             function sendSMS(callback) {
                 if (user.phoneNum) {
-                    req.sendNoti.sms(user.phoneNum, notification.body, null, function (err) {
+                    sendNoti.sms(user.phoneNum, notification.body, null, function (err) {
                         if (err) {
-                            if (callback) callback(err.status, req.phoneErrorRefiner(err));
+                            if (callback) callback(err.status, phoneErrorRefiner(err));
                         } else {
                             if (callback) callback(204);
                         }
@@ -74,7 +82,7 @@ module.exports = {
             function send(callback) {
 
                 // application 타입일 경우 userNotification에서 보낼지 여부를 찾아야함
-                if (notification.type == NOTIFICATION.formApplication) {
+                if (notification.form == NOTIFICATION.formApplication) {
                     // userNotifiction에 없거나, true 이면 발송
                     // userNotification에 false이면 미발송
 
@@ -82,7 +90,11 @@ module.exports = {
                     for (var i = 0; i < userNotifications.length; ++i) {
                         var userNoti = userNotifications[i];
                         if (userNoti.notificationId == notification.id && userNoti.switch == false) {
-                            if (callback) return callback(204);
+                            if (callback) {
+                                return callback(204);
+                            } else {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -92,7 +104,11 @@ module.exports = {
                     for (var i = 0; i < userPublicNotifications.length; ++i) {
                         var userPublicNoti = userPublicNotifications[i];
                         if (userPublicNoti.type == notification.type && userPublicNoti.switch == false) {
-                            if (callback) return callback(204);
+                            if (callback) {
+                                return callback(204);
+                            } else {
+                                return false;
+                            }
                         }
                     }
                 }
@@ -114,7 +130,7 @@ module.exports = {
             uploadData = JSON.stringify(uploadData);
 
             if (notification.isStored) {
-                var notificationBox = req.models.NotificationBox.build({
+                var notificationBox = sequelize.models.NotificationBox.build({
                     userId: user.id,
                     notificationId: notification.id,
                     data: uploadData
