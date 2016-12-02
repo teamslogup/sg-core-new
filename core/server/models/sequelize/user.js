@@ -508,6 +508,9 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                }, {
                     model: sequelize.models.UserNotification,
                     as: 'userNotifications',
                     attributes: sequelize.models.UserNotification.getUserNotificationFields()
@@ -634,7 +637,7 @@ module.exports = {
                     options.order = [['createdAt', options.sort]];
                 }
 
-                include = sequelize.models.User.getIncludeUser();
+                include = sequelize.models.User.getIncludeUserWithLoginHistory();
 
                 var loadedUser;
                 var loadedCount;
