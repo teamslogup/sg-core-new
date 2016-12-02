@@ -4,8 +4,10 @@
  */
 
 var Sequelize = require('sequelize');
+var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
+var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
@@ -75,7 +77,43 @@ module.exports = {
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
-        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {}),
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            'loadNotification': function (key, options, callback) {
+
+                var loadedData = null;
+                var isSuccess = false;
+
+                sequelize.transaction(function (t) {
+
+                    var query = {
+                        where: {
+                            key: key
+                        }
+                    };
+
+                    return sequelize.models.Notification.find(query).then(function (data) {
+                        isSuccess = true;
+                        // 로드하려는 노티피케이션이 없는경우
+                        if (!data) {
+                            var notification = sequelize.models.Notification.build(options);
+                            return notification.save().then(function (data) {
+                                isSuccess = true;
+                                loadedData = data;
+                            });
+                        } else {
+                            isSuccess = true;
+                            loadedData = data;
+                        }
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (isSuccess) {
+                        callback(200, loadedData);
+                    }
+                });
+
+            }
+        }),
         'hooks': {}
     }
 };

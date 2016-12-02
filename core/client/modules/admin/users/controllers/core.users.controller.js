@@ -81,11 +81,11 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
     };
 
     function splitBirth(str) {
-        if(str){
+        if (str) {
             var date = str.split("-");
 
             $scope.form.birthYear = Number(date[0]);
-            $scope.form.birthMonth= Number(date[1]);
+            $scope.form.birthMonth = Number(date[1]);
             $scope.form.birthDay = Number(date[2]);
         }
     }
@@ -261,6 +261,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                     $scope.notificationSwitchs[$scope.notifications[i].key] = {
                         switch: true,
                         key: $scope.notifications[i].key,
+                        title: $scope.notifications[i].title,
                         notificationId: $scope.notifications[i].id
                     };
 
@@ -439,6 +440,34 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
             loadingHandler.endLoading(LOADING.spinnerKey, 'deleteSessionRemote');
         });
 
+    };
+
+    $scope.deleteUser = function (index) {
+
+        dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+
+            var user = $scope.userList[index];
+
+            loadingHandler.startLoading(LOADING.spinnerKey, 'deleteUser');
+            usersManager.deleteUser(user, function (status, data) {
+
+                if (status == 204) {
+                    $scope.userList.splice(index, 1);
+                } else {
+                    dialogHandler.alertError(status, data);
+                }
+
+                loadingHandler.endLoading(LOADING.spinnerKey, 'deleteUser');
+
+            });
+
+        });
+
+    };
+
+    $scope.showUserDetailAndStartEditMode = function (index) {
+        $scope.showUserDetail(index);
+        $scope.startEditMode();
     };
 
     $scope.$watch('params.role', function (newVal, oldVal) {
