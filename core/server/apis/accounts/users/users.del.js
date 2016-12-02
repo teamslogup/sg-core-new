@@ -37,7 +37,8 @@ del.destroyUser = function () {
         //     });
         // }
 
-        if (req.meta.std.user.deleteApiUrl) {
+        //스탠다드 replaceApi에 userDel 있으면 해당 api 호출
+        if (req.meta.std.replaceApi.userDel) {
 
             var requestAPI = req.coreUtils.common.requestAPI(req, res, next);
             requestAPI({

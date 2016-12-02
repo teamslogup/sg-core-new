@@ -135,7 +135,9 @@ var standards = {
         "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
-        "deleteApiUrl": ""
+    },
+    "replaceApi": {
+        'userDel': ""
     },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.
