@@ -80,14 +80,25 @@ module.exports = {
                             model: sequelize.models.User,
                             as: 'user',
                             attributes: sequelize.models.User.getUserFields(),
-                            include: {
+                            include: [{
+                                model: sequelize.models.LoginHistory,
+                                as: 'loginHistories',
+                            }, {
+                                model: sequelize.models.UserNotification,
+                                as: 'userNotifications',
+                                attributes: sequelize.models.UserNotification.getUserNotificationFields()
+                            }, {
+                                model: sequelize.models.UserPublicNotification,
+                                as: 'userPublicNotifications',
+                                attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
+                            }, {
                                 model: sequelize.models.UserImage,
                                 as: 'userImages',
                                 include: {
                                     model: sequelize.models.Image,
                                     as: 'image'
                                 }
-                            }
+                            }]
                         }]
                     }).then(function (data) {
 

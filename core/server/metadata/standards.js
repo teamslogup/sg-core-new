@@ -34,15 +34,18 @@ var standards = {
         "minImgLength": 1,
         "maxDescriptionLength": 60,
         "minDescriptionLength": 1,
-        "notiApply": {
-            "type": "push",
-            "key": "notiNameApply",
-            "title": "notiNameApplyTitle",
-            "body": "notiNameApplyBody",
-            "isStored": true,
-            "isOption": true,
-            "form": "application"
+        "app": {
+            "notiChat": {
+                "type": "push",
+                "key": "notiNameChat",
+                "title": "notiNameChatTitle",
+                "body": "notiNameChatBody",
+                "isStored": false,
+                "isOption": true,
+                "form": "application"
+            }
         }
+
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
@@ -132,6 +135,7 @@ var standards = {
         "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
+        "deleteApiUrl": ""
     },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.

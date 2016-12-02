@@ -77,6 +77,7 @@ module.exports.init = function (io) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateSendMessage());
+            joinBinder.add(middles.loadNotification(STD.notification.app.notiChat.key, STD.notification.app.notiChat));
             joinBinder.add(middles.checkPrivateChatRoomUser());
             joinBinder.add(middles.sendMessage());
             joinBinder.bind();
