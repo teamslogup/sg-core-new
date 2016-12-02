@@ -119,14 +119,31 @@ module.exports.init = function (sequelize) {
     app.use(languageParser(META.local));
     app.use(function(req, res, next) {
         var contentType = (req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type']);
-        if (!contentType || contentType.indexOf("xml") == -1) {
-            bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
-                bodyParser.urlencoded({extended: true})(req, res, function() {
+        if (!contentType || contentType.indexOf("charset") === -1 || contentType.toLowerCase().indexOf("utf-8") > -1) {
+            if (!contentType || contentType.indexOf("xml") == -1) {
+                bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
+                    bodyParser.urlencoded({extended: true})(req, res, function() {
+                        next();
+                    });
+                });
+            } else {
+                xmlParser()(req, res, function() {
                     next();
                 });
-            });
+            }
         } else {
-            xmlParser()(req, res, function() {
+            var urlNotEncodedParser = function(req, res, next) {
+                var rawBody = '';
+                req.on('data', function(chunk) {
+                    rawBody += chunk;
+                    if (rawBody.length > 1e6) req.connection.destroy();
+                });
+                req.on('end', function() {
+                    req.rawBody = rawBody;
+                    next();
+                });
+            };
+            urlNotEncodedParser(req, res, function() {
                 next();
             });
         }
