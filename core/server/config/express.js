@@ -95,7 +95,7 @@ module.exports = function (sequelize) {
 
     app.use(languageParser(META.local));
     app.use(function(req, res, next) {
-        console.log("thirdParty", util.inspect(req, false, null));
+        // console.log("thirdParty", util.inspect(req, false, null));
         var contentType = (req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type']);
         if (!contentType || contentType.indexOf("xml") == -1) {
             bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
