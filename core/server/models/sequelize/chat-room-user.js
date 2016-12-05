@@ -36,6 +36,11 @@ module.exports = {
             'asReverse': 'roomUsers',
             'allowNull': false
         },
+        'noView': {
+            'type': Sequelize.INTEGER,
+            'allowNull': false,
+            'defaultValue': 0
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -243,6 +248,7 @@ module.exports = {
                 sequelize.transaction(function (t) {
 
                     return sequelize.models.ChatRoomUser.update({
+                        noView: 0,
                         updatedAt: micro.now()
                     }, {
                         'where': {
@@ -265,6 +271,26 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(204, chatRoomUser);
+                    }
+                });
+
+            },
+            "getNewChatMessageCount": function (userId, callback) {
+
+                var rowQuery = "SELECT sum(noView) as count FROM ChatRoomUsers WHERE userId = " + userId;
+
+                sequelize.query(rowQuery, {
+                    type: sequelize.QueryTypes.SELECT,
+                    raw: true
+                }).then(function (data) {
+                    if (data.length > 0) {
+                        return data;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data) {
+                        callback(200, data[0].count);
                     }
                 });
 

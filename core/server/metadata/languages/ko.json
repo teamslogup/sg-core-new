@@ -60,6 +60,7 @@
   "month": "월",
   "day": "일",
   "contact": "연락처",
+  "contact2": "연락처2",
   "authNum": "번호인증",
   "sendAuthNum": "인증번호 전송",
   "resendAuthNum": "인증번호 재전송",
@@ -211,6 +212,8 @@
   "profile": "프로필",
   "profileInfo": "프로필 정보",
   "notiNameChatTitle": "채팅 알림",
-  "notiNameChatBody": ":user:님이 메세지를 남기셨습니다."
+  "notiNameChatBody": ":user:님이 메세지를 남기셨습니다.",
+  "communicationsRetailReport": "통신판매업신고",
+  "fax": "팩스"
 }
 

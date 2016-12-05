@@ -18,7 +18,11 @@ export default function companyInfoManager(CompanyInfo, metaManager, loadingHand
                 regNum: companyInfo.regNum,
                 privateInfoManager: companyInfo.privateInfoManager,
                 address: companyInfo.address,
-                contact: companyInfo.contact || MAGIC.reset
+                communicationsRetailReport: companyInfo.communicationsRetailReport || MAGIC.reset,
+                contact: companyInfo.contact || MAGIC.reset,
+                contact2: companyInfo.contact2 || MAGIC.reset,
+                fax: companyInfo.fax || MAGIC.reset,
+                email: companyInfo.email || MAGIC.reset
             };
 
             loadingHandler.startLoading(LOADING.spinnerKey, 'updateCompanyInfo');

@@ -127,11 +127,11 @@ module.exports = {
                     "LEFT JOIN `Users` as user ON user.id = roomUser.userId " +
                     "WHERE room.isPrivate = TRUE AND roomUser.userId = " + options.userId + " AND roomUser.deletedAt IS NULL " +
                     "GROUP BY room.id) as v1 " +
-                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.deletedAt as deletedAt, image.folder as folder, image.name as url FROM ChatRoomUsers as roomUser " +
+                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, image.folder as folder, image.name as url FROM ChatRoomUsers as roomUser " +
                     "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
                     "LEFT JOIN Images as image ON image.id = userImages.imageId " +
-                    "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId " +
+                    "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId GROUP BY roomUserId " +
                     "ORDER BY createdAt DESC";
 
                 sequelize.query(query, {

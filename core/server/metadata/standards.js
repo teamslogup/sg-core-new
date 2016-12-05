@@ -349,10 +349,14 @@ var standards = {
         "maxRegNumLength": 20,
         "minPrivateInfoManagerLength": 1,
         "maxPrivateInfoManagerLength": 100,
+        "minCommunicationsRetailReportLength": 1,
+        "maxCommunicationsRetailReportLength": 100,
         "minAddressLength": 1,
         "maxAddressLength": 1000,
         "minContactLength": 1,
         "maxContactLength": 100,
+        "minEmailLength": 1,
+        "maxEmailLength": 100
     },
     "dashboardInfo": {
         "minMonthArrayLength": 1,
