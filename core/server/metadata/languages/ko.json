@@ -208,6 +208,8 @@
   "roleS": "SlogUp",
   "AM": "오전",
   "PM": "오후",
+  "profile": "프로필",
+  "profileInfo": "프로필 정보",
   "notiNameChatTitle": "채팅 알림",
   "notiNameChatBody": ":user:님이 메세지를 남기셨습니다."
 }

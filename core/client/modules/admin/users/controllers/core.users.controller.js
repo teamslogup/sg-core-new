@@ -1,4 +1,4 @@
-export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, sessionRemoteManager, dialogHandler, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, sessionRemoteManager, profileManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -72,6 +72,11 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         };
         splitBirth($scope.currentUser.birth);
 
+        delete $scope.currentUser.profile.createdAt;
+        delete $scope.currentUser.profile.updatedAt;
+        delete $scope.currentUser.profile.deletedAt;
+        delete $scope.currentUser.profile.id;
+
         $scope.isUserDetailVisible = true;
         $scope.isUserDetailFirstTime = false;
 
@@ -79,6 +84,18 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         $scope.findAllNotificationBox($scope.currentUser.id);
 
     };
+
+    function obejctToArray(object) {
+
+        var array = [];
+
+        for (var key in object) {
+            // skip loop if the property is from prototype
+            if (!object.hasOwnProperty(key)) continue;
+            array.push(object[key]);
+        }
+
+    }
 
     function splitBirth(str) {
         if (str) {
@@ -460,6 +477,23 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
                 loadingHandler.endLoading(LOADING.spinnerKey, 'deleteUser');
 
             });
+
+        });
+
+    };
+
+    $scope.updateProfile = function (user) {
+
+        loadingHandler.startLoading(LOADING.spinnerKey, 'updateProfile');
+        profileManager.updateProfileByUserId(user.id, user.profile, function (status, data) {
+
+            if (status == 200) {
+                $scope.exitEditMode();
+            } else {
+                dialogHandler.alertError(status, data);
+            }
+
+            loadingHandler.endLoading(LOADING.spinnerKey, 'updateProfile');
 
         });
 

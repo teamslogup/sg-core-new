@@ -6,6 +6,7 @@ var userResources = {
     NOTIFICATION_BOX: '/api/accounts/notification-box',
     NOTIFICATION_SWITCH: '/api/accounts/notification-switch',
     SESSION_REMOTE: '/api/accounts/session_remote',
+    PROFILE: '/api/accounts/profile'
 };
 
 export default userResources;
