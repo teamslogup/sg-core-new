@@ -66,7 +66,7 @@ post.removeAllSessions = function () {
             },  [{
                 model: req.models.User,
                 as: 'user',
-                include: req.models.User.getIncludeUser()
+                include: req.models.User.getIncludeUserWithLoginHistory()
             }],
             function (status, data) {
                 if (status == 200) {

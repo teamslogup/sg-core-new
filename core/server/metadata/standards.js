@@ -34,15 +34,18 @@ var standards = {
         "minImgLength": 1,
         "maxDescriptionLength": 60,
         "minDescriptionLength": 1,
-        "notiApply": {
-            "type": "push",
-            "key": "notiNameApply",
-            "title": "notiNameApplyTitle",
-            "body": "notiNameApplyBody",
-            "isStored": true,
-            "isOption": true,
-            "form": "application"
+        "app": {
+            "notiChat": {
+                "type": "push",
+                "key": "notiNameChat",
+                "title": "notiNameChatTitle",
+                "body": "notiNameChatBody",
+                "isStored": false,
+                "isOption": true,
+                "form": "application"
+            }
         }
+
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
@@ -133,6 +136,9 @@ var standards = {
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
     },
+    "replaceApi": {
+        'userDel': ""
+    },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.
         "isAutoVerifiedEmail": false,
@@ -141,7 +147,8 @@ var standards = {
         "isUseRedis": false,
         "isUseHttps": false,
         "isDuplicatedLogin": false,
-        "isUseCluster": false
+        "isUseCluster": false,
+        "isUseChat": true
     },
     "category": {
         "minNameLength": 1,
@@ -189,7 +196,7 @@ var standards = {
         "maxNickLength": 14,
         "enumSearchFields": ["nick", "email", "body"],
         "enumSolved": ["solved", "unsolved"],
-        "solved":"solved",
+        "solved": "solved",
         "unsolved": "unsolved"
     },
     "notice": {
@@ -258,12 +265,13 @@ var standards = {
         "all": "all"
     },
     "file": {
-        "enumFolders": ["user", "common", "bg", "article", "attach"],
+        "enumFolders": ["user", "common", "bg", "article", "attach", "chat"],
         "folderUser": "user",
         "folderCommon": "common",
         "folderArticle": "article",
         "folderAttach": "attach",
         "folderBg": "bg",
+        "folderChat": "chat",
         "minCount": 1,
         "maxCount": 20,
         "enumValidImageExtensions": ["jpg", "jpeg", "png", "gif"],
@@ -353,6 +361,35 @@ var standards = {
     },
     "dialog": {
         "isUseAnimation": true
+    },
+    "chat": {
+        "clientCreateRoom": "clientCreateRoom",
+        "clientJoinRoom": "clientJoinRoom",
+        "clientJoinAllRooms": "clientJoinAllRooms",
+        "clientLeaveRoom": "clientLeaveRoom",
+        "clientTyping": "clientTyping",
+        "clientSendMessage": "clientSendMessage",
+        "clientReadMessage": "clientReadMessage",
+        "serverJoinRoom": "serverJoinRoom",
+        "serverJoinUser": "serverJoinUser",
+        "serverJoinAllRooms": "serverJoinAllRooms",
+        "serverLeaveRoom": "serverLeaveRoom",
+        "serverLeaveUser": "serverLeaveUser",
+        "serverTyping": "serverTyping",
+        "serverCheckMessage": "serverCheckMessage",
+        "serverReceiveMessage": "serverReceiveMessage",
+        "serverReadMessage": "serverReadMessage",
+        "serverRequestFail": "serverRequestFail"
+    },
+    "chatRoom": {},
+    "chatRoomUser": {},
+    "chatHistory": {
+        "minMessageLength": 1,
+        "maxMessageLength": 10000,
+        "chatHistoryEnum": ['text', 'image', 'media'],
+        "text": "text",
+        "image": "image",
+        "media": "media"
     },
     "dashboard": {
         "defaultCount": 1

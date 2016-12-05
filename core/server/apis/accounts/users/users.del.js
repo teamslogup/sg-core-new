@@ -13,8 +13,8 @@ del.validate = function () {
 
 del.removeAllSessions = function () {
     return function (req, res, next) {
-        req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.user.id, function (status, data) {
-            if (status == 204) {
+        req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.params.id, function (status, data) {
+            if (status == 204 || status == 404) {
                 next();
             }
             else {
@@ -37,13 +37,35 @@ del.destroyUser = function () {
         //     });
         // }
 
-        req.models.User.destroyUser(req.params.id, null, function (status, data) {
-            if (status == 204) {
-                next();
-            } else {
-                res.hjson(req, next, status, data);
-            }
-        });
+        //스탠다드 replaceApi에 userDel 있으면 해당 api 호출
+        if (req.meta.std.replaceApi.userDel) {
+
+            var requestAPI = req.coreUtils.common.requestAPI(req, res, next);
+            requestAPI({
+                resource: req.meta.std.user.deleteApiUrl,
+                method: 'delete',
+                data: req.body,
+                params: {
+                    id: req.params.id
+                }
+            }, function (status, data) {
+                if (status == 204) {
+                    next();
+                } else {
+                    res.hjson(req, next, 200, req.data);
+                }
+            });
+
+        } else {
+            req.models.User.destroyUser(req.params.id, null, function (status, data) {
+                if (status == 204) {
+                    next();
+                } else {
+                    res.hjson(req, next, status, data);
+                }
+            });
+        }
+
     };
 };
 

@@ -1,6 +1,4 @@
 "use strict";
-
-var util = require('util');
 var url = require('url'),
     fs = require('fs'),
     path = require('path');
@@ -41,7 +39,32 @@ var CONFIG = require('../../../bridge/config/env'),
 require('../../../bridge/config/extend-validator')();
 var globalVariables = require('./ejs/index');
 
-module.exports = function (sequelize) {
+
+var sessionSettings = {
+    secret: CONFIG.app.secret,
+    name : 'slogupSessionId',
+    saveUninitialized: true,
+    resave: true,
+    cookie: {
+        path: '/', httpOnly: true, secure: false, maxAge: CONFIG.app.sessionExpiredSeconds
+    }
+};
+
+if (META.std.flag.isUseRedis) {
+    var urlObj = url.parse(CONFIG.db.redis);
+    var auth = urlObj.auth;
+    var auth = (auth && auth.split(":")) || null;
+    console.log('redis info', urlObj);
+    sessionSettings.store = new RedisStore({
+        'host': urlObj.hostname,
+        'port': urlObj.port,
+        'pass': auth && auth[0] || null,
+        'ttl': CONFIG.app.sessionExpiredSeconds
+    });
+}
+
+module.exports.sessionSetting = sessionSettings;
+module.exports.init = function (sequelize) {
 
     var stat = fs.existsSync(CONFIG.app.uploadFileDir);
     if (!stat) {
@@ -95,16 +118,32 @@ module.exports = function (sequelize) {
 
     app.use(languageParser(META.local));
     app.use(function(req, res, next) {
-        // console.log("thirdParty", util.inspect(req, false, null));
         var contentType = (req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type']);
-        if (!contentType || contentType.indexOf("xml") == -1) {
-            bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
-                bodyParser.urlencoded({extended: true})(req, res, function() {
+        if (!contentType || contentType.indexOf("charset") === -1 || contentType.toLowerCase().indexOf("utf-8") > -1) {
+            if (!contentType || contentType.indexOf("xml") == -1) {
+                bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
+                    bodyParser.urlencoded({extended: true})(req, res, function() {
+                        next();
+                    });
+                });
+            } else {
+                xmlParser()(req, res, function() {
                     next();
                 });
-            });
+            }
         } else {
-            xmlParser()(req, res, function() {
+            var urlNotEncodedParser = function(req, res, next) {
+                var rawBody = '';
+                req.on('data', function(chunk) {
+                    rawBody += chunk;
+                    if (rawBody.length > 1e6) req.connection.destroy();
+                });
+                req.on('end', function() {
+                    req.rawBody = rawBody;
+                    next();
+                });
+            };
+            urlNotEncodedParser(req, res, function() {
                 next();
             });
         }
@@ -118,29 +157,6 @@ module.exports = function (sequelize) {
     }));
 
     app.use(cookieParser(CONFIG.app.secret));
-    var sessionSettings = {
-        secret: CONFIG.app.secret,
-        name : 'slogupSessionId',
-        saveUninitialized: true,
-        resave: true,
-        cookie: {
-            path: '/', httpOnly: true, secure: false, maxAge: CONFIG.app.sessionExpiredSeconds
-        }
-    };
-
-    if (META.std.flag.isUseRedis) {
-        var urlObj = url.parse(CONFIG.db.redis);
-        var auth = urlObj.auth;
-        var auth = (auth && auth.split(":")) || null;
-        console.log('redis info', urlObj);
-        sessionSettings.store = new RedisStore({
-            'host': urlObj.hostname,
-            'port': urlObj.port,
-            'pass': auth && auth[0] || null,
-            'ttl': CONFIG.app.sessionExpiredSeconds
-        });
-    }
-
     app.use(session(sessionSettings));
 
     app.use(flash());
@@ -185,7 +201,6 @@ module.exports = function (sequelize) {
 
     app.use(passport.initialize());
     app.use(passport.session());
-
 
     // security
 
