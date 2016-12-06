@@ -11,6 +11,7 @@ var Article = require('./article');
 var Test = require('./test');
 var Profile = require('./profile');
 var Image = require('./image');
+var Audio = require('./audio');
 var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
 var OptionalTerms = require('./optional-terms');
@@ -39,6 +40,7 @@ var models = {
     Test: Test,
     Profile: Profile,
     Image: Image,
+    Audio: Audio,
     ExtinctUser: ExtinctUser,
     Terms: Terms,
     OptionalTerms: OptionalTerms,

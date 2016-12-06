@@ -36,7 +36,7 @@ var api = {
                 },
                 param: 'id',
                 title: '단일 얻기',
-                state: 'development'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -82,8 +82,8 @@ var api = {
 
                 },
                 role: STD.user.roleAdmin,
-                title: '이미지 리스트 얻기',
-                state: 'development'
+                title: '오디오 리스트 얻기',
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -96,7 +96,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(gets.validate());
-                apiCreator.add(gets.getImages());
+                apiCreator.add(gets.getAudios());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
 
@@ -114,7 +114,7 @@ var api = {
                 essential: ['folder'],
                 resettable: [],
                 explains : {
-                    'folder': '이미지를 올릴 폴더 ' + FILE.enumFolders.join(", "),
+                    'folder': '오디오를 올릴 폴더 ' + FILE.enumFolders.join(", "),
                     'offsetX': 'x 위치',
                     'offsetY': 'y 위치',
                     'width': '너비',
@@ -123,10 +123,10 @@ var api = {
                 response: {
                     
                 },
-                title: '이미지 업로드',
+                title: '오디오 업로드',
                 file: 'file',
                 files_cnt: 5,
-                state: 'development'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -140,16 +140,13 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
+                apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidAudioExtensions));
                 apiCreator.add(req.middles.upload.checkFileCount(FILE.minCount, FILE.maxCount));
-                apiCreator.add(req.middles.upload.createPrefixName());
-                apiCreator.add(req.middles.upload.createResizeOptions());
-                apiCreator.add(req.middles.upload.normalizeImages());
                 if (!STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.moveFileDir());
                 if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.s3.sendFiles(config.aws.bucketName));
                 if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.removeLocalFiles());
                 apiCreator.add(post.bulkCreate());
-                apiCreator.add(post.getImages());
+                apiCreator.add(post.getAudios());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
@@ -174,9 +171,9 @@ var api = {
 
                 },
                 role: STD.user.roleAdmin,
-                title: '이미지 인증/비인증 수정',
+                title: '오디오 인증/비인증 수정',
                 param: 'id',
-                state: 'development'
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -189,7 +186,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(put.validate());
-                apiCreator.add(put.updateImage());
+                apiCreator.add(put.updateAudio());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 
@@ -203,18 +200,18 @@ var api = {
     delete : function(isOnlyParams) {
         return function(req, res, next) {
             var params = {
-                acceptable: ['folder', 'imageIds'],
-                essential: ['folder', 'imageIds'],
+                acceptable: ['folder', 'audioIds'],
+                essential: ['folder', 'audioIds'],
                 resettable: [],
                 explains : {
-                    'folder': '지울 이미지 폴더',
-                    'imageIds': '지울 이미지 아이디 ex) 1,2'
+                    'folder': '지울 오디오 폴더',
+                    'audioIds': '지울 오디오 아이디 ex) 1,2'
                 },
                 response: {
 
                 },
-                title: '파일 제거',
-                state: 'development'
+                title: '오디오 파일 제거',
+                state: 'staging'
             };
 
             if (!isOnlyParams) {
@@ -226,7 +223,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(del.getImages());
+                apiCreator.add(del.getAudios());
                 apiCreator.add(del.checkSession());
                 apiCreator.add(del.validate());
                 if (!STD.flag.isUseS3Bucket) {
