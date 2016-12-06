@@ -101,7 +101,6 @@ var api = {
                     'imageIdsToBeDeleted': '지워질 이미지 ids'
                 },
                 title: '유저 이미지 수정',
-                param: 'id',
                 state: 'development'
             };
 
