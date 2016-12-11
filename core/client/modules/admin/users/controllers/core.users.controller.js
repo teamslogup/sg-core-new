@@ -31,12 +31,12 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
     $scope.params.searchField = $scope.userEnumSearchFields[0];
 
     $scope.userEnumRoles = angular.copy(USER.enumRoles);
-    $scope.userEnumRoles.unshift(COMMON.all);
-    $scope.params.role = COMMON.all;
+    $scope.userEnumRoles.unshift(USER.roleAll);
+    $scope.params.role = USER.roleAll;
 
     $scope.userEnumGender = angular.copy(USER.enumGenders);
-    $scope.userEnumGender.unshift(COMMON.all);
-    $scope.params.gender = COMMON.all;
+    $scope.userEnumGender.unshift(USER.genderAll);
+    $scope.params.gender = USER.genderAll;
 
     $scope.userDetailEnumGender = angular.copy(USER.enumGenders);
 

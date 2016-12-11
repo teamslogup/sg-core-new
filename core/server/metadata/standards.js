@@ -59,6 +59,7 @@ var standards = {
         "enumGenders": ["m", "f"],
         "genderMale": "m",
         "genderFemale": "f",
+        "genderAll": "genderAll",
         "enumAuthTypes": ["emailSignup", "phoneSignup", "emailFindPass", "phoneFindPass", "phoneFindId", "emailAdding", "phoneAdding", "phoneLogin", "emailFindId", "phoneChange"],
         "enumAuthPhoneTypes": ["phoneSignup", "phoneFindPass", "phoneFindId", "phoneAdding", "phoneLogin", "phoneChange"],
         "enumAuthEmailTypes": ["emailSignup", "emailFindPass", "emailAdding", 'emailFindId'],
@@ -98,7 +99,7 @@ var standards = {
         "roleUltraAdmin": "roleF",
         "roleSuperUltraAdmin": "roleG",
         "roleSupervisor": "roleS",
-
+        "roleAll": "roleAll",
         "enumLinkIdPassTypes": ["email", "normal"],
         "linkIdPassEmail": "email",
         "linkIdPassNormal": "normal",
