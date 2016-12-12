@@ -228,7 +228,7 @@ var api = {
                 ));
                 apiCreator.add(del.getImages());
                 apiCreator.add(del.checkSession());
-                apiCreator.add(del.validate());
+                apiCreator.add(del.setParam());
                 if (!STD.flag.isUseS3Bucket) {
                     apiCreator.add(req.middles.upload.removeLocalFiles());
                 } else {
