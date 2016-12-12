@@ -32,22 +32,26 @@ del.checkSession = function() {
     };
 };
 
-del.validate = function(){
+del.setParam = function(){
     return function(req, res, next){
         var FILE = req.meta.std.file;
-        var filePath = path.join(__dirname, "../../../../.." + req.meta.std.cdn.rootUrl + '/' + req.body.folder + '/');
+        var filePath = path.join(__dirname, "../../../../.." + req.meta.std.cdn.rootUrl);
 
         req.files = [];
 
         for (var j=0; j<req.images.length; j++) {
+            req.files.push({
+                folder: req.body.folder,
+                localPath: filePath,
+                name: req.images[j].name
+            });
             for (var i=0; i<FILE.enumPrefixes.length; i++) {
                 req.files.push({
-                    path: filePath + FILE.enumPrefixes[i] + req.images[j].name
+                    folder: req.body.folder,
+                    localPath: filePath,
+                    name: FILE.enumPrefixes[i] + req.images[j].name
                 });
             }
-            req.files.push({
-                path: filePath + req.images[j].name
-            });
         }
 
         req.check('folder','400_3').isEnum(FILE.enumFolders);
