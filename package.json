@@ -87,6 +87,7 @@
     "express-session": "*",
     "express-validator": "*",
     "express-xml-bodyparser": "^0.3.0",
+    "form-data": "^2.1.2",
     "formidable": "*",
     "gm": "*",
     "helmet": "^2.1.2",
