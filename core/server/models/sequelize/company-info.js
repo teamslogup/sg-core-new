@@ -35,16 +35,32 @@ module.exports = {
             'type': Sequelize.STRING(1024),
             'allowNull': false
         },
+        'communicationsRetailReport': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
         'contact': {
             'type': Sequelize.STRING,
             'allowNull': true
+        },
+        'contact2': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'fax': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'email': {
+            'type': Sequelize.STRING,
+            'allowNull': true
         }
+
     },
     options: {
         'timestamps': true,
         'charset': 'utf8',
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
-        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-        })
+        'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {})
     }
 };

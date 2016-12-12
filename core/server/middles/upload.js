@@ -48,7 +48,7 @@ module.exports = function () {
         };
     };
 
-    Upload.prototype.checkImageType = function (types) {
+    Upload.prototype.checkFileFormat = function (types) {
         return function (req, res, next) {
 
             if (req.files) {

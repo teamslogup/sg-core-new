@@ -56,9 +56,9 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address', 'contact'],
+                acceptable: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'communicationsRetailReport', 'address', 'contact', 'contact2', 'fax', 'email'],
                 essential: ['companyName', 'representative', 'regNum', 'privateInfoManager', 'address'],
-                resettable: ['contact'],
+                resettable: ['communicationsRetailReport', 'contact', 'contact2', 'fax', 'email'],
                 explains: {
                     'companyName': '회사이름',
                     'representative': '대표자',

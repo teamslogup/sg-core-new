@@ -22,22 +22,22 @@ export default function inputPass() {
                 if (newVal) {
                     if (base.test(newVal)) {
                         scope.barClass = "sg-core-orange";
-                        scope.inputClass = "sg-core-orange";
+                        scope.wrapClass = "sg-core-orange";
                         scope.inputClass = "sg-core-orange";
                         scope.ngFlag = true;
                         if (enhance.test(newVal) || /^.*(?=.*\W).*$/.test(newVal)) {
                             scope.barClass = "sg-core-green";
-                            scope.inputClass = "sg-core-green";
+                            scope.wrapClass = "sg-core-green";
                             scope.inputClass = "sg-core-green";
                         }
                         if (enhance.test(newVal) && /^.*(?=.*\W).*$/.test(newVal)) {
                             scope.barClass = "sg-core-blue";
-                            scope.inputClass = "sg-core-blue";
+                            scope.wrapClass = "sg-core-blue";
                             scope.inputClass = "sg-core-blue";
                         }
                     } else {
                         scope.barClass = "sg-core-red";
-                        scope.inputClass = "sg-core-red";
+                        scope.wrapClass = "sg-core-red";
                         scope.inputClass = "sg-core-red";
                         scope.ngFlag = false;
                     }

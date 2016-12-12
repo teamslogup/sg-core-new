@@ -88,15 +88,15 @@ module.exports = function(config) {
     S3.prototype.removeFiles = function (bucket) {
         return function (req, res, next) {
 
-            if (req.body.files) {
-                var files = req.body.files;
-                var folder = req.body.folder;
+            if (req.files) {
+                var files = req.files;
                 var deleteObject = {
                     Objects: []
                 };
 
                 for (var i = 0; i < files.length; ++i) {
-                    var name = files[i];
+                    var name = files[i].name;
+                    var folder = files[i].folder;
                     deleteObject.Objects.push({
                         Key: folder + '/' + name
                     });

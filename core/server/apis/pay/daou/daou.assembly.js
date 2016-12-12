@@ -13,12 +13,9 @@ var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
 
-var config = require('../../../../../bridge/config/env');
-const META = require('../../../../../bridge/metadata/index');
+
+const META = require('../../../../../bridge/metadata');
 const STD = META.std;
-const IMAGE = STD.image;
-const FILE = STD.file;
-const COMMON = STD.common;
 
 var api = {
     get : function(isOnlyParams) {
@@ -31,18 +28,15 @@ var api = {
                 explains : {
                     'id': '데이터를 얻을 리소스의 id'
                 },
-                response: {
-
-                },
                 param: 'id',
                 title: '단일 얻기',
-                state: 'development'
+                state: 'design'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -52,54 +46,45 @@ var api = {
                 apiCreator.add(get.setParam());
                 apiCreator.add(get.supplement());
                 apiCreator.run();
+
+                
             }
             else {
                 return params;
             }
         };
     },
-    gets: function (isOnlyParams) {
-        return function (req, res, next) {
+    gets : function(isOnlyParams) {
+        return function(req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'searchField', 'searchItemUser', 'searchFieldUser', 'authorId', 'last', 'size', 'orderBy', 'sort', 'folder', 'authorized'],
+                acceptable: ['last', 'size', 'userId'],
                 essential: [],
                 resettable: [],
-                explains: {
-                    searchItem: '검색할 내용',
-                    searchField: '검색할 필드' + STD.image.enumSearchFields.join(", "),
-                    searchItemUser: '검색할 내용 유저',
-                    searchFieldUser: '검색할 필드 유저' + STD.image.enumSearchFieldsUser.join(", "),
-                    authorId: '작성자 id',
-                    last: '마지막 데이터',
-                    size: '몇개 로드할지에 대한 사이즈',
-                    orderBy: '정렬 옵션 ex) ' + IMAGE.enumOrders.join(", "),
-                    sort: '정렬 순서 ex) ' + COMMON.enumSortTypes.join(", "),
-                    folder: '폴더명 ex) ' + FILE.enumFolders.join(", "),
-                    authorized: '인증, 비인증 여부'
+                explains : {
+                    'userId': '유저별 필터링',
+                    'last': '마지막 데이터',
+                    'size': '몇개 로드할지에 대한 사이즈'
                 },
-                response: {
-
-                },
-                role: STD.user.roleAdmin,
-                title: '이미지 리스트 얻기',
-                state: 'development'
+                title: '',
+                state: 'design'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
+                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(gets.validate());
-                apiCreator.add(gets.getImages());
+                apiCreator.add(gets.setParam());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
 
+                
             }
             else {
                 return params;
@@ -110,46 +95,63 @@ var api = {
         return function(req, res, next) {
 
             var params = {
-                acceptable: ['folder', 'offsetX', 'offsetY', 'width', 'height'],
-                essential: ['folder'],
+                acceptable: [
+                    'CPID', //가맹점ID
+                    //'ORDERNO', //주문번호
+                    'PRODUCTTYPE', //상품구분(1: 디지털, 2: 실물)
+                    //'BILLTYPE', //과금 유형(1: 일반)
+                    'TAXFREECD', //"과세 비과세 여부(00: 과세, 01: 비과세)"
+                    'AMOUNT', //결제금액
+                    'QUOTAOPT', //최대 할부 개월 수
+                    'PRODUCTNAME', //상품명
+                    'EMAIL', //고객 E-MAIL(결제결과 통보 Default)
+                    "USERID", //고객 ID
+                    "USERNAME", //고객명
+                    "PRODUCTCODE", //상품코드
+                    "RESERVEDINDEX1", //예약항목1(내부에서 INDEX로 관리)
+                    "RESERVEDINDEX2", //예약항목2(내부에서 INDEX로 관리)
+                    "RESERVEDSTRING", //예약항목3
+                    "RETURNURL", //결제 성공 후, 이동할 URL(새 창)
+                    "HOMEURL", //"결제 성공 후, 이동할 URL(결제 창에서 이동)"
+                    "DIRECTRESULTFLAG", //"다우페이 결제 완료 창 없이HOMEURL로 바로 이동"
+                    "used_card_YN", //"결제창 카드사 노출 여부(Y : used_card 사용)"
+                    "used_card", //결제창 카드사 노출 값
+                    "not_used_card", //결제창 카드사 노출제한
+                    "kcp_site_logo", //결제창 상단에 나타날 가맹점이로고
+                    "kcp_site_img" //결제창 하단에 나타날 가맹점문구
+                ],
+                essential: [
+                    'CPID',
+                    //'ORDERNO',
+                    'PRODUCTTYPE',
+                    //'BILLTYPE',
+                    'TAXFREECD',
+                    'AMOUNT',
+                    'QUOTAOPT',
+                    'PRODUCTNAME'
+                ],
                 resettable: [],
                 explains : {
-                    'folder': '이미지를 올릴 폴더 ' + FILE.enumFolders.join(", "),
-                    'offsetX': 'x 위치',
-                    'offsetY': 'y 위치',
-                    'width': '너비',
-                    'height': '높이'
+                    body: ''
                 },
-                response: {
-                    
+                defaults: {
+
                 },
-                title: '이미지 업로드',
-                file: 'file',
-                files_cnt: 5,
-                state: 'development'
+                title: '신고하기',
+                state: 'design'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
-                apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.upload.refineFiles());
+                // apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
-                apiCreator.add(req.middles.upload.checkFileCount(FILE.minCount, FILE.maxCount));
-                apiCreator.add(req.middles.upload.createPrefixName());
-                apiCreator.add(req.middles.upload.createResizeOptions());
-                apiCreator.add(req.middles.upload.normalizeImages());
-                if (!STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.moveFileDir());
-                if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.s3.sendFiles(config.aws.bucketName));
-                if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.removeLocalFiles());
-                apiCreator.add(post.bulkCreate());
-                apiCreator.add(post.getImages());
+                apiCreator.add(post.setParam());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
@@ -160,61 +162,20 @@ var api = {
             }
         };
     },
-    put: function (isOnlyParams) {
-        return function (req, res, next) {
-
-            var params = {
-                acceptable: ['authorized'],
-                essential: [],
-                resettable: [],
-                explains: {
-                    'authorized': '인증/비인증'
-                },
-                response: {
-
-                },
-                role: STD.user.roleAdmin,
-                title: '이미지 인증/비인증 수정',
-                param: 'id',
-                state: 'development'
-            };
-
-            if (!isOnlyParams) {
-                var apiCreator = new HAPICreator(req, res, next);
-
-                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
-                apiCreator.add(req.middles.validator(
-                    params.acceptable,
-                    params.essential,
-                    params.resettable
-                ));
-                apiCreator.add(put.validate());
-                apiCreator.add(put.updateImage());
-                apiCreator.add(put.supplement());
-                apiCreator.run();
-
-
-            }
-            else {
-                return params;
-            }
-        };
-    },
-    delete : function(isOnlyParams) {
+    put : function(isOnlyParams) {
         return function(req, res, next) {
+
             var params = {
-                acceptable: ['folder', 'imageIds'],
-                essential: ['folder', 'imageIds'],
+                acceptable: ['body'],
+                essential: ['body'],
                 resettable: [],
                 explains : {
-                    'folder': '지울 이미지 폴더',
-                    'imageIds': '지울 이미지 아이디 ex) 1,2'
+                    'body': '수정할 신고 내용',
+                    'id': '데이터 리소스의 id'
                 },
-                response: {
-
-                },
-                title: '파일 제거',
-                state: 'development'
+                title: '수정',
+                param: 'id',
+                state: 'design'
             };
 
             if (!isOnlyParams) {
@@ -226,17 +187,49 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(del.getImages());
-                apiCreator.add(del.checkSession());
-                apiCreator.add(del.setParam());
-                if (!STD.flag.isUseS3Bucket) {
-                    apiCreator.add(req.middles.upload.removeLocalFiles());
-                } else {
-                    apiCreator.add(req.middles.s3.removeFiles(config.aws.bucketName));
-                }
+                apiCreator.add(put.validate());
+                apiCreator.add(top.hasAuthorization());
+                apiCreator.add(put.updateReport());
+                apiCreator.add(put.supplement());
+                apiCreator.run();
+
+                
+            }
+            else {
+                return params;
+            }
+        };
+    },
+    delete : function(isOnlyParams) {
+        return function(req, res, next) {
+            var params = {
+                acceptable: [],
+                essential: [],
+                resettable: [],
+                explains : {
+                    'id': '데이터 리소스의 id'
+                },
+                title: '제거',
+                param: 'id',
+                state: 'design'
+            };
+
+            if (!isOnlyParams) {
+                var apiCreator = new HAPICreator(req, res, next);
+
+                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.validator(
+                    params.acceptable,
+                    params.essential,
+                    params.resettable
+                ));
+                apiCreator.add(del.validate());
+                apiCreator.add(top.hasAuthorization());
                 apiCreator.add(del.destroy());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
+
+                
             }
             else {
                 return params;
@@ -249,7 +242,7 @@ router.get('/' + resource + '/:id', api.get());
 router.get('/' + resource, api.gets());
 router.post('/' + resource, api.post());
 router.put('/' + resource + '/:id', api.put());
-router.delete('/' + resource, api.delete());
+router.delete('/' + resource + '/:id', api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

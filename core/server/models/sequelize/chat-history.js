@@ -105,6 +105,25 @@ module.exports = {
                         chatHistory = data;
 
                         return sequelize.models.ChatRoomUser.update({
+                            noView: sequelize.literal('noView + 1')
+                        }, {
+                            'where': {
+                                roomId: body.roomId
+                            },
+                            'paranoid': false,
+                            'transaction': t
+                        }).then(function (data) {
+                            if (data[0] > 0) {
+                                return true;
+                            } else {
+                                throw new errorHandler.CustomSequelizeError(400);
+                            }
+                        });
+
+                    }).then(function () {
+
+                        return sequelize.models.ChatRoomUser.update({
+                            noView: 0,
                             updatedAt: micro.now()
                         }, {
                             'where': {
@@ -192,6 +211,50 @@ module.exports = {
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);
                         }
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data) {
+                        callback(200, data);
+                    }
+                });
+
+            },
+            'getNewNotificationCount': function (body, callback) {
+
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.ChatRoomUser.findAll({
+                        where: {
+                            userId: body.userId
+                        },
+                        transaction: t
+                    }).then(function (data) {
+
+                        if (data.length > 0) {
+
+                            for (var i = 0; i < data.length; i++) {
+
+                            }
+
+                            return sequelize.models.ChatHistory.count({
+                                where: {
+                                    createdAt: data.updatedAt
+                                }
+                            });
+
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    }).then(function (data) {
+
+                        if (data) {
+                            return data;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
                     });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (data) {

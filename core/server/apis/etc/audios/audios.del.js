@@ -3,16 +3,16 @@ var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var path = require('path');
 
-del.getImages = function() {
+del.getAudios = function() {
     return function(req, res, next) {
         req.idArray = [];
-        req.utils.common.toArray(req.body, 'imageIds');
-        for (var i=0; i<req.body.imageIds.length; i++) {
-            req.idArray.push(parseInt(req.body.imageIds[i]));
+        req.utils.common.toArray(req.body, 'audioIds');
+        for (var i=0; i<req.body.audioIds.length; i++) {
+            req.idArray.push(parseInt(req.body.audioIds[i]));
         }
-        req.models.Image.findImagesByIds(req.idArray, req.user, function (status, data) {
+        req.models.Audio.findAudiosByIds(req.idArray, req.user, function (status, data) {
             if (status == 200) {
-                req.images = data;
+                req.audios = data;
                 next();
             } else {
                 res.hjson(req, next, status, data);
@@ -23,7 +23,7 @@ del.getImages = function() {
 
 del.checkSession = function() {
     return function(req, res, next) {
-        if (req.idArray.length == req.images.length) {
+        if (req.idArray.length == req.audios.length) {
             next();
         }
         else {
@@ -32,26 +32,22 @@ del.checkSession = function() {
     };
 };
 
-del.setParam = function(){
+del.validate = function(){
     return function(req, res, next){
         var FILE = req.meta.std.file;
-        var filePath = path.join(__dirname, "../../../../.." + req.meta.std.cdn.rootUrl);
+        var filePath = path.join(__dirname, "../../../../.." + req.meta.std.cdn.rootUrl + '/' + req.body.folder + '/');
 
         req.files = [];
 
-        for (var j=0; j<req.images.length; j++) {
-            req.files.push({
-                folder: req.body.folder,
-                localPath: filePath,
-                name: req.images[j].name
-            });
+        for (var j=0; j<req.audios.length; j++) {
             for (var i=0; i<FILE.enumPrefixes.length; i++) {
                 req.files.push({
-                    folder: req.body.folder,
-                    localPath: filePath,
-                    name: FILE.enumPrefixes[i] + req.images[j].name
+                    path: filePath + FILE.enumPrefixes[i] + req.audios[j].name
                 });
             }
+            req.files.push({
+                path: filePath + req.audios[j].name
+            });
         }
 
         req.check('folder','400_3').isEnum(FILE.enumFolders);
@@ -62,7 +58,7 @@ del.setParam = function(){
 
 del.destroy = function(){
     return function(req, res, next) {
-        req.models.Image.deleteImagesByIds(req.idArray, function (status, data) {
+        req.models.Audio.deleteAudiosByIds(req.idArray, function (status, data) {
             if (status == 204) {
                 next();
             } else {
