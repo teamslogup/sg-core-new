@@ -29,12 +29,15 @@ var express = require('express'),
     expressSanitizer = require('express-sanitizer'),
     expressDefend = require('express-defend'),
     blacklist = require('express-blacklist'),
-    xmlParser = require('express-xml-bodyparser');
+    xmlParser = require('express-xml-bodyparser'),
+    appRootPath = require("app-root-path").path;
 var multiViews = require('multi-views');
 var bridgeUtils = require('../../../bridge/utils');
 var models = require('../../../bridge/models/sequelize');
 var CONFIG = require('../../../bridge/config/env'),
     META = require('../../../bridge/metadata');
+var LOCAL = META.std.local;
+var FILE = META.std.file;
 
 require('../../../bridge/config/extend-validator')();
 var globalVariables = require('./ejs/index');
@@ -66,21 +69,53 @@ if (META.std.flag.isUseRedis) {
 module.exports.sessionSetting = sessionSettings;
 module.exports.init = function (sequelize) {
 
-    var stat = fs.existsSync(CONFIG.app.uploadFileDir);
+    var stat = fs.existsSync(appRootPath + '/' + LOCAL.uploadUrl);
     if (!stat) {
-        fs.mkdirSync(CONFIG.app.uploadFileDir);
+        fs.mkdirSync(appRootPath + '/' + LOCAL.uploadUrl);
     }
 
-    stat = fs.existsSync(CONFIG.app.tempFileDir);
+    stat = fs.existsSync(appRootPath + '/' + LOCAL.tempUrl);
     if (!stat) {
-        fs.mkdirSync(CONFIG.app.tempFileDir);
+        fs.mkdirSync(appRootPath + '/' + LOCAL.tempUrl);
     }
 
     var i = 0;
     var fileFolderDir;
     
-    for(i = 0; i < META.std.file.enumFolders.length; ++i) {
-        fileFolderDir = CONFIG.app.uploadFileDir + "/" + META.std.file.enumFolders[i];
+    for(i = 0; i < FILE.enumFolders.length; ++i) {
+        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.enumFolders[i];
+        stat = fs.existsSync(fileFolderDir);
+        if (!stat) {
+            fs.mkdirSync(fileFolderDir);
+        }
+    }
+
+    for (i = 0; i < FILE.enumImageFolders.length; ++i) {
+        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderImages + '/' + FILE.enumImageFolders[i];
+        stat = fs.existsSync(fileFolderDir);
+        if (!stat) {
+            fs.mkdirSync(fileFolderDir);
+        }
+    }
+
+    for (i = 0; i < FILE.enumAudioFolders.length; ++i) {
+        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderAudios + '/' + FILE.enumAudioFolders[i];
+        stat = fs.existsSync(fileFolderDir);
+        if (!stat) {
+            fs.mkdirSync(fileFolderDir);
+        }
+    }
+
+    for (i = 0; i < FILE.enumVideoFolders.length; ++i) {
+        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderVideos + '/' + FILE.enumVideoFolders[i];
+        stat = fs.existsSync(fileFolderDir);
+        if (!stat) {
+            fs.mkdirSync(fileFolderDir);
+        }
+    }
+
+    for (i = 0; i < FILE.enumEtcFolders.length; ++i) {
+        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.enumEtcFolders[i];
         stat = fs.existsSync(fileFolderDir);
         if (!stat) {
             fs.mkdirSync(fileFolderDir);
@@ -167,11 +202,11 @@ module.exports.init = function (sequelize) {
     if (META.std.flag.isUseS3Bucket) {
         // s3이용시 템프에 넣고 지움.
         console.log('prepare s3 bucket');
-        app.use(sgcUploadManager(CONFIG.app.tempFileDir, CONFIG.app.maxUploadFileSize));
+        app.use(sgcUploadManager(appRootPath + '/' + LOCAL.tempUrl, CONFIG.app.maxUploadFileSize));
     } else {
         // 로컬 이용시 바로 업로드 폴더 이용
         console.log('local image folders');
-        app.use(sgcUploadManager(CONFIG.app.uploadFileDir, CONFIG.app.maxUploadFileSize));
+        app.use(sgcUploadManager(appRootPath + '/' + LOCAL.uploadUrl, CONFIG.app.maxUploadFileSize));
     }
     app.use(function (req, res, next) {
         var country = req.country;
@@ -192,7 +227,7 @@ module.exports.init = function (sequelize) {
     app.use(express.static('dist'));
 
     if (!META.std.flag.isUseS3Bucket) {
-        app.use('/uploads', express.static('uploads'));
+        app.use('/', express.static("uploads"));
     }
 
     if (hasAppDir) {

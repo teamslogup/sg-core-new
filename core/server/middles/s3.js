@@ -54,7 +54,7 @@ module.exports = function(config) {
         return function (req, res, next) {
 
             if (req.files) {
-                var folder = req.body.folder;
+                var folder = req.folder;
                 var funcs = [];
 
                 for (var i = 0; i < req.files.length; ++i) {
@@ -95,10 +95,9 @@ module.exports = function(config) {
                 };
 
                 for (var i = 0; i < files.length; ++i) {
-                    var name = files[i].name;
-                    var folder = files[i].folder;
+                    var path = files[i].path;
                     deleteObject.Objects.push({
-                        Key: folder + '/' + name
+                        Key: path
                     });
                 }
 

@@ -2,6 +2,8 @@ var path = require('path');
 var fs = require('fs');
 var async = require('async');
 var gm = require('gm').subClass({imageMagick: true});
+var STD = require('../../../bridge/metadata/standards');
+var appRootPath = require("app-root-path").path;
 
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
@@ -215,15 +217,34 @@ module.exports = function () {
 
     Upload.prototype.removeLocalFiles = function () {
         return function (req, res, next) {
+            var localPath = path.join(__dirname, "../../../" + STD.local.uploadUrl + '/');
+            for (var i=0; i<req.files.length; i++) {
+                if (req.files[i].path) {
+                    req.files[i].path = localPath + req.files[i].path;
+                }
+            }
             req.removeLocalFiles(function (err) {
                 next();
             });
         };
     };
 
+    Upload.prototype.generateFolder = function (parentFolder) {
+        return function (req, res, next) {
+            var now = new Date();
+            req.dateFolder = now.getUTCFullYear() + '-' + (now.getUTCMonth() + 1) + '-' + now.getUTCDate();
+            req.folder = parentFolder + '/' + req.body.folder + '/' + req.dateFolder;
+            next();
+        };
+    };
+
     Upload.prototype.moveFileDir = function () {
         return function (req, res, next) {
-            if (req.files) {
+            if (req.files && req.folder) {
+                var stat = fs.existsSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
+                if (!stat) {
+                    fs.mkdirSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
+                }
 
                 var files = req.files;
                 var funcs = [];
@@ -233,7 +254,7 @@ module.exports = function () {
                     (function (file) {
                         funcs.push(function (n) {
                             var originPath = file.path;
-                            file.path = file.path.replace("uploads/", "uploads/" + req.body.folder + "/");
+                            file.path = file.path.replace(STD.local.uploadUrl + '/', STD.local.uploadUrl + '/' + req.folder + '/');
                             fs.rename(originPath, file.path, function (err) {
                                 if (err) {
                                     n(err, null);

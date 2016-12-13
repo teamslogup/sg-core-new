@@ -3,6 +3,15 @@ var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var path = require('path');
 
+del.validate = function () {
+    return function (req, res, next) {
+        var FILE = req.meta.std.file;
+        req.check('folder','400_3').isEnum(FILE.enumImageFolders);
+        req.utils.common.checkError(req, res, next);
+        next();
+    };
+};
+
 del.getImages = function() {
     return function(req, res, next) {
         req.idArray = [];
@@ -35,27 +44,8 @@ del.checkSession = function() {
 del.setParam = function(){
     return function(req, res, next){
         var FILE = req.meta.std.file;
-        var filePath = path.join(__dirname, "../../../../.." + req.meta.std.cdn.rootUrl + '/' + req.body.folder + '/');
 
-        req.files = [];
-
-        for (var j=0; j<req.images.length; j++) {
-            req.files.push({
-                folder: req.body.folder,
-                path: filePath + req.images[j].name,
-                name: req.images[j].name
-            });
-            for (var i=0; i<FILE.enumPrefixes.length; i++) {
-                req.files.push({
-                    folder: req.body.folder,
-                    path: filePath + FILE.enumPrefixes[i] + req.images[j].name,
-                    name: FILE.enumPrefixes[i] + req.images[j].name
-                });
-            }
-        }
-
-        req.check('folder','400_3').isEnum(FILE.enumFolders);
-        req.utils.common.checkError(req, res, next);
+        req.coreUtils.file.setRemoveFiles(req, req.images, FILE.folderImages, FILE.enumPrefixes);
         next();
     };
 };

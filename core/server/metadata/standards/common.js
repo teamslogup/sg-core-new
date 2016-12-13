@@ -1,4 +1,8 @@
 var standards = {
+    "local": {
+        "uploadUrl": "uploads",
+        "tempUrl": "temp"
+    },
     "cdn": {
         "rootUrl": "",
         "staticsUrl": ""
@@ -277,7 +281,15 @@ var standards = {
         "all": "all"
     },
     "file": {
-        "enumFolders": ["user", "common", "bg", "article", "attach", "chat"],
+        "enumFolders": ["images", "audios", "videos", "etc"],
+        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat"],
+        "enumAudioFolders": [],
+        "enumVideoFolders": [],
+        "enumEtcFolders": [],
+        "folderEtc": "etc",
+        "folderImages": "images",
+        "folderAudios": "audios",
+        "folderVideos": "videos",
         "folderUser": "user",
         "folderCommon": "common",
         "folderArticle": "article",
@@ -288,6 +300,7 @@ var standards = {
         "maxCount": 20,
         "enumValidAudioExtensions": ["3GP", "AIFF", "AAC", "ALAC", "AMR", "ATRAC", "AU", "AWB", "dvf", "flac", "mmf", "mp3", "Mpc", "msv", "ogg", "Opus", "TTA", "VOX", "WAV", "wma"],
         "enumValidImageExtensions": ["jpg", "jpeg", "png", "gif"],
+        "enumValidVideoExtensions": ["mp4", "mkv", "avi", "wmv", "flv", "ogv", "m4p", "m4v", "yuv", "mov"],
         "enumInvalidFileExtensions": ["exe", "js", "php", "jsp", "aspx", "asp", "html", "htm", "css"],
         "enumPrefixes": ["s_", "m_", "l_"],
         "prefixSmall": "s_",

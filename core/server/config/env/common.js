@@ -1,12 +1,8 @@
-var appRootPath = require("app-root-path");
-
 module.exports = {
     "app": {
         "secret": "secre2tsecr2et123",
         "maxUploadFileSize": 100 * 1024 * 1024,
         "maxUploadFileSizeMBVersion": "100mb",
-        "uploadFileDir": appRootPath.path + "/uploads",
-        "tempFileDir": appRootPath.path + "/temp",
         "port": 3001,
         "apiName": "api",
         "rootUrl": "http://localhost:3001",
