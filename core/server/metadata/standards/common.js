@@ -1,4 +1,7 @@
 var standards = {
+    "local": {
+        "rootUrl": "uploads"
+    },
     "cdn": {
         "rootUrl": "",
         "staticsUrl": ""
