@@ -215,6 +215,13 @@ module.exports = function () {
 
     Upload.prototype.removeLocalFiles = function () {
         return function (req, res, next) {
+            var LOCAL = req.meta.std.local;
+            var localPath = path.join(__dirname, "../../../" + LOCAL.rootUrl + '/');
+            for (var i=0; i<req.files.length; i++) {
+                if (req.files[i].folder && req.files[i].name) {
+                    req.files[i].path = localPath + req.files[i].folder + '/' + req.files[i].name;
+                }
+            }
             req.removeLocalFiles(function (err) {
                 next();
             });
