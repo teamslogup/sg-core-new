@@ -15,6 +15,7 @@ module.exports = {
         "off": false,
         "mongodb": "mongodb://localhost/slogup",
         "redis": "redis://localhost:6379/slogup",
+        "socketRedis": "",
         "mysql": "mysql://slogup:123123@localhost:3306/core",
         "logging": false,
         "force": false
