@@ -24,11 +24,6 @@ if (!process.env.AWS_SECRET_ACCESS_KEY) {
     process.env.AWS_SECRET_ACCESS_KEY = config.aws.secretAccessKey;
 }
 
-var stat = fs.existsSync(config.app.uploadFileDir);
-if (!stat) {
-    fs.mkdirSync(config.app.uploadFileDir);
-}
-
 var app = express(sequelize);
 var server = https(app);
 server = socketIo(server, app);

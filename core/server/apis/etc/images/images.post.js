@@ -5,7 +5,7 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
         
-        req.check('folder', '400_3').isEnum(req.meta.std.file.enumFolders);
+        req.check('folder', '400_3').isEnum(req.meta.std.file.enumImageFolders);
 
         if (req.body.offsetX !== undefined) {
             req.check('offsetX', '400_5').isInt();
@@ -43,6 +43,7 @@ post.bulkCreate = function () {
             var body = {
                 name: req.fileNames[i],
                 folder: req.body.folder,
+                dateFolder: req.dateFolder,
                 authorId: req.user.id
             };
             images.push(body);
