@@ -217,10 +217,12 @@ module.exports = function () {
 
     Upload.prototype.removeLocalFiles = function () {
         return function (req, res, next) {
-            var localPath = path.join(__dirname, "../../../" + STD.local.uploadUrl + '/');
-            for (var i=0; i<req.files.length; i++) {
-                if (req.files[i].path) {
-                    req.files[i].path = localPath + req.files[i].path;
+            if (!STD.flag.isUseS3Bucket) {
+                var localPath = path.join(__dirname, "../../../" + STD.local.uploadUrl + '/');
+                for (var i=0; i<req.files.length; i++) {
+                    if (req.files[i].path) {
+                        req.files[i].path = localPath + req.files[i].path;
+                    }
                 }
             }
             req.removeLocalFiles(function (err) {
