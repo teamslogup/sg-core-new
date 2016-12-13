@@ -1,4 +1,7 @@
 var standards = {
+    "host": {
+        "url": "http://localhost:8080"
+    },
     "local": {
         "uploadUrl": "uploads",
         "tempUrl": "temp"
