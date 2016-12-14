@@ -15,7 +15,7 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
     $scope.imageList = [];
     $scope.imageListTotal = 0;
 
-    $scope.imageFolders = angular.copy(metaManager.std.file.enumFolders);
+    $scope.imageFolders = angular.copy(metaManager.std.file.enumImageFolders);
     $scope.imageFolders.unshift(COMMON.all);
     $scope.form.folder = $scope.imageFolders[0];
 

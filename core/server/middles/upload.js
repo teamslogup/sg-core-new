@@ -234,7 +234,7 @@ module.exports = function () {
     Upload.prototype.generateFolder = function (parentFolder) {
         return function (req, res, next) {
             var now = new Date();
-            req.dateFolder = now.getUTCFullYear() + '-' + (now.getUTCMonth() + 1) + '-' + now.getUTCDate();
+            req.dateFolder = now.getUTCFullYear() + '-' + req.coreUtils.common.attachZero(now.getUTCMonth() + 1) + '-' + req.coreUtils.common.attachZero(now.getUTCDate());
             req.folder = parentFolder + '/' + req.body.folder + '/' + req.dateFolder;
             next();
         };
