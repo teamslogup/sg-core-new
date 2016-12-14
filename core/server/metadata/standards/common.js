@@ -285,7 +285,7 @@ var standards = {
     },
     "file": {
         "enumFolders": ["images", "audios", "videos", "etc"],
-        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat"],
+        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat", "ck"],
         "enumAudioFolders": [],
         "enumVideoFolders": [],
         "enumEtcFolders": [],
@@ -299,6 +299,7 @@ var standards = {
         "folderAttach": "attach",
         "folderBg": "bg",
         "folderChat": "chat",
+        "folderCk": "ck",
         "minCount": 1,
         "maxCount": 20,
         "enumValidAudioExtensions": ["3GP", "AIFF", "AAC", "ALAC", "AMR", "ATRAC", "AU", "AWB", "dvf", "flac", "mmf", "mp3", "Mpc", "msv", "ogg", "Opus", "TTA", "VOX", "WAV", "wma"],

@@ -32,6 +32,7 @@ module.exports = {
             'referenceKey': 'id',
             'referenceType': 'one',
             'as': 'image',
+            'asReverse': 'userImages',
             'allowNull': false
         },
         'createdAt': {
