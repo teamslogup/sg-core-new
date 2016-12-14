@@ -9,26 +9,18 @@ post.validate = function () {
 
         if (req.body.offsetX !== undefined) {
             req.check('offsetX', '400_5').isInt();
-        } else {
-            req.body.offsetX = 0;
         }
 
         if (req.body.offsetY !== undefined) {
             req.check('offsetY', '400_5').isInt();
-        } else {
-            req.body.offsetY = 0;
         }
 
         if (req.body.width !== undefined) {
             req.check('width', '400_5').isInt();
-        } else {
-            req.body.width = 0;
         }
 
         if (req.body.height !== undefined) {
             req.check('height', '400_5').isInt();
-        } else {
-            req.body.height = 0;
         }
 
         req.utils.common.checkError(req, res, next);
