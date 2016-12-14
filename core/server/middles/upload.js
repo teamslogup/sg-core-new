@@ -148,8 +148,10 @@ module.exports = function () {
                                 return n(err, null);
                             }
 
-                            if (req.body.width == 0) req.body.width = value.width;
-                            if (req.body.height == 0) req.body.height = value.height;
+                            if (req.body.width !== undefined) req.body.width = value.width;
+                            if (req.body.height !== undefined) req.body.height = value.height;
+                            if (req.body.offsetX !== undefined) req.body.offsetX = 0;
+                            if (req.body.offsetY !== undefined) req.body.offsetY = 0;
 
                             gm(filePath).crop(req.body.width, req.body.height, req.body.offsetX, req.body.offsetY).stream(function (err, stdout, stderr) {
                                 if (err) {
