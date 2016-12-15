@@ -155,6 +155,13 @@ module.exports.init = function (sequelize) {
         //app.use(minify());
     }
 
+    app.use(function () {
+        return function (req, res, next) {
+            req.originalUrl = unescape(req.originalUrl);
+            next();
+        };
+    }());
+
     app.use(ipRefiner());
     //app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
