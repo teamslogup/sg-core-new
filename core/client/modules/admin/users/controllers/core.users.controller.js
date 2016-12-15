@@ -449,7 +449,7 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
         loadingHandler.startLoading(LOADING.spinnerKey, 'deleteSessionRemote');
         sessionRemoteManager.deleteSessionRemote(loginHistory, function (status, data) {
-            if (status == 200) {
+            if (status == 204) {
                 $scope.currentUser.loginHistories.splice(index, 1);
             } else {
                 dialogHandler.alertError(status, data);
