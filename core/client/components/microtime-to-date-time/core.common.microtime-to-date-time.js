@@ -18,6 +18,14 @@ export default function microTimeToDateTime() {
                 day = '0' + day;
             }
 
+            if (parseInt(hour) < 10) {
+                hour = '0' + hour;
+            }
+
+            if (parseInt(min) < 10) {
+                min = '0' + min;
+            }
+
             return year + '-' + month + '-' + day + ' ' + hour + ':' + min;
         }
 
