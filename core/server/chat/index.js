@@ -61,6 +61,7 @@ module.exports.init = function (io) {
         socket.on(STD.chat.clientLeaveRoom, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateLeaveRoom());
             joinBinder.add(middles.leaveRoom());
             joinBinder.bind();
         });
@@ -68,6 +69,7 @@ module.exports.init = function (io) {
         socket.on(STD.chat.clientTyping, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateTyping());
             joinBinder.add(middles.onTyping());
             joinBinder.bind();
         });
@@ -88,6 +90,7 @@ module.exports.init = function (io) {
 
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateReadMessage());
             joinBinder.add(middles.readMessage());
             joinBinder.bind();
 

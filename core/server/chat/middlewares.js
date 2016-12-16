@@ -144,18 +144,56 @@ var middles = {
 
         }
     },
+    validateLeaveRoom: function () {
+        return function (socket, payload, next) {
+
+            if (payload.roomId === undefined) {
+                return socket.emit(STD.chat.serverRequestFail, 400, {});
+            }
+
+            next();
+        }
+    },
+    validateTyping: function () {
+        return function (socket, payload, next) {
+
+            if (payload.isTyping === undefined) {
+                return socket.emit(STD.chat.serverRequestFail, 400, {});
+            }
+
+            if (payload.roomId === undefined) {
+                return socket.emit(STD.chat.serverRequestFail, 400, {});
+            }
+
+            next();
+        }
+    },
     validateSendMessage: function () {
         return function (socket, payload, next) {
 
-            if (!payload.roomId) {
+            if (payload.roomId === undefined) {
                 return socket.emit(STD.chat.serverRequestFail, 400, {});
             }
 
-            if (!payload.message) {
+            if (payload.type === undefined) {
                 return socket.emit(STD.chat.serverRequestFail, 400, {});
             }
 
-            if (!payload.type) {
+            if (payload.type == STD.chatHistory.text && !payload.message) {
+                return socket.emit(STD.chat.serverRequestFail, 400, {});
+            }
+
+            if (payload.type == STD.chatHistory.image && !payload.imageId) {
+                return socket.emit(STD.chat.serverRequestFail, 400, {});
+            }
+
+            next();
+        }
+    },
+    validateReadMessage: function () {
+        return function (socket, payload, next) {
+
+            if (payload.roomId === undefined) {
                 return socket.emit(STD.chat.serverRequestFail, 400, {});
             }
 
@@ -191,7 +229,8 @@ var middles = {
                 userId: user.id,
                 roomId: payload.roomId,
                 message: payload.message,
-                type: payload.type
+                type: payload.type,
+                imageId: payload.imageId
             };
 
             sequelize.models.ChatHistory.createChatHistory(body, function (status, data) {

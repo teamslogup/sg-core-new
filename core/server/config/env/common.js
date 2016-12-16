@@ -5,7 +5,6 @@ module.exports = {
         "maxUploadFileSizeMBVersion": "100mb",
         "port": 3001,
         "apiName": "api",
-        "rootUrl": "http://localhost:3001",
         "isServerChecking": false,
         "deletedUserPrefix": "deletedUser0323",
         "sessionExpiredSeconds": 60 * 60 * 24 * 100

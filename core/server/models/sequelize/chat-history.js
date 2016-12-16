@@ -44,6 +44,13 @@ module.exports = {
             'values': STD.chatHistory.chatHistoryEnum,
             'allowNull': false
         },
+        'imageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'referenceType': 'one',
+            'as': 'image',
+            'allowNull': true
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -99,6 +106,9 @@ module.exports = {
                                     as: 'image'
                                 }
                             }]
+                        }, {
+                            model: sequelize.models.Image,
+                            as: 'image'
                         }]
                     }).then(function (data) {
 
@@ -198,6 +208,9 @@ module.exports = {
                                 }, {
                                     model: sequelize.models.ChatRoom,
                                     as: 'room'
+                                }, {
+                                    model: sequelize.models.Image,
+                                    as: 'image'
                                 }],
                                 'transaction': t
                             });
