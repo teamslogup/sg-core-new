@@ -1,16 +1,16 @@
-var get = {};
+var put = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var micro = require('microtime-nodejs');
 
-get.validate = function () {
+put.validate = function () {
     return function (req, res, next) {
         req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
-get.resetPasswordUpdatedAt = function () {
+put.resetPasswordUpdatedAt = function () {
     return function (req, res, next) {
         req.user.updateFields({
             passUpdatedAt: micro.now()
@@ -25,10 +25,10 @@ get.resetPasswordUpdatedAt = function () {
     };
 };
 
-get.supplement = function () {
+put.supplement = function () {
     return function (req, res, next) {
         res.hjson(req, next, 200, req.user.toSecuredJSON());
     };
 };
 
-module.exports = get;
+module.exports = put;
