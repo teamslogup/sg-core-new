@@ -6,6 +6,7 @@ import inputPass from './input-pass/core.common.input-pass';
 import toMicrotime from './to-microtime/core.common.to-microtime';
 import microTimeTo12hoursTime from './microtime-to-12hours-time/core.common.microtime-to-12hours-time';
 import microTimeToDate from './microtime-to-date/core.common.microtime-to-date';
+import microTimeToDateTime from './microtime-to-date-time/core.common.microtime-to-date-time';
 import trustAsHtml from './trust-as-html/core.common.trust-as-html';
 import roundUp from './round-up/core.common.round-up';
 import ckEditor from './ck-editor/core.common.ck-editor';
@@ -19,6 +20,7 @@ export default angular.module('core.common', [])
     .directive('inputPass', inputPass)
     .filter('toMicrotime', toMicrotime)
     .filter('microTimeTo12hoursTime', microTimeTo12hoursTime)
+    .filter('microTimeToDateTime', microTimeToDateTime)
     .filter('microTimeToDate', microTimeToDate)
     .filter('trustAsHtml', trustAsHtml)
     .filter('roundUp', roundUp)

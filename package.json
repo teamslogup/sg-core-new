@@ -16,6 +16,7 @@
     "expose-loader": "^0.7.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "get-gulp-args": "0.0.1",
+    "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
     "gulp-env": "^0.4.0",
     "gulp-html-minifier": "^0.1.8",
@@ -28,6 +29,7 @@
     "gulp-spawn-mocha": "^3.1.0",
     "gulp-sync": "^0.1.4",
     "gulp-webpack": "^1.5.0",
+    "html-minifier": "^3.0.2",
     "html-webpack-plugin": "^2.22.0",
     "imports-loader": "^0.6.5",
     "karma": "*",
@@ -38,6 +40,7 @@
     "merge-stream": "^1.0.0",
     "minimist": "^1.2.0",
     "mocha": "*",
+    "mocha.parallel": "^0.13.0",
     "sass-loader": "^4.0.0",
     "should": "*",
     "split-by-name-webpack-plugin": "0.0.3",
@@ -49,9 +52,7 @@
     "webpack-preset": "^0.2.0",
     "webpack-preset-babel": "^0.2.0",
     "webpack-preset-babel-stage-0": "^0.2.0",
-    "webpack-split-by-path": "0.1.0-beta.1",
-    "gulp": "^3.9.1",
-    "html-minifier": "^3.0.2"
+    "webpack-split-by-path": "0.1.0-beta.1"
   },
   "dependencies": {
     "angular": "^1.5.8",
