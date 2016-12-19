@@ -1,7 +1,7 @@
 var async = require('async');
 var sequelize = require('../../server/config/sequelize');
 
-var ValidateManager = require('./validateManager');
+var validateManager = require('./validateManager');
 var coreUtils = require('../utils');
 var STD = require('../../../bridge/metadata/standards');
 
@@ -148,7 +148,6 @@ var middles = {
     validateLeaveRoom: function () {
         return function (socket, payload, next) {
 
-            var validateManager = new ValidateManager();
             validateManager.check('roomId', '400_14').isId();
 
             validateManager.checkError(socket, payload, next);
@@ -157,7 +156,6 @@ var middles = {
     validateTyping: function () {
         return function (socket, payload, next) {
 
-            var validateManager = new ValidateManager();
             validateManager.check('roomId', '400_14').isId();
             validateManager.check('isTyping', '400_20').isBoolean();
 
@@ -166,7 +164,6 @@ var middles = {
     },
     validateSendMessage: function () {
         return function (socket, payload, next) {
-            var validateManager = new ValidateManager();
             var CHAT_HISTORY = STD.chatHistory;
             validateManager.check('roomId', '400_14').isId();
             validateManager.check('type', '400_20').isEnum(CHAT_HISTORY.chatHistoryEnum);
@@ -184,7 +181,6 @@ var middles = {
     },
     validateReadMessage: function () {
         return function (socket, payload, next) {
-            var validateManager = new ValidateManager();
             validateManager.check('roomId', '400_14').isId();
 
             validateManager.checkError(socket, payload, next);

@@ -1,53 +1,51 @@
 var STD = require('../../../bridge/metadata/standards');
 var Validator = require('./validator');
 
-module.exports = function () {
-    function ValidateManager() {
-        this.checkList = [];
-        this.errorResults = [];
-    }
 
-    ValidateManager.prototype.check = function (str, errorCode) {
-        var validator = new Validator(str, errorCode);
-        this.checkList.push(validator);
-        return validator;
-    };
+function ValidateManager() {
+    this.checkList = [];
+    this.errorResults = [];
+}
 
-    ValidateManager.prototype.checkError = function (socket, payload, next) {
-        var checkList = this.checkList;
-        var errorResults = this.errorResults;
+ValidateManager.prototype.check = function (str, errorCode) {
+    var validator = new Validator(str, errorCode);
+    this.checkList.push(validator);
+    return validator;
+};
 
-        for (var i = 0; i < checkList.length; i++) {
+ValidateManager.prototype.checkError = function (socket, payload, next) {
+    var checkList = this.checkList;
+    var errorResults = this.errorResults;
 
-            if (payload[checkList[i].getParam()] !== undefined) {
-                checkList[i].setValue(payload[checkList[i].getParam()]);
+    for (var i = 0; i < checkList.length; i++) {
 
-                if (!checkList[i].isValidate()) {
-                    errorResults.push({
-                        "param": checkList[i].getParam(),
-                        "value": checkList[i].getValue(),
-                        "code": checkList[i].getCode()
-                    })
-                }
-            } else {
+        if (payload[checkList[i].getParam()] !== undefined) {
+            checkList[i].setValue(payload[checkList[i].getParam()]);
+
+            if (!checkList[i].isValidate()) {
                 errorResults.push({
                     "param": checkList[i].getParam(),
                     "value": checkList[i].getValue(),
-                    "code": "400_14"
+                    "code": checkList[i].getCode()
                 })
             }
-        }
-
-        if (this.errorResults.length > 0) {
-            socket.emit(STD.chat.serverRequestFail, 400, errorResults);
         } else {
-            next();
+            errorResults.push({
+                "param": checkList[i].getParam(),
+                "value": checkList[i].getValue(),
+                "code": "400_14"
+            })
         }
+    }
 
-        this.checkList = [];
-        this.errorResults = [];
-        return false;
-    };
+    if (this.errorResults.length > 0) {
+        socket.emit(STD.chat.serverRequestFail, 400, errorResults);
+    } else {
+        next();
+    }
 
-    return new ValidateManager();
+    this.checkList = [];
+    this.errorResults = [];
 };
+
+module.exports = new ValidateManager();
