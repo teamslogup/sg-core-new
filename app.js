@@ -9,6 +9,7 @@ var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var config = require('./bridge/config/env');
 var express = require('./bridge/config/express');
+var initializeDatabase = require('./bridge/config/initialize-database');
 var https = require('./core/server/config/https');
 var socketIo = require('./core/server/config/socket-io');
 var cluster = require('./core/server/config/cluster');
@@ -32,31 +33,33 @@ passport();
 
 console.log('database info : ', config.db);
 sequelize.sync({force: config.db.force}).then(function (err) {
-    if (env === 'production') {
-        if (server.isUseHttps) {
-            if (STD.flag.isUseCluster) {
-                cluster.startCluster(server.https);
+    initializeDatabase(function () {
+        if (env === 'production') {
+            if (server.isUseHttps) {
+                if (STD.flag.isUseCluster) {
+                    cluster.startCluster(server.https);
+                } else {
+                    server.http.listen(config.app.port);
+                    server.https.listen(config.app.httpsPort);
+                }
             } else {
+                if (STD.flag.isUseCluster) {
+                    cluster.startCluster(server.http);
+                } else {
+                    server.http.listen(config.app.port);
+                }
+            }
+            console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
+        } else {
+            if (server.isUseHttps) {
                 server.http.listen(config.app.port);
                 server.https.listen(config.app.httpsPort);
-            }
-        } else {
-            if (STD.flag.isUseCluster) {
-                cluster.startCluster(server.http);
             } else {
                 server.http.listen(config.app.port);
             }
+            console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
         }
-        console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
-    } else {
-        if (server.isUseHttps) {
-            server.http.listen(config.app.port);
-            server.https.listen(config.app.httpsPort);
-        } else {
-            server.http.listen(config.app.port);
-        }
-        console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
-    }
+    });
 }, function (err) {
     console.log('Unable to connect to the database:', err);
 });
