@@ -10,6 +10,7 @@ import microTimeToDateTime from './microtime-to-date-time/core.common.microtime-
 import trustAsHtml from './trust-as-html/core.common.trust-as-html';
 import roundUp from './round-up/core.common.round-up';
 import ckEditor from './ck-editor/core.common.ck-editor';
+import imageUrl from './image-url/core.common.image-url';
 
 import fileModel from './file-model/core.common.file-model';
 import fileUploader from './file-uploader/core.common.file-uploader';
@@ -24,6 +25,7 @@ export default angular.module('core.common', [])
     .filter('microTimeToDate', microTimeToDate)
     .filter('trustAsHtml', trustAsHtml)
     .filter('roundUp', roundUp)
+    .filter('imageUrl', imageUrl)
     .provider('staticLoader', StaticLoader)
     .directive('ckEditor', ckEditor)
     .directive('fileModel', fileModel)
