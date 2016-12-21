@@ -483,14 +483,6 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.UserNotification,
-                    as: 'userNotifications',
-                    attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                }, {
-                    model: sequelize.models.UserPublicNotification,
-                    as: 'userPublicNotifications',
-                    attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                }, {
                     model: sequelize.models.UserImage,
                     as: 'userImages',
                     include: [{
@@ -499,34 +491,26 @@ module.exports = {
                     }]
                 }]
             },
-            'getIncludeUserWithLoginHistory': function () {
-                return [{
-                    model: sequelize.models.Profile,
-                    as: profileKey
-                }, {
-                    model: sequelize.models.Provider,
-                    as: 'providers',
-                    attributes: sequelize.models.Provider.getProviderFields()
-                }, {
-                    model: sequelize.models.LoginHistory,
-                    as: 'loginHistories',
-                }, {
-                    model: sequelize.models.UserNotification,
-                    as: 'userNotifications',
-                    attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                }, {
-                    model: sequelize.models.UserPublicNotification,
-                    as: 'userPublicNotifications',
-                    attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                }, {
-                    model: sequelize.models.UserImage,
-                    as: 'userImages',
-                    include: [{
-                        model: sequelize.models.Image,
-                        as: 'image'
-                    }]
-                }]
-            },
+            // 'getIncludeUserWithLoginHistory': function () {
+            //     return [{
+            //         model: sequelize.models.Profile,
+            //         as: profileKey
+            //     }, {
+            //         model: sequelize.models.Provider,
+            //         as: 'providers',
+            //         attributes: sequelize.models.Provider.getProviderFields()
+            //     }, {
+            //         model: sequelize.models.LoginHistory,
+            //         as: 'loginHistories',
+            //     }, {
+            //         model: sequelize.models.UserImage,
+            //         as: 'userImages',
+            //         include: [{
+            //             model: sequelize.models.Image,
+            //             as: 'image'
+            //         }]
+            //     }]
+            // },
             'getUserFields': function () {
                 var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt'];
                 return fields;
@@ -1361,6 +1345,40 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(200, usersAgeGroup);
+                    }
+                });
+
+            },
+            'findUserNotificationInfo': function (userId, callback) {
+
+                var user;
+
+                sequelize.models.User.findOne({
+                    where: {
+                        id: userId
+                    },
+                    include: [{
+                        model: sequelize.models.LoginHistory,
+                        as: 'loginHistories'
+                    }, {
+                        model: sequelize.models.NotificationSwitch,
+                        as: 'notificationSwitches',
+                        attributes: sequelize.models.NotificationSwitch.getUserNotificationFields()
+                    }, {
+                        model: sequelize.models.NotificationPublicSwitch,
+                        as: 'notificationPublicSwitches',
+                        attributes: sequelize.models.NotificationPublicSwitch.getUserPublicNotificationFields()
+                    }]
+                }).then(function (data) {
+                    if (data) {
+                        user = data;
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, user);
                     }
                 });
 

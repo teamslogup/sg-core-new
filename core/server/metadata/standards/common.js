@@ -19,16 +19,16 @@ var standards = {
         "includeProfileItems": []
     },
     "notification": {
-        "enumForms": ["notice", "event", "emergency", "application"],
-        "formNotice": "notice",
-        "formEvent": "event",
-        "formEmergency": "emergency",
-        "formApplication": "application",
-        "enumNotificationTypes": ["email", "push", "sms", "email+push"],
-        "notificationEmail": "email",
-        "notificationPush": "push",
-        "notificationSms": "sms",
-        "notificationEmailPush": "email+push",
+        "enumNotificationTypes": ["notice", "event", "emergency", "application"],
+        "notificationTypeNotice": "notice",
+        "notificationTypeEvent": "event",
+        "notificationTypeEmergency": "emergency",
+        "notificationTypeApplication": "application",
+        "enumSendTypes": ["email", "push", "message", "email+push"],
+        "sendTypeEmail": "email",
+        "sendTypePush": "push",
+        "sendTypeMessage": "message",
+        "sendTypeEmailPush": "email+push",
         "maxKeyLength": 100,
         "minKeyLength": 1,
         "maxTitleLength": 60,
@@ -40,19 +40,7 @@ var standards = {
         "maxImgLength": 60,
         "minImgLength": 1,
         "maxDescriptionLength": 60,
-        "minDescriptionLength": 1,
-        "app": {
-            "notiChat": {
-                "type": "push",
-                "key": "notiNameChat",
-                "title": "notiNameChatTitle",
-                "body": "notiNameChatBody",
-                "isStored": false,
-                "isOption": true,
-                "form": "application"
-            }
-        }
-
+        "minDescriptionLength": 1
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
@@ -428,7 +416,10 @@ var standards = {
     "dashboard": {
         "defaultCount": 1
     },
-    "timeZone": 0
+    "timeZone": 0,
+    "loginHistory": {
+        "maxDuplicateLoginCount": 10
+    }
 };
 
 module.exports = standards;

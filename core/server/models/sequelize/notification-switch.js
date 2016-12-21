@@ -4,6 +4,7 @@
  */
 
 var Sequelize = require('sequelize');
+var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
@@ -14,19 +15,15 @@ module.exports = {
             reference: 'User',
             referenceKey: 'id',
             as: 'user',
-            asReverse: 'userNotifications',
+            asReverse: 'notificationSwitches',
             allowNull: false
         },
-        'notificationId': {
-            reference: 'Notification',
+        'notificationSendTypeId': {
+            reference: 'NotificationSendType',
             referenceKey: 'id',
-            as: 'notification',
-            asReverse: 'notifications',
+            as: 'notificationSendType',
+            asReverse: 'notificationSwitches',
             allowNull: false
-        },
-        'switch': {
-            'type': Sequelize.BOOLEAN,
-            'allowNull': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -35,22 +32,18 @@ module.exports = {
         'updatedAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
-        },
-        'deletedAt': {
-            'type': Sequelize.DATE,
-            'allowNull': true
         }
     },
     options: {
         "indexes": [{
             unique: true,
-            fields: ['userId', 'notificationId']
+            fields: ['userId', 'notificationSendTypeId']
         }],
         'timestamps': true,
         'charset': 'utf8',
         'createdAt': false,
         'updatedAt': false,
-        'paranoid': true, // deletedAt 추가. delete안함.
+        'paranoid': false,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
@@ -58,8 +51,24 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            getUserNotificationFields: function() {
-                return ['notificationId', 'switch'];
+            getUserNotificationFields: function () {
+                return ['notificationSendTypeId'];
+            },
+            'deleteNotificationSwitch': function (userId, notificationSendTypeId, callback) {
+
+                sequelize.models.NotificationSwitch.destroy({
+                    where: {
+                        userId: userId,
+                        notificationSendTypeId: notificationSendTypeId
+                    }
+                }).then(function () {
+                    return true
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(204);
+                    }
+                });
+
             }
         })
     }

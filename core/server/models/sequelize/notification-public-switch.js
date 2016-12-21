@@ -4,8 +4,10 @@
  */
 
 var Sequelize = require('sequelize');
+var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
+var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
@@ -13,18 +15,18 @@ module.exports = {
             reference: 'User',
             referenceKey: 'id',
             as: 'user',
-            asReverse: 'userPublicNotifications',
+            asReverse: 'notificationPublicSwitches',
             allowNull: false
         },
-        'type': {
+        'notificationType': {
             'type': Sequelize.ENUM,
             'allowNull': false,
-            'values': STD.notification.enumForms,
-            'comment': "노티피케이션의 형태, application 모드가 아닌 경우 유저 내에서 노티를 받을지 결정할 수 있음(application 모드는 user-notification에서 결정함, application모드에서만 isStored가 작동함)"
+            'values': STD.notification.enumNotificationTypes
         },
-        'switch': {
-            'type': Sequelize.BOOLEAN,
-            'allowNull': false
+        'sendType': {
+            'type': Sequelize.ENUM,
+            'allowNull': false,
+            'values': STD.notification.enumSendTypes
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -33,22 +35,18 @@ module.exports = {
         'updatedAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
-        },
-        'deletedAt': {
-            'type': Sequelize.DATE,
-            'allowNull': true
         }
     },
     options: {
         "indexes": [{
             unique: true,
-            fields: ['userId', 'type']
+            fields: ['userId', 'notificationType', 'sendType']
         }],
         'timestamps': true,
         'charset': 'utf8',
         'createdAt': false,
         'updatedAt': false,
-        'paranoid': true, // deletedAt 추가. delete안함.
+        'paranoid': false,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,
@@ -56,8 +54,25 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            getUserPublicNotificationFields: function() {
-                return ['type', 'switch'];
+            getUserPublicNotificationFields: function () {
+                return ['notificationType', 'sendType'];
+            },
+            'deleteNotificationPublicSwitch': function (userId, notificationType, sendType, callback) {
+
+                sequelize.models.NotificationPublicSwitch.destroy({
+                    where: {
+                        userId: userId,
+                        notificationType: notificationType,
+                        sendType: sendType
+                    }
+                }).then(function () {
+                    return true
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(204);
+                    }
+                });
+
             }
         })
     }

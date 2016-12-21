@@ -213,8 +213,8 @@
   "PM": "오후",
   "profile": "프로필",
   "profileInfo": "프로필 정보",
-  "notiNameChatTitle": "채팅 알림",
-  "notiNameChatBody": ":user:님이 메세지를 남기셨습니다.",
+  "kNotiNameChatTitle": "채팅 알림",
+  "kNotiNameChatBody": ":userNick:님이 메세지를 남기셨습니다.",
   "communicationsRetailReport": "통신판매업신고",
   "fax": "팩스"
 }

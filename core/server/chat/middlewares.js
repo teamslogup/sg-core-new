@@ -4,6 +4,7 @@ var sequelize = require('../../server/config/sequelize');
 var validateManager = require('./validateManager');
 var coreUtils = require('../utils');
 var STD = require('../../../bridge/metadata/standards');
+var NOTIFICATIONS = require('../../../bridge/metadata/notifications');
 
 var middles = {
 
@@ -208,7 +209,6 @@ var middles = {
     sendMessage: function () {
         return function (socket, payload, next) {
 
-            var notification = socket.request.notification;
             var user = socket.request.user;
 
             var body = {
@@ -224,8 +224,8 @@ var middles = {
                     socket.emit(STD.chat.serverCheckMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
 
-                    coreUtils.notification.all.sendNotification(data.user, notification, {
-                        user: user.nick
+                    coreUtils.notification.all.sendNotification(data.userId, NOTIFICATIONS.notiChat.key, {
+                        userNick: user.nick
                     });
 
                 } else {

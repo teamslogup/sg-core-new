@@ -54,11 +54,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['notificationSendTypeId'],
-                essential: ['notificationSendTypeId'],
+                acceptable: ['notificationType', 'sendType'],
+                essential: ['notificationType', 'sendType'],
                 resettable: [],
                 explains: {
-                    'notificationSendTypeId': "notificationSendType 아이디"
+                    'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
+                    'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", ")
                 },
                 response: resforms.notification,
                 title: '알림 수신거부 설정',
@@ -90,11 +91,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['notificationSendTypeId', 'switch'],
-                essential: ['notificationSendTypeId', 'switch'],
+                acceptable: ['notificationType', 'sendType', 'switch'],
+                essential: ['notificationType', 'sendType', 'switch'],
                 resettable: [],
                 explains: {
-                    'notificationSendTypeId': "notificationSendType 아이디",
+                    'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
+                    'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", "),
                     'switch': '온오프 여부'
                 },
                 response: resforms.notification,
@@ -128,11 +130,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['notificationSendTypeId'],
-                essential: ['notificationSendTypeId'],
+                acceptable: ['notificationType', 'sendType'],
+                essential: ['notificationType', 'sendType'],
                 resettable: [],
                 explains: {
-                    'notificationSendTypeId': "notificationSendType 아이디"
+                    'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
+                    'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", ")
                 },
                 response: resforms.notification,
                 title: '알림 수신거부 해제',

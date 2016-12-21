@@ -66,7 +66,7 @@ post.removeAllSessions = function () {
             },  [{
                 model: req.models.User,
                 as: 'user',
-                include: req.models.User.getIncludeUserWithLoginHistory()
+                include: req.models.User.getIncludeUser()
             }],
             function (status, data) {
                 if (status == 200) {
@@ -106,6 +106,18 @@ post.logInUser = function () {
                 res.hjson(req, next, 403);
             }
         });
+    };
+};
+
+post.checkLoginHistoryCountAndRemove = function () {
+    return function (req, res, next) {
+
+        req.models.LoginHistory.checkLoginHistoryCountAndRemove(req.user.id, function (status, data) {
+            if (status != 204) {
+                logger.e(data);
+            }
+        });
+        next();
     };
 };
 

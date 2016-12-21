@@ -88,17 +88,6 @@ module.exports = {
                             as: 'user',
                             attributes: sequelize.models.User.getUserFields(),
                             include: [{
-                                model: sequelize.models.LoginHistory,
-                                as: 'loginHistories',
-                            }, {
-                                model: sequelize.models.UserNotification,
-                                as: 'userNotifications',
-                                attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                            }, {
-                                model: sequelize.models.UserPublicNotification,
-                                as: 'userPublicNotifications',
-                                attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                            }, {
                                 model: sequelize.models.UserImage,
                                 as: 'userImages',
                                 include: {

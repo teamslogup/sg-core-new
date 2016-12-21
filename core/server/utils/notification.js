@@ -14,6 +14,10 @@ var emailErrorRefiner = sgSender.emailErrorRefiner;
 var phoneErrorRefiner = sgSender.phoneErrorRefiner;
 
 var sequelize = require('../../server/config/sequelize');
+var errorHandler = require('sg-sequelize-error-handler');
+var NOTIFICATION = STD.notification;
+var NOTIFICATIONS = require('../../../bridge/metadata/notifications');
+var LANGUAGES = require('../../../bridge/metadata/languages');
 
 function makeAuthEmailUrl(redirects, auth) {
     return url + auth.token + "&type=" + auth.type + "&successRedirect=" + (redirects.successRedirect || "") + "&errorRedirect=" + (redirects.errorRedirect || "");
@@ -21,17 +25,201 @@ function makeAuthEmailUrl(redirects, auth) {
 
 module.exports = {
     all: {
-        sendNotification: function (user, notification, data, callback) {
-            var NOTIFICATION = STD.notification;
+        sendNotification: function (userId, notificationKey, payload, callback) {
+            var _this = this;
+            var user;
+            var notification;
+
+            sequelize.models.User.findUserNotificationInfo(userId, function (status, data) {
+                if (status == 200) {
+                    user = data;
+
+                    _this.loadNotification(notificationKey, function (status, data) {
+
+                        if (status == 200) {
+
+                            notification = data;
+
+                            _this.createdNotificationBox(user, notification, payload, function (status, data) {
+
+                                if (status == 200) {
+
+                                    if (_this.isNotificationSwitchOn(user, notification)) {
+
+                                        for (var i = 0; i < notification.notificationSendTypes.length; i++) {
+                                            _this.replaceMagicKey(notification.notificationSendTypes[i], payload, user.language, function (isSuccess, sendType, title, body) {
+
+                                                if (isSuccess) {
+                                                    _this.send(user, sendType, title, body, function (status, data) {
+                                                        if (status == 204) {
+                                                            if (callback) callback(status, data);
+                                                        } else {
+                                                            if (callback) callback(status, data);
+                                                        }
+                                                    });
+
+                                                } else {
+                                                    if (callback)callback(204);
+                                                }
+
+                                            });
+                                        }
+
+                                    } else {
+                                        if (callback)callback(204);
+                                    }
+
+                                } else {
+                                    if (callback) callback(204);
+                                }
+                            });
+
+                        } else {
+                            if (callback) callback(status, data);
+                        }
+                    });
+
+                } else {
+                    if (callback) callback(204);
+                }
+            });
+
+        },
+        loadNotification: function (notificationKey, callback) {
+
+            var notification;
+
+            return sequelize.models.Notification.findOne({
+                where: {
+                    key: notificationKey
+                },
+                include: {
+                    model: sequelize.models.NotificationSendType,
+                    as: 'notificationSendTypes'
+                }
+            }).then(function (data) {
+
+                if (data) {
+                    notification = data;
+                    return true;
+                } else {
+                    sequelize.models.Notification.create(NOTIFICATIONS[notificationKey], {
+                        include: {
+                            model: sequelize.models.NotificationSendType,
+                            as: 'notificationSendTypes'
+                        }
+                    }).then(function (data) {
+                        notification = data;
+                        return true;
+                    });
+                }
+
+            }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                if (isSuccess) {
+                    callback(200, notification);
+                }
+            });
+
+        },
+        createdNotificationBox: function (user, notification, payload, callback) {
+
+            var uploadData = payload || notification.payload;
+            uploadData = JSON.stringify(uploadData);
+
+            if (notification.isStored) {
+                var notificationBox = sequelize.models.NotificationBox.build({
+                    userId: user.id,
+                    notificationId: notification.id,
+                    payload: uploadData
+                });
+                notificationBox.create(function (status, data) {
+                    if (status == 200) {
+                        callback(status, data);
+                    } else {
+                        callback(204);
+                    }
+                });
+            } else {
+                callback(204);
+            }
+
+        },
+        isNotificationSwitchOn: function (user, notification) {
+
+            // application 타입일 경우 notificationSwitch에서 보낼지 여부를 찾아야함
+            if (notification.notificationType == NOTIFICATION.notificationTypeApplication) {
+                // notificationSwitch에 없으면 발송
+                // notificationSwitch에 있으면 미발송
+
+                var notificationSwitch = user.notificationSwitches;
+                for (var i = 0; i < notificationSwitch.length; ++i) {
+                    if (notificationSwitch[i].notificationId == notification.id) {
+                        return false;
+                    }
+                }
+            }
+            // application 타입 이외의 경우 notificationPublicSwitch에 에서 찾아야함
+            else {
+                var notificationPublicSwitch = user.notificationPublicSwitches;
+                for (var i = 0; i < notificationPublicSwitch.length; ++i) {
+                    if (notificationPublicSwitch[i].notificationSendType == notification.notificationSendType) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+
+        },
+        replaceMagicKey: function (notificationSendType, payload, language, callback) {
+
+            var localLanguage;
+            var title;
+            var body;
+
+            if (LANGUAGES.hasOwnProperty(language)) {
+                localLanguage = LANGUAGES[language];
+
+                if (localLanguage.hasOwnProperty(notificationSendType.title) && localLanguage.hasOwnProperty(notificationSendType.body)) {
+
+                    title = localLanguage[notificationSendType.title];
+                    body = localLanguage[notificationSendType.body];
+
+                    for (var key in payload) {
+                        if (payload.hasOwnProperty(key)) {
+                            body = body.replace(':' + key + ':', "'" + payload[key] + "'");
+                        }
+                    }
+
+                    return callback(true, notificationSendType.sendType, title, body);
+                }
+            }
+
+            return callback(false);
+
+        },
+        send: function (user, sendType, title, body, callback) {
+
+            if (sendType == NOTIFICATION.sendTypeEmail) {
+                sendEmail(callback);
+            } else if (sendType == NOTIFICATION.sendTypeEmailPush) {
+                sendEmailAndPush(callback);
+            } else if (sendType == NOTIFICATION.sendTypeMessage) {
+                sendSMS(callback);
+            } else if (sendType == NOTIFICATION.sendTypePush) {
+                sendPush(callback);
+            } else {
+                callback(500);
+            }
 
             function sendPush(callback) {
                 var histories = user.loginHistories;
                 histories.forEach(function (history) {
-                    sendNoti.fcm(history.token, notification.title, data || notification.data, function (err) {
+                    sendNoti.fcm(history.token, title, body, function (err) {
                         if (err) {
-                            if (callback) callback(500, err);
+                            callback(500, err);
                         } else {
-                            if (callback) callback(204);
+                            callback(204);
                         }
                     });
                 });
@@ -39,18 +227,18 @@ module.exports = {
 
             function sendEmail(callback) {
                 sendNoti.email(user.email, "Notification", {
-                    subject: notification.title,
+                    subject: title,
                     dir: appDir,
                     name: 'common',
                     params: {
-                        body: notification.body
+                        body: body
                     }
                 }, function (err) {
                     if (process.env.NODE_ENV == 'test') return callback(204);
                     if (err) {
-                        if (callback) callback(503, emailErrorRefiner(err));
+                        callback(503, emailErrorRefiner(err));
                     } else {
-                        if (callback) callback(204);
+                        callback(204);
                     }
                 });
             }
@@ -67,83 +255,16 @@ module.exports = {
 
             function sendSMS(callback) {
                 if (user.phoneNum) {
-                    sendNoti.sms(user.phoneNum, notification.body, null, function (err) {
+                    sendNoti.sms(user.phoneNum, body, null, function (err) {
                         if (err) {
-                            if (callback) callback(err.status, phoneErrorRefiner(err));
+                            callback(err.status, phoneErrorRefiner(err));
                         } else {
-                            if (callback) callback(204);
+                            callback(204);
                         }
                     });
                 } else {
-                    if (callback) callback(404);
+                    callback(404);
                 }
-            }
-
-            function send(callback) {
-
-                // application 타입일 경우 userNotification에서 보낼지 여부를 찾아야함
-                if (notification.form == NOTIFICATION.formApplication) {
-                    // userNotifiction에 없거나, true 이면 발송
-                    // userNotification에 false이면 미발송
-
-                    var userNotifications = user.userNotifications;
-                    for (var i = 0; i < userNotifications.length; ++i) {
-                        var userNoti = userNotifications[i];
-                        if (userNoti.notificationId == notification.id && userNoti.switch == false) {
-                            if (callback) {
-                                return callback(204);
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                // application 타입 이외의 경우 userPublicNotification 에서 찾아야함
-                else {
-                    var userPublicNotifications = user.userPublicNotifications;
-                    for (var i = 0; i < userPublicNotifications.length; ++i) {
-                        var userPublicNoti = userPublicNotifications[i];
-                        if (userPublicNoti.type == notification.type && userPublicNoti.switch == false) {
-                            if (callback) {
-                                return callback(204);
-                            } else {
-                                return false;
-                            }
-                        }
-                    }
-                }
-
-                if (notification.type == NOTIFICATION.notificationEmail) {
-                    sendEmail(callback);
-                } else if (notification.type == NOTIFICATION.notificationEmailPush) {
-                    sendEmailAndPush(callback);
-                } else if (notification.type == NOTIFICATION.notificationSms) {
-                    sendSMS(callback);
-                } else if (notification.type == NOTIFICATION.notificationPush) {
-                    sendPush(callback);
-                } else {
-                    if (callback) callback(500);
-                }
-            }
-
-            var uploadData = data || notification.data;
-            uploadData = JSON.stringify(uploadData);
-
-            if (notification.isStored) {
-                var notificationBox = sequelize.models.NotificationBox.build({
-                    userId: user.id,
-                    notificationId: notification.id,
-                    data: uploadData
-                });
-                notificationBox.create(function (status, data) {
-                    if (status == 200) {
-                        send(callback)
-                    } else {
-                        if (callback) callback(status, data);
-                    }
-                });
-            } else {
-                send(callback)
             }
         }
     },
@@ -268,5 +389,58 @@ module.exports = {
                 callback(204);
             }
         }
+    },
+    init: function (callback) {
+        var bodyArray = Object.keys(NOTIFICATIONS).map(function (key) {
+            return NOTIFICATIONS[key];
+        });
+
+        sequelize.transaction(function (t) {
+
+            return sequelize.models.Notification.findAll({
+                where: {
+                    notificationType: STD.notification.notificationTypeApplication
+                },
+                include: {
+                    model: sequelize.models.NotificationSendType,
+                    as: 'notificationSendTypes'
+                },
+                transaction: t
+            }).then(function (data) {
+                for (var i = 0; i < data.length; i++) {
+                    for (var j = 0; j < bodyArray.length; j++) {
+                        if (bodyArray[j].key == data[i].key) {
+                            bodyArray.splice(j, 1);
+                        }
+                    }
+                }
+
+                if (bodyArray.length > 0) {
+                    var promises = [];
+
+                    for (var i = 0; i < bodyArray.length; i++) {
+                        var newPromise = sequelize.models.Notification.create(bodyArray[i], {
+                            include: {
+                                model: sequelize.models.NotificationSendType,
+                                as: 'notificationSendTypes'
+                            },
+                            transaction: t
+                        });
+                        promises.push(newPromise);
+                    }
+
+                    return Promise.all(promises);
+
+                } else {
+                    return true;
+                }
+
+            }).then(function (data) {
+                return true;
+            });
+
+        }).then(function (data) {
+            callback();
+        });
     }
 };

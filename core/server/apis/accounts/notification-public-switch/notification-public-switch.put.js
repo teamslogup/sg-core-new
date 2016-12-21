@@ -5,7 +5,10 @@ var logger = new Logger(__filename);
 put.validate = function () {
     return function (req, res, next) {
 
-        req.check('notificationSendTypeId', '400_12').isInt();
+        var NOTIFICATION = req.meta.std.notification;
+
+        req.check('notificationType', '400_28').isEnum(NOTIFICATION.enumNotificationTypes);
+        req.check('sendType', '400_28').isEnum(NOTIFICATION.enumSendTypes);
         req.check('switch', '400_20').isBoolean();
         req.sanitize('switch').toBoolean();
 
@@ -19,7 +22,7 @@ put.updateReport = function () {
 
         if (req.body.switch) {
 
-            req.models.NotificationSwitch.deleteNotificationSwitch(req.user.id, req.body.notificationSendTypeId, function (status, data) {
+            req.models.NotificationPublicSwitch.deleteNotificationPublicSwitch(req.user.id, req.body.notificationType, req.body.sendType, function (status, data) {
 
                 if (status == 204) {
                     next();
@@ -33,12 +36,14 @@ put.updateReport = function () {
 
             var body = {
                 userId: req.user.id,
-                notificationSendTypeId: req.body.notificationSendTypeId
+                notificationType: req.body.notificationType,
+                sendType: req.body.sendType
             };
 
-            var instance = req.models.NotificationSwitch.build(body);
+            var instance = req.models.NotificationPublicSwitch.build(body);
             instance.create(function (status, data) {
                 if (status == 200) {
+                    req.instance = data;
                     next();
                 } else {
                     return res.hjson(req, next, status, data);
