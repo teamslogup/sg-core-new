@@ -13,31 +13,6 @@ top.hasAuthorization = function () {
         } else {
             res.hjson(req, next, 403);
         }
-
-        // if (req.params.type == req.meta.std.formApplication) {
-        //
-        //     req.models.UserNotification.findDataByAuthenticatedId(req.params.id, 'userId', req.user.id, function (status, data) {
-        //         if (status == 200) {
-        //             req.data = data;
-        //             next();
-        //         } else {
-        //             res.hjson(req, next, status, data);
-        //         }
-        //     });
-        //
-        // } else {
-        //
-        //     req.models.UserPublicNotification.findDataByAuthenticatedId(req.params.id, 'userId', req.user.id, function (status, data) {
-        //         if (status == 200) {
-        //             req.data = data;
-        //             next();
-        //         } else {
-        //             res.hjson(req, next, status, data);
-        //         }
-        //     });
-        //
-        // }
-
     };
 };
 

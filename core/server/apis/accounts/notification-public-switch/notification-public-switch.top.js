@@ -13,6 +13,7 @@ top.hasAuthorization = function () {
         } else {
             res.hjson(req, next, 403);
         }
+
     };
 };
 

@@ -44,6 +44,13 @@ module.exports = {
             'values': STD.chatHistory.chatHistoryEnum,
             'allowNull': false
         },
+        'imageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'referenceType': 'one',
+            'as': 'image',
+            'allowNull': true
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -81,17 +88,6 @@ module.exports = {
                             as: 'user',
                             attributes: sequelize.models.User.getUserFields(),
                             include: [{
-                                model: sequelize.models.LoginHistory,
-                                as: 'loginHistories',
-                            }, {
-                                model: sequelize.models.UserNotification,
-                                as: 'userNotifications',
-                                attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                            }, {
-                                model: sequelize.models.UserPublicNotification,
-                                as: 'userPublicNotifications',
-                                attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                            }, {
                                 model: sequelize.models.UserImage,
                                 as: 'userImages',
                                 include: {
@@ -99,6 +95,9 @@ module.exports = {
                                     as: 'image'
                                 }
                             }]
+                        }, {
+                            model: sequelize.models.Image,
+                            as: 'image'
                         }]
                     }).then(function (data) {
 
@@ -198,6 +197,9 @@ module.exports = {
                                 }, {
                                     model: sequelize.models.ChatRoom,
                                     as: 'room'
+                                }, {
+                                    model: sequelize.models.Image,
+                                    as: 'image'
                                 }],
                                 'transaction': t
                             });

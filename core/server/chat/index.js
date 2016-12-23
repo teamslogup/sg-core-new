@@ -11,25 +11,25 @@ var middles = require('./middlewares');
 
 module.exports.init = function (io) {
 
-    // if (STD.flag.isUseRedis) {
-    //
-    //     var redisAuth;
-    //     var redisUrl = url.parse(CONFIG.db.redis);
-    //
-    //     if (redisUrl.auth) redisAuth = redisUrl.auth.split(':');
-    //     else redisAuth = [null, null];
-    //
-    //     var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
-    //         auth_pass: redisAuth[1]
-    //     });
-    //
-    //     var sub = redis.createClient(redisUrl.port, redisUrl.hostname, {
-    //         detect_buffers: true,
-    //         auth_pass: redisAuth[1]
-    //     });
-    //
-    //     io.adapter( redisAdapter({pubClient: pub, subClient: sub}) );
-    // }
+    if (STD.flag.isUseRedis) {
+        var redisAuth;
+        var redisUrl = url.parse(CONFIG.db.socketRedis);
+
+        if (redisUrl) {
+            redisAuth = redisUrl.split(':');
+
+            var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
+                auth_pass: redisAuth[1]
+            });
+
+            var sub = redis.createClient(redisUrl.port, redisUrl.hostname, {
+                detect_buffers: true,
+                auth_pass: redisAuth[1]
+            });
+
+            io.adapter(redisAdapter({pubClient: pub, subClient: sub}));
+        }
+    }
 
     io.set('authorization', middles.authorization);
 
@@ -61,6 +61,7 @@ module.exports.init = function (io) {
         socket.on(STD.chat.clientLeaveRoom, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateLeaveRoom());
             joinBinder.add(middles.leaveRoom());
             joinBinder.bind();
         });
@@ -68,6 +69,7 @@ module.exports.init = function (io) {
         socket.on(STD.chat.clientTyping, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateTyping());
             joinBinder.add(middles.onTyping());
             joinBinder.bind();
         });
@@ -77,7 +79,7 @@ module.exports.init = function (io) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateSendMessage());
-            joinBinder.add(middles.loadNotification(STD.notification.app.notiChat.key, STD.notification.app.notiChat));
+            // joinBinder.add(middles.loadNotification(STD.notification.app.notiChat.key, STD.notification.app.notiChat));
             joinBinder.add(middles.checkPrivateChatRoomUser());
             joinBinder.add(middles.sendMessage());
             joinBinder.bind();
@@ -88,6 +90,7 @@ module.exports.init = function (io) {
 
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateReadMessage());
             joinBinder.add(middles.readMessage());
             joinBinder.bind();
 

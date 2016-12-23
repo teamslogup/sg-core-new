@@ -4,22 +4,27 @@ var logger = new Logger(__filename);
 
 del.validate = function () {
     return function (req, res, next) {
-        req.check('id', '400_12').isInt();
+
+        req.check('notificationSendTypeId', '400_12').isInt();
+
         req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
-del.destroy = function () {
+del.deleteNotificationSwitch = function () {
     return function (req, res, next) {
 
-        req.models.NotificationBox.destroyDataById(req.params.id, false, function (status, data) {
+        req.models.NotificationSwitch.deleteNotificationSwitch(req.user.id, req.body.notificationSendTypeId, function (status, data) {
+
             if (status == 204) {
                 next();
             } else {
-                res.hjson(req, next, status, data);
+                return res.hjson(req, next, status, data);
             }
+
         });
+
     };
 };
 

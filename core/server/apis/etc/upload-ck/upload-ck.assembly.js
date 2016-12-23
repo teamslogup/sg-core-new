@@ -16,6 +16,7 @@ var async = require('async');
 const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
 var config = require('../../../../../bridge/config/env');
+const FILE = STD.file;
 
 var api = {
     post : function(isOnlyParams) {
@@ -47,11 +48,16 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(req.middles.upload.generateFolder(FILE.folderImages));
+                apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
+                apiCreator.add(req.middles.upload.checkFileCount(FILE.minCount, FILE.maxCount));
                 apiCreator.add(req.middles.upload.createPrefixName());
-                apiCreator.add(req.middles.upload.checkFileCount(STD.file.minCount, STD.file.maxCount));
+                apiCreator.add(req.middles.upload.createResizeOptions());
+                apiCreator.add(req.middles.upload.normalizeImages());
                 if (!STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.moveFileDir());
                 if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.s3.sendFiles(config.aws.bucketName));
                 if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.removeLocalFiles());
+                apiCreator.add(post.create());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 

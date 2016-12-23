@@ -4,22 +4,30 @@ var logger = new Logger(__filename);
 
 del.validate = function () {
     return function (req, res, next) {
-        req.check('id', '400_12').isInt();
+
+        var NOTIFICATION = req.meta.std.notification;
+
+        req.check('notificationType', '400_28').isEnum(NOTIFICATION.enumNotificationTypes);
+        req.check('sendType', '400_28').isEnum(NOTIFICATION.enumSendTypes);
+
         req.utils.common.checkError(req, res, next);
         next();
     };
 };
 
-del.destroy = function () {
+del.deleteNotificationSwitch = function () {
     return function (req, res, next) {
 
-        req.models.NotificationBox.destroyDataById(req.params.id, false, function (status, data) {
+        req.models.NotificationPublicSwitch.deleteNotificationPublicSwitch(req.user.id, req.body.notificationType, req.body.sendType, function (status, data) {
+
             if (status == 204) {
                 next();
             } else {
-                res.hjson(req, next, status, data);
+                return res.hjson(req, next, status, data);
             }
+
         });
+
     };
 };
 

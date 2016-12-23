@@ -19,16 +19,16 @@ var standards = {
         "includeProfileItems": []
     },
     "notification": {
-        "enumForms": ["notice", "event", "emergency", "application"],
-        "formNotice": "notice",
-        "formEvent": "event",
-        "formEmergency": "emergency",
-        "formApplication": "application",
-        "enumNotificationTypes": ["email", "push", "sms", "email+push"],
-        "notificationEmail": "email",
-        "notificationPush": "push",
-        "notificationSms": "sms",
-        "notificationEmailPush": "email+push",
+        "enumNotificationTypes": ["notice", "event", "report", "emergency", "application"],
+        "notificationTypeNotice": "notice",
+        "notificationTypeEvent": "event",
+        "notificationTypeReport": "report",
+        "notificationTypeEmergency": "emergency",
+        "notificationTypeApplication": "application",
+        "enumSendTypes": ["email", "push", "message"],
+        "sendTypeEmail": "email",
+        "sendTypePush": "push",
+        "sendTypeMessage": "message",
         "maxKeyLength": 100,
         "minKeyLength": 1,
         "maxTitleLength": 60,
@@ -40,19 +40,7 @@ var standards = {
         "maxImgLength": 60,
         "minImgLength": 1,
         "maxDescriptionLength": 60,
-        "minDescriptionLength": 1,
-        "app": {
-            "notiChat": {
-                "type": "push",
-                "key": "notiNameChat",
-                "title": "notiNameChatTitle",
-                "body": "notiNameChatBody",
-                "isStored": false,
-                "isOption": true,
-                "form": "application"
-            }
-        }
-
+        "minDescriptionLength": 1
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
@@ -66,6 +54,7 @@ var standards = {
         "enumGenders": ["m", "f"],
         "genderMale": "m",
         "genderFemale": "f",
+        "genderAll": "genderAll",
         "enumAuthTypes": ["emailSignup", "phoneSignup", "emailFindPass", "phoneFindPass", "phoneFindId", "emailAdding", "phoneAdding", "phoneLogin", "emailFindId", "phoneChange"],
         "enumAuthPhoneTypes": ["phoneSignup", "phoneFindPass", "phoneFindId", "phoneAdding", "phoneLogin", "phoneChange"],
         "enumAuthEmailTypes": ["emailSignup", "emailFindPass", "emailAdding", 'emailFindId'],
@@ -105,7 +94,7 @@ var standards = {
         "roleUltraAdmin": "roleF",
         "roleSuperUltraAdmin": "roleG",
         "roleSupervisor": "roleS",
-
+        "roleAll": "roleAll",
         "enumLinkIdPassTypes": ["email", "normal"],
         "linkIdPassEmail": "email",
         "linkIdPassNormal": "normal",
@@ -284,7 +273,7 @@ var standards = {
     },
     "file": {
         "enumFolders": ["images", "audios", "videos", "etc"],
-        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat"],
+        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat", "ck"],
         "enumAudioFolders": [],
         "enumVideoFolders": [],
         "enumEtcFolders": [],
@@ -298,6 +287,7 @@ var standards = {
         "folderAttach": "attach",
         "folderBg": "bg",
         "folderChat": "chat",
+        "folderCk": "ck",
         "minCount": 1,
         "maxCount": 20,
         "enumValidAudioExtensions": ["3GP", "AIFF", "AAC", "ALAC", "AMR", "ATRAC", "AU", "AWB", "dvf", "flac", "mmf", "mp3", "Mpc", "msv", "ogg", "Opus", "TTA", "VOX", "WAV", "wma"],
@@ -426,7 +416,10 @@ var standards = {
     "dashboard": {
         "defaultCount": 1
     },
-    "timeZone": 0
+    "timeZone": 0,
+    "loginHistory": {
+        "maxDuplicateLoginCount": 10
+    }
 };
 
 module.exports = standards;
