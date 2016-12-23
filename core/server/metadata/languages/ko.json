@@ -215,7 +215,20 @@
   "profileInfo": "프로필 정보",
   "kNotiNameChatTitle": "채팅 알림",
   "kNotiNameChatBody": ":userNick:님이 메세지를 남기셨습니다.",
+  "kNotiNameReportBoxTitle": "",
+  "kNotiNameReportBoxBody": "",
+  "kNotiNameReportEmailTitle": "문의 알림",
+  "kNotiNameReportEmailBody": ":reply:",
+  "kNotiNameReportPushTitle": "",
+  "kNotiNameReportPushBody": "",
+  "kNotiNameReportMessageTitle": "",
+  "kNotiNameReportMessageBody": "",
   "communicationsRetailReport": "통신판매업신고",
-  "fax": "팩스"
+  "fax": "팩스",
+  "push": "푸시",
+  "message": "문자",
+  "platform": "운영체제",
+  "device": "기기",
+  "browser": "브라우저"
 }
 

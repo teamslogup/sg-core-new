@@ -5,6 +5,7 @@ var logger = new Logger(__filename);
 put.validate = function () {
     return function (req, res, next) {
 
+        req.check('userId', '400_12').isInt();
         req.check('notificationSendTypeId', '400_12').isInt();
         req.check('switch', '400_20').isBoolean();
         req.sanitize('switch').toBoolean();
@@ -19,7 +20,7 @@ put.updateReport = function () {
 
         if (req.body.switch) {
 
-            req.models.NotificationSwitch.deleteNotificationSwitch(req.user.id, req.body.notificationSendTypeId, function (status, data) {
+            req.models.NotificationSwitch.deleteNotificationSwitch(req.body.userId, req.body.notificationSendTypeId, function (status, data) {
 
                 if (status == 204) {
                     next();
@@ -32,7 +33,7 @@ put.updateReport = function () {
         } else {
 
             var body = {
-                userId: req.user.id,
+                userId: req.body.userId,
                 notificationSendTypeId: req.body.notificationSendTypeId
             };
 

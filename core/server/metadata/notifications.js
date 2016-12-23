@@ -11,6 +11,27 @@ var notifications = {
             "title": "kNotiNameChatTitle",
             "body": "kNotiNameChatBody"
         }]
+    },
+    "notiReport": {
+        "key": "notiNameReport",
+        "isStored": false,
+        "isOption": true,
+        "notificationType": "report",
+        "notificationBoxTitle": "kNotiNameReportBoxTitle",
+        "notificationBoxBody": "kNotiNameReportBoxBody",
+        "notificationSendTypes": [{
+            "sendType": "email",
+            "title": "kNotiNameReportEmailTitle",
+            "body": "kNotiNameReportEmailBody"
+        },{
+            "sendType": "push",
+            "title": "kNotiNameReportPushTitle",
+            "body": "kNotiNameReportPushBody"
+        },{
+            "sendType": "message",
+            "title": "kNotiNameReportMessageTitle",
+            "body": "kNotiNameReportMessageBody"
+        }]
     }
 };
 

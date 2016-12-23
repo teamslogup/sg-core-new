@@ -22,7 +22,7 @@ module.exports = {
             'type': Sequelize.ENUM,
             'values': STD.notification.enumSendTypes,
             'allowNull': false,
-            'defaultValue': STD.notification.sendTypeEmailPush
+            'defaultValue': STD.notification.sendTypePush
         },
         'title': {
             'type': Sequelize.STRING,

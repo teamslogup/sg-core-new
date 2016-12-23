@@ -6,6 +6,7 @@ gets.validate = function () {
     return function (req, res, next) {
         var NOTIFICATION = req.meta.std.notification;
 
+        req.check('userId', '400_12').isInt();
         req.check('sendType', '400_28').isEnum(NOTIFICATION.enumSendTypes);
 
         req.utils.common.checkError(req, res, next);
@@ -22,7 +23,7 @@ gets.getNotificationSwitch = function () {
 
         req.models.NotificationPublicSwitch.findAll({
             where: {
-                userId: req.user.id,
+                userId: req.query.userId,
                 sendType: req.query.sendType
             },
             order: [['createdAt', 'ASC']]
@@ -30,7 +31,7 @@ gets.getNotificationSwitch = function () {
 
             for (var i = 0; i < NOTIFICATION.enumNotificationTypes.length; i++) {
 
-                if (NOTIFICATION.enumNotificationTypes[i] != NOTIFICATION.notificationTypeApplication) {
+                if (NOTIFICATION.enumNotificationTypes[i] != NOTIFICATION.notificationTypeApplication && NOTIFICATION.enumNotificationTypes[i] != NOTIFICATION.notificationTypeReport) {
                     notificationPublicSwitch.push({
                         notificationType: NOTIFICATION.enumNotificationTypes[i],
                         sendType: req.query.sendType,

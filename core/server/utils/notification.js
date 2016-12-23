@@ -202,8 +202,6 @@ module.exports = {
 
             if (sendType == NOTIFICATION.sendTypeEmail) {
                 sendEmail(callback);
-            } else if (sendType == NOTIFICATION.sendTypeEmailPush) {
-                sendEmailAndPush(callback);
             } else if (sendType == NOTIFICATION.sendTypeMessage) {
                 sendSMS(callback);
             } else if (sendType == NOTIFICATION.sendTypePush) {
@@ -239,16 +237,6 @@ module.exports = {
                         callback(503, emailErrorRefiner(err));
                     } else {
                         callback(204);
-                    }
-                });
-            }
-
-            function sendEmailAndPush(callback) {
-                sendEmail(function (status, data) {
-                    if (status == 204) {
-                        sendPush(callback);
-                    } else {
-                        if (callback) callback(status, data);
                     }
                 });
             }
@@ -398,9 +386,6 @@ module.exports = {
         sequelize.transaction(function (t) {
 
             return sequelize.models.Notification.findAll({
-                where: {
-                    notificationType: STD.notification.notificationTypeApplication
-                },
                 include: {
                     model: sequelize.models.NotificationSendType,
                     as: 'notificationSendTypes'

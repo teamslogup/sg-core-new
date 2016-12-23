@@ -21,10 +21,13 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['sendType'],
-                essential: ['sendType'],
+                acceptable: ['userId', 'sendType'],
+                essential: ['userId', 'sendType'],
                 resettable: [],
-                explains: {'sendType': '알림 전송 형태' + STD.notification.enumSendTypes.join(',')},
+                explains: {
+                    'userId': '유저 id',
+                    'sendType': '알림 전송 형태' + STD.notification.enumSendTypes.join(',')
+                },
                 response: {rows: [resforms.notification]},
                 title: '알림 전체 얻기',
                 state: 'development'
@@ -34,6 +37,7 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(top.hasAuthorization());
                 // apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
@@ -91,10 +95,11 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['notificationType', 'sendType', 'switch'],
-                essential: ['notificationType', 'sendType', 'switch'],
+                acceptable: ['userId', 'notificationType', 'sendType', 'switch'],
+                essential: ['userId', 'notificationType', 'sendType', 'switch'],
                 resettable: [],
                 explains: {
+                    'userId': '유저 id',
                     'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
                     'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", "),
                     'switch': '온오프 여부'
@@ -108,6 +113,7 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
+
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,

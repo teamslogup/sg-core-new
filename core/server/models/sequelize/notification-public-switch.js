@@ -26,7 +26,8 @@ module.exports = {
         'sendType': {
             'type': Sequelize.ENUM,
             'allowNull': false,
-            'values': STD.notification.enumSendTypes
+            'values': STD.notification.enumSendTypes,
+            'defaultValue': STD.notification.sendTypePush
         },
         'createdAt': {
             'type': Sequelize.BIGINT,

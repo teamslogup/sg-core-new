@@ -491,26 +491,26 @@ module.exports = {
                     }]
                 }]
             },
-            // 'getIncludeUserWithLoginHistory': function () {
-            //     return [{
-            //         model: sequelize.models.Profile,
-            //         as: profileKey
-            //     }, {
-            //         model: sequelize.models.Provider,
-            //         as: 'providers',
-            //         attributes: sequelize.models.Provider.getProviderFields()
-            //     }, {
-            //         model: sequelize.models.LoginHistory,
-            //         as: 'loginHistories',
-            //     }, {
-            //         model: sequelize.models.UserImage,
-            //         as: 'userImages',
-            //         include: [{
-            //             model: sequelize.models.Image,
-            //             as: 'image'
-            //         }]
-            //     }]
-            // },
+            'getIncludeUserWithLoginHistory': function () {
+                return [{
+                    model: sequelize.models.Profile,
+                    as: profileKey
+                }, {
+                    model: sequelize.models.Provider,
+                    as: 'providers',
+                    attributes: sequelize.models.Provider.getProviderFields()
+                }, {
+                    model: sequelize.models.LoginHistory,
+                    as: 'loginHistories',
+                }, {
+                    model: sequelize.models.UserImage,
+                    as: 'userImages',
+                    include: [{
+                        model: sequelize.models.Image,
+                        as: 'image'
+                    }]
+                }]
+            },
             'getUserFields': function () {
                 var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt'];
                 return fields;

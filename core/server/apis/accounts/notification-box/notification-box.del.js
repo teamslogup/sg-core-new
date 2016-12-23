@@ -4,7 +4,7 @@ var logger = new Logger(__filename);
 
 del.validate = function () {
     return function (req, res, next) {
-        req.check('id', '400_8').isInt();
+        req.check('id', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
         next();
     };

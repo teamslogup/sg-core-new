@@ -20,11 +20,14 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['last', 'size', 'offset'],
+                acceptable: ['userId', 'last', 'size', 'offset'],
                 essential: [],
                 resettable: [],
                 explains: {},
-                response: {rows: [resforms.notification]},
+                response: {
+                    'userId': '유저 id',
+                    rows: [resforms.notification]
+                },
                 // role: STD.role.account,
                 title: '노티피케이션 알림내용 전체 얻기',
                 state: 'development'
@@ -34,6 +37,7 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(top.hasAuthorization());
                 // apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
