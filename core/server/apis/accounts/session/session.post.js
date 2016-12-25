@@ -176,7 +176,19 @@ post.checkLoginHistoryCountAndRemove = function () {
     return function (req, res, next) {
 
         req.models.LoginHistory.checkLoginHistoryCountAndRemove(req.user.id, function (status, data) {
-            if (status != 204) {
+            if (status == 200) {
+
+                data.forEach(function (loginHistory) {
+                    var sessionId = loginHistory.session;
+
+                    req.sessionStore.destroy(sessionId, function (err) {
+                        if (err) {
+                            logger.e(err);
+                        }
+                    });
+                });
+
+            } else {
                 logger.e(data);
             }
         });
