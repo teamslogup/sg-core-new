@@ -5,9 +5,9 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
-        var OPTIONAL_TERMS = req.meta.std.optionalTerms;
+        var TERMS = req.meta.std.terms;
 
-        req.check('termsIds', '400_12').isNumberIds(OPTIONAL_TERMS.maxOptionalTermsCount);
+        req.check('termsIds', '400_12').isNumberIds(TERMS.maxOptionalTermsCount);
 
         req.utils.common.checkError(req, res, next);
         next();

@@ -1,4 +1,4 @@
-export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler, loadingHandler, metaManager) {
+export default function ImagesCtrl($scope, $rootScope, $filter, imagesManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -10,6 +10,7 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
     var LOADING = metaManager.std.loading;
     var COMMON = metaManager.std.common;
     var IMAGE = metaManager.std.image;
+    var ADMIN = metaManager.std.admin;
 
     $scope.form = {};
     $scope.imageList = [];
@@ -182,5 +183,9 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
         if (args.type == 'delete') {
             $scope.imageList.splice($scope.imageList.indexOf(args.data), 1);
         }
+    });
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleImages
     });
 }

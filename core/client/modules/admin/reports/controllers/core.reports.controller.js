@@ -1,4 +1,4 @@
-export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandler, loadingHandler, metaManager) {
+export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -13,6 +13,7 @@ export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandl
     var LOADING = metaManager.std.loading;
     var COMMON = metaManager.std.common;
     var REPORT = metaManager.std.report;
+    var ADMIN = metaManager.std.admin;
 
     $scope.isReportDetailVisible = false;
     $scope.isReportDetailFirstTime = true;
@@ -160,4 +161,8 @@ export default function ReportsCtrl($scope, $filter, reportsManager, dialogHandl
             $scope.findReports();
         }
     }, true);
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleReports
+    });
 }

@@ -1,0 +1,69 @@
+<div id="sg-notice-manage-create" ng-class="isNoticeCreateVisible ? '' : 'sg-notice-manage-detail-hide'" ng-if="!isNoticeDetailFirstTime">
+
+    <div class="sg-notice-manage-create-fake" ng-click="hideNoticeCreate()">
+    </div>
+
+    <div ng-class="isNoticeCreateVisible ? 'sg-notice-manage-create-container' : 'sg-notice-manage-create-container-hide'" ng-if="!isNoticeDetailFirstTime">
+
+        <!--<div class="sg-notice-manage-create-title sg-titles">-->
+            <!--공지사항 생성-->
+        <!--</div>-->
+
+        <div class="sg-notice-manage-create-close" ng-click="hideNoticeCreate()">
+
+        </div>
+
+        <div class="sg-notice-manage-create-body">
+
+            <div class="sg-notice-manage-create-body-top">
+                <div class="sg-notice-manage-create-body-type">
+                    <div class="sg-notice-manage-create-titles">
+                        {{'type'| translate}}
+                    </div>
+                    <div class="sg-notice-manage-create-body-type-body">
+                        <select ng-model="form.type" class="sg-main-view-top-second-sort-btn sg-option" required>
+                            <option ng-repeat="x in noticeTypes" value="{{x}}">{{x | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="sg-notice-manage-create-body-country">
+                    <div class="sg-notice-manage-create-titles">
+                        {{'country'| translate}}
+                    </div>
+                    <div class="sg-notice-manage-create-body-country-body">
+                        <select ng-model="form.country" class="sg-main-view-top-second-sort-btn sg-option" required>
+                            <option ng-repeat="x in noticeCountries" value="{{x}}">{{x | translate}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sg-notice-manage-create-body-title">
+                <div class="sg-notice-manage-create-titles">
+                    {{'title'| translate}}
+                </div>
+                <input ng-model="form.title" type="text" class="sg-notice-manage-create-body-title-body sg-input"
+                       placeholder="{{'title'|translate}}" required>
+            </div>
+
+            <div class="sg-notice-manage-create-body-body">
+                <div class="sg-notice-manage-create-titles">
+                    {{'body'| translate}}
+                </div>
+                <div class="sg-notice-manage-create-body-body-body">
+                    <form>
+                        <textarea ck-editor ng-model="form.body" required></textarea>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="sg-notice-manage-create-bottom">
+            <button class="sg-notice-manage-create-bottom-create-btn sgc-btn-action" ng-click="createNotice()">{{'create'|translate}}</button>
+        </div>
+
+    </div>
+
+</div>

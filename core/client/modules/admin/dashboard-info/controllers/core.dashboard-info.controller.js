@@ -1,4 +1,4 @@
-export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager, dialogHandler, loadingHandler, metaManager) {
+export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboardInfoManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -7,6 +7,7 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
     }
 
     var LOADING = metaManager.std.loading;
+    var ADMIN = metaManager.std.admin;
 
     $scope.dashboardInfo = undefined;
 
@@ -282,5 +283,9 @@ export default function DashboardInfoCtrl($scope, $filter, dashboardInfoManager,
     };
 
     $scope.findDashboardInfo();
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleDashboardInfo
+    });
 
 }

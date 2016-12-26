@@ -11,6 +11,16 @@ var standards = {
         "staticsUrl": ""
     },
     "admin": {
+        "kNavigation": "navigation",
+        "modules": ["users", "notices", "reports", "terms", "images", "notification", "company-info", "dashboard-info"],
+        "moduleUsers": "users",
+        "moduleNotices": "notices",
+        "moduleReports": "reports",
+        "moduleTerms": "terms",
+        "moduleImages": "images",
+        "moduleNotification": "notifications",
+        "moduleCompanyInfo": "company-info",
+        "moduleDashboardInfo": "dashboard-info",
         "isUseModalAnimation": true,
         "modalBackDrop": true
     },
@@ -178,9 +188,7 @@ var standards = {
         "enumOrderBys": ["createdAt", "updatedAt"],
         "defaultOrderBy": "createdAt",
         "showAgreeTerms": "showAgreeTerms",
-        "modalSize": "md"
-    },
-    "optionalTerms": {
+        "modalSize": "md",
         "maxOptionalTermsCount": 10
     },
     "report": {

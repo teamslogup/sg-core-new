@@ -58,7 +58,7 @@ var api = {
 
             var params = {
                 acceptable: ["appliedId", "title", "type", "language"],
-                essential: [],
+                essential: ['language'],
                 resettable: [],
                 explains: {
                     "type": "이용약관 유형 " + STD.terms.enumTypes.join(", "),

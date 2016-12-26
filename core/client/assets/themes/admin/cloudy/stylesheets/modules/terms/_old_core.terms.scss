@@ -1,10 +1,4 @@
-@mixin after-clear() {
-    &:after {
-        display: block;
-        content: "";
-        clear: both;
-    }
-}
+@import "../../import";
 
 #sg-core-terms-manage-wrap {
     position: relative;
@@ -212,4 +206,4 @@ button.sg-core-modal-exit {
     }
 }
 
-@import './core.create-terms';
+@import 'core.create-terms';

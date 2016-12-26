@@ -1,7 +1,8 @@
-export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialogHandler, loadingHandler, metaManager) {
+export default function NoticesCtrl($scope, $rootScope, $sce, $filter, noticesManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;
+    var ADMIN = metaManager.std.admin;
 
     $scope.isNoticeCreateVisible = false;
     $scope.isNoticeEditMode = false;
@@ -232,4 +233,9 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
             $scope.findNotices();
         }
     }, true);
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleNotices
+    });
+
 }
