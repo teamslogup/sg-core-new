@@ -166,7 +166,7 @@ module.exports = {
                     query.where.device = data.device;
                 }
 
-                if (data.device !== undefined) {
+                if (data.token !== undefined) {
                     query.where.token = data.token;
                 }
 
