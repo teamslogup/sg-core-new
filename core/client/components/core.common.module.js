@@ -11,6 +11,7 @@ import trustAsHtml from './trust-as-html/core.common.trust-as-html';
 import roundUp from './round-up/core.common.round-up';
 import ckEditor from './ck-editor/core.common.ck-editor';
 import notificationBody from './notification-body/core.common.notification-body';
+import imageUrl from './image-url/core.common.image-url';
 
 import fileModel from './file-model/core.common.file-model';
 import fileUploader from './file-uploader/core.common.file-uploader';
@@ -26,6 +27,7 @@ export default angular.module('core.common', [])
     .filter('trustAsHtml', trustAsHtml)
     .filter('roundUp', roundUp)
     .filter('notificationBody', notificationBody)
+    .filter('imageUrl', imageUrl)
     .provider('staticLoader', StaticLoader)
     .directive('ckEditor', ckEditor)
     .directive('fileModel', fileModel)
