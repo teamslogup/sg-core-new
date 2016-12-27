@@ -33,11 +33,12 @@ module.exports = {
             'referenceKey': 'id',
             'referenceType': 'one',
             'as': 'room',
+            'asReverse': 'chatHistories',
             'allowNull': false
         },
         'message': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'type': {
             'type': Sequelize.ENUM,

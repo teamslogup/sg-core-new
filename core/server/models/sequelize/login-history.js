@@ -207,6 +207,8 @@ module.exports = {
             },
             checkLoginHistoryCountAndRemove: function (userId, callback) {
 
+                var deletedLoginHistories = [];
+
                 sequelize.models.LoginHistory.findAll({
                     where: {
                         userId: userId,
@@ -220,6 +222,7 @@ module.exports = {
                         var toBeDeletedIdArray = [];
                         for (var i = 0; i < data.length - STD.loginHistory.maxDuplicateLoginCount; i++) {
                             toBeDeletedIdArray.push(data[i].id);
+                            deletedLoginHistories.push(data[i]);
                         }
 
                         return sequelize.models.LoginHistory.destroy({
@@ -235,7 +238,7 @@ module.exports = {
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
-                        callback(204);
+                        callback(200, deletedLoginHistories);
                     }
                 });
             }

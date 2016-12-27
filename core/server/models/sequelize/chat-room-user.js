@@ -70,7 +70,8 @@ module.exports = {
                 return [{
                     model: sequelize.models.User,
                     as: 'user',
-                    attributes: sequelize.models.User.getUserFields()
+                    attributes: sequelize.models.User.getUserFields(),
+                    include: sequelize.models.User.getIncludeUser()
                 }, {
                     model: sequelize.models.ChatRoom,
                     as: 'room',
@@ -82,7 +83,8 @@ module.exports = {
                             include: {
                                 model: sequelize.models.User,
                                 as: 'user',
-                                attributes: sequelize.models.User.getUserFields()
+                                attributes: sequelize.models.User.getUserFields(),
+                                include: sequelize.models.User.getIncludeUser()
                             }
                         }
                     ]

@@ -1,4 +1,4 @@
-export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, dialogHandler, loadingHandler, metaManager) {
+export default function CompanyInfoCtrl($scope, $rootScope, $filter, companyInfoManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -7,6 +7,7 @@ export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, dia
     }
 
     var LOADING = metaManager.std.loading;
+    var ADMIN = metaManager.std.admin;
 
     $scope.isCompanyInfoEditVisible = false;
 
@@ -50,4 +51,8 @@ export default function CompanyInfoCtrl($scope, $filter, companyInfoManager, dia
             }
         });
     };
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleCompanyInfo
+    });
 }

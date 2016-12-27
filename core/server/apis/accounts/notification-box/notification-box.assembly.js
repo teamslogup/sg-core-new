@@ -37,7 +37,7 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(top.hasAuthorization());
+                apiCreator.add(top.hasAuthorizationForQuery());
                 // apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,

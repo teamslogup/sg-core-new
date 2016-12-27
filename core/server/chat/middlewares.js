@@ -149,7 +149,7 @@ var middles = {
     validateLeaveRoom: function () {
         return function (socket, payload, next) {
 
-            validateManager.check('roomId', '400_14').isId();
+            validateManager.check('roomId', '400_12').isId();
 
             validateManager.checkError(socket, payload, next);
         }
@@ -157,7 +157,7 @@ var middles = {
     validateTyping: function () {
         return function (socket, payload, next) {
 
-            validateManager.check('roomId', '400_14').isId();
+            validateManager.check('roomId', '400_12').isId();
             validateManager.check('isTyping', '400_20').isBoolean();
 
             validateManager.checkError(socket, payload, next);
@@ -166,15 +166,15 @@ var middles = {
     validateSendMessage: function () {
         return function (socket, payload, next) {
             var CHAT_HISTORY = STD.chatHistory;
-            validateManager.check('roomId', '400_14').isId();
+            validateManager.check('roomId', '400_12').isId();
             validateManager.check('type', '400_20').isEnum(CHAT_HISTORY.chatHistoryEnum);
             validateManager.check('isPrivate', '400_20').isBoolean();
 
             if (payload.type == STD.chatHistory.text) {
-                validateManager.check('message', '400_14').len(CHAT_HISTORY.minMessageLength, CHAT_HISTORY.maxMessageLength);
+                validateManager.check('message', '400_51').len(CHAT_HISTORY.minMessageLength, CHAT_HISTORY.maxMessageLength);
             }
             if (payload.type == STD.chatHistory.image) {
-                validateManager.check('imageId', '400_20').isId();
+                validateManager.check('imageId', '400_12').isId();
             }
 
             validateManager.checkError(socket, payload, next);
@@ -182,7 +182,7 @@ var middles = {
     },
     validateReadMessage: function () {
         return function (socket, payload, next) {
-            validateManager.check('roomId', '400_14').isId();
+            validateManager.check('roomId', '400_12').isId();
 
             validateManager.checkError(socket, payload, next);
         }

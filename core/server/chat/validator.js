@@ -72,11 +72,14 @@ module.exports = function (param, errorCode) {
     Validator.prototype.isId = function () {
         this.validateMethod = function () {
             return function (value) {
+
+                value = parseInt(value);
+
                 if (!Number.isInteger(value)) {
                     return false;
                 }
 
-                if (parseInt(value) <= 0) {
+                if (value <= 0) {
                     return false;
                 }
 

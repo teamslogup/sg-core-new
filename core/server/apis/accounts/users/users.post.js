@@ -12,7 +12,7 @@ post.validate = function () {
 
         var USER = req.meta.std.user;
         var SMS = req.meta.std.sms;
-        var OPTIONAL_TERMS = req.meta.std.optionalTerms;
+        var TERMS = req.meta.std.terms;
 
         req.check('type', '400_3').isEnum(USER.enumSignUpTypes);
 
@@ -103,7 +103,7 @@ post.validate = function () {
         }
 
         if (req.body.optionalTerms !== undefined) {
-            req.check('optionalTerms', '400_12').isNumberIds(OPTIONAL_TERMS.maxOptionalTermsCount);
+            req.check('optionalTerms', '400_12').isNumberIds(TERMS.maxOptionalTermsCount);
         }
 
         req.utils.common.checkError(req, res, next);

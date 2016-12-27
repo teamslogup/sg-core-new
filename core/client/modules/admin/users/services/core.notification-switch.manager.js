@@ -25,7 +25,8 @@ export default function notificationSwitchManager(NotificationSwitch) {
 
     function findAllNotificationSwitch(data, callback) {
         NotificationSwitch.query({
-            userId: data.userId || ''
+            userId: data.userId || '',
+            sendType: data.sendType || '',
         }, function (data) {
             callback(200, data);
         }, function (data) {

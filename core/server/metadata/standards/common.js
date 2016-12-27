@@ -11,6 +11,16 @@ var standards = {
         "staticsUrl": ""
     },
     "admin": {
+        "kNavigation": "navigation",
+        "modules": ["users", "notices", "reports", "terms", "images", "notification", "company-info", "dashboard-info"],
+        "moduleUsers": "users",
+        "moduleNotices": "notices",
+        "moduleReports": "reports",
+        "moduleTerms": "terms",
+        "moduleImages": "images",
+        "moduleNotification": "notifications",
+        "moduleCompanyInfo": "company-info",
+        "moduleDashboardInfo": "dashboard-info",
         "isUseModalAnimation": true,
         "modalBackDrop": true
     },
@@ -178,9 +188,7 @@ var standards = {
         "enumOrderBys": ["createdAt", "updatedAt"],
         "defaultOrderBy": "createdAt",
         "showAgreeTerms": "showAgreeTerms",
-        "modalSize": "md"
-    },
-    "optionalTerms": {
+        "modalSize": "md",
         "maxOptionalTermsCount": 10
     },
     "report": {
@@ -193,7 +201,8 @@ var standards = {
         "enumSearchFields": ["nick", "email", "body"],
         "enumSolved": ["solved", "unsolved"],
         "solved": "solved",
-        "unsolved": "unsolved"
+        "unsolved": "unsolved",
+        "modalSize": "md"
     },
     "notice": {
         "minTitleLength": 1,
@@ -207,7 +216,8 @@ var standards = {
         "noticeTypeEvent": "event",
         "noticeTypePopup": "popup",
         "enumFields": ["title", "body"],
-        "enumCountries": ["KR"]
+        "enumCountries": ["KR"],
+        "modalSize": "md"
     },
     "board": {
         "minSlugLength": 1,
