@@ -64,5 +64,54 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
         } else {
             return "정의되지 않은 에러";
         }
+    };
+
+    this.validator = function (data, acceptableKeys, essentialKeys, callback) {
+        var self = this;
+        try {
+            var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
+                throw(err);
+            });
+            var essentialKeyHash = makeHash(essentialKeys, function (err) {
+                throw(err);
+            });
+            if (data instanceof Object) {
+                for (var k in data) {
+                    if (!acceptableKeyHash[k]) {
+                        throw('400_15');
+                    }
+                }
+                for (var k in essentialKeyHash) {
+                    if (!data[k]) {
+                        throw('400_14');
+                    }
+                }
+            } else {
+                throw('400');
+            }
+            callback(data);
+        } catch (err) {
+            self.alertError(400, {
+                code: err
+            });
+        }
+    };
+
+    function makeHash (arrayOrObject, failCallback) {
+        var returnHash = {};
+        if (arrayOrObject instanceof Array) {
+            for (var i=0; i<arrayOrObject.length; i++) {
+                returnHash[arrayOrObject[i]] = true;
+            }
+        } else if (arrayOrObject instanceof Object) {
+            for (var k in arrayOrObject) {
+                returnHash[k] = true;
+            }
+        } else {
+            if (failCallback) {
+                failCallback('400');
+            }
+        }
+        return returnHash;
     }
 }
