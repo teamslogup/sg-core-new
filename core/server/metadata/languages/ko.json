@@ -141,7 +141,6 @@
   "requireBody": "내용을 입력해주세요.",
   "requireType": "타입을 선택해주세요.",
   "requireLanguage": "국가를 선택해주세요.",
-  "dashboard": "대쉬보드",
   "editMode": "수정모드",
   "viewMode": "일반모드",
   "close": "닫기",
@@ -198,7 +197,6 @@
   "thisIsAppliedTerms": "현재 적용중인 약관입니다.",
   "content": "내용",
   "appliedTerms": "적용 약관",
-  "termsManage": "약관 관리",
   "isEssentialTerms": "는 필수 약관",
   "roleA": "비인증 유저",
   "roleB": "일반 유저",
@@ -229,6 +227,14 @@
   "message": "문자",
   "platform": "운영체제",
   "device": "기기",
-  "browser": "브라우저"
+  "browser": "브라우저",
+  "dashboard": "대쉬보드",
+  "userManage": "유저 관리",
+  "noticeManage": "공지사항 관리",
+  "reportManage": "문의 관리",
+  "termsManage": "약관 관리",
+  "imageManage": "이미지 관리",
+  "notificationManage": "알림 관리",
+  "infoManage": "회사정보 관리"
 }
 
