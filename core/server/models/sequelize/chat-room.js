@@ -85,37 +85,75 @@ module.exports = {
             // },
             'findChatRoomsByOption': function (options, callback) {
 
-                // var where = {};
-                //
-                // if (options.userId !== undefined) {
-                //     where.userId = options.userId
-                // }
-                //
-                // where.createdAt = {
-                //     '$lt': options.last
-                // };
-                //
+                var where = {};
+
+                if (options.userId !== undefined) {
+                    where.userId = options.userId
+                }
+
+                where.createdAt = {
+                    '$lt': options.last
+                };
+
                 // sequelize.transaction(function (t) {
                 //
-                //     return sequelize.models.ChatRoomUser.findAll({
-                //         'offset': parseInt(options.offset),
-                //         'limit': parseInt(options.size),
-                //         'where': where,
+                //     return sequelize.models.ChatRoom.findAll({
                 //         'order': [[options.orderBy, options.sort]],
-                //         'include': sequelize.models.ChatRoomUser.getIncludeChatRoomUser(),
                 //         'paranoid': true,
+                //         include: [{
+                //             model: sequelize.models.ChatRoomUser,
+                //             as: 'roomUsers',
+                //             where: where
+                //         }],
                 //         'transaction': t
                 //     }).then(function (data) {
                 //         if (data.length > 0) {
-                //             return data;
+                //
+                //             var roomIds = [];
+                //
+                //             for (var i = 0; i < data.length; i++) {
+                //                 roomIds.push(data[i].id);
+                //             }
+                //
+                //             return sequelize.models.ChatRoomUser.findAll({
+                //                 where: {
+                //                     roomId: roomIds,
+                //                     userId: {
+                //                         $ne: options.userId
+                //                     }
+                //                 },
+                //                 paranoid: false,
+                //                 include: [{
+                //                     model: sequelize.models.User,
+                //                     as: 'user',
+                //                     attributes: sequelize.models.User.getUserFields(),
+                //                     paranoid: false,
+                //                     include: [{
+                //                         model: sequelize.models.UserImage,
+                //                         as: 'userImages',
+                //                         include: {
+                //                             model: sequelize.models.Image,
+                //                             as: 'image'
+                //                         }
+                //                     }]
+                //                 }],
+                //                 transaction: t
+                //             });
+                //
                 //         } else {
                 //             throw new errorHandler.CustomSequelizeError(404);
                 //         }
+                //
+                //     }).then(function (data) {
+                //         return data;
                 //     });
                 //
                 // }).catch(errorHandler.catchCallback(callback)).done(function (data) {
                 //     if (data) {
-                //         callback(200, data);
+                //         callback(200, {
+                //             count: data.length,
+                //             rows: data
+                //         });
                 //     }
                 // });
 

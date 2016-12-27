@@ -1,210 +1,182 @@
 #sg-notice-manage-detail {
-  position: fixed;
-  top: 0;
-  left: 0;
+    $sg-notice-manage-detail-padding-left-right: 20px;
 
-  width: 100%;
-  height: 100%;
+    .sg-notice-manage-detail-container {
+        z-index: 13;
 
-  z-index: 12;
+        position: relative;
+        padding: 40px 20px;
 
-  background-color: rgba(0, 0, 0, 0.5);
-  overflow: auto;
+        top: 0;
+        left: 0;
 
-  $sg-notice-manage-detail-padding-left-right: 20px;
+        width: 100%;
+        min-width: 0;
+        height: initial;
+        background-color: white;
 
-  .sg-notice-manage-detail-fake {
-    position: fixed;
-    top: 0;
-    left: 0;
+        @media screen and (min-width: $web-min-width) {
+            max-width: 700px;
+            padding: 36px;
 
-    width: 100%;
-    height: 100%;
+            margin-left: auto;
+            margin-right: auto;
 
-    z-index: 12;
-  }
-
-  .sg-notice-manage-detail-container, .sg-notice-manage-detail-container-hide {
-    z-index: 13;
-
-    position: relative;
-    padding: 40px 20px;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    min-width: 0;
-    height: 100%;
-
-    background-color: white;
-
-    @media screen and (min-width: $web-min-width) {
-      max-width: 700px;
-      padding: 36px;
-      height: auto;
-
-      top: 70px;
-
-      margin-bottom: 100px;
-      margin-left: auto;
-      margin-right: auto;
-
-      border-radius: 5px;
-    }
-
-    .sg-notice-manage-detail-close {
-      position: absolute;
-      top: -34px;
-      right: 0;
-
-      width: 30px;
-      height: 30px;
-
-      cursor: pointer;
-
-      background-image: url('/assets/themes/admin/cloudy/images/ic_close_24_2x.png');
-      background-repeat: no-repeat;
-      background-size: 24px;
-      background-position: center;
-    }
-
-    .sg-notice-manage-detail-titles {
-      font-size: 14px;
-      font-weight: 300;
-      color: #8d93a6;
-
-      margin-bottom: 8px;
-    }
-    .sg-notice-manage-detail-body {
-      margin-top: 12px;
-      @include after-clear();
-
-      .sg-notice-manage-detail-body-top {
-        height: 34px;
-        line-height: 34px;
-
-        padding: 0 $sg-notice-manage-detail-padding-left-right;
-
-        border-top: 1px solid $divider;
-        border-bottom: 1px solid $divider;
-
-        @include after-clear();
-
-        .sg-notice-manage-detail-body-type {
-          float: left;
-
-          .sg-notice-manage-detail-body-type-title {
-
-            font-size: 16px;
-            color: #121428;
-          }
+            border-radius: 5px;
         }
 
-        .sg-notice-manage-detail-body-country {
-          float: right;
-          margin-left: 12px;
-          @include after-clear();
-          .sg-notice-manage-detail-body-country-img {
-            float: left;
+        .sg-notice-manage-detail-close {
+            position: absolute;
+            top: -34px;
+            right: 0;
 
-            margin-top: 8px;
-            margin-right: 4px;
+            width: 30px;
+            height: 30px;
 
-            width: 20px;
-            height: 20px;
+            cursor: pointer;
 
-            background-image: url('/assets/themes/admin/cloudy/images/ic_national_flag_korea_20_2x.png');
-
+            background-image: url('/assets/themes/admin/cloudy/images/ic_close_24_2x.png');
             background-repeat: no-repeat;
-            background-size: 20px;
+            background-size: 24px;
             background-position: center;
-          }
-          .sg-notice-manage-detail-body-country-title {
-            float: left;
-            font-size: 16px;
-            color: #121428;
-          }
-        }
-      }
-
-      .sg-notice-manage-detail-body-sub-top {
-        clear: both;
-
-        height: 50px;
-        line-height: 50px;
-
-        padding: 0 $sg-notice-manage-detail-padding-left-right;
-        border-bottom: 1px solid $divider;
-
-        @include after-clear();
-        .sg-notice-manage-detail-body-title {
-          float: left;
-
-          font-size: 18px;
-          font-weight: 500;
-          color: #121428;
-
-        }
-        .sg-notice-manage-detail-body-created-at {
-          float: right;
-
-          font-size: 16px;
-          font-weight: 300;
-          color: #121428;
-        }
-      }
-
-      .sg-notice-manage-detail-body-body {
-
-        padding: 30px $sg-notice-manage-detail-padding-left-right;
-        border-bottom: 1px solid $divider;
-        .sg-notice-manage-detail-body-body-body {
-          @include after-clear();
         }
 
-      }
+        .sg-notice-manage-detail-titles {
+            font-size: 14px;
+            font-weight: 300;
+            color: #8d93a6;
+
+            margin-bottom: 8px;
+        }
+        .sg-notice-manage-detail-body {
+            margin-top: 12px;
+            @include after-clear();
+
+            .sg-notice-manage-detail-body-top {
+                height: 34px;
+                line-height: 34px;
+
+                padding: 0 $sg-notice-manage-detail-padding-left-right;
+
+                border-top: 1px solid $divider;
+                border-bottom: 1px solid $divider;
+
+                @include after-clear();
+
+                .sg-notice-manage-detail-body-type {
+                    float: left;
+
+                    .sg-notice-manage-detail-body-type-title {
+
+                        font-size: 16px;
+                        color: #121428;
+                    }
+                }
+
+                .sg-notice-manage-detail-body-country {
+                    float: right;
+                    margin-left: 12px;
+                    @include after-clear();
+                    .sg-notice-manage-detail-body-country-img {
+                        float: left;
+
+                        margin-top: 8px;
+                        margin-right: 4px;
+
+                        width: 20px;
+                        height: 20px;
+
+                        background-image: url('/assets/themes/admin/cloudy/images/ic_national_flag_korea_20_2x.png');
+
+                        background-repeat: no-repeat;
+                        background-size: 20px;
+                        background-position: center;
+                    }
+                    .sg-notice-manage-detail-body-country-title {
+                        float: left;
+                        font-size: 16px;
+                        color: #121428;
+                    }
+                }
+            }
+
+            .sg-notice-manage-detail-body-sub-top {
+                clear: both;
+
+                height: 50px;
+                line-height: 50px;
+
+                padding: 0 $sg-notice-manage-detail-padding-left-right;
+                border-bottom: 1px solid $divider;
+
+                @include after-clear();
+                .sg-notice-manage-detail-body-title {
+                    float: left;
+
+                    font-size: 18px;
+                    font-weight: 500;
+                    color: #121428;
+
+                }
+                .sg-notice-manage-detail-body-created-at {
+                    float: right;
+
+                    font-size: 16px;
+                    font-weight: 300;
+                    color: #121428;
+                }
+            }
+
+            .sg-notice-manage-detail-body-body {
+
+                padding: 30px $sg-notice-manage-detail-padding-left-right;
+                border-bottom: 1px solid $divider;
+                .sg-notice-manage-detail-body-body-body {
+                    @include after-clear();
+                }
+
+            }
+        }
+
+        .sg-notice-manage-detail-body-edit {
+            .sg-notice-manage-detail-body-top {
+                @include after-clear();
+
+                .sg-notice-manage-detail-body-type {
+                    float: left;
+
+                    .sg-notice-manage-detail-body-type-title {
+                    }
+                }
+
+                .sg-notice-manage-detail-body-country {
+                    float: left;
+                    margin-left: 12px;
+                    .sg-notice-manage-detail-body-country-title {
+                    }
+                }
+            }
+
+            .sg-notice-manage-detail-body-title {
+                margin-top: 18px;
+            }
+
+            .sg-notice-manage-detail-body-body {
+                margin-top: 18px;
+            }
+        }
+
+        .sg-notice-manage-detail-bottom {
+            margin-top: 20px;
+            @include after-clear();
+            .sg-notice-manage-detail-bottom-cancel-btn {
+                float: right;
+            }
+            .sg-notice-manage-detail-bottom-edit-btn {
+                float: right;
+                margin-left: 10px;
+            }
+        }
     }
-
-    .sg-notice-manage-detail-body-edit {
-      .sg-notice-manage-detail-body-top {
-        @include after-clear();
-
-        .sg-notice-manage-detail-body-type {
-          float: left;
-
-          .sg-notice-manage-detail-body-type-title {
-          }
-        }
-
-        .sg-notice-manage-detail-body-country {
-          float: left;
-          margin-left: 12px;
-          .sg-notice-manage-detail-body-country-title {
-          }
-        }
-      }
-
-      .sg-notice-manage-detail-body-title {
-        margin-top: 18px;
-      }
-
-      .sg-notice-manage-detail-body-body {
-        margin-top: 18px;
-      }
-    }
-
-    .sg-notice-manage-detail-bottom {
-      margin-top: 20px;
-      @include after-clear();
-      .sg-notice-manage-detail-bottom-cancel-btn {
-        float: right;
-      }
-      .sg-notice-manage-detail-bottom-edit-btn {
-        float: right;
-        margin-left: 10px;
-      }
-    }
-  }
 
 }

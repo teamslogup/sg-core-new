@@ -218,8 +218,8 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
         data: [65, 59, 80, 81, 56, 55],
         colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d", "#ff9d9d"],
         options: {
-            responsive: false,
-            maintainAspectRatio: false
+            responsive: true,
+            maintainAspectRatio: true
         }
     };
 

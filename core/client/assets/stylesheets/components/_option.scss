@@ -1,9 +1,9 @@
-.sg-option {
+select.sg-option {
     width: 109px;
     height: 42px;
     border-radius: 5px;
     background-color: #ffffff;
-    border: solid 1px #d5dbec;
+    border: solid 1px color(divider, base);
     padding-left: 8px;
 
     -webkit-appearance: none;

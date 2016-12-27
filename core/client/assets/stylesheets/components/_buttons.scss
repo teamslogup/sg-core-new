@@ -1,3 +1,6 @@
+$button-width: 1200px;
+$button-height: 426px;
+
 @mixin sgc-btn($color, $hover-color, $isBorder:null) {
     width: 120px;
     height: 40px;
@@ -40,7 +43,7 @@
 }
 
 button.sgc-btn-action {
-    @include sgc-btn(color(primary, base), white, true);
+    @include sgc-btn(color(primary, base), color(primary, dark));
 }
 
 button.sgc-btn-cancel {
@@ -48,11 +51,11 @@ button.sgc-btn-cancel {
 }
 
 button.sgc-btn-delete {
-    @include sgc-btn(#c7515c, #b34852);
+    @include sgc-btn(color(red, base), color(red, dark));
 }
 
 button.sgc-btn-more {
-    @include sgc-btn(#abb7d6, #9dacd2);
+    @include sgc-btn(color(more, base), color(more, dark));
 
 
 }

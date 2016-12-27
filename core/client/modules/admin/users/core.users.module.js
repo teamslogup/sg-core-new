@@ -18,7 +18,7 @@ import profileManager from './services/core.profile.manager';
 import UsersCtrl from './controllers/core.users.controller';
 import routes from './config/core.users.route';
 import '../../../../../core/client/assets/themes/admin/cloudy/stylesheets/modules/users/core.users.scss'
-import '../../../../../app/client/assets/themes/admin/cloudy/stylesheets/modules/users/app.users.scss'
+
 
 export default angular.module("core.users", [])
     .config(routes)

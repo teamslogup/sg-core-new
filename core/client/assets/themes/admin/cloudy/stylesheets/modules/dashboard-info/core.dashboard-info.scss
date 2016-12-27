@@ -525,6 +525,7 @@
                                                         float: none;
                                                     }
                                                     .sg-dashboard-chart-top-sign-up-status-body-right-top-items {
+                                                        @include after-clear();
                                                         .sg-dashboard-chart-top-sign-up-status-body-right-top-item {
                                                             float: left;
                                                         }
@@ -542,6 +543,7 @@
                                                         float: none;
                                                     }
                                                     .sg-dashboard-chart-top-sign-up-status-body-right-bottom-items {
+                                                        @include after-clear();
                                                         .sg-dashboard-chart-top-sign-up-status-body-right-bottom-item {
                                                             float: left;
                                                         }
@@ -557,9 +559,13 @@
                         }
                         .sg-dashboard-chart-body {
                             .sg-dashboard-chart-body-main {
+                                @include after-clear();
                                 .sg-dashboard-chart-body-main-left {
                                     float: left;
                                     width: calc(100% - 200px);
+
+                                    padding-left: 50px;
+                                    padding-right: 50px;
 
                                     .chart-pie {
                                         margin: auto;

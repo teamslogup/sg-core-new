@@ -1,8 +1,13 @@
-export default function NoticesCtrl($scope, $rootScope, $sce, $filter, noticesManager, dialogHandler, loadingHandler, metaManager) {
+export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal, noticesManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;
     var ADMIN = metaManager.std.admin;
+
+    $scope.noticesManager = noticesManager;
+    $scope.dialogHandler = dialogHandler;
+    $scope.loadingHandler = loadingHandler;
+    $scope.metaManager = metaManager;
 
     $scope.isNoticeCreateVisible = false;
     $scope.isNoticeEditMode = false;
@@ -38,14 +43,16 @@ export default function NoticesCtrl($scope, $rootScope, $sce, $filter, noticesMa
 
     $scope.showNoticeDetail = function (index) {
         $scope.currentIndex = index;
-        $scope.form = {
-            title: $scope.noticeList[index].title,
-            body: $scope.noticeList[index].body,
-            type: $scope.noticeList[index].type,
-            country: $scope.noticeList[index].country
-        };
-        $scope.isNoticeDetailVisible = true;
-        $scope.isNoticeDetailFirstTime = false;
+
+        openDetailModal($scope.noticeList[index]);
+        // $scope.form = {
+        //     title: $scope.noticeList[index].title,
+        //     body: $scope.noticeList[index].body,
+        //     type: $scope.noticeList[index].type,
+        //     country: $scope.noticeList[index].country
+        // };
+        // $scope.isNoticeDetailVisible = true;
+        // $scope.isNoticeDetailFirstTime = false;
     };
 
     $scope.hideNoticeDetail = function () {
@@ -227,6 +234,32 @@ export default function NoticesCtrl($scope, $rootScope, $sce, $filter, noticesMa
     };
 
     $scope.findNotices();
+
+    function openDetailModal(notice) {
+
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreNoticeDetail.html',
+            controller: 'NoticeDetailCtrl',
+            size: NOTICE.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                notice: function () {
+                    return notice;
+                }
+            }
+        });
+
+        createInstance.result.then(function (result) {
+
+
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
 
     $scope.$watch('params.type', function (newVal, oldVal) {
         if (newVal != oldVal) {

@@ -150,7 +150,7 @@ function extending() {
         var result = false;
         if (str === '') return true;
         str = str + "";
-        var booleans = ['true', 'false'];
+        var booleans = ['true', 'false', '0', '1'];
         for (var i = 0; i < booleans.length; ++i) {
             booleans[i] = booleans[i] + "";
             if (booleans[i] === str) {

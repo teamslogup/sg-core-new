@@ -85,7 +85,6 @@ $g-color-header-user-info: #fbfbfb;
 
 $g-color-background-gray-lite: #f8f8f9;
 $g-color-background-gray: #f1f3f8;
-;
 
 $g-color-item-visibility-hidden: #e1e1e3;
 
@@ -130,21 +129,23 @@ $sg-container-radius: 5px;
 $colors: (
         primary: (
                 base: #51c7b5,
-                light: #000,
                 dark: #45a19f
         ),
         secondary: (
-                base: #0969A2,
-                light: lighten(#0969A2, 15%),
-                dark: darken(#0969A2, 15%)
-        ),
-        red: (
                 base: #ed5565,
                 dark: #BA2232
+        ),
+        red: (
+                base: #c7515c,
+                dark: #b34852
         ),
         grey: (
                 base: #6f8690,
                 dark: #3C535D
+        ),
+        more: (
+                base: #abb7d6,
+                dark: #9dacd2
         ),
         soft-blue: (
                 base: #6d8fe4,
@@ -163,6 +164,9 @@ $size: (
         buttons: (
                 width: 120px,
                 height: 40px
+        ),
+        width: (
+            buttons: 120px
         )
 );
 

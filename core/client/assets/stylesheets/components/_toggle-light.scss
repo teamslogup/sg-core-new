@@ -52,7 +52,7 @@
 .tgl-light {
     + .tgl-btn {
         //background: #f0f0f0;
-        background: $dowado-red-color;
+        background: color(secondary, base);
         border-radius: 2em;
         padding: 2px;
         transition: all .4s ease;
@@ -86,7 +86,7 @@
     }
 
     &:checked + .tgl-btn {
-        background: $dowado-color;
+        background: color(primary, base);
     }
     &:disabled + .tgl-btn {
         background: #f0f0f0;

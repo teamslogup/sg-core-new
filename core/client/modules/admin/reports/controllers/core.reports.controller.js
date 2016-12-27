@@ -1,4 +1,4 @@
-export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager, dialogHandler, loadingHandler, metaManager) {
+export default function ReportsCtrl($scope, $rootScope, $filter, $uibModal, reportsManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -15,12 +15,12 @@ export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager,
     var REPORT = metaManager.std.report;
     var ADMIN = metaManager.std.admin;
 
-    $scope.isReportDetailVisible = false;
-    $scope.isReportDetailFirstTime = true;
+    $scope.reportsManager = reportsManager;
+    $scope.dialogHandler = dialogHandler;
+    $scope.loadingHandler = loadingHandler;
+    $scope.metaManager = metaManager;
 
     $scope.params = {};
-    $scope.form = {};
-    $scope.form = {};
 
     $scope.reportList = [];
     $scope.reportListTotal = 0;
@@ -33,68 +33,24 @@ export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager,
 
     $scope.more = false;
 
-    $scope.showReportDetail = function (index) {
+    $scope.showReportDetail = showReportDetail;
+    $scope.findReports = findReports;
+    $scope.findReportsMore = findReportsMore;
+
+    function showReportDetail(index) {
         $scope.currentIndex = index;
-        $scope.currentReport = $scope.reportList[$scope.currentIndex];
 
-        $scope.form = {
-            reply: $scope.currentReport.reply,
-            isSolved: true
-        };
-        $scope.isReportDetailVisible = true;
-        $scope.isReportDetailFirstTime = false;
-    };
+        openModal($scope.reportList[index]);
+    }
 
-    $scope.hideReportDetail = function () {
-        $scope.isReportDetailVisible = false;
-        $scope.form = {};
-    };
-
-    $scope.$on('$locationChangeStart', function (event, next, current) {
-        if (next != current) {
-            if($scope.isReportDetailVisible) {
-                event.preventDefault();
-                $scope.hideReportDetail();
-            }
-        }
-    });
-
-    $scope.isFormValidate = function () {
-
-        var isValidate = true;
-
-        if ($scope.form.reply === undefined || $scope.form.reply === null || $scope.form.reply === '') {
-            isValidate = false;
-            dialogHandler.show('', $filter('translate')('requireBody'), '', true);
-            return isValidate;
-        }
-
-        return isValidate;
-    };
-
-    $scope.solveReport = function () {
-
-        if ($scope.isFormValidate()) {
-            var body = angular.copy($scope.form);
-
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateReportById');
-            reportsManager.updateReportById($scope.currentReport.id, body, function (status, data) {
-                if (status == 200) {
-                    $scope.reportList[$scope.currentIndex] = data;
-
-                    if ($scope.isSolved == REPORT.unsolved) {
-                        $scope.reportList.splice($scope.currentIndex, 1);
-                    }
-
-                    $scope.hideReportDetail();
-                } else {
-                    dialogHandler.alertError(status, data);
-                }
-                loadingHandler.endLoading(LOADING.spinnerKey, 'updateReportById');
-            });
-        }
-
-    };
+    // $scope.$on('$locationChangeStart', function (event, next, current) {
+    //     if (next != current) {
+    //         if ($scope.isReportDetailVisible) {
+    //             event.preventDefault();
+    //             $scope.hideReportDetail();
+    //         }
+    //     }
+    // });
 
     function toBooleanIsSolved() {
         if ($scope.isSolved == $scope.reportEnumSolved[0]) {
@@ -106,7 +62,7 @@ export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager,
         }
     }
 
-    $scope.findReports = function () {
+    function findReports() {
 
         $scope.reportListTotal = 0;
         $scope.reportList = [];
@@ -129,9 +85,9 @@ export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager,
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findReports');
         });
-    };
+    }
 
-    $scope.findReportsMore = function () {
+    function findReportsMore() {
 
         if ($scope.reportList.length > 0) {
             $scope.params.last = $scope.reportList[$scope.reportList.length - 1].createdAt;
@@ -152,9 +108,38 @@ export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager,
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findReportsMore');
         });
-    };
+    }
 
-    $scope.findReports();
+    function openModal(report) {
+
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreReportDetail.html',
+            controller: 'ReportDetailCtrl',
+            size: REPORT.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                report: function () {
+                    return report;
+                }
+            }
+        });
+
+        createInstance.result.then(function (result) {
+
+            $scope.reportList[$scope.currentIndex] = result;
+
+            if ($scope.isSolved == $.unsolved) {
+                $scope.reportList.splice($scope.currentIndex, 1);
+            }
+
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
 
     $scope.$watch('isSolved', function (newVal, oldVal) {
         if (newVal != oldVal) {
@@ -165,4 +150,6 @@ export default function ReportsCtrl($scope, $rootScope, $filter, reportsManager,
     $rootScope.$broadcast(ADMIN.kNavigation, {
         activeNav: ADMIN.moduleReports
     });
+
+    findReports();
 }

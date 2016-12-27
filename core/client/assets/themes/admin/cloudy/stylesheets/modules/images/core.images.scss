@@ -69,10 +69,13 @@
                     position: relative;
                     float: left;
                     overflow: hidden;
-
                     width: 233.6px;
-
                     margin-top: 8px;
+
+                    @media screen and (max-width: $web-min-width) {
+                        float: none;
+                        width: inherit;
+                    }
 
                     @media screen and (min-width: $web-min-width) and (max-width: 958.4px + $g-menu-size) {
                         margin-right: 8px;
@@ -91,6 +94,7 @@
                     }
 
                     @media screen and (min-width: $web-container-size + $g-menu-size) {
+
                         margin-right: 8px;
 
                         &:nth-child(5n) {

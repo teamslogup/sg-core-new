@@ -201,7 +201,8 @@ var standards = {
         "enumSearchFields": ["nick", "email", "body"],
         "enumSolved": ["solved", "unsolved"],
         "solved": "solved",
-        "unsolved": "unsolved"
+        "unsolved": "unsolved",
+        "modalSize": "md"
     },
     "notice": {
         "minTitleLength": 1,
@@ -215,7 +216,8 @@ var standards = {
         "noticeTypeEvent": "event",
         "noticeTypePopup": "popup",
         "enumFields": ["title", "body"],
-        "enumCountries": ["KR"]
+        "enumCountries": ["KR"],
+        "modalSize": "md"
     },
     "board": {
         "minSlugLength": 1,
