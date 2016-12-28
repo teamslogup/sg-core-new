@@ -72,18 +72,22 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
             var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
                 throw(err);
             });
-            var essentialKeyHash = makeHash(essentialKeys, function (err) {
-                throw(err);
-            });
+            if (essentialKeys) {
+                var essentialKeyHash = makeHash(essentialKeys, function (err) {
+                    throw(err);
+                });
+            }
             if (data instanceof Object) {
                 for (var k in data) {
                     if (!acceptableKeyHash[k]) {
                         throw('400_15');
                     }
                 }
-                for (var k in essentialKeyHash) {
-                    if (!data[k]) {
-                        throw('400_14');
+                if (essentialKeys) {
+                    for (var k in essentialKeyHash) {
+                        if (!data[k]) {
+                            throw('400_14');
+                        }
                     }
                 }
             } else {
