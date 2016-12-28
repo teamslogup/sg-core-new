@@ -3,10 +3,7 @@ var STD = require('../../../bridge/metadata/standards');
 var CONFIG = require('../../../bridge/config/env');
 var chat = require('../chat');
 
-var session = require('express-session');
-var sessionSetting = require('../config/express').sessionSetting;
-sessionSetting.test = true;
-var sessionMiddleware = session(sessionSetting);
+var sessionMiddleware = require('../config/express').sessionMiddleware;
 
 module.exports = function (server, app) {
 

@@ -1,6 +1,7 @@
-export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dialogHandler, loadingHandler, metaManager) {
+export default function TermsCtrl($scope, $rootScope, $filter, $uibModal, termsManager, dialogHandler, loadingHandler, metaManager) {
 
     var LOADING = metaManager.std.loading;
+    var ADMIN = metaManager.std.admin;
     $scope.TERMS = metaManager.std.terms;
     $scope.ADMIN = metaManager.std.admin;
     $scope.termsManager = termsManager;
@@ -177,4 +178,8 @@ export default function TermsCtrl($scope, $filter, $uibModal, termsManager, dial
             console.log("cancel modal page");
         });
     }
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleTerms
+    });
 }

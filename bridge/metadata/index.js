@@ -7,3 +7,4 @@ module.exports.codes = require('./codes');
 module.exports.langs = require('./languages');
 module.exports.local = require('./localization');
 module.exports.stdLocal = stdLocal;
+module.exports.notifications = require('./notifications');

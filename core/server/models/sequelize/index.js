@@ -17,9 +17,10 @@ var Terms = require('./terms');
 var OptionalTerms = require('./optional-terms');
 var LoginHistory = require('./login-history');
 var Notification = require('./notification');
+var NotificationSendType = require('./notification-send-type');
 var NotificationBox = require('./notification-box');
-var UserNotification = require('./user-notification');
-var UserPublicNotification = require('./user-public-notification');
+var NotificationSwitch = require('./notification-switch');
+var NotificationPublicSwitch = require('./notification-public-switch');
 var UserImage = require('./user-image');
 var CompanyInfo = require('./company-info');
 var ChatHistory = require('./chat-history');
@@ -47,8 +48,9 @@ var models = {
     LoginHistory: LoginHistory,
     Notification: Notification,
     NotificationBox: NotificationBox,
-    UserNotification: UserNotification,
-    UserPublicNotification: UserPublicNotification,
+    NotificationSendType: NotificationSendType,
+    NotificationSwitch: NotificationSwitch,
+    NotificationPublicSwitch: NotificationPublicSwitch,
     UserImage: UserImage,
     CompanyInfo: CompanyInfo,
     ChatHistory: ChatHistory,

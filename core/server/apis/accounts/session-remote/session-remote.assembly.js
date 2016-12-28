@@ -19,13 +19,14 @@ var api = {
     delete: function (isOnlyParams) {
         return function (req, res, next) {
             var params = {
-                acceptable: ['id'],
-                essential: ['id'],
+                acceptable: [],
+                essential: [],
                 resettable: [],
                 explains: {
                     'id': '히스토리 아이디'
                 },
                 title: '로그아웃 (자신의 계정 로그아웃 시키기 기능)',
+                param: 'id',
                 state: 'staging'
             };
 
@@ -33,6 +34,7 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.session.hasAuthorization());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -49,7 +51,7 @@ var api = {
     }
 };
 
-router.delete('/' + resource, api.delete());
+router.delete('/' + resource + '/:id', api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

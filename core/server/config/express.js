@@ -45,7 +45,7 @@ var globalVariables = require('./ejs/index');
 
 var sessionSettings = {
     secret: CONFIG.app.secret,
-    name : 'slogupSessionId',
+    name: 'slogupSessionId',
     saveUninitialized: true,
     resave: true,
     cookie: {
@@ -61,12 +61,19 @@ if (META.std.flag.isUseRedis) {
     sessionSettings.store = new RedisStore({
         'host': urlObj.hostname,
         'port': urlObj.port,
-        'pass': auth && auth[0] || null,
+        'pass': auth && auth[1] || null,
         'ttl': CONFIG.app.sessionExpiredSeconds
+    });
+} else {
+    var MemoryStore = session.MemoryStore;
+    sessionSettings.store = new MemoryStore({
+        'expires': CONFIG.app.sessionExpiredSeconds
     });
 }
 
-module.exports.sessionSetting = sessionSettings;
+var sessionMiddleware = session(sessionSettings);
+
+module.exports.sessionMiddleware = sessionMiddleware;
 module.exports.init = function (sequelize) {
 
     var stat = fs.existsSync(appRootPath + '/' + LOCAL.uploadUrl);
@@ -81,8 +88,8 @@ module.exports.init = function (sequelize) {
 
     var i = 0;
     var fileFolderDir;
-    
-    for(i = 0; i < FILE.enumFolders.length; ++i) {
+
+    for (i = 0; i < FILE.enumFolders.length; ++i) {
         fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.enumFolders[i];
         stat = fs.existsSync(fileFolderDir);
         if (!stat) {
@@ -148,37 +155,44 @@ module.exports.init = function (sequelize) {
         //app.use(minify());
     }
 
+    app.use(function () {
+        return function (req, res, next) {
+            req.originalUrl = unescape(req.originalUrl);
+            next();
+        };
+    }());
+
     app.use(ipRefiner());
     //app.use(favicon(__dirname + '/public/images/favicon.ico'));
 
     app.use(languageParser(META.local));
-    app.use(function(req, res, next) {
-        var contentType = (req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type']  || req.headers['content-type']);
+    app.use(function (req, res, next) {
+        var contentType = (req.headers['Content-type'] || req.headers['Content-Type'] || req.headers['content-Type'] || req.headers['content-type']);
         if (!contentType || contentType.indexOf("charset") === -1 || contentType.toLowerCase().indexOf("utf-8") > -1) {
             if (!contentType || contentType.indexOf("xml") == -1) {
-                bodyParser.json({limit:CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function() {
-                    bodyParser.urlencoded({extended: true})(req, res, function() {
+                bodyParser.json({limit: CONFIG.app.maxUploadFileSizeMBVersion})(req, res, function () {
+                    bodyParser.urlencoded({extended: true})(req, res, function () {
                         next();
                     });
                 });
             } else {
-                xmlParser()(req, res, function() {
+                xmlParser()(req, res, function () {
                     next();
                 });
             }
         } else {
-            var urlNotEncodedParser = function(req, res, next) {
+            var urlNotEncodedParser = function (req, res, next) {
                 var rawBody = '';
-                req.on('data', function(chunk) {
+                req.on('data', function (chunk) {
                     rawBody += chunk;
                     if (rawBody.length > 1e6) req.connection.destroy();
                 });
-                req.on('end', function() {
+                req.on('end', function () {
                     req.rawBody = rawBody;
                     next();
                 });
             };
-            urlNotEncodedParser(req, res, function() {
+            urlNotEncodedParser(req, res, function () {
                 next();
             });
         }
@@ -245,7 +259,7 @@ module.exports.init = function (sequelize) {
         dropSuspiciousRequest: true,      // respond 403 Forbidden when max attempts count is reached
         consoleLogging: true,             // (default: true) enable console logging
         logFile: 'suspicious.log',        // if specified, express-defend will log it's output here
-        onMaxAttemptsReached: function(ipAddress, url){
+        onMaxAttemptsReached: function (ipAddress, url) {
             console.log('IP address ' + ipAddress + ' is considered to be malicious, URL: ' + url);
         }
     }));

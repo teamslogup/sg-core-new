@@ -48,6 +48,7 @@ var api = {
                 apiCreator.add(post.getUser());
                 apiCreator.add(post.removeAllSessions());
                 apiCreator.add(post.logInUser());
+                apiCreator.add(post.checkLoginHistoryCountAndRemove());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 

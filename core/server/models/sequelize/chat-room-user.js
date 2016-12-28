@@ -70,7 +70,8 @@ module.exports = {
                 return [{
                     model: sequelize.models.User,
                     as: 'user',
-                    attributes: sequelize.models.User.getUserFields()
+                    attributes: sequelize.models.User.getUserFields(),
+                    include: sequelize.models.User.getIncludeUser()
                 }, {
                     model: sequelize.models.ChatRoom,
                     as: 'room',
@@ -82,7 +83,8 @@ module.exports = {
                             include: {
                                 model: sequelize.models.User,
                                 as: 'user',
-                                attributes: sequelize.models.User.getUserFields()
+                                attributes: sequelize.models.User.getUserFields(),
+                                include: sequelize.models.User.getIncludeUser()
                             }
                         }
                     ]
@@ -156,6 +158,11 @@ module.exports = {
                     where.userId = options.userId
                 }
 
+                var chatRoomUser = {
+                    count: 0,
+                    rows: []
+                };
+
                 sequelize.transaction(function (t) {
 
                     return sequelize.models.ChatRoomUser.findAll({
@@ -165,15 +172,17 @@ module.exports = {
                         'transaction': t
                     }).then(function (data) {
                         if (data.length > 0) {
-                            return data;
+                            chatRoomUser.count = data.length;
+                            chatRoomUser.rows = data;
+                            return true;
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);
                         }
                     });
 
-                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                    if (data) {
-                        callback(200, data);
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, chatRoomUser);
                     }
                 });
 

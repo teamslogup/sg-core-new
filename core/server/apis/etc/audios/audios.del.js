@@ -3,11 +3,20 @@ var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var path = require('path');
 
-del.getAudios = function() {
-    return function(req, res, next) {
+del.validate = function () {
+    return function (req, res, next) {
+        var FILE = req.meta.std.file;
+        req.check('folder', '400_3').isEnum(FILE.enumAudioFolders);
+        req.utils.common.checkError(req, res, next);
+        next();
+    };
+};
+
+del.getAudios = function () {
+    return function (req, res, next) {
         req.idArray = [];
         req.utils.common.toArray(req.body, 'audioIds');
-        for (var i=0; i<req.body.audioIds.length; i++) {
+        for (var i = 0; i < req.body.audioIds.length; i++) {
             req.idArray.push(parseInt(req.body.audioIds[i]));
         }
         req.models.Audio.findAudiosByIds(req.idArray, req.user, function (status, data) {
@@ -21,8 +30,8 @@ del.getAudios = function() {
     }
 };
 
-del.checkSession = function() {
-    return function(req, res, next) {
+del.checkSession = function () {
+    return function (req, res, next) {
         if (req.idArray.length == req.audios.length) {
             next();
         }
@@ -32,32 +41,17 @@ del.checkSession = function() {
     };
 };
 
-del.validate = function(){
-    return function(req, res, next){
+del.setParam = function () {
+    return function (req, res, next) {
         var FILE = req.meta.std.file;
-        var filePath = path.join(__dirname, "../../../../.." + req.meta.std.cdn.rootUrl + '/' + req.body.folder + '/');
 
-        req.files = [];
-
-        for (var j=0; j<req.audios.length; j++) {
-            for (var i=0; i<FILE.enumPrefixes.length; i++) {
-                req.files.push({
-                    path: filePath + FILE.enumPrefixes[i] + req.audios[j].name
-                });
-            }
-            req.files.push({
-                path: filePath + req.audios[j].name
-            });
-        }
-
-        req.check('folder','400_3').isEnum(FILE.enumFolders);
-        req.utils.common.checkError(req, res, next);
+        req.coreUtils.file.setRemoveFiles(req, req.audios, FILE.folderAudios, FILE.enumPrefixes);
         next();
     };
 };
 
-del.destroy = function(){
-    return function(req, res, next) {
+del.destroy = function () {
+    return function (req, res, next) {
         req.models.Audio.deleteAudiosByIds(req.idArray, function (status, data) {
             if (status == 204) {
                 next();
@@ -68,8 +62,8 @@ del.destroy = function(){
     }
 };
 
-del.supplement = function(){
-    return function(req, res, next){
+del.supplement = function () {
+    return function (req, res, next) {
         res.hjson(req, next, 204);
     };
 };

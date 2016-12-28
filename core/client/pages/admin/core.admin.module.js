@@ -1,6 +1,6 @@
-import coreBaseModule from '../../modules/base/core.base.module';
-import users from '../../modules/users/core.users.module';
-import session from '../../modules/session/core.session.module';
+import coreBaseModule from '../../modules/common/base/core.base.module';
+import users from '../../modules/common/users/core.users.module';
+import session from '../../modules/common/session/core.session.module';
 
 import routing from './config/core.admin.route';
 import AdminCtrl from './controllers/core.admin.controller';

@@ -167,6 +167,12 @@ module.exports = {
             },
             'getReportsStatus': function (callback) {
 
+                //오늘 날짜 구하기
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = today.getMonth() + 1;
+                var day = today.getDate();
+
                 var reportsStatus = {};
 
                 sequelize.transaction(function (t) {
@@ -188,6 +194,33 @@ module.exports = {
                     }).then(function (reportsSolved) {
                         reportsStatus.solved = reportsSolved;
 
+                        var query = 'SELECT count(day) as count FROM (SELECT ' +
+                            'YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, ' +
+                            'MONTH(FROM_UNIXTIME(createdAt/1000000)) as month, ' +
+                            'DAY(FROM_UNIXTIME(createdAt/1000000)) as day FROM Reports) as Reports ' +
+                            'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+
+                    }).then(function (data) {
+                        reportsStatus.reportsToday = data[0].count;
+
+                        var query = 'SELECT count(day) as count FROM (SELECT ' +
+                            'YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, ' +
+                            'MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month, ' +
+                            'DAY(FROM_UNIXTIME(solvedAt/1000000)) as day FROM Reports) as Reports ' +
+                            'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+
+                    }).then(function (data) {
+                        reportsStatus.solvedToday = data[0].count;
                         return true;
                     });
 

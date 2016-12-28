@@ -4,7 +4,9 @@ var resource = filePath[filePath.length - 1];
 
 var top = require('./' + resource + '.top.js');
 var gets = require('./' + resource + '.gets.js');
+var post = require('./' + resource + '.post.js');
 var put = require('./' + resource + '.put.js');
+var del = require('./' + resource + '.del.js');
 
 var express = require('express');
 var router = new express.Router();
@@ -19,15 +21,15 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId'],
-                essential: ['userId'],
+                acceptable: ['userId', 'sendType'],
+                essential: ['userId', 'sendType'],
                 resettable: [],
                 explains: {
-                    'userId': 'userId'
+                    'userId': '유저 id',
+                    'sendType': '알림 전송 형태' + STD.notification.enumSendTypes.join(',')
                 },
-                response: {rows:[resforms.notification]},
-                role: STD.role.account,
-                title: '노티피케이션 전체 얻기',
+                response: {rows: [resforms.notification]},
+                title: '알림 전체 얻기',
                 state: 'development'
             };
 
@@ -35,18 +37,53 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.role.account));
+                apiCreator.add(top.hasAuthorization());
+                // apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(gets.validate());
-                apiCreator.add(gets.getNotification());
-                apiCreator.add(gets.getUserNotification());
-                apiCreator.add(gets.getUserPublicNotification());
+                apiCreator.add(gets.getNotificationSwitch());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
+            }
+            else {
+                return params;
+            }
+        };
+    },
+    post: function (isOnlyParams) {
+        return function (req, res, next) {
+
+            var params = {
+                acceptable: ['notificationSendTypeId'],
+                essential: ['notificationSendTypeId'],
+                resettable: [],
+                explains: {
+                    'notificationSendTypeId': "notificationSendType 아이디"
+                },
+                response: resforms.notification,
+                title: '알림 수신거부 설정',
+                state: 'development'
+            };
+
+            if (!isOnlyParams) {
+                var apiCreator = new HAPICreator(req, res, next);
+
+                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.validator(
+                    params.acceptable,
+                    params.essential,
+                    params.resettable
+                ));
+                apiCreator.add(post.validate());
+                apiCreator.add(post.createNotificationSwitch());
+                apiCreator.add(post.supplement());
+                apiCreator.run();
+
+
             }
             else {
                 return params;
@@ -57,18 +94,16 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId', 'notificationId', 'switch', 'type'],
-                essential: ['userId', 'switch', 'type'],
+                acceptable: ['userId', 'notificationSendTypeId', 'switch'],
+                essential: ['userId', 'notificationSendTypeId', 'switch'],
                 resettable: [],
                 explains: {
-                    'userId': '유저 아이디',
-                    'notificationId': "노티피케이션 아이디, type이 appication일 경우만 가능함.",
-                    'switch': '온오프 여부',
-                    'type': "노티피케이션 형태 " + STD.notification.enumForms.join(", ")
+                    'userId': '유저 id',
+                    'notificationSendTypeId': "notificationSendType 아이디",
+                    'switch': '온오프 여부'
                 },
                 response: resforms.notification,
-                role: STD.role.account,
-                title: '노티피케이션 스위칭',
+                title: '알림 스위칭',
                 state: 'development'
             };
 
@@ -76,7 +111,7 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.role.userIdChecker('body', 'userId', STD.role.account));
+                apiCreator.add(top.hasAuthorization());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -94,11 +129,49 @@ var api = {
                 return params;
             }
         };
-    }
+    },
+    delete: function (isOnlyParams) {
+        return function (req, res, next) {
+
+            var params = {
+                acceptable: ['notificationSendTypeId'],
+                essential: ['notificationSendTypeId'],
+                resettable: [],
+                explains: {
+                    'notificationSendTypeId': "notificationSendType 아이디"
+                },
+                response: resforms.notification,
+                title: '알림 수신거부 해제',
+                state: 'development'
+            };
+
+            if (!isOnlyParams) {
+                var apiCreator = new HAPICreator(req, res, next);
+
+                apiCreator.add(req.middles.session.loggedIn());
+                apiCreator.add(req.middles.validator(
+                    params.acceptable,
+                    params.essential,
+                    params.resettable
+                ));
+                apiCreator.add(del.validate());
+                apiCreator.add(del.deleteNotificationSwitch());
+                apiCreator.add(del.supplement());
+                apiCreator.run();
+
+
+            }
+            else {
+                return params;
+            }
+        };
+    },
 };
 
 router.get('/' + resource, api.gets());
+router.post('/' + resource, api.post());
 router.put('/' + resource, api.put());
+router.delete('/' + resource, api.delete());
 
 module.exports.router = router;
 module.exports.api = api;

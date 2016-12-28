@@ -6,6 +6,7 @@ import CreateTermsCtrl from './controllers/core.create-terms.controller';
 import createTerms from './directives/create-terms/core.create-terms';
 import returnDeleteDisabled from './filters/core.terms.returnDeleteDisabled.filter';
 import routes from './config/core.terms.route';
+import '../../../../../core/client/assets/themes/admin/cloudy/stylesheets/modules/terms/core.terms.scss'
 
 
 export default angular.module("core.terms", [])

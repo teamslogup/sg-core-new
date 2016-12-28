@@ -114,7 +114,7 @@ var api = {
                 essential: ['folder'],
                 resettable: [],
                 explains : {
-                    'folder': '오디오를 올릴 폴더 ' + FILE.enumFolders.join(", "),
+                    'folder': '오디오를 올릴 폴더 ' + FILE.enumAudioFolders.join(", "),
                     'offsetX': 'x 위치',
                     'offsetY': 'y 위치',
                     'width': '너비',
@@ -140,6 +140,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(req.middles.upload.generateFolder(FILE.folderAudios));
                 apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidAudioExtensions));
                 apiCreator.add(req.middles.upload.checkFileCount(FILE.minCount, FILE.maxCount));
                 if (!STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.moveFileDir());
@@ -223,9 +224,10 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(del.validate());
                 apiCreator.add(del.getAudios());
                 apiCreator.add(del.checkSession());
-                apiCreator.add(del.validate());
+                apiCreator.add(del.setParam());
                 if (!STD.flag.isUseS3Bucket) {
                     apiCreator.add(req.middles.upload.removeLocalFiles());
                 } else {

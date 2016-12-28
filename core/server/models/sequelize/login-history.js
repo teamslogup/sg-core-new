@@ -63,8 +63,8 @@ module.exports = {
         },
         'token': {
             'type': Sequelize.STRING,
-            'allowNull': true,
-            'indicesType': 'SPATIAL'
+            'allowNull': true
+            // 'indicesType': 'SPATIAL'
         },
         'ip': {
             'type': Sequelize.STRING,
@@ -85,6 +85,11 @@ module.exports = {
         }
     },
     'options': {
+        // 'indexes': [{
+        //     fields: ['userId']
+        // },{
+        //
+        // }],
         'timestamps': true,
         'charset': 'utf8',
         'paranoid': false,
@@ -139,26 +144,31 @@ module.exports = {
                 if (!data.ip || !data.session) return callback(500);
                 var update = {
                     type: data.type,
-                    device: data.device || '',
-                    platform: data.platform || "",
-                    browser: data.browser || "",
-                    version: data.version || "",
+                    device: data.device || undefined,
+                    platform: data.platform || undefined,
+                    browser: data.browser || undefined,
+                    version: data.version || undefined,
                     ip: data.ip,
                     createdAt: MICRO.now(),
                     updatedAt: MICRO.now(),
                     userId: id,
-
-                    token: data.token || '',
+                    token: data.token || undefined,
                     session: data.session
                 };
 
                 var query = {
                     where: {
-                        userId: id,
-                        device: data.device || '',
-                        token: data.token || ''
+                        userId: id
                     }
                 };
+
+                if (data.device !== undefined) {
+                    query.where.device = data.device;
+                }
+
+                if (data.token !== undefined) {
+                    query.where.token = data.token;
+                }
 
                 this.upsertData(update, query, callback);
             },
@@ -192,6 +202,43 @@ module.exports = {
                             return callback(404);
                         }
                         return callback(200, loadedData);
+                    }
+                });
+            },
+            checkLoginHistoryCountAndRemove: function (userId, callback) {
+
+                var deletedLoginHistories = [];
+
+                sequelize.models.LoginHistory.findAll({
+                    where: {
+                        userId: userId,
+                        token: null
+                    },
+                    order: [['createdAt', 'ASC']]
+                }).then(function (data) {
+
+                    if (data.length > STD.loginHistory.maxDuplicateLoginCount) {
+
+                        var toBeDeletedIdArray = [];
+                        for (var i = 0; i < data.length - STD.loginHistory.maxDuplicateLoginCount; i++) {
+                            toBeDeletedIdArray.push(data[i].id);
+                            deletedLoginHistories.push(data[i]);
+                        }
+
+                        return sequelize.models.LoginHistory.destroy({
+                            where: {
+                                id: toBeDeletedIdArray
+                            }
+                        });
+
+                    }
+                }).then(function () {
+
+                    return true;
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, deletedLoginHistories);
                     }
                 });
             }

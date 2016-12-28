@@ -39,7 +39,37 @@ put.updateReport = function () {
 };
 
 put.sendNotifications = function () {
+    return function (req, res, next) {
 
+        if (req.body.isSolved !== undefined && req.body.isSolved !== true && req.body.reply !== undefined && req.report.authorId != null) {
+
+            var user;
+
+            req.models.User.findUserNotificationInfo(req.report.authorId, function (status, data) {
+                if (status == 200) {
+                    user = data;
+                    req.coreUtils.notification.all.replaceMagicKey(req.meta.notifications.notiReport.notificationSendTypes, {
+                        userId: req.report.userId,
+                        nick: req.report.nick,
+                        body: req.report.body,
+                        reply: req.report.reply
+                    }, user.language, function (isSuccess, sendType, title, body) {
+
+                        if (isSuccess) {
+                            req.coreUtils.notification.all.send(user, sendType, title, body, function (status, data) {
+
+                            });
+                        }
+
+                    });
+                }
+            });
+
+        }
+
+        next();
+
+    }
 };
 
 put.supplement = function () {

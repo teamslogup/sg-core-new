@@ -7,9 +7,6 @@ export default function SessionRemote($resource, usersResources) {
         update: {
             method: 'PUT'
         },
-        delete: {
-            method: 'DELETE'
-        },
         query: {
             isArray: false
         }

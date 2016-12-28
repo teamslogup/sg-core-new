@@ -21,13 +21,14 @@ var api = {
 
             var params = {
                 acceptable: ['userId', 'last', 'size', 'offset'],
-                essential: ['userId'],
+                essential: [],
                 resettable: [],
-                explains: {
-                    'userId': 'userId'
+                explains: {},
+                response: {
+                    'userId': '유저 id',
+                    rows: [resforms.notification]
                 },
-                response: {rows: [resforms.notification]},
-                role: STD.role.account,
+                // role: STD.role.account,
                 title: '노티피케이션 알림내용 전체 얻기',
                 state: 'development'
             };
@@ -36,7 +37,8 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.user.roleAdmin));
+                apiCreator.add(top.hasAuthorizationForQuery());
+                // apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
@@ -60,7 +62,7 @@ var api = {
                 essential: [],
                 resettable: [],
                 explains: {},
-                role: STD.role.account,
+                // role: STD.role.account,
                 title: '노티피케이션 읽음표시, id가 있을경우 해당 id만 읽음표시',
                 state: 'design'
             };
@@ -93,7 +95,7 @@ var api = {
                 essential: [],
                 resettable: [],
                 explains: {},
-                role: STD.role.account,
+                // role: STD.role.account,
                 title: '노티피케이션 알림상자 제거',
                 param: 'id',
                 state: 'development'

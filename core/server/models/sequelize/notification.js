@@ -11,41 +11,19 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
-        'country': {
-            'type': Sequelize.STRING,
-            'allowNull': true
-        },
-        'language': {
-            'type': Sequelize.STRING,
-            'allowNull': true
-        },
-        'type': {
-            'type': Sequelize.ENUM,
-            'values': STD.notification.enumNotificationTypes,
-            'allowNull': false,
-            'defaultValue': STD.notification.notificationEmailPush
-        },
         'key': {
             'type': Sequelize.STRING,
             'allowNull': false,
             'unique': true
         },
-        'title': {
-            'type': Sequelize.STRING,
-            'allowNull': false
-        },
-        'body': {
-            'type': Sequelize.STRING,
-            'allowNull': false
-        },
-        'data': {
-            'type': Sequelize.STRING,
-            'allowNull': true
-        },
-        'img': {
-            'type': Sequelize.STRING,
-            'allowNull': true
-        },
+        // 'data': {
+        //     'type': Sequelize.STRING,
+        //     'allowNull': true
+        // },
+        // 'img': {
+        //     'type': Sequelize.STRING,
+        //     'allowNull': true
+        // },
         'isStored': {
             'type': Sequelize.BOOLEAN,
             'allowNull': false,
@@ -58,26 +36,40 @@ module.exports = {
             'defaultValue': true,
             'comment': "formApplication form일때 user-notification에 switch로 옵션을 조절할 지 여부"
         },
-        'description': {
+        // 'description': {
+        //     'type': Sequelize.STRING,
+        //     'allowNull': true
+        // },
+        'notificationType': {
+            'type': Sequelize.ENUM,
+            'allowNull': false,
+            'values': STD.notification.enumNotificationTypes,
+            'defaultValue': STD.notification.notificationTypeApplication,
+            'comment': "노티피케이션의 형태, application 모드가 아닌경우 유저 내에서 노티를 받을지 결정할 수 있음, 또한 application모드에서만 isStored가 작동함"
+        },
+        'notificationBoxTitle': {
             'type': Sequelize.STRING,
             'allowNull': true
         },
-        'form': {
-            'type': Sequelize.ENUM,
-            'allowNull': false,
-            'values': STD.notification.enumForms,
-            'defaultValue': STD.notification.formApplication,
-            'comment': "노티피케이션의 형태, application 모드가 아닌경우 유저 내에서 노티를 받을지 결정할 수 있음, 또한 application모드에서만 isStored가 작동함"
+        'notificationBoxBody': {
+            'type': Sequelize.STRING,
+            'allowNull': true
         }
     },
     options: {
         "indexes": [{
-            fields: ['type', 'isStored', 'isOption', 'form']
+            fields: ['key', 'isStored', 'isOption']
         }],
         'charset': 'utf8',
         'paranoid': true, // deletedAt 추가. delete안함.
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            'getIncludeNotification': function (key, options, callback) {
+                return {
+                    model: sequelize.models.NotificationSendType,
+                    as: 'notificationSendTypes'
+                }
+            },
             'loadNotification': function (key, options, callback) {
 
                 var loadedData = null;
