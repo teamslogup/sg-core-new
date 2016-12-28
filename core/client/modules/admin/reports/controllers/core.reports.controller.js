@@ -130,12 +130,6 @@ export default function ReportsCtrl($scope, $rootScope, $filter, $uibModal, repo
 
         createInstance.result.then(function (result) {
 
-            $scope.reportList[$scope.currentIndex] = result;
-
-            if ($scope.isSolved == $.unsolved) {
-                $scope.reportList.splice($scope.currentIndex, 1);
-            }
-
         }, function () {
             console.log("cancel modal page");
         });

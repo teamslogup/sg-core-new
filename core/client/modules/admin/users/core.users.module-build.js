@@ -16,6 +16,8 @@ import notificationSwitchManager from './services/core.notification-switch.manag
 import sessionRemoteManager from './services/core.session-remote.manager';
 import profileManager from './services/core.profile.manager';
 import UsersCtrl from './controllers/core.users.controller';
+import UserDetailCtrl from './controllers/core.user-detail.controller';
+import userDetail from './directives/user-detail/core.user-detail';
 import routes from './config/core.users.route';
 #{importCoreTheme}
 #{importAppTheme}
@@ -40,4 +42,6 @@ export default angular.module("core.users", [])
     .service("sessionRemoteManager", sessionRemoteManager)
     .service("profileManager", profileManager)
     .controller("UsersCtrl", UsersCtrl)
+    .controller("UserDetailCtrl", UserDetailCtrl)
+    .directive("userDetail", userDetail)
     .name;

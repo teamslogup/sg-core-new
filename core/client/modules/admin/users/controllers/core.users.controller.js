@@ -1,4 +1,4 @@
-export default function UsersCtrl($scope, $rootScope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, notificationPublicSwitchManager, sessionRemoteManager, profileManager, dialogHandler, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $rootScope, $uibModal, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, notificationPublicSwitchManager, sessionRemoteManager, profileManager, dialogHandler, loadingHandler, metaManager) {
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -9,6 +9,8 @@ export default function UsersCtrl($scope, $rootScope, $filter, usersManager, not
     if (vm.CDN === undefined) {
         vm.CDN = metaManager.std.cdn;
     }
+
+    $scope.openModal = openModal;
 
     $scope.showUserDetail = showUserDetail;
     $scope.hideUserDetail = hideUserDetail;
@@ -73,44 +75,44 @@ export default function UsersCtrl($scope, $rootScope, $filter, usersManager, not
     $scope.more = false;
 
     function showUserDetail(index) {
-        $scope.currentUserIndex = index;
-        $scope.currentUser = $scope.userList[index];
-
-        for (var i = 0; i < $scope.currentUser.providers.length; i++) {
-            if ($scope.currentUser.providers[i].type == 'facebook') {
-                $scope.currentUser.providerFacebookIndex = i;
-            } else if ($scope.currentUser.providers[i].type == 'kakao') {
-                $scope.currentUser.providerKakaoIndex = i;
-            }
-        }
-
-        $scope.form = {
-            nick: $scope.currentUser.nick,
-            name: $scope.currentUser.name,
-            gender: $scope.currentUser.gender,
-            birthYear: $scope.currentUser.birthYear,
-            birthMonth: $scope.currentUser.birthMonth,
-            birthDay: $scope.currentUser.birthDay,
-            country: $scope.currentUser.country,
-            language: $scope.currentUser.language,
-            role: $scope.currentUser.role,
-            agreedEmail: $scope.currentUser.agreedEmail,
-            agreedPhoneNum: $scope.currentUser.agreedPhoneNum
-        };
-        splitBirth($scope.currentUser.birth);
-
-        delete $scope.currentUser.profile.createdAt;
-        delete $scope.currentUser.profile.updatedAt;
-        delete $scope.currentUser.profile.deletedAt;
-        delete $scope.currentUser.profile.id;
-
-        $scope.isUserDetailVisible = true;
-        $scope.isUserDetailFirstTime = false;
-
-        // $scope.findAllNotification($scope.currentUser.id);
-        findAllNotificationSwitch($scope.currentUser.id);
-        findAllNotificationPublicSwitch($scope.currentUser.id);
-        findAllNotificationBox($scope.currentUser.id);
+        // $scope.currentUserIndex = index;
+        // $scope.currentUser = $scope.userList[index];
+        //
+        // for (var i = 0; i < $scope.currentUser.providers.length; i++) {
+        //     if ($scope.currentUser.providers[i].type == 'facebook') {
+        //         $scope.currentUser.providerFacebookIndex = i;
+        //     } else if ($scope.currentUser.providers[i].type == 'kakao') {
+        //         $scope.currentUser.providerKakaoIndex = i;
+        //     }
+        // }
+        //
+        // $scope.form = {
+        //     nick: $scope.currentUser.nick,
+        //     name: $scope.currentUser.name,
+        //     gender: $scope.currentUser.gender,
+        //     birthYear: $scope.currentUser.birthYear,
+        //     birthMonth: $scope.currentUser.birthMonth,
+        //     birthDay: $scope.currentUser.birthDay,
+        //     country: $scope.currentUser.country,
+        //     language: $scope.currentUser.language,
+        //     role: $scope.currentUser.role,
+        //     agreedEmail: $scope.currentUser.agreedEmail,
+        //     agreedPhoneNum: $scope.currentUser.agreedPhoneNum
+        // };
+        // splitBirth($scope.currentUser.birth);
+        //
+        // delete $scope.currentUser.profile.createdAt;
+        // delete $scope.currentUser.profile.updatedAt;
+        // delete $scope.currentUser.profile.deletedAt;
+        // delete $scope.currentUser.profile.id;
+        //
+        // $scope.isUserDetailVisible = true;
+        // $scope.isUserDetailFirstTime = false;
+        //
+        // // $scope.findAllNotification($scope.currentUser.id);
+        // findAllNotificationSwitch($scope.currentUser.id);
+        // findAllNotificationPublicSwitch($scope.currentUser.id);
+        // findAllNotificationBox($scope.currentUser.id);
 
     }
 
@@ -465,6 +467,33 @@ export default function UsersCtrl($scope, $rootScope, $filter, usersManager, not
         $scope.startEditMode();
     }
 
+    function openModal(index) {
+        $scope.currentUserIndex = index;
+        var user = $scope.userList[index];
+
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreUserDetail.html',
+            controller: 'UserDetailCtrl',
+            size: USER.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                user: function () {
+                    return user;
+                }
+            }
+        });
+
+        createInstance.result.then(function (result) {
+
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
+
     $scope.$on('$locationChangeStart', function (event, next, current) {
         if (next != current) {
             if ($scope.isUserDetailVisible) {
@@ -500,7 +529,6 @@ export default function UsersCtrl($scope, $rootScope, $filter, usersManager, not
     }, true);
 
     findUsers();
-
 
     $rootScope.$broadcast(ADMIN.kNavigation, {
         activeNav: ADMIN.moduleUsers

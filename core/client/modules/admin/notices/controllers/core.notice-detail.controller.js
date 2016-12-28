@@ -1,5 +1,6 @@
-export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, scope, notice) {
+export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, scope, notice, isEditMode) {
 
+    var NOTICE = scope.metaManager.std.notice;
     var LOADING = scope.metaManager.std.loading;
 
     $scope.currentNotice = notice;
@@ -11,39 +12,49 @@ export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, sco
         country: notice.country
     };
 
-    $scope.startEditMode = function () {
+    $scope.noticeTypes = NOTICE.enumNoticeTypes;
+    $scope.noticeCountries = NOTICE.enumCountries;
+
+    $scope.startEditMode = startEditMode;
+    $scope.exitEditMode = exitEditMode;
+    $scope.updateNotice = updateNotice;
+    $scope.cancel = cancel;
+
+    if (isEditMode) {
+        startEditMode();
+    }
+
+    function startEditMode() {
         $scope.isNoticeEditMode = true;
-    };
+    }
 
-    $scope.exitEditMode = function () {
+    function exitEditMode() {
         $scope.isNoticeEditMode = false;
-    };
+    }
 
-    $scope.updateNotice = function () {
+    function updateNotice() {
 
-        if (scope.isFormValidate()) {
-            var body = angular.copy(scope.form);
+        var body = angular.copy($scope.form);
 
-            scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
-            scope.noticesManager.updateNoticeById(notice.id, body, function (status, data) {
-                if (status == 200) {
-                    scope.noticeList[scope.currentIndex] = data;
+        scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
+        scope.noticesManager.updateNoticeById(notice.id, body, function (status, data) {
+            if (status == 200) {
+                scope.noticeList[scope.currentIndex] = data;
 
-                    if (scope.params.type != body.type) {
-                        scope.noticeList.splice(scope.currentIndex, 1);
-                    }
-
-                    scope.exitEditMode();
-                } else {
-                    scope.dialogHandler.alertError(status, data);
+                if (scope.params.type != body.type) {
+                    scope.noticeList.splice(scope.currentIndex, 1);
                 }
-                scope.loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
-            });
-        }
 
-    };
+                $scope.exitEditMode();
+            } else {
+                scope.dialogHandler.alertError(status, data);
+            }
+            scope.loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
+        });
 
-    $scope.cancel = function () {
+    }
+
+    function cancel() {
         $uibModalInstance.dismiss('cancel');
-    };
+    }
 }

@@ -1,7 +1,7 @@
 #sg-report-manage-detail {
     $sg-report-manage-detail-container-width: 500px;
 
-    .sg-report-manage-detail-container{
+    .sg-report-manage-detail-container {
         border-radius: 5px;
 
         z-index: 13;
@@ -169,13 +169,6 @@
                     text-align: center;
                     cursor: pointer;
 
-                    &:hover > .sg-report-manage-detail-bottom-notification-item-img {
-                        border: solid 1px #1b1e33;
-
-                    }
-                    &:hover > .sg-report-manage-detail-bottom-notification-item-text {
-                        color: #1b1e33;
-                    }
                     .sg-report-manage-detail-bottom-notification-item-img {
                         width: 38px;
                         height: 38px;
@@ -207,14 +200,26 @@
                         background-size: 45px;
                     }
 
-                    &:hover > .sms {
-                        background-image: url('/assets/themes/admin/cloudy/images/ic_report_message_active_45_2x.png');
+                    &.active {
+                        .sg-report-manage-detail-bottom-notification-item-img {
+                            border: solid 1px #1b1e33;
+                        }
+                        .sg-report-manage-detail-bottom-notification-item-text {
+                            color: #1b1e33;
+                        }
+                        .sms {
+                            background-image: url('/assets/themes/admin/cloudy/images/ic_report_message_active_45_2x.png');
+                        }
+                        .email {
+                            background-image: url('/assets/themes/admin/cloudy/images/ic_report_mail_active_45_2x.png');
+                        }
+                        .push {
+                            background-image: url('/assets/themes/admin/cloudy/images/ic_report_push_active_45_2x.png');
+                        }
                     }
-                    &:hover > .email {
-                        background-image: url('/assets/themes/admin/cloudy/images/ic_report_mail_active_45_2x.png');
-                    }
-                    &:hover > .push {
-                        background-image: url('/assets/themes/admin/cloudy/images/ic_report_push_active_45_2x.png');
+
+                    &:active {
+                        transform: scale(0.95);
                     }
 
                 }

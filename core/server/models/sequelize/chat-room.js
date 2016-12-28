@@ -166,7 +166,7 @@ module.exports = {
                     "FROM (SELECT a.roomId, a.chatType, a.chatMessage, count(case when a.createdAt > a.roomUserUpdatedAt then 1 else null end) as count, a.createdAt as createdAT FROM (SELECT room.id as roomId, chatHistory.createdAt as createdAt, chatHistory.type as chatType, chatHistory.message as chatMessage, roomUser.updatedAt as roomUserUpdatedAt " +
                     "FROM `ChatRooms` as room " +
                     "LEFT JOIN `ChatRoomUsers` as roomUser ON room.id = roomUser.roomId " +
-                    "LEFT JOIN ChatHistories as chatHistory ON room.id = chatHistory.roomId " +
+                    "LEFT JOIN (SELECT chatHistory.* FROM ChatHistories as chatHistory LEFT JOIN ChatRoomUsers as roomUser ON chatHistory.roomId = roomUser.roomId WHERE roomUser.userId = " + options.userId + " AND chatHistory.createdAt > roomUser.createdAt) as chatHistory ON room.id = chatHistory.roomId " +
                     "LEFT JOIN `Users` as user ON user.id = roomUser.userId " +
                     "WHERE room.isPrivate = TRUE AND roomUser.userId = " + options.userId + " AND roomUser.deletedAt IS NULL " +
                     "ORDER BY chatHistory.createdAt DESC) AS a GROUP BY a.roomId ) as v1 " +

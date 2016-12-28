@@ -76,15 +76,18 @@ module.exports = {
                 return [{
                     'model': sequelize.models.User,
                     'as': 'author',
-                    'attributes': sequelize.models.User.getUserFields(),
-                    'include': {
+                    'attributes': sequelize.models.User.getFullUserFields(),
+                    'include': [{
                         'model': sequelize.models.UserImage,
                         'as': 'userImages',
                         'include': {
                             'model': sequelize.models.Image,
                             'as': 'image'
                         }
-                    }
+                    }, {
+                        'model': sequelize.models.LoginHistory,
+                        'as': 'loginHistories'
+                    }]
                 }];
             },
             'findReportsByOptions': function (options, callback) {

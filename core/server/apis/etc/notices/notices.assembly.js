@@ -12,7 +12,7 @@ var del = require('./' + resource + '.del.js');
 var express = require('express');
 var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
-
+var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
@@ -29,19 +29,7 @@ var api = {
                     'id': '데이터를 얻을 리소스의 id'
                 },
                 param: 'id',
-                response: {
-                    title: "공지사항 제목",
-                    body: "공지사항 내용",
-                    country: "KR",
-                    type: "normal",
-                    startDate: "2016-03-23",
-                    endDate: "2016-03-26",
-                    imageId: 1,
-                    id: 1,
-                    createAt: "2016-03-22",
-                    updateAt: "2016-03-22",
-                    deletedAt: null
-                },
+                response: resforms.notice,
                 title: '단일 공지 얻기',
                 state: 'staging'
             };
@@ -83,37 +71,7 @@ var api = {
                     type: '유형 필터 ' + STD.notice.enumNoticeTypes.join(", "),
                     sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", ")
                 },
-                response: [{
-                    "title": "공지사항 제목",
-                    "body": "공지사항 내용",
-                    "country": "KR",
-                    "type": "notice",
-                    "startDate": "2016-03-23",
-                    "endDate": "2016-03-26",
-                    "id": 1,
-                    "createAt": "2016-03-22",
-                    "updateAt": "2016-03-22",
-                    "deletedAt": null,
-                    "thumbnailImage": {
-                        "authorId": 1,
-                        "folder": "common",
-                        "name": "upload_d8ea10c9b81d797a198a4f4d3ba32bd6.png",
-                        "authorized": true,
-                        "createdAt": "2016-06-27T07:23:17.000Z",
-                        "updatedAt": "2016-06-27T07:23:17.000Z",
-                        "id": 1
-                    },
-                    "bigImage": {
-                        "authorId": 1,
-                        "folder": "common",
-                        "name": "upload_83a28c7bdbfc1a08ff645dbea60748e6.png",
-                        "authorized": true,
-                        "createdAt": "2016-06-27T07:29:39.000Z",
-                        "updatedAt": "2016-06-27T07:29:39.000Z",
-                        "id": 2
-                    },
-                    "smallImage": null
-                }],
+                response: {rows: [resforms.notice]},
                 title: '공지리스트얻기',
                 state: 'staging'
             };
@@ -161,6 +119,7 @@ var api = {
                     type: 'notice'
                 },
                 role: STD.user.roleAdmin,
+                response: resforms.notice,
                 title: '공지쓰기',
                 state: 'staging'
             };
@@ -205,6 +164,7 @@ var api = {
                     'smallImageId': '작은 이미지 id'
                 },
                 role: STD.user.roleAdmin,
+                response: resforms.notice,
                 title: '공지 내용 수정',
                 param: 'id',
                 state: 'staging'

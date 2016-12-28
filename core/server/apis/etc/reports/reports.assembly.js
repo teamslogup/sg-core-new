@@ -168,6 +168,7 @@ var api = {
                 apiCreator.add(put.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(put.updateReport());
+                apiCreator.add(put.sendNotifications());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 
