@@ -54,8 +54,11 @@ module.exports = {
         'email': {
             'type': Sequelize.STRING,
             'allowNull': true
+        },
+        'hostUrl': {
+            'type': Sequelize.STRING,
+            'allowNull': true
         }
-
     },
     options: {
         'timestamps': true,
