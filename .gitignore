@@ -17,3 +17,4 @@ app/server/views/admin-production.ejs
 app/server/views/admin-development.ejs
 /dist/
 npm-debug.log
+core/client/modules/admin/*/*.module.js
