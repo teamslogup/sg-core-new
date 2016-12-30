@@ -1,17 +1,17 @@
 <div id="sg-report-manage" ng-controller="ReportsCtrl">
 
     <div class="sg-report-manage-container">
-        <div class="sg-report-manage-title sg-titles">
+        <div class="sg-report-manage-title sgc-titles">
             {{'reportManage' | translate}}
         </div>
 
         <div class="sg-report-manage-menu">
-            <select ng-model="params.searchField" class="sg-report-manage-menu-search-option sg-option">
+            <select ng-model="params.searchField" class="sg-report-manage-menu-search-option sgc-option">
                 <option ng-repeat="x in reportEnumSearchFields" value="{{x}}">{{x | translate}}</option>
             </select>
             <div class="sg-report-manage-menu-search">
                 <form ng-submit="findReports()">
-                    <input class="sg-search-input" ng-model="params.searchItem" type="text"
+                    <input class="sgc-search-input" ng-model="params.searchItem" type="text"
                            placeholder="{{'typeKeywords'|translate}}">
                     <button type="submit"></button>
                 </form>
@@ -20,10 +20,10 @@
 
         <div class="sg-report-manage-main">
             <div class="sg-report-manage-main-top">
-                <select ng-model="isSolved" class="sg-report-manage-main-top-filter sg-filter">
+                <select ng-model="isSolved" class="sg-report-manage-main-top-filter sgc-filter">
                     <option ng-repeat="x in reportEnumSolved" value="{{x}}">{{x | translate}}</option>
                 </select>
-                <div class="sg-report-manage-main-top-total sg-total">Total <span>{{reportListTotal}}</span></div>
+                <div class="sg-report-manage-main-top-total sgc-total">Total <span>{{reportListTotal}}</span></div>
             </div>
             <div class="sg-report-manage-main-list">
                 <div class="sg-report-manage-main-item" ng-repeat="report in reportList track by $index"

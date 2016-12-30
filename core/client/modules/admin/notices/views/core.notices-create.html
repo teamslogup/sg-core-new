@@ -5,7 +5,7 @@
 
     <div ng-class="isNoticeCreateVisible ? 'sg-notice-manage-create-container' : 'sg-notice-manage-create-container-hide'" ng-if="!isNoticeDetailFirstTime">
 
-        <!--<div class="sg-notice-manage-create-title sg-titles">-->
+        <!--<div class="sg-notice-manage-create-title sgc-titles">-->
             <!--공지사항 생성-->
         <!--</div>-->
 
@@ -21,7 +21,7 @@
                         {{'type'| translate}}
                     </div>
                     <div class="sg-notice-manage-create-body-type-body">
-                        <select ng-model="form.type" class="sg-main-view-top-second-sort-btn sg-option" required>
+                        <select ng-model="form.type" class="sg-main-view-top-second-sort-btn sgc-option" required>
                             <option ng-repeat="x in noticeTypes" value="{{x}}">{{x | translate}}</option>
                         </select>
                     </div>
@@ -32,7 +32,7 @@
                         {{'country'| translate}}
                     </div>
                     <div class="sg-notice-manage-create-body-country-body">
-                        <select ng-model="form.country" class="sg-main-view-top-second-sort-btn sg-option" required>
+                        <select ng-model="form.country" class="sg-main-view-top-second-sort-btn sgc-option" required>
                             <option ng-repeat="x in noticeCountries" value="{{x}}">{{x | translate}}</option>
                         </select>
                     </div>
@@ -43,7 +43,7 @@
                 <div class="sg-notice-manage-create-titles">
                     {{'title'| translate}}
                 </div>
-                <input ng-model="form.title" type="text" class="sg-notice-manage-create-body-title-body sg-input"
+                <input ng-model="form.title" type="text" class="sg-notice-manage-create-body-title-body sgc-input"
                        placeholder="{{'title'|translate}}" required>
             </div>
 
