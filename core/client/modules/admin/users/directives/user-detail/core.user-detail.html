@@ -63,42 +63,42 @@
 
                     <div class="sg-user-manage-detail-main-list">
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'nick'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.nick}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sg-input" type="text" ng-model="form.nick"
+                            <input class="sg-user-manage-detail-item-input sgc-input" type="text" ng-model="form.nick"
                                    ng-if="isUserEditMode">
                         </div>
 
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'name'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.name}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sg-input" type="text" ng-model="form.name"
+                            <input class="sg-user-manage-detail-item-input sgc-input" type="text" ng-model="form.name"
                                    ng-if="isUserEditMode">
                         </div>
 
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'gender'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.gender | translate}}
                             </div>
-                            <select ng-model="form.gender" class="sg-user-manage-detail-item-options sg-option"
+                            <select ng-model="form.gender" class="sg-user-manage-detail-item-options sgc-option"
                                     ng-if="isUserEditMode">
                                 <option ng-repeat="x in userDetailEnumGender" value="{{x}}">{{x | translate}}</option>
                             </select>
                         </div>
 
                         <div class="sg-user-manage-detail-item" ng-if="!isUserEditMode">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'birth'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body">
@@ -107,71 +107,71 @@
                         </div>
 
                         <div class="sg-user-manage-detail-item" ng-if="isUserEditMode">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'year'| translate}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sg-input" type="text"
+                            <input class="sg-user-manage-detail-item-input sgc-input" type="text"
                                    ng-model="form.birthYear">
                         </div>
 
                         <div class="sg-user-manage-detail-item" ng-if="isUserEditMode">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'month'| translate}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sg-input" type="text"
+                            <input class="sg-user-manage-detail-item-input sgc-input" type="text"
                                    ng-model="form.birthMonth">
                         </div>
 
                         <div class="sg-user-manage-detail-item" ng-if="isUserEditMode">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'day'| translate}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sg-input" type="text"
+                            <input class="sg-user-manage-detail-item-input sgc-input" type="text"
                                    ng-model="form.birthDay">
                         </div>
 
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'country'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.country | translate}}
                             </div>
-                            <select ng-model="form.country" class="sg-user-manage-detail-item-option sg-option"
+                            <select ng-model="form.country" class="sg-user-manage-detail-item-option sgc-option"
                                     ng-if="isUserEditMode">
                                 <option ng-repeat="x in enumCountries" value="{{x}}">{{x | translate}}</option>
                             </select>
                         </div>
 
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'language'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.language | translate}}
                             </div>
 
-                            <select ng-model="form.language" class="sg-user-manage-detail-item-option sg-option"
+                            <select ng-model="form.language" class="sg-user-manage-detail-item-option sgc-option"
                                     ng-if="isUserEditMode">
                                 <option ng-repeat="x in enumLanguages" value="{{x}}">{{x | translate}}</option>
                             </select>
                         </div>
 
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'role'| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.role | translate}}
                             </div>
-                            <select ng-model="form.role" class="sg-user-manage-detail-item-option sg-option"
+                            <select ng-model="form.role" class="sg-user-manage-detail-item-option sgc-option"
                                     ng-if="isUserEditMode">
                                 <option ng-repeat="x in userEnumRoles" value="{{x}}">{{x | translate}}</option>
                             </select>
                         </div>
 
                         <div class="sg-user-manage-detail-item">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{'marketingAgreedSetting'| translate}}
                             </div>
                             <!--<div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">-->
@@ -185,13 +185,13 @@
                                 <div class="sg-user-manage-detail-item-input" ng-class="{'active': isUserEditMode}">
                                     <input id="sg-user-manage-detail-item-input-agreedEmail" type="checkbox"
                                            ng-model="form.agreedEmail"
-                                           class='material-checkbox'>
+                                           class='sgc-material-checkbox'>
                                     <label for="sg-user-manage-detail-item-input-agreedEmail">{{'email'| translate}}</label>
                                 </div>
                                 <div class="sg-user-manage-detail-item-input" ng-class="{'active': isUserEditMode}">
                                     <input id="sg-user-manage-detail-item-input-agreedPhoneNum" type="checkbox"
                                            ng-model="form.agreedPhoneNum"
-                                           class='material-checkbox'>
+                                           class='sgc-material-checkbox'>
                                     <label for="sg-user-manage-detail-item-input-agreedPhoneNum">{{'phone'|
                                         translate}}</label>
                                 </div>
@@ -263,13 +263,13 @@
 
                     <div class="sg-user-manage-detail-main-list">
                         <div class="sg-user-manage-detail-item" ng-repeat="(key, body) in currentUser.profile">
-                            <div class="sg-user-manage-detail-item-title sg-subtitles">
+                            <div class="sg-user-manage-detail-item-title sgc-subtitles">
                                 {{key| translate}}
                             </div>
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{body| translate}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sg-input" type="text" ng-model="currentUser.profile[key]"
+                            <input class="sg-user-manage-detail-item-input sgc-input" type="text" ng-model="currentUser.profile[key]"
                                    ng-if="isUserEditMode">
                         </div>
                     </div>
@@ -293,7 +293,7 @@
 
             <div class="sg-user-manage-detail-notification" ng-if="currentPage == 3">
                 <div class="sg-user-manage-detail-notification-option ">
-                    <select data-ng-model="params.sendType" class="sg-user-manage-main-top-filter sg-filter">
+                    <select data-ng-model="params.sendType" class="sg-user-manage-main-top-filter sgc-filter">
                         <option ng-repeat="x in enumSendTypes" value="{{x}}">{{x | translate}}</option>
                     </select>
                 </div>

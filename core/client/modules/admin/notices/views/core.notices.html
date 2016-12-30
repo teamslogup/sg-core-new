@@ -1,18 +1,18 @@
 <div id="sg-notice-manage" ng-controller="NoticesCtrl">
 
     <div class="sg-notice-manage-container">
-        <div class="sg-notice-manage-title sg-titles">
+        <div class="sg-notice-manage-title sgc-titles">
             {{'noticeManage' | translate}}
         </div>
 
         <div class="sg-notice-manage-menu">
 
-            <select ng-model="params.searchField" class="sg-notice-manage-menu-search-option sg-option">
+            <select ng-model="params.searchField" class="sg-notice-manage-menu-search-option sgc-option">
                 <option ng-repeat="x in noticeSearchFields" value="{{x}}">{{x | translate}}</option>
             </select>
             <div class="sg-notice-manage-menu-search">
                 <form ng-submit="findNotices()">
-                    <input class="sg-search-input" ng-model="params.searchItem" type="text" placeholder="{{'typeKeywords' | translate}}">
+                    <input class="sgc-search-input" ng-model="params.searchItem" type="text" placeholder="{{'typeKeywords' | translate}}">
                     <button type="submit"></button>
                 </form>
             </div>
@@ -26,10 +26,10 @@
         <div class="sg-notice-manage-main">
 
             <div class="sg-notice-manage-main-top">
-                <select ng-model="params.type" class="sg-notice-manage-main-top-filter sg-filter">
+                <select ng-model="params.type" class="sg-notice-manage-main-top-filter sgc-filter">
                     <option ng-repeat="x in noticeTypes" value="{{x}}">{{x | translate}}</option>
                 </select>
-                <div class="sg-notice-manage-main-top-total sg-total">Total <span>{{noticeListTotal}}</span></div>
+                <div class="sg-notice-manage-main-top-total sgc-total">Total <span>{{noticeListTotal}}</span></div>
             </div>
 
             <div class="sg-notice-manage-main-list">

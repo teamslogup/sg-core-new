@@ -2,21 +2,21 @@
 
     <div class="sg-image-manage-container">
         <div class="sg-image-manage-top">
-            <div class="sg-image-manage-title sg-titles">
+            <div class="sg-image-manage-title sgc-titles">
                 {{'imageManage' | translate}}
             </div>
-            <select ng-model="form.folder" class="sg-image-manage-folder sg-option">
+            <select ng-model="form.folder" class="sg-image-manage-folder sgc-option">
                 <option ng-repeat="x in imageFolders" value="{{x}}">{{x | translate}}</option>
             </select>
         </div>
 
         <div class="sg-image-manage-menu">
-            <select ng-model="form.searchFieldUser" class="sg-image-manage-menu-option sg-option">
+            <select ng-model="form.searchFieldUser" class="sg-image-manage-menu-option sgc-option">
                 <option ng-repeat="x in enumSearchFieldsUser" value="{{x}}">{{x | translate}}</option>
             </select>
             <div class="sg-image-manage-menu-search">
                 <form ng-submit="findImages()">
-                    <input class="sg-search-input" ng-model="form.searchItemUser" type="text"
+                    <input class="sgc-search-input" ng-model="form.searchItemUser" type="text"
                            placeholder="{{'typeKeywords'|translate}}">
                     <button type="submit"></button>
                 </form>
@@ -25,10 +25,10 @@
 
         <div class="sg-image-manage-main">
             <div class="sg-image-manage-main-top">
-                <select ng-model="isAuthorized" class="sg-image-manage-main-top-filter sg-filter">
+                <select ng-model="isAuthorized" class="sg-image-manage-main-top-filter sgc-filter">
                     <option ng-repeat="x in enumAuthorized" value="{{x}}">{{x | translate}}</option>
                 </select>
-                <div class="sg-image-manage-main-top-total sg-total">
+                <div class="sg-image-manage-main-top-total sgc-total">
                     Total <span>{{imageListTotal}}</span>
                 </div>
             </div>
