@@ -17,7 +17,7 @@
                 </form>
             </div>
 
-            <button class="sg-notice-manage-main-create sgc-btn-action" ng-click="showNoticeCreate()">
+            <button class="sg-notice-manage-main-create sgc-btn-action" ng-click="openCreateModal()">
                 {{'create' | translate}}
             </button>
 
@@ -45,7 +45,7 @@
                     </div>
                     <div class="sg-notice-manage-main-list-top-more"></div>
                 </div>
-                <div class="sg-notice-manage-main-item" ng-repeat="notice in noticeList track by $index" ng-click="showNoticeDetail($index)">
+                <div class="sg-notice-manage-main-item" ng-repeat="notice in noticeList track by $index" ng-click="openDetailModal($index)">
 
                     <div class="sg-notice-manage-main-item-left">
                         <div class="sg-notice-manage-main-item-type"> {{notice.type | translate}}</div>
@@ -78,9 +78,6 @@
 
     <div class="sg-notice-manage-overlay" ng-if="currentOption" ng-click="hideItemOption()"></div>
 
-    <div data-ng-include src="'modules/admin/notices/views/core.notices-create.html'"
-         ng-if="isNoticeCreateVisible"></div>
-    <div data-ng-include src="'modules/admin/notices/views/core.notices-detail.html'" ng-if="isNoticeDetailVisible"></div>
 </div>
 <notice-create></notice-create>
 <notice-detail></notice-detail>

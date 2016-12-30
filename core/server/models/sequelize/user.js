@@ -694,6 +694,15 @@ module.exports = {
                 sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
             },
             /**
+             * nick으로 유저 찾기
+             * @param {Object} aid - 찾을 유저의 aid
+             * @param {responseCallback} callback - 응답콜백
+             */
+            'findUserByNick': function (nick, callback) {
+                var where = {nick: nick};
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
+            },
+            /**
              * 범용 유저생성
              * @param {Object} data - 유저 생성을 위한 유저 필드
              * @param {responseCallback} callback - 응답콜백

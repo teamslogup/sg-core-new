@@ -141,6 +141,7 @@ var standards = {
         "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
+        "modalSize": "md"
     },
     "replaceApi": {
         'userDel': ""

@@ -11,7 +11,9 @@
                 <div class="sg-report-manage-detail-top-unsolved-img" ng-if="!currentReport.solvedAt"></div>
                 <div class="sg-report-manage-detail-top-solved" ng-if="currentReport.solvedAt"> {{'solved' | translate}}
                 </div>
-                <div class="sg-report-manage-detail-top-unsolved" ng-if="!currentReport.solvedAt"> {{'unsolved' | translate}}</div>
+                <div class="sg-report-manage-detail-top-unsolved" ng-if="!currentReport.solvedAt"> {{'unsolved' |
+                    translate}}
+                </div>
 
             </div>
             <div class="sg-report-manage-detail-body">
@@ -20,8 +22,11 @@
                 </div>
 
                 <div class="sg-report-manage-detail-body-bottom">
-                    <div class="sg-report-manage-detail-body-bottom-user-img" ng-if="currentReport.author &&currentReport.author.userImages.length > 0" ng-style="{'background-image': 'url('+ (currentReport.author.userImages[0].image | imageUrl) + ')'}"></div>
-                    <div class="sg-report-manage-detail-body-bottom-user-img" ng-if="!currentReport.author ||currentReport.author.userImages.length == 0"></div>
+                    <div class="sg-report-manage-detail-body-bottom-user-img"
+                         ng-if="currentReport.author &&currentReport.author.userImages.length > 0"
+                         ng-style="{'background-image': 'url('+ (currentReport.author.userImages[0].image | imageUrl) + ')'}"></div>
+                    <div class="sg-report-manage-detail-body-bottom-user-img"
+                         ng-if="!currentReport.author ||currentReport.author.userImages.length == 0"></div>
                     <div class="sg-report-manage-detail-top-nick">{{currentReport.nick}}</div>
                     <div class="sg-report-manage-detail-body-crated-at">
                         {{currentReport.createdAt | microTimeToDate}}
@@ -34,7 +39,9 @@
                 <textarea name="" id="" cols="30" rows="10" ng-model="form.reply"></textarea>
 
                 <div class="sg-report-manage-detail-bottom-notification">
-                    <div class="sg-report-manage-detail-bottom-notification-item">
+                    <div class="sg-report-manage-detail-bottom-notification-item"
+                         ng-class="{'active' : form.isMessageOn}" ng-if="currentReport.author.phoneNum"
+                         ng-click="form.isMessageOn = !form.isMessageOn">
                         <div class="sg-report-manage-detail-bottom-notification-item-img sms">
 
                         </div>
@@ -42,7 +49,9 @@
                             {{'smsNotification'|translate}}
                         </div>
                     </div>
-                    <div class="sg-report-manage-detail-bottom-notification-item">
+                    <div class="sg-report-manage-detail-bottom-notification-item" ng-class="{'active' : form.isEmailOn}"
+                         ng-if="currentReport.author.email"
+                         ng-click="form.isEmailOn = !form.isEmailOn">
                         <div class="sg-report-manage-detail-bottom-notification-item-img email">
 
                         </div>
@@ -50,7 +59,9 @@
                             {{'emailNotification'|translate}}
                         </div>
                     </div>
-                    <div class="sg-report-manage-detail-bottom-notification-item">
+                    <div class="sg-report-manage-detail-bottom-notification-item" ng-class="{'active' : form.isPushOn}"
+                         ng-if="enablePush"
+                         ng-click="form.isPushOn = !form.isPushOn">
                         <div class="sg-report-manage-detail-bottom-notification-item-img push">
 
                         </div>

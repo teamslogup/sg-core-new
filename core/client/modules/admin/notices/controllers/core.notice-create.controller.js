@@ -1,48 +1,37 @@
-export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, scope, report) {
+export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, scope) {
 
+    var NOTICE = scope.metaManager.std.notice;
     var LOADING = scope.metaManager.std.loading;
 
-    $scope.currentReport = report;
-
     $scope.form = {
-        reply: report.reply,
-        isSolved: true
+        type: scope.noticeTypes[0],
+        country: scope.noticeCountries[0]
     };
 
-    $scope.solveReport = solveReport;
+    $scope.noticeTypes = NOTICE.enumNoticeTypes;
+    $scope.noticeCountries = NOTICE.enumCountries;
 
-    function isFormValidate() {
+    $scope.createNotice = createNotice;
+    $scope.cancel = cancel;
 
-        var isValidate = true;
+    function createNotice() {
 
-        if ($scope.form.reply === undefined || $scope.form.reply === null || $scope.form.reply === '') {
-            isValidate = false;
-            scope.dialogHandler.show('', $filter('translate')('requireBody'), '', true);
-            return isValidate;
-        }
+        var body = angular.copy($scope.form);
 
-        return isValidate;
-    }
-
-    function solveReport() {
-
-        if (isFormValidate()) {
-            var body = angular.copy($scope.form);
-
-            scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateReportById');
-            scope.reportsManager.updateReportById($scope.currentReport.id, body, function (status, data) {
-                if (status == 200) {
-                    $uibModalInstance.close(data);
-                } else {
-                    scope.dialogHandler.alertError(status, data);
-                }
-                scope.loadingHandler.endLoading(LOADING.spinnerKey, 'updateReportById');
-            });
-        }
+        scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
+        scope.noticesManager.createNotice(body, function (status, data) {
+            if (status == 201) {
+                scope.noticeList.unshift(data);
+                $uibModalInstance.close(data);
+            } else {
+                scope.dialogHandler.alertError(status, data);
+            }
+            scope.loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
+        });
 
     }
 
-    $scope.cancel = function () {
+    function cancel() {
         $uibModalInstance.dismiss('cancel');
-    };
+    }
 }

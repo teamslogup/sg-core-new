@@ -55,7 +55,7 @@
                     <div class="sg-user-manage-main-list-top-more"></div>
                 </div>
 
-                <div class="sg-user-manage-main-list-item" ng-repeat="user in userList track by $index" ng-click="showUserDetail($index)">
+                <div class="sg-user-manage-main-list-item" ng-repeat="user in userList track by $index" ng-click="openModal($index)">
 
                     <div class="sg-user-manage-main-list-item-img" ng-if="user.userImages.length > 0"
                          ng-style="{'background-image': 'url('+ (user.userImages[0].image | imageUrl) + ')'}">
@@ -158,5 +158,5 @@
     </div>
 
     <div class="sg-user-manage-overlay" ng-if="currentOption" ng-click="hideItemOption()"></div>
-    <div data-ng-include src="'modules/admin/users/views/core.users-detail.html'" ng-if="isUserDetailVisible"></div>
 </div>
+<user-detail></user-detail>

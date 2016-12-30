@@ -154,11 +154,9 @@ module.exports = {
             },
             'findChatHistoriesByOptions': function (options, userId, callback) {
 
-                var where = {};
-
-                if (options.userId !== undefined) {
-                    where.userId = options.userId
-                }
+                var where = {
+                    userId: userId
+                };
 
                 if (options.roomId !== undefined) {
                     where.roomId = options.roomId

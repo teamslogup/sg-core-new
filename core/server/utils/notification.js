@@ -44,29 +44,35 @@ module.exports = {
 
                                 if (status == 200) {
 
-                                    if (_this.isNotificationSwitchOn(user, notification)) {
+                                    for (var i = 0; i < notification.notificationSendTypes.length; i++) {
 
-                                        for (var i = 0; i < notification.notificationSendTypes.length; i++) {
-                                            _this.replaceMagicKey(notification.notificationSendTypes[i], payload, user.language, function (isSuccess, sendType, title, body) {
-
-                                                if (isSuccess) {
-                                                    _this.send(user, sendType, title, body, function (status, data) {
-                                                        if (status == 204) {
-                                                            if (callback) callback(status, data);
-                                                        } else {
-                                                            if (callback) callback(status, data);
-                                                        }
-                                                    });
-
-                                                } else {
-                                                    if (callback)callback(204);
-                                                }
-
-                                            });
+                                        if (notification.notificationType == NOTIFICATION.notificationTypeApplication) {
+                                            if (!_this.isNotificationSwitchOn(user, notification.notificationSendTypes[i].id)) {
+                                                continue;
+                                            }
+                                        } else {
+                                            if (!_this.isNotificationPublicSwitchOn(user, notification.notificationSendTypes[i].notificationType, notification.notificationSendTypes[i].sendType)) {
+                                                continue;
+                                            }
                                         }
 
-                                    } else {
-                                        if (callback)callback(204);
+                                        _this.replaceMagicKey(notification.notificationSendTypes[i], payload, user.language, function (isSuccess, sendType, title, body) {
+
+                                            if (isSuccess) {
+                                                _this.send(user, sendType, title, body, function (status, data) {
+                                                    if (status == 204) {
+                                                        if (callback) callback(status, data);
+                                                    } else {
+                                                        if (callback) callback(status, data);
+                                                    }
+                                                });
+
+                                            } else {
+                                                if (callback)callback(204);
+                                            }
+
+                                        });
+
                                     }
 
                                 } else {
@@ -144,27 +150,24 @@ module.exports = {
             }
 
         },
-        isNotificationSwitchOn: function (user, notification) {
+        isNotificationSwitchOn: function (user, notificationSendTypeId) {
 
-            // application 타입일 경우 notificationSwitch에서 보낼지 여부를 찾아야함
-            if (notification.notificationType == NOTIFICATION.notificationTypeApplication) {
-                // notificationSwitch에 없으면 발송
-                // notificationSwitch에 있으면 미발송
-
-                var notificationSwitch = user.notificationSwitches;
-                for (var i = 0; i < notificationSwitch.length; ++i) {
-                    if (notificationSwitch[i].notificationId == notification.id) {
-                        return false;
-                    }
+            var notificationSwitch = user.notificationSwitches;
+            for (var i = 0; i < notificationSwitch.length; ++i) {
+                if (notificationSwitch[i].notificationSendTypeId == notificationSendTypeId) {
+                    return false;
                 }
             }
-            // application 타입 이외의 경우 notificationPublicSwitch에 에서 찾아야함
-            else {
-                var notificationPublicSwitch = user.notificationPublicSwitches;
-                for (var i = 0; i < notificationPublicSwitch.length; ++i) {
-                    if (notificationPublicSwitch[i].notificationSendType == notification.notificationSendType) {
-                        return false;
-                    }
+
+            return true;
+
+        },
+        isNotificationPublicSwitchOn: function (user, notificationType, sendType) {
+
+            var notificationPublicSwitch = user.notificationPublicSwitches;
+            for (var i = 0; i < notificationPublicSwitch.length; ++i) {
+                if (notificationPublicSwitch[i].notificationType == notificationType && notificationPublicSwitch[i].sendType == sendType) {
+                    return false;
                 }
             }
 
@@ -224,21 +227,25 @@ module.exports = {
             }
 
             function sendEmail(callback) {
-                sendNoti.email(user.email, "Notification", {
-                    subject: title,
-                    dir: appDir,
-                    name: 'common',
-                    params: {
-                        body: body
-                    }
-                }, function (err) {
-                    if (process.env.NODE_ENV == 'test') return callback(204);
-                    if (err) {
-                        callback(503, emailErrorRefiner(err));
-                    } else {
-                        callback(204);
-                    }
-                });
+                if (user.email) {
+                    sendNoti.email(user.email, "Notification", {
+                        subject: title,
+                        dir: appDir,
+                        name: 'common',
+                        params: {
+                            body: body
+                        }
+                    }, function (err) {
+                        if (process.env.NODE_ENV == 'test') return callback(204);
+                        if (err) {
+                            callback(503, emailErrorRefiner(err));
+                        } else {
+                            callback(204);
+                        }
+                    });
+                } else {
+                    callback(404);
+                }
             }
 
             function sendSMS(callback) {

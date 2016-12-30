@@ -11,7 +11,9 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
 
     $scope.dashboardInfo = undefined;
 
-    $scope.findDashboardInfo = function () {
+    $scope.findDashboardInfo = findDashboardInfo;
+
+    function findDashboardInfo() {
         loadingHandler.startLoading(LOADING.spinnerKey, 'findDashboardInfo');
         dashboardInfoManager.findDashboardInfo(getParams(), function (status, data) {
             if (status == 200) {
@@ -25,7 +27,7 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findDashboardInfo');
         });
-    };
+    }
 
     function getParams() {
         var today = new Date();
@@ -282,7 +284,7 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
             "#41b1a0;"]
     };
 
-    $scope.findDashboardInfo();
+    findDashboardInfo();
 
     $rootScope.$broadcast(ADMIN.kNavigation, {
         activeNav: ADMIN.moduleDashboardInfo

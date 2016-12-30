@@ -11,7 +11,25 @@ put.validate = function () {
 
         if (req.body.body !== undefined) req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
         if (req.body.reply !== undefined && req.body.reply !== MAGIC.reset) req.check('reply', '400_8').len(REPORT.minReplyLength, REPORT.maxReplyLength);
-        if (req.body.isSolved !== undefined) req.check('isSolved', '400_20').isBoolean();
+        if (req.body.isSolved !== undefined) {
+            req.check('isSolved', '400_20').isBoolean();
+            req.sanitize('isSolved').toBoolean();
+        }
+
+        if (req.body.isPushOn !== undefined) {
+            req.check('isPushOn', '400_20').isBoolean();
+            req.sanitize('isPushOn').toBoolean();
+        }
+
+        if (req.body.isEmailOn !== undefined) {
+            req.check('isEmailOn', '400_20').isBoolean();
+            req.sanitize('isEmailOn').toBoolean();
+        }
+
+        if (req.body.isMessageOn !== undefined) {
+            req.check('isMessageOn', '400_20').isBoolean();
+            req.sanitize('isMessageOn').toBoolean();
+        }
 
         req.utils.common.checkError(req, res, next);
         next();
@@ -41,27 +59,56 @@ put.updateReport = function () {
 put.sendNotifications = function () {
     return function (req, res, next) {
 
-        if (req.body.isSolved !== undefined && req.body.isSolved !== true && req.body.reply !== undefined && req.report.authorId != null) {
+        var notification = req.meta.notifications.notiReport;
+
+        if (req.body.isSolved !== undefined && req.body.isSolved == true && req.body.reply !== undefined && req.report.authorId != null) {
 
             var user;
 
             req.models.User.findUserNotificationInfo(req.report.authorId, function (status, data) {
                 if (status == 200) {
                     user = data;
-                    req.coreUtils.notification.all.replaceMagicKey(req.meta.notifications.notiReport.notificationSendTypes, {
-                        userId: req.report.userId,
-                        nick: req.report.nick,
-                        body: req.report.body,
-                        reply: req.report.reply
-                    }, user.language, function (isSuccess, sendType, title, body) {
 
-                        if (isSuccess) {
-                            req.coreUtils.notification.all.send(user, sendType, title, body, function (status, data) {
+                    for (var i = 0; i < notification.notificationSendTypes.length; i++) {
+
+                        if (notification.notificationSendTypes[i].sendType == req.meta.std.notification.sendTypePush) {
+                            if (!req.body.isPushOn) {
+                                continue;
+                            }
+                        }
+
+                        if (notification.notificationSendTypes[i].sendType == req.meta.std.notification.sendTypeEmail) {
+                            if (!req.body.isEmailOn) {
+                                continue;
+                            }
+                        }
+
+                        if (notification.notificationSendTypes[i].sendType == req.meta.std.notification.sendTypeMessage) {
+                            if (!req.body.isMessageOn) {
+                                continue;
+                            }
+                        }
+
+                        if (req.coreUtils.notification.all.isNotificationPublicSwitchOn(user, notification.notificationSendTypes[i].notificationType, notification.notificationSendTypes[i].notificationSendTypes)) {
+
+                            req.coreUtils.notification.all.replaceMagicKey(notification.notificationSendTypes[i], {
+                                userId: req.report.userId,
+                                nick: req.report.nick,
+                                body: req.report.body,
+                                reply: req.report.reply
+                            }, user.language, function (isSuccess, sendType, title, body) {
+
+                                if (isSuccess) {
+                                    req.coreUtils.notification.all.send(user, sendType, title, body, function (status, data) {
+                                        console.log('reportNoti', status);
+                                    });
+                                }
 
                             });
                         }
 
-                    });
+                    }
+
                 }
             });
 
