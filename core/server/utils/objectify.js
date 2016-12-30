@@ -168,7 +168,7 @@ module.exports = {
     },
     sanitizeBoolean: function (string) {
 
-        if (string) {
+        if (string && typeof string == 'string') {
             if (string == 'true') {
                 return true;
             }
