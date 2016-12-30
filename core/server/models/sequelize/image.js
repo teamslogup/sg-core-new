@@ -63,6 +63,10 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            'getFieldsImage': function () {
+                var fields = ['id', 'authorId', 'folder', 'dateFolder', 'name', 'authorized', 'createdAt', 'updatedAt', 'deletedAt'];
+                return fields;
+            },
             'createImages': function (array, callback) {
                 var loadedImage = null;
                 sequelize.models.Image.bulkCreate(array, {individualHooks: true}).then(function (data) {
