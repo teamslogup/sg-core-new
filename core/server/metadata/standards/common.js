@@ -19,6 +19,7 @@ var standards = {
         "moduleTerms": "terms",
         "moduleImages": "images",
         "moduleNotification": "notifications",
+        "moduleMassNotifications": "mass-notifications",
         "moduleCompanyInfo": "company-info",
         "moduleDashboardInfo": "dashboard-info",
         "isUseModalAnimation": true,
