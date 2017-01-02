@@ -130,10 +130,6 @@ module.exports = {
         var currentItem = item;
         var currentIndex = indexes;
 
-        if (key == 'postImages.id') {
-            console.log('ds');
-        }
-
         for (var i = 0; i < temp.length; i++) {
             if (i < temp.length - 1) {
                 if (keyPattern[temp[i]]) {
@@ -164,11 +160,25 @@ module.exports = {
                     console.log('objectifyError', temp[i]);
                 }
             } else {
-                currentItem[temp[i]] = value;
+                currentItem[temp[i]] = this.sanitizeBoolean(value);
             }
 
         }
 
+    },
+    sanitizeBoolean: function (string) {
+
+        if (string && typeof string == 'string') {
+            if (string == 'true') {
+                return true;
+            }
+
+            if (string == 'false') {
+                return false;
+            }
+        }
+
+        return string;
     }
 
     /**

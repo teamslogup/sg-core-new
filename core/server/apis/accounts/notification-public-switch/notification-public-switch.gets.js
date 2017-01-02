@@ -31,13 +31,15 @@ gets.getNotificationSwitch = function () {
 
             for (var i = 0; i < NOTIFICATION.enumNotificationTypes.length; i++) {
 
-                if (NOTIFICATION.enumNotificationTypes[i] != NOTIFICATION.notificationTypeApplication && NOTIFICATION.enumNotificationTypes[i] != NOTIFICATION.notificationTypeReport) {
-                    notificationPublicSwitch.push({
-                        notificationType: NOTIFICATION.enumNotificationTypes[i],
-                        sendType: req.query.sendType,
-                        switch: true
-                    });
+                if (NOTIFICATION.enumNotificationTypes[i] == NOTIFICATION.notificationTypeApplication || NOTIFICATION.enumNotificationTypes[i] == NOTIFICATION.notificationTypeReport) {
+                    break;
                 }
+
+                notificationPublicSwitch.push({
+                    notificationType: NOTIFICATION.enumNotificationTypes[i],
+                    sendType: req.query.sendType,
+                    switch: true
+                });
 
                 for (var j = 0; j < data.length; j++) {
 
