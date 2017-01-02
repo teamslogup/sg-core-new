@@ -156,7 +156,8 @@ var standards = {
         "isUseHttps": false,
         "isDuplicatedLogin": false,
         "isUseCluster": false,
-        "isUseChat": true
+        "isUseChat": true,
+        "isResponsive": true
     },
     "category": {
         "minNameLength": 1,
