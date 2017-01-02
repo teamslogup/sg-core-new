@@ -27,6 +27,7 @@ var ChatHistory = require('./chat-history');
 var ChatRoom = require('./chat-room');
 var ChatRoomUser = require('./chat-room-user');
 var LoginCount = require('./login-count');
+var MassNotification = require('./mass-notification');
 
 var models = {
     User: User,
@@ -56,7 +57,8 @@ var models = {
     ChatHistory: ChatHistory,
     ChatRoom: ChatRoom,
     ChatRoomUser: ChatRoomUser,
-    LoginCount: LoginCount
+    LoginCount: LoginCount,
+    MassNotification: MassNotification
 };
 
 module.exports = models;
