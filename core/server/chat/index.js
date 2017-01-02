@@ -47,6 +47,7 @@ module.exports.init = function (io) {
         socket.on(STD.chat.clientJoinRoom, function (body) {
             var joinBinder = new Binder(socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateJoinRoom());
             joinBinder.add(middles.joinRoom());
             joinBinder.bind();
         });

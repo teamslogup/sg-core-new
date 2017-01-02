@@ -19,6 +19,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 var micro = require('microtime-nodejs');
 
+var coreUtils = require('../../utils');
+
 module.exports = {
     fields: {
         'name': {
@@ -162,22 +164,20 @@ module.exports = {
                     rows: []
                 };
 
-                var query = "SELECT v1.roomId as roomId, v2.nick as title, v2.deletedAt as deletedAt, v1.count as noReadCount, v2.folder as folder, v2.dateFolder as dateFolder, v2.name as name, v1.chatType as chatType, v1.chatMessage as chatMessage " +
-                    "FROM (SELECT a.roomId, a.chatType, a.chatMessage, count(case when a.createdAt > a.roomUserUpdatedAt then 1 else null end) as count, a.createdAt as createdAT FROM (SELECT room.id as roomId, chatHistory.createdAt as createdAt, chatHistory.type as chatType, chatHistory.message as chatMessage, roomUser.updatedAt as roomUserUpdatedAt " +
+                var query = "SELECT v1.roomId as id, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
+                    "FROM (SELECT a.roomId, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +
                     "FROM `ChatRooms` as room " +
                     "LEFT JOIN `ChatRoomUsers` as roomUser ON room.id = roomUser.roomId " +
                     "LEFT JOIN (SELECT chatHistory.* FROM ChatHistories as chatHistory LEFT JOIN ChatRoomUsers as roomUser ON chatHistory.roomId = roomUser.roomId WHERE roomUser.userId = " + options.userId + " AND chatHistory.createdAt > roomUser.createdAt) as chatHistory ON room.id = chatHistory.roomId " +
                     "LEFT JOIN `Users` as user ON user.id = roomUser.userId " +
                     "WHERE room.isPrivate = TRUE AND roomUser.userId = " + options.userId + " AND roomUser.deletedAt IS NULL " +
                     "ORDER BY chatHistory.createdAt DESC) AS a GROUP BY a.roomId ) as v1 " +
-                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, image.folder as folder, image.dateFolder as dateFolder, image.name as name FROM ChatRoomUsers as roomUser " +
+                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, userImages.id as userImageId, image.folder as folder, image.dateFolder as dateFolder, image.name as name FROM ChatRoomUsers as roomUser " +
                     "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
                     "LEFT JOIN Images as image ON image.id = userImages.imageId " +
                     "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId GROUP BY roomUserId " +
-                    "ORDER BY createdAt DESC";
-
-                console.log(query);
+                    "ORDER BY chatCreatedAt DESC";
 
                 sequelize.query(query, {
                     type: sequelize.QueryTypes.SELECT,
@@ -185,7 +185,15 @@ module.exports = {
                 }).then(function (result) {
 
                     chatRoom.count = result.length;
-                    chatRoom.rows = result;
+                    chatRoom.rows = coreUtils.objectify.convert(result, {
+                        user: {
+                            userImages: [{
+                                image: {}
+                            }]
+                        },
+                        chatHistories: [{}]
+                    });
+
                     return true;
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {

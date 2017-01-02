@@ -8,11 +8,17 @@ top.hasAuthorization = function () {
             return next();
         }
 
-        if (req.user.id == req.body.userId) {
-            return next();
+        if (req.method == 'GET') {
+            if (req.user.id == req.query.userId) {
+                return next();
+            }
         } else {
-            res.hjson(req, next, 403);
+            if (req.user.id == req.body.userId) {
+                return next();
+            }
         }
+
+        res.hjson(req, next, 403);
 
     };
 };

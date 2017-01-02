@@ -146,6 +146,14 @@ var middles = {
 
         }
     },
+    validateJoinRoom: function () {
+        return function (socket, payload, next) {
+
+            validateManager.check('roomId', '400_12').isId();
+
+            validateManager.checkError(socket, payload, next);
+        }
+    },
     validateLeaveRoom: function () {
         return function (socket, payload, next) {
 
