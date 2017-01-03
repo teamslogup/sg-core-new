@@ -16,8 +16,6 @@ var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
 var OptionalTerms = require('./optional-terms');
 var LoginHistory = require('./login-history');
-var Notification = require('./notification');
-var NotificationSendType = require('./notification-send-type');
 var NotificationBox = require('./notification-box');
 var NotificationSwitch = require('./notification-switch');
 var NotificationPublicSwitch = require('./notification-public-switch');
@@ -47,9 +45,7 @@ var models = {
     Terms: Terms,
     OptionalTerms: OptionalTerms,
     LoginHistory: LoginHistory,
-    Notification: Notification,
     NotificationBox: NotificationBox,
-    NotificationSendType: NotificationSendType,
     NotificationSwitch: NotificationSwitch,
     NotificationPublicSwitch: NotificationPublicSwitch,
     UserImage: UserImage,

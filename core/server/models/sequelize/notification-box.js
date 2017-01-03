@@ -18,12 +18,9 @@ module.exports = {
             asReverse: 'reports',
             allowNull: false
         },
-        'notificationId': {
-            reference: 'Notification',
-            referenceKey: 'id',
-            as: 'notification',
-            asReverse: 'notificationBoxes',
-            allowNull: false
+        'key': {
+            'type': Sequelize.STRING,
+            'allowNull': false
         },
         'payload': {
             'type': Sequelize.STRING,
@@ -82,7 +79,6 @@ module.exports = {
                         'limit': parseInt(options.size),
                         'where': where,
                         'order': [[options.orderBy, options.sort]],
-                        'include': sequelize.models.NotificationBox.getNotificationBoxInclude(),
                         'transaction': t
                     }).then(function (data) {
                         if (data && data.rows.length > 0) {

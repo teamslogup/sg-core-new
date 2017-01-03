@@ -25,104 +25,52 @@ function makeAuthEmailUrl(redirects, auth) {
 
 module.exports = {
     all: {
-        sendNotification: function (userId, notificationKey, payload, callback) {
+        sendNotification: function (userId, notification, payload, callback) {
             var _this = this;
             var user;
-            var notification;
 
             sequelize.models.User.findUserNotificationInfo(userId, function (status, data) {
                 if (status == 200) {
                     user = data;
 
-                    _this.loadNotification(notificationKey, function (status, data) {
+                    _this.createdNotificationBox(user, notification, payload, function (status, data) {
 
                         if (status == 200) {
 
-                            notification = data;
+                            var sendTypes = notification.sendTypes;
 
-                            _this.createdNotificationBox(user, notification, payload, function (status, data) {
+                            for (var key in sendTypes) {
 
-                                if (status == 200) {
+                                if (!_this.isNotificationSwitchOn(user, key)) {
+                                    continue;
+                                }
 
-                                    for (var i = 0; i < notification.notificationSendTypes.length; i++) {
+                                _this.replaceMagicKey(sendTypes[key], payload, user.language, function (isSuccess, title, body) {
 
-                                        if (notification.notificationType == NOTIFICATION.notificationTypeApplication) {
-                                            if (!_this.isNotificationSwitchOn(user, notification.notificationSendTypes[i].id)) {
-                                                continue;
-                                            }
-                                        } else {
-                                            if (!_this.isNotificationPublicSwitchOn(user, notification.notificationSendTypes[i].notificationType, notification.notificationSendTypes[i].sendType)) {
-                                                continue;
-                                            }
-                                        }
-
-                                        _this.replaceMagicKey(notification.notificationSendTypes[i], payload, user.language, function (isSuccess, sendType, title, body) {
-
-                                            if (isSuccess) {
-                                                _this.send(user, sendType, title, body, function (status, data) {
-                                                    if (status == 204) {
-                                                        if (callback) callback(status, data);
-                                                    } else {
-                                                        if (callback) callback(status, data);
-                                                    }
-                                                });
-
+                                    if (isSuccess) {
+                                        _this.send(user, key, title, body, function (status, data) {
+                                            if (status == 204) {
+                                                if (callback) callback(status, data);
                                             } else {
-                                                if (callback)callback(204);
+                                                if (callback) callback(status, data);
                                             }
-
                                         });
 
+                                    } else {
+                                        if (callback)callback(204);
                                     }
 
-                                } else {
-                                    if (callback) callback(204);
-                                }
-                            });
+                                });
+
+                            }
 
                         } else {
-                            if (callback) callback(status, data);
+                            if (callback) callback(204);
                         }
                     });
 
                 } else {
                     if (callback) callback(204);
-                }
-            });
-
-        },
-        loadNotification: function (notificationKey, callback) {
-
-            var notification;
-
-            return sequelize.models.Notification.findOne({
-                where: {
-                    key: notificationKey
-                },
-                include: {
-                    model: sequelize.models.NotificationSendType,
-                    as: 'notificationSendTypes'
-                }
-            }).then(function (data) {
-
-                if (data) {
-                    notification = data;
-                    return true;
-                } else {
-                    sequelize.models.Notification.create(NOTIFICATIONS[notificationKey], {
-                        include: {
-                            model: sequelize.models.NotificationSendType,
-                            as: 'notificationSendTypes'
-                        }
-                    }).then(function (data) {
-                        notification = data;
-                        return true;
-                    });
-                }
-
-            }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
-                if (isSuccess) {
-                    callback(200, notification);
                 }
             });
 
@@ -135,7 +83,7 @@ module.exports = {
             if (notification.isStored) {
                 var notificationBox = sequelize.models.NotificationBox.build({
                     userId: user.id,
-                    notificationId: notification.id,
+                    key: notification.key,
                     payload: uploadData
                 });
                 notificationBox.create(function (status, data) {
@@ -150,11 +98,11 @@ module.exports = {
             }
 
         },
-        isNotificationSwitchOn: function (user, notificationSendTypeId) {
+        isNotificationSwitchOn: function (user, sendType) {
 
             var notificationSwitch = user.notificationSwitches;
             for (var i = 0; i < notificationSwitch.length; ++i) {
-                if (notificationSwitch[i].notificationSendTypeId == notificationSendTypeId) {
+                if (notificationSwitch[i].sendType == sendType) {
                     return false;
                 }
             }
@@ -162,19 +110,7 @@ module.exports = {
             return true;
 
         },
-        isNotificationPublicSwitchOn: function (user, notificationType, sendType) {
-
-            var notificationPublicSwitch = user.notificationPublicSwitches;
-            for (var i = 0; i < notificationPublicSwitch.length; ++i) {
-                if (notificationPublicSwitch[i].notificationType == notificationType && notificationPublicSwitch[i].sendType == sendType) {
-                    return false;
-                }
-            }
-
-            return true;
-
-        },
-        replaceMagicKey: function (notificationSendType, payload, language, callback) {
+        replaceMagicKey: function (sendType, payload, language, callback) {
 
             var localLanguage;
             var title;
@@ -183,10 +119,10 @@ module.exports = {
             if (LANGUAGES.hasOwnProperty(language)) {
                 localLanguage = LANGUAGES[language];
 
-                if (localLanguage.hasOwnProperty(notificationSendType.title) && localLanguage.hasOwnProperty(notificationSendType.body)) {
+                if (localLanguage.hasOwnProperty(sendType.title) && localLanguage.hasOwnProperty(sendType.body)) {
 
-                    title = localLanguage[notificationSendType.title];
-                    body = localLanguage[notificationSendType.body];
+                    title = localLanguage[sendType.title];
+                    body = localLanguage[sendType.body];
 
                     for (var key in payload) {
                         if (payload.hasOwnProperty(key)) {
@@ -194,7 +130,7 @@ module.exports = {
                         }
                     }
 
-                    return callback(true, notificationSendType.sendType, title, body);
+                    return callback(true, title, body);
                 }
             }
 
@@ -384,55 +320,5 @@ module.exports = {
                 callback(204);
             }
         }
-    },
-    init: function (callback) {
-        var bodyArray = Object.keys(NOTIFICATIONS).map(function (key) {
-            return NOTIFICATIONS[key];
-        });
-
-        sequelize.transaction(function (t) {
-
-            return sequelize.models.Notification.findAll({
-                include: {
-                    model: sequelize.models.NotificationSendType,
-                    as: 'notificationSendTypes'
-                },
-                transaction: t
-            }).then(function (data) {
-                for (var i = 0; i < data.length; i++) {
-                    for (var j = 0; j < bodyArray.length; j++) {
-                        if (bodyArray[j].key == data[i].key) {
-                            bodyArray.splice(j, 1);
-                        }
-                    }
-                }
-
-                if (bodyArray.length > 0) {
-                    var promises = [];
-
-                    for (var i = 0; i < bodyArray.length; i++) {
-                        var newPromise = sequelize.models.Notification.create(bodyArray[i], {
-                            include: {
-                                model: sequelize.models.NotificationSendType,
-                                as: 'notificationSendTypes'
-                            },
-                            transaction: t
-                        });
-                        promises.push(newPromise);
-                    }
-
-                    return Promise.all(promises);
-
-                } else {
-                    return true;
-                }
-
-            }).then(function (data) {
-                return true;
-            });
-
-        }).then(function (data) {
-            callback();
-        });
     }
 };

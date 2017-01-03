@@ -62,7 +62,7 @@ var api = {
                 essential: [],
                 resettable: [],
                 explains: {
-                    'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'type': 'notification type ' + STD.notification.enumPublicNotificationTypes.join(", "),
                     'isStored': 'notification-box에 저장할지 여부',
                     'isOption': '유저 switch option에 표시할 지 여부'
                 },
@@ -99,7 +99,7 @@ var api = {
                 essential: ['type', 'key', 'title', 'body', 'data', 'img', 'isStored', 'isOption', 'description'],
                 resettable: [],
                 explains: {
-                    'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'type': 'notification type ' + STD.notification.enumPublicNotificationTypes.join(", "),
                     'key': 'notification을 구분하는 유일한 키값',
                     'title': 'notification title',
                     'body': 'notification body',
@@ -143,7 +143,7 @@ var api = {
                 resettable: [],
                 explains: {
                     'key': 'notification을 구분하는 유일한 키값',
-                    'type': 'notification type ' + STD.notification.enumNotificationTypes.join(", "),
+                    'type': 'notification type ' + STD.notification.enumPublicNotificationTypes.join(", "),
                     'title': 'notification title',
                     'body': 'notification body',
                     'data': 'notification title',

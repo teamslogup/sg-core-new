@@ -5,9 +5,15 @@
 
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
-var STD = require('../../../../bridge/metadata/standards');
+
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+
+var META = require('../../../../bridge/metadata');
+var STD = META.std;
+
+var NOTIFICATIONS_PUBLIC = META.notifications.public;
+var ENUM_NOTIFICATIONS_PUBLIC = Object.keys(NOTIFICATIONS_PUBLIC);
 
 module.exports = {
     fields: {
@@ -18,10 +24,10 @@ module.exports = {
             asReverse: 'notificationPublicSwitches',
             allowNull: false
         },
-        'notificationType': {
+        'key': {
             'type': Sequelize.ENUM,
             'allowNull': false,
-            'values': STD.notification.enumPublicNotificationTypes
+            'values': ENUM_NOTIFICATIONS_PUBLIC
         },
         'sendType': {
             'type': Sequelize.ENUM,
@@ -41,7 +47,7 @@ module.exports = {
     options: {
         "indexes": [{
             unique: true,
-            fields: ['userId', 'notificationType', 'sendType']
+            fields: ['userId', 'key', 'sendType']
         }],
         'timestamps': true,
         'charset': 'utf8',
@@ -56,16 +62,12 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             getUserPublicNotificationFields: function () {
-                return ['notificationType', 'sendType'];
+                return ['key', 'sendType'];
             },
-            'deleteNotificationPublicSwitch': function (userId, notificationType, sendType, callback) {
+            'deleteNotificationPublicSwitch': function (body, callback) {
 
                 sequelize.models.NotificationPublicSwitch.destroy({
-                    where: {
-                        userId: userId,
-                        notificationType: notificationType,
-                        sendType: sendType
-                    }
+                    where: body
                 }).then(function () {
                     return true
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {

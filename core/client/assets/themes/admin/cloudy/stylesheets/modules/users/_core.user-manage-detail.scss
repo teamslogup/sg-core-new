@@ -1,129 +1,40 @@
 #sg-user-manage-detail {
-    position: fixed;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    z-index: 12;
-
-    background-color: rgba(0, 0, 0, 0.5);
-    overflow: auto;
 
     $sg-user-manage-detail-padding-mobile: 18px;
     $sg-user-manage-detail-padding: 18px;
 
     $sg-user-manage-detail-container-width: 700px;
 
-    .sg-user-manage-detail-fake {
-        position: fixed;
+    .sg-user-manage-detail-container {
+        border-radius: 5px;
+
+        z-index: 13;
+
+        position: relative;
+
         top: 0;
         left: 0;
 
         width: 100%;
+        min-width: 0;
         height: 100%;
 
-        z-index: 12;
-    }
+        background-color: white;
 
-    .sg-user-manage-detail-container, .sg-user-manage-detail-container-hide {
-        z-index: 13;
+        .sg-user-manage-detail-close-btn {
+            position: absolute;
+            top: -34px;
+            right: 0;
 
-        position: relative;
-        top: 0;
+            width: 30px;
+            height: 30px;
 
-        width: 100%;
-        min-width: 0;
+            cursor: pointer;
 
-        //background-color: #f1f3f8;
-        min-height: 700px;
-
-        @media screen and (min-width: $web-min-width) {
-            max-width: $sg-user-manage-detail-container-width;
-            height: auto;
-
-            top: 100px;
-            left: calc(50% - 350px);
-
-            margin-bottom: 25px;
-        }
-
-        @media screen and (min-width: $web-min-width) and (max-width: $sg-user-manage-detail-container-width) {
-            //margin-left: 12px;
-            //margin-right: 12px;
-            //width: calc(100% - 24px);
-            left: auto;
-        }
-
-        .sg-user-manage-detail-top {
-            //padding-left: $sg-user-manage-detail-padding-mobile;
-            //padding-right: $sg-user-manage-detail-padding-mobile;
-            //
-            //@media screen and (min-width: $mobile-max-width) {
-            //    padding-left: $sg-user-manage-detail-padding;
-            //    padding-right: $sg-user-manage-detail-padding;
-            //}
-
-            height: 50px;
-
-            //box-shadow: 0 0 16px 2px rgba(4, 0, 0, 0.1);
-
-            color: white;
-
-            @include after-clear();
-
-            .sg-user-manage-detail-top-left {
-                float: left;
-
-                cursor: pointer;
-                .sg-user-manage-detail-top-left-menu-btn {
-                    width: 24px;
-                    height: 24px;
-                    margin: 12px;
-                }
-
-            }
-            .sg-user-manage-detail-top-center {
-                float: left;
-                margin-top: 6px;
-
-                border-left: 1px solid #2e314d;
-                padding-left: 12px;
-                .sg-user-manage-detail-top-center-aid {
-
-                }
-                .sg-user-manage-detail-top-center-created-at {
-                    font-size: 11px;
-                    color: #f1f3f8;
-                }
-
-            }
-            .sg-user-manage-detail-top-right {
-                float: right;
-
-                @include after-clear();
-                .sg-user-manage-detail-top-right-delete {
-                    float: left;
-                }
-                .sg-user-manage-detail-top-right-edit {
-                    float: left;
-                }
-                .sg-user-manage-detail-top-right-notification-box {
-                    float: left;
-                }
-
-                .sg-user-manage-detail-top-right-close-btn {
-                    float: left;
-                    width: 24px;
-                    height: 24px;
-
-                    margin-top: 12px;
-                    margin-right: 12px;
-
-                    cursor: pointer;
-                }
-            }
+            background-image: url('/assets/themes/admin/cloudy/images/ic_close_24_2x.png');
+            background-repeat: no-repeat;
+            background-size: 24px;
+            background-position: center;
         }
 
         .sg-user-manage-detail-top-sub {

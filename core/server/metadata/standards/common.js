@@ -30,13 +30,10 @@ var standards = {
         "includeProfileItems": []
     },
     "notification": {
-        "enumNotificationTypes": ["notice", "event", "emergency", "report", "application"],
         "enumPublicNotificationTypes": ["notice", "event", "emergency"],
         "notificationTypeNotice": "notice",
         "notificationTypeEvent": "event",
-        "notificationTypeReport": "report",
         "notificationTypeEmergency": "emergency",
-        "notificationTypeApplication": "application",
         "enumSendTypes": ["email", "push", "message"],
         "sendTypeEmail": "email",
         "sendTypePush": "push",
@@ -145,7 +142,7 @@ var standards = {
         "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
-        "modalSize": "md"
+        "modalSize": "lg"
     },
     "replaceApi": {
         'userDel': ""

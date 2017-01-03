@@ -18,6 +18,7 @@ gets.getNotificationSwitch = function () {
     return function (req, res, next) {
 
         var NOTIFICATION = req.meta.std.notification;
+        var NOTIFICATIONS_PUBLIC = req.meta.notifications.public;
 
         var notificationPublicSwitch = [];
 
@@ -29,26 +30,26 @@ gets.getNotificationSwitch = function () {
             order: [['createdAt', 'ASC']]
         }).then(function (data) {
 
-            for (var i = 0; i < NOTIFICATION.enumNotificationTypes.length; i++) {
+            for (var key in NOTIFICATIONS_PUBLIC) {
 
-                if (NOTIFICATION.enumNotificationTypes[i] == NOTIFICATION.notificationTypeApplication || NOTIFICATION.enumNotificationTypes[i] == NOTIFICATION.notificationTypeReport) {
-                    break;
-                }
+                if (NOTIFICATIONS_PUBLIC[key] && key != NOTIFICATION.notificationTypeEmergency) {
 
-                notificationPublicSwitch.push({
-                    notificationType: NOTIFICATION.enumNotificationTypes[i],
-                    sendType: req.query.sendType,
-                    switch: true
-                });
+                    var isSwitchOn = true;
 
-                for (var j = 0; j < data.length; j++) {
-
-                    if (data[j].notificationType == NOTIFICATION.enumNotificationTypes[i]) {
-                        notificationPublicSwitch[i].switch = false;
-                        break;
+                    for (var i = 0; i < data.length; i++) {
+                        if (key == data[i].key) {
+                            isSwitchOn = false;
+                            data.splice(i, 1);
+                        }
                     }
-                }
 
+                    notificationPublicSwitch.push({
+                        key: NOTIFICATIONS_PUBLIC[key].key,
+                        title: NOTIFICATIONS_PUBLIC[key].boxTitle,
+                        sendType: req.query.sendType,
+                        switch: isSwitchOn
+                    });
+                }
             }
 
             req.data = notificationPublicSwitch;

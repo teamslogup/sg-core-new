@@ -18,12 +18,15 @@ module.exports = {
             asReverse: 'notificationSwitches',
             allowNull: false
         },
-        'notificationSendTypeId': {
-            reference: 'NotificationSendType',
-            referenceKey: 'id',
-            as: 'notificationSendType',
-            asReverse: 'notificationSwitches',
-            allowNull: false
+        'key': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'sendType': {
+            'type': Sequelize.ENUM,
+            'allowNull': false,
+            'values': STD.notification.enumSendTypes,
+            'defaultValue': STD.notification.sendTypePush
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -37,7 +40,7 @@ module.exports = {
     options: {
         "indexes": [{
             unique: true,
-            fields: ['userId', 'notificationSendTypeId']
+            fields: ['userId', 'key', 'sendType']
         }],
         'timestamps': true,
         'charset': 'utf8',
@@ -54,13 +57,10 @@ module.exports = {
             getUserNotificationFields: function () {
                 return ['notificationSendTypeId'];
             },
-            'deleteNotificationSwitch': function (userId, notificationSendTypeId, callback) {
+            'deleteNotificationSwitch': function (body, callback) {
 
                 sequelize.models.NotificationSwitch.destroy({
-                    where: {
-                        userId: userId,
-                        notificationSendTypeId: notificationSendTypeId
-                    }
+                    where: body
                 }).then(function () {
                     return true
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {

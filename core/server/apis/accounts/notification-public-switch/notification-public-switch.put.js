@@ -8,7 +8,6 @@ put.validate = function () {
         var NOTIFICATION = req.meta.std.notification;
 
         req.check('userId', '400_12').isInt();
-        req.check('notificationType', '400_28').isEnum(NOTIFICATION.enumNotificationTypes);
         req.check('sendType', '400_28').isEnum(NOTIFICATION.enumSendTypes);
         req.check('switch', '400_20').isBoolean();
         req.sanitize('switch').toBoolean();
@@ -18,12 +17,32 @@ put.validate = function () {
     };
 };
 
+put.validateKey = function () {
+    return function (req, res, next) {
+        var NOTIFICATIONS_PUBLIC = req.meta.notifications.public;
+
+        if (NOTIFICATIONS_PUBLIC[req.body.key]) {
+            next();
+        } else {
+            return res.hjson(req, next, 400, {
+                code: '400_3'
+            });
+        }
+    }
+};
+
 put.updateReport = function () {
     return function (req, res, next) {
 
+        var body = {
+            userId: req.body.userId,
+            key: req.body.key,
+            sendType: req.body.sendType
+        };
+
         if (req.body.switch) {
 
-            req.models.NotificationPublicSwitch.deleteNotificationPublicSwitch(req.body.userId, req.body.notificationType, req.body.sendType, function (status, data) {
+            req.models.NotificationPublicSwitch.deleteNotificationPublicSwitch(body, function (status, data) {
 
                 if (status == 204) {
                     next();
@@ -34,12 +53,6 @@ put.updateReport = function () {
             });
 
         } else {
-
-            var body = {
-                userId: req.body.userId,
-                notificationType: req.body.notificationType,
-                sendType: req.body.sendType
-            };
 
             var instance = req.models.NotificationPublicSwitch.build(body);
             instance.create(function (status, data) {

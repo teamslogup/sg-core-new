@@ -4,9 +4,7 @@ var resource = filePath[filePath.length - 1];
 
 var top = require('./' + resource + '.top.js');
 var gets = require('./' + resource + '.gets.js');
-var post = require('./' + resource + '.post.js');
 var put = require('./' + resource + '.put.js');
-var del = require('./' + resource + '.del.js');
 
 var express = require('express');
 var router = new express.Router();
@@ -15,6 +13,9 @@ var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata');
 const STD = META.std;
+
+var NOTIFICATIONS_PUBLIC = META.notifications.public;
+var ENUM_NOTIFICATIONS_PUBLIC = Object.keys(NOTIFICATIONS_PUBLIC);
 
 var api = {
     gets: function (isOnlyParams) {
@@ -26,10 +27,10 @@ var api = {
                 resettable: [],
                 explains: {
                     'userId': '유저 id',
-                    'sendType': '알림 전송 형태' + STD.notification.enumSendTypes.join(',')
+                    'sendType': '알림 전송 형태 ' + STD.notification.enumSendTypes.join(',')
                 },
                 response: {rows: [resforms.notification]},
-                title: '알림 전체 얻기',
+                title: 'public 알림 전체 얻기',
                 state: 'development'
             };
 
@@ -54,58 +55,21 @@ var api = {
             }
         };
     },
-    post: function (isOnlyParams) {
-        return function (req, res, next) {
-
-            var params = {
-                acceptable: ['notificationType', 'sendType'],
-                essential: ['notificationType', 'sendType'],
-                resettable: [],
-                explains: {
-                    'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
-                    'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", ")
-                },
-                response: resforms.notification,
-                title: '알림 수신거부 설정',
-                state: 'development'
-            };
-
-            if (!isOnlyParams) {
-                var apiCreator = new HAPICreator(req, res, next);
-
-                apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.validator(
-                    params.acceptable,
-                    params.essential,
-                    params.resettable
-                ));
-                apiCreator.add(post.validate());
-                apiCreator.add(post.createNotificationSwitch());
-                apiCreator.add(post.supplement());
-                apiCreator.run();
-
-
-            }
-            else {
-                return params;
-            }
-        };
-    },
     put: function (isOnlyParams) {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId', 'notificationType', 'sendType', 'switch'],
-                essential: ['userId', 'notificationType', 'sendType', 'switch'],
+                acceptable: ['userId', 'key', 'sendType', 'switch'],
+                essential: ['userId', 'key', 'sendType', 'switch'],
                 resettable: [],
                 explains: {
                     'userId': '유저 id',
-                    'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
-                    'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", "),
+                    'key': "알림 키 " + ENUM_NOTIFICATIONS_PUBLIC.join(", "),
+                    'sendType': "알림 전송 형태 " + STD.notification.enumSendTypes.join(", "),
                     'switch': '온오프 여부'
                 },
                 response: resforms.notification,
-                title: '알림 스위칭',
+                title: 'public 알림 수신 설정',
                 state: 'development'
             };
 
@@ -120,6 +84,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(put.validate());
+                apiCreator.add(put.validateKey());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(put.updateReport());
                 apiCreator.add(put.supplement());
@@ -131,50 +96,11 @@ var api = {
                 return params;
             }
         };
-    },
-    delete: function (isOnlyParams) {
-        return function (req, res, next) {
-
-            var params = {
-                acceptable: ['notificationType', 'sendType'],
-                essential: ['notificationType', 'sendType'],
-                resettable: [],
-                explains: {
-                    'notificationType': "노티피케이션 형태 " + STD.notification.enumNotificationTypes.join(", "),
-                    'sendType': "노티피케이션 전송 형태 " + STD.notification.enumSendTypes.join(", ")
-                },
-                response: resforms.notification,
-                title: '알림 수신거부 해제',
-                state: 'development'
-            };
-
-            if (!isOnlyParams) {
-                var apiCreator = new HAPICreator(req, res, next);
-
-                apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.validator(
-                    params.acceptable,
-                    params.essential,
-                    params.resettable
-                ));
-                apiCreator.add(del.validate());
-                apiCreator.add(del.deleteNotificationSwitch());
-                apiCreator.add(del.supplement());
-                apiCreator.run();
-
-
-            }
-            else {
-                return params;
-            }
-        };
-    },
+    }
 };
 
 router.get('/' + resource, api.gets());
-router.post('/' + resource, api.post());
 router.put('/' + resource, api.put());
-router.delete('/' + resource, api.delete());
 
 module.exports.router = router;
 module.exports.api = api;
