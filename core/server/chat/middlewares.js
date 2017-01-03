@@ -5,6 +5,7 @@ var validateManager = require('./validateManager');
 var coreUtils = require('../utils');
 var STD = require('../../../bridge/metadata/standards');
 var NOTIFICATIONS = require('../../../bridge/metadata/notifications');
+var errorHandler = require('sg-sequelize-error-handler');
 
 var middles = {
 
@@ -31,7 +32,7 @@ var middles = {
 
     },
     isLoggedIn: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
             if (socket.request.session) {
                 next();
             } else {
@@ -40,7 +41,7 @@ var middles = {
         }
     },
     createRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var body = {
                 name: ''
@@ -66,7 +67,7 @@ var middles = {
         }
     },
     joinRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -80,6 +81,30 @@ var middles = {
                 if (status == 200) {
 
                     var roomId = body.roomId;
+
+                    // data.room.roomUsers.forEach(function (roomUser) {
+                    //
+                    //     sequelize.models.LoginHistory.findAllDataForQuery({
+                    //         where: {
+                    //             userId: roomUser.user.id
+                    //         }
+                    //     }, function (status, data) {
+                    //
+                    //         if (status == 200) {
+                    //             data.forEach(function (loginHistory) {
+                    //
+                    //                 if (io.sockets.connected[loginHistory.session]) {
+                    //                     var remoteSocket = io.sockets.connect[loginHistory.session];
+                    //
+                    //                     remoteSocket.join(roomId);
+                    //                 }
+                    //
+                    //             });
+                    //         }
+                    //
+                    //     });
+                    //
+                    // });
 
                     socket.join(roomId);
                     socket.emit(STD.chat.serverJoinRoom, roomId);
@@ -98,7 +123,7 @@ var middles = {
         }
     },
     joinAllRoomsFromDB: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
             var user = socket.request.user;
 
             var body = {
@@ -124,7 +149,7 @@ var middles = {
         }
     },
     leaveRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
             var roomId = payload.roomId;
@@ -146,8 +171,16 @@ var middles = {
 
         }
     },
+    validateJoinRoom: function () {
+        return function (io, socket, payload, next) {
+
+            validateManager.check('roomId', '400_12').isId();
+
+            validateManager.checkError(socket, payload, next);
+        }
+    },
     validateLeaveRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             validateManager.check('roomId', '400_12').isId();
 
@@ -155,7 +188,7 @@ var middles = {
         }
     },
     validateTyping: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             validateManager.check('roomId', '400_12').isId();
             validateManager.check('isTyping', '400_20').isBoolean();
@@ -164,7 +197,7 @@ var middles = {
         }
     },
     validateSendMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
             var CHAT_HISTORY = STD.chatHistory;
             validateManager.check('roomId', '400_12').isId();
             validateManager.check('type', '400_20').isEnum(CHAT_HISTORY.chatHistoryEnum);
@@ -181,14 +214,14 @@ var middles = {
         }
     },
     validateReadMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
             validateManager.check('roomId', '400_12').isId();
 
             validateManager.checkError(socket, payload, next);
         }
     },
     checkPrivateChatRoomUser: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             if (payload.isPrivate) {
                 var user = socket.request.user;
@@ -207,7 +240,7 @@ var middles = {
         }
     },
     sendMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -240,7 +273,7 @@ var middles = {
         }
     },
     readMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -259,7 +292,7 @@ var middles = {
         }
     },
     onTyping: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -273,7 +306,7 @@ var middles = {
         }
     },
     loadNotification: function (key, options) {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             sequelize.models.Notification.loadNotification(key, options, function (status, data) {
                 if (status == 200) {

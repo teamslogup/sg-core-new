@@ -15,8 +15,8 @@ module.exports.init = function (io) {
         var redisAuth;
         var redisUrl = url.parse(CONFIG.db.socketRedis);
 
-        if (redisUrl) {
-            redisAuth = redisUrl.split(':');
+        if (redisUrl.auth) {
+            redisAuth = redisUrl.auth.split(':');
 
             var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
                 auth_pass: redisAuth[1]
@@ -38,28 +38,29 @@ module.exports.init = function (io) {
         console.log('session', socket.request.session);
 
         socket.on(STD.chat.clientCreateRoom, function (body) {
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.createRoom());
             joinBinder.bind();
         });
 
         socket.on(STD.chat.clientJoinRoom, function (body) {
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.validateJoinRoom());
             joinBinder.add(middles.joinRoom());
             joinBinder.bind();
         });
 
         socket.on(STD.chat.clientJoinAllRooms, function (body) {
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.joinAllRoomsFromDB());
             joinBinder.bind();
         });
 
         socket.on(STD.chat.clientLeaveRoom, function (body) {
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateLeaveRoom());
             joinBinder.add(middles.leaveRoom());
@@ -67,7 +68,7 @@ module.exports.init = function (io) {
         });
 
         socket.on(STD.chat.clientTyping, function (body) {
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateTyping());
             joinBinder.add(middles.onTyping());
@@ -76,7 +77,7 @@ module.exports.init = function (io) {
 
         socket.on(STD.chat.clientSendMessage, function (body) {
 
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateSendMessage());
             // joinBinder.add(middles.loadNotification(STD.notification.app.notiChat.key, STD.notification.app.notiChat));
@@ -88,7 +89,7 @@ module.exports.init = function (io) {
 
         socket.on(STD.chat.clientReadMessage, function (body) {
 
-            var joinBinder = new Binder(socket, body);
+            var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateReadMessage());
             joinBinder.add(middles.readMessage());

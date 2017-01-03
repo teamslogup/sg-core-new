@@ -7,7 +7,7 @@ export default function notificationSwitchManager(NotificationSwitch) {
     function updateNotificationSwitch(notificationSwitch, callback) {
 
         NotificationSwitch.update({}, notificationSwitch, function (data) {
-            callback(200, data);
+            callback(204, data);
         }, function (data) {
             callback(data.status, data.data);
         });

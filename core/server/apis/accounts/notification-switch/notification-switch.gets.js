@@ -2,7 +2,6 @@ var gets = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var MICRO = require('microtime-nodejs');
-var NOTIFICATIONS = require('../../../../../bridge/metadata/notifications');
 
 gets.validate = function () {
     return function (req, res, next) {
@@ -19,51 +18,43 @@ gets.validate = function () {
 gets.getNotificationSwitch = function () {
     return function (req, res, next) {
 
+        var NOTIFICATIONS = req.meta.notifications;
         var notificationSwitch = [];
 
-        req.models.NotificationSendType.findAll({
+        req.models.NotificationSwitch.findAll({
             where: {
+                userId: req.query.userId,
                 sendType: req.query.sendType
-            },
-            include: [{
-                model: req.models.Notification,
-                as: 'notification',
-                where: {
-                    notificationType: req.meta.std.notification.notificationTypeApplication
-                }
-            },{
-                model: req.models.NotificationSwitch,
-                as: 'notificationSwitches',
-                where: {
-                    userId: req.query.userId
-                },
-                required: false
-            }],
-            order: [['notificationId', 'ASC']]
+            }
         }).then(function (data) {
 
-            for (var i = 0; i < data.length; i++) {
+            for (var key in NOTIFICATIONS) {
+                if (NOTIFICATIONS[key] && key != 'public') {
 
-                if (data[i].notificationSwitches.length > 0) {
+                    var isSwitchOn = true;
+
+                    for (var i = 0; i < data.length; i++) {
+                        if (key == data[i].key) {
+                            isSwitchOn = false;
+                            data.splice(i, 1);
+                        }
+                    }
+
                     notificationSwitch.push({
-                        title: data[i].title,
-                        notificationSendTypeId: data[i].id,
-                        switch: false
+                        key: NOTIFICATIONS[key].key,
+                        title: NOTIFICATIONS[key].boxTitle,
+                        sendType: req.query.sendType,
+                        switch: isSwitchOn
                     });
-                } else {
-                    notificationSwitch.push({
-                        title: data[i].title,
-                        notificationSendTypeId: data[i].id,
-                        switch: true
-                    });
+
                 }
-
             }
 
             req.data = notificationSwitch;
             next();
 
         });
+
     };
 };
 

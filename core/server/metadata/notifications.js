@@ -1,37 +1,102 @@
 var notifications = {
     "notiChat": {
-        "key": "notiNameChat",
+        "key": "notiChat",
         "isStored": false,
         "isOption": true,
-        "notificationType": "application",
-        "notificationBoxTitle": "kNotiNameChatTitle",
-        "notificationBoxBody": "kNotiNameChatBody",
-        "notificationSendTypes": [{
-            "sendType": "push",
-            "title": "kNotiNameChatTitle",
-            "body": "kNotiNameChatBody"
-        }]
+        "boxTitle": "kNotiChatTitle",
+        "boxBody": "kNotiChatBody",
+        "sendTypes": {
+            "push": {
+                "title": "kNotiChatTitle",
+                "body": "kNotiChatBody"
+            }
+        }
     },
     "notiReport": {
-        "key": "notiNameReport",
+        "key": "notiReport",
         "isStored": false,
         "isOption": true,
-        "notificationType": "report",
-        "notificationBoxTitle": "kNotiNameReportBoxTitle",
-        "notificationBoxBody": "kNotiNameReportBoxBody",
-        "notificationSendTypes": [{
-            "sendType": "email",
-            "title": "kNotiNameReportEmailTitle",
-            "body": "kNotiNameReportEmailBody"
-        },{
-            "sendType": "push",
-            "title": "kNotiNameReportPushTitle",
-            "body": "kNotiNameReportPushBody"
-        },{
-            "sendType": "message",
-            "title": "kNotiNameReportMessageTitle",
-            "body": "kNotiNameReportMessageBody"
-        }]
+        "boxTitle": "kNotiReportTitle",
+        "boxBody": "kNotiReportBody",
+        "sendTypes": {
+            "email": {
+                "title": "kNotiReportEmailTitle",
+                "body": "kNotiReportEmailBody"
+            },
+            "push": {
+                "title": "kNotiReportPushTitle",
+                "body": "kNotiReportPushBody"
+            },
+            "message": {
+                "title": "kNotiReportMessageTitle",
+                "body": "kNotiReportMessageBody"
+            }
+        }
+    },
+    "public": {
+        "notice": {
+            "key": "notice",
+            "isStored": false,
+            "isOption": true,
+            "boxTitle": "kNotiNoticeTitle",
+            "boxBody": "kNotiNoticeBody",
+            "sendTypes": {
+                "email": {
+                    "title": "kNotiNoticeEmailTitle",
+                    "body": "kNotiNoticeEmailBody"
+                },
+                "push": {
+                    "title": "kNotiNoticePushTitle",
+                    "body": "kNotiNoticePushBody"
+                },
+                "message": {
+                    "title": "kNotiNoticeMessageTitle",
+                    "body": "kNotiNoticeMessageBody"
+                }
+            }
+        },
+        "event": {
+            "key": "event",
+            "isStored": false,
+            "isOption": true,
+            "boxTitle": "kNotiEventTitle",
+            "boxBody": "kNotiEventBody",
+            "sendTypes": {
+                "email": {
+                    "title": "kNotiEventEmailTitle",
+                    "body": "kNotiEventEmailBody"
+                },
+                "push": {
+                    "title": "kNotiEventPushTitle",
+                    "body": "kNotiEventPushBody"
+                },
+                "message": {
+                    "title": "kNotiEventMessageTitle",
+                    "body": "kNotiEventMessageBody"
+                }
+            }
+        },
+        "emergency": {
+            "key": "emergency",
+            "isStored": false,
+            "isOption": true,
+            "boxTitle": "kNotiEmergencyTitle",
+            "boxBody": "kNotiEmergencyBody",
+            "sendTypes": {
+                "email": {
+                    "title": "kNotiEmergencyEmailTitle",
+                    "body": "kNotiEmergencyEmailBody"
+                },
+                "push": {
+                    "title": "kNotiEmergencyPushTitle",
+                    "body": "kNotiEmergencyPushBody"
+                },
+                "message": {
+                    "title": "kNotiEmergencyMessageTitle",
+                    "body": "kNotiEmergencyMessageBody"
+                }
+            }
+        }
     }
 };
 

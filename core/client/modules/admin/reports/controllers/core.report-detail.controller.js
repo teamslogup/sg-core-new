@@ -15,11 +15,13 @@ export default function ReportDetailCtrl($scope, $uibModalInstance, scope, repor
 
     $scope.enablePush = false;
 
-    var loginHistories = report.author.loginHistories;
+    if (report.author != null) {
+        var loginHistories = report.author.loginHistories;
 
-    for (var i = 0; i < loginHistories.length; i++) {
-        if (loginHistories[i].token) {
-            $scope.enablePush = true;
+        for (var i = 0; i < loginHistories.length; i++) {
+            if (loginHistories[i].token) {
+                $scope.enablePush = true;
+            }
         }
     }
 

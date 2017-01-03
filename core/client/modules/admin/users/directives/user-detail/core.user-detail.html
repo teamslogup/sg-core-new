@@ -3,11 +3,8 @@
 
         <div class="sg-user-manage-detail-container">
 
-            <div class="sg-user-manage-detail-top">
-                <div class="sg-user-manage-detail-top-right">
-                    <img class="sg-user-manage-detail-top-right-close-btn"
-                         ng-src="/pages/admin/assets/images/ic_close_24_2x.png" ng-click="hideUserDetail()"/>
-                </div>
+            <div class="sg-user-manage-detail-close-btn">
+
             </div>
 
             <div class="sg-user-manage-detail-top-sub">
@@ -310,9 +307,9 @@
                             {{ notificationSwitch.title | translate}}
                         </div>
                         <div class="sg-user-manage-detail-notification-setting-item-checkbox">
-                            <input ng-model="notificationSwitch.switch" id="{{notificationSwitch.notificationSendTypeId}}" type="checkbox"
+                            <input ng-model="notificationSwitch.switch" id="{{notificationSwitch.key}}" type="checkbox"
                                    class="tgl tgl-light" ng-click="updateAppNotificationSwitch(notificationSwitch)">
-                            <label for="{{notificationSwitch.notificationSendTypeId}}" class="tgl-btn">
+                            <label for="{{notificationSwitch.key}}" class="tgl-btn">
                                 <div class="tgl-btn-on">On</div>
                                 <div class="tgl-btn-off">Off</div>
                             </label>
@@ -330,14 +327,14 @@
                     <div class="sg-user-manage-detail-notification-public-setting-item"
                          ng-repeat="notificationPublicSwitch in notificationPublicSwitches">
                         <div class="sg-user-manage-detail-notification-public-setting-item-title">
-                            {{ notificationPublicSwitch.notificationType | translate}}
+                            {{ notificationPublicSwitch.title | translate}}
                         </div>
                         <div class="sg-user-manage-detail-notification-public-setting-item-checkbox">
-                            <input ng-model="notificationPublicSwitch.switch" id="{{notificationPublicSwitch.notificationType}}"
+                            <input ng-model="notificationPublicSwitch.switch" id="{{notificationPublicSwitch.key}}"
                                    type="checkbox"
                                    class="tgl tgl-light"
                                    ng-click="updatePublicNotificationSwitch(notificationPublicSwitch)">
-                            <label for="{{notificationPublicSwitch.notificationType}}" class="tgl-btn">
+                            <label for="{{notificationPublicSwitch.key}}" class="tgl-btn">
                                 <div class="tgl-btn-on">On</div>
                                 <div class="tgl-btn-off">Off</div>
                             </label>
