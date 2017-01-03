@@ -152,6 +152,8 @@ module.exports = {
                     } else {
                         if (currentItem[temp[i]]) {
                             currentItem = currentItem[temp[i]];
+                        } else {
+                            return false;
                         }
 
                         currentIndex = currentIndex[temp[i]];
