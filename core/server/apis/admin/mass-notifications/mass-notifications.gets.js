@@ -25,7 +25,7 @@ gets.validate = function(){
             min: 1,
             max: COMMON.loadingMaxLength
         });
-        if (req.query.notificationType !== undefined) req.check("notificationType", "400_3").isEnum(NOTIFICATION.enumPublicNotificationTypes);
+        if (req.query.key !== undefined) req.check("key", "400_8").len(NOTIFICATION.minKeyLength, NOTIFICATION.maxKeyLength);
         if (req.query.sendType !== undefined) req.check("sendType", "400_3").isEnum(NOTIFICATION.enumSendTypes);
         if (req.query.isStored !== undefined) {
             req.check("isStored", "400_20").isBoolean();

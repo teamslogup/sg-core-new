@@ -11,12 +11,9 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
-        'notificationType': {
-            'type': Sequelize.ENUM,
-            'allowNull': false,
-            'values': STD.notification.enumPublicNotificationTypes,
-            'defaultValue': STD.notification.notificationTypeNotice,
-            'comment': "노티피케이션의 형태"
+        'key': {
+            'type': Sequelize.STRING,
+            'allowNull': false
         },
         'sendType': {
             'type': Sequelize.ENUM,
@@ -45,8 +42,8 @@ module.exports = {
     },
     options: {
         "indexes": [{
-            name: 'notificationType',
-            fields: ['notificationType']
+            name: 'key',
+            fields: ['key']
         }, {
             name: 'sendType',
             fields: ['sendType']
@@ -83,8 +80,8 @@ module.exports = {
                     where.isStored = options.isStored;
                 }
 
-                if (options.notificationType !== undefined) {
-                    where.notificationType = options.notificationType;
+                if (options.key !== undefined) {
+                    where.key = options.key;
                 }
 
                 if (options.sendType !== undefined) {

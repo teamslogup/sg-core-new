@@ -62,7 +62,7 @@ var api = {
                     "sort",
                     "last",
                     "size",
-                    "notificationType",
+                    "key",
                     "sendType",
                     "isStored"
                 ],
@@ -73,7 +73,7 @@ var api = {
                     "sort": "정렬 방식 " + STD.common.enumSortTypes.join(", "),
                     "last": "조회 기준 데이터 일자",
                     "size": "가져올 데이터 갯수",
-                    "notificationType": "전송 유형 " + STD.notification.enumPublicNotificationTypes.join(", "),
+                    "key": "전송 유형",
                     "sendType": "전송 방식 " + STD.notification.enumSendTypes.join(", "),
                     "isStored": "Box 저장 여부 true, false"
                 },
