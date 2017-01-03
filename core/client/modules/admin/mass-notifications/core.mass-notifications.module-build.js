@@ -1,5 +1,5 @@
-import MassNotificationsCtrl from './controllers/core.mass-notifications.controller';
 import routes from './config/core.mass-notifications.route';
+import MassNotificationsCtrl from './controllers/core.mass-notifications.controller';
 #{importCoreTheme}
 #{importAppTheme}
 

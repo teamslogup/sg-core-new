@@ -30,7 +30,8 @@ var standards = {
         "includeProfileItems": []
     },
     "notification": {
-        "enumNotificationTypes": ["notice", "event", "report", "emergency", "application"],
+        "enumNotificationTypes": ["notice", "event", "emergency", "report", "application"],
+        "enumPublicNotificationTypes": ["notice", "event", "emergency"],
         "notificationTypeNotice": "notice",
         "notificationTypeEvent": "event",
         "notificationTypeReport": "report",
@@ -51,7 +52,9 @@ var standards = {
         "maxImgLength": 60,
         "minImgLength": 1,
         "maxDescriptionLength": 60,
-        "minDescriptionLength": 1
+        "minDescriptionLength": 1,
+        "enumOrderBys": ["createdAt", "updatedAt"],
+        "defaultOrderBy": "createdAt"
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
@@ -156,7 +159,8 @@ var standards = {
         "isUseHttps": false,
         "isDuplicatedLogin": false,
         "isUseCluster": false,
-        "isUseChat": true
+        "isUseChat": true,
+        "isResponsive": true
     },
     "category": {
         "minNameLength": 1,

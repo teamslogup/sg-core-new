@@ -21,7 +21,7 @@ module.exports = {
         'notificationType': {
             'type': Sequelize.ENUM,
             'allowNull': false,
-            'values': STD.notification.enumNotificationTypes
+            'values': STD.notification.enumPublicNotificationTypes
         },
         'sendType': {
             'type': Sequelize.ENUM,
