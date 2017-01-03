@@ -55,7 +55,7 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             getUserNotificationFields: function () {
-                return ['notificationSendTypeId'];
+                return ['userId', 'key', 'sendType'];
             },
             'deleteNotificationSwitch': function (body, callback) {
 
