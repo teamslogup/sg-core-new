@@ -1,6 +1,6 @@
 var notifications = {
-    "notiChat": {
-        "key": "notiChat",
+    "chat": {
+        "key": "chat",
         "isStored": false,
         "isOption": true,
         "boxTitle": "kNotiChatTitle",
@@ -12,8 +12,8 @@ var notifications = {
             }
         }
     },
-    "notiReport": {
-        "key": "notiReport",
+    "report": {
+        "key": "report",
         "isStored": false,
         "isOption": true,
         "boxTitle": "kNotiReportTitle",

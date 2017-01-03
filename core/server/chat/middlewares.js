@@ -257,7 +257,7 @@ var middles = {
                     socket.emit(STD.chat.serverCheckMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
 
-                    coreUtils.notification.all.sendNotification(data.userId, NOTIFICATIONS.notiChat.key, {
+                    coreUtils.notification.all.sendNotification(data.userId, NOTIFICATIONS.chat, {
                         userNick: user.nick
                     });
 
@@ -303,20 +303,6 @@ var middles = {
             });
 
             next();
-        }
-    },
-    loadNotification: function (key, options) {
-        return function (io, socket, payload, next) {
-
-            sequelize.models.Notification.loadNotification(key, options, function (status, data) {
-                if (status == 200) {
-                    socket.request.notification = data;
-                    next();
-                } else {
-                    return socket.emit(STD.chat.serverRequestFail, status, data);
-                }
-            });
-
         }
     }
 };

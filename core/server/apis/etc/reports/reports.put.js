@@ -59,7 +59,8 @@ put.updateReport = function () {
 put.sendNotifications = function () {
     return function (req, res, next) {
 
-        var notification = req.meta.notifications.notiReport;
+        var NOTIFICATION = req.meta.std.notification;
+        var notificationReport = req.meta.notifications.report;
 
         if (req.body.isSolved !== undefined && req.body.isSolved == true && req.body.reply !== undefined && req.report.authorId != null) {
 
@@ -69,54 +70,55 @@ put.sendNotifications = function () {
                 if (status == 200) {
                     user = data;
 
-                    for (var i = 0; i < notification.notificationSendTypes.length; i++) {
+                    for (var key in notificationReport.sendTypes) {
 
-                        if (notification.notificationSendTypes[i].sendType == req.meta.std.notification.sendTypePush) {
-                            if (!req.body.isPushOn) {
-                                continue;
-                            }
-                        }
+                        var sendType = notificationReport.sendTypes[key];
 
-                        if (notification.notificationSendTypes[i].sendType == req.meta.std.notification.sendTypeEmail) {
+                        if (key == NOTIFICATION.sendTypeEmail) {
                             if (!req.body.isEmailOn) {
                                 continue;
                             }
                         }
 
-                        if (notification.notificationSendTypes[i].sendType == req.meta.std.notification.sendTypeMessage) {
+                        if (key == NOTIFICATION.sendTypePush) {
+                            if (!req.body.isPushOn) {
+                                continue;
+                            }
+                        }
+
+                        if (key == NOTIFICATION.sendTypeMessage) {
                             if (!req.body.isMessageOn) {
                                 continue;
                             }
                         }
 
-                        if (req.coreUtils.notification.all.isNotificationPublicSwitchOn(user, notification.notificationSendTypes[i].notificationType, notification.notificationSendTypes[i].notificationSendTypes)) {
+                        if (req.coreUtils.notification.all.isNotificationSwitchOn(user, key)) {
 
-                            req.coreUtils.notification.all.replaceMagicKey(notification.notificationSendTypes[i], {
+                            req.coreUtils.notification.all.replaceMagicKey(sendType, {
                                 userId: req.report.userId,
                                 nick: req.report.nick,
                                 body: req.report.body,
                                 reply: req.report.reply
-                            }, user.language, function (isSuccess, sendType, title, body) {
+                            }, user.language, function (isSuccess, title, body) {
 
                                 if (isSuccess) {
-                                    req.coreUtils.notification.all.send(user, sendType, title, body, function (status, data) {
+                                    req.coreUtils.notification.all.send(user, key, title, body, function (status, data) {
                                         console.log('reportNoti', status);
                                     });
                                 }
 
                             });
                         }
-
                     }
-
                 }
-            });
 
+            });
         }
 
         next();
 
     }
+
 };
 
 put.supplement = function () {
