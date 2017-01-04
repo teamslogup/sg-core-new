@@ -47,9 +47,14 @@ var sessionSettings = {
     secret: CONFIG.app.secret,
     name: 'slogupSessionId',
     saveUninitialized: true,
-    resave: true,
+    rolling: true,
+    resave: false,
     cookie: {
-        path: '/', httpOnly: true, secure: false, maxAge: CONFIG.app.sessionExpiredSeconds
+        path: '/',
+        httpOnly: true,
+        secure: false,
+        maxAge: CONFIG.app.sessionExpiredSeconds,
+        expires: CONFIG.app.sessionExpiredSeconds * 1000
     }
 };
 
