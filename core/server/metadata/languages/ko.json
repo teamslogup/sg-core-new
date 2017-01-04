@@ -237,6 +237,9 @@
   "termsManage": "약관 관리",
   "imageManage": "이미지 관리",
   "notificationManage": "알림 관리",
-  "infoManage": "회사정보 관리"
+  "infoManage": "회사정보 관리",
+  "massNotificationManage": "전송 관리",
+  "searchFieldTitle": "--검색--",
+  "massNotificationKeyTitle": "--전송 유형--"
 }
 

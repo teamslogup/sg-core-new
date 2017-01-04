@@ -6,13 +6,23 @@
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
+var NOTIFICATIONS = require('../../../../bridge/metadata/notifications');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
+        'authorId': {
+            'reference': 'User',
+            'referenceKey': 'id',
+            'as': 'author',
+            'asReverse': 'massNotifications',
+            'allowNull': false
+        },
         'key': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.ENUM,
+            'values': Object.keys(NOTIFICATIONS.public),
+            'defaultValue': Object.keys(NOTIFICATIONS.public)[0],
             'allowNull': false
         },
         'sendType': {
@@ -26,6 +36,14 @@ module.exports = {
             'allowNull': false,
             'defaultValue': true,
             'comment': "formApplication form일때 notification-box에 저장할 지 여부"
+        },
+        'title': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'body': {
+            'type': Sequelize.TEXT(STD.notification.bodyDataType),
+            'allowNull': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -42,6 +60,9 @@ module.exports = {
     },
     options: {
         "indexes": [{
+            name: 'authorId',
+            fields: ['authorId']
+        }, {
             name: 'key',
             fields: ['key']
         }, {
@@ -69,6 +90,7 @@ module.exports = {
             "findMassNotificationsByOptions": function (options, callback) {
                 var count = 0;
                 var foundData = [];
+                var countWhere = {};
                 var where = {};
                 var query = {
                     limit: parseInt(options.size),
@@ -77,18 +99,33 @@ module.exports = {
                 };
 
                 if (options.isStored !== undefined) {
+                    countWhere.isStored = options.isStored;
                     where.isStored = options.isStored;
                 }
 
                 if (options.key !== undefined) {
+                    countWhere.key = options.key;
                     where.key = options.key;
                 }
 
                 if (options.sendType !== undefined) {
+                    countWhere.sendType = options.sendType;
                     where.sendType = options.sendType;
                 }
 
-                sequelize.models.MassNotification.count(query).then(function (data) {
+                if (options.sort == STD.common.DESC) {
+                    where[options.orderBy] = {
+                        "$lt": options.last
+                    };
+                } else {
+                    where[options.orderBy] = {
+                        "$gt": options.last
+                    };
+                }
+
+                sequelize.models.MassNotification.count({
+                    where: countWhere
+                }).then(function (data) {
                     count = data;
                     if (count > 0) {
                         return sequelize.models.MassNotification.findAll(query).then(function (data) {
