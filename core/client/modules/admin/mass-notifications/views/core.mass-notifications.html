@@ -1,5 +1,36 @@
 <div id="sgc-mass-notification-wrap" ng-controller="MassNotificationsCtrl">
     <div class="sgc-container" data-ng-class="{'sgc-responsive': FLAG.isResponsive}">
-        awdawd
+        <div class="sgc-mass-notification-title sgc-titles">
+            {{ 'massNotificationManage' | translate }}
+        </div>
+
+        <div class="sgc-mass-notification-menu">
+            <select data-ng-model="form.searchField" class="sgc-mass-notification-search-option sgc-option">
+                <option value="" disabled hidden selected>{{ 'searchFieldTitle' | translate }}</option>
+                <option data-ng-repeat="item in searchFields" value="{{ item }}">
+                    {{ item | translate }}
+                </option>
+            </select>
+            <div class="sgc-mass-notification-search">
+                <form>
+                    <input type="text" class="sgc-search-input" data-ng-model="form.searchItem">
+                    <button type="submit" data-ng-click="findMassNotifications()"></button>
+                </form>
+            </div>
+        </div>
+
+        <div class="sgc-mass-notification-content-wrap">
+            <div class="sgc-mass-notification-content-menu">
+
+            </div>
+            <div class="sgc-mass-notification-content-list">
+
+            </div>
+            <div class="sgc-mass-notification-content-more-wrap">
+                <button class="sgc-mass-notification-content-more sgc-btn-more" data-ng-if="more" data-ng-click="findMoreMassNotifications()">
+                    {{ 'more' | translate }}
+                </button>
+            </div>
+        </div>
     </div>
 </div>
