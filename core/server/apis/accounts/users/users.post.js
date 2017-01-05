@@ -145,7 +145,7 @@ post.checkCi = function () {
                     });
 
                 } else {
-                    res.hjson(req, next, 409, {
+                    res.hjson(req, next, 400, {
                         code: '400_62'
                     });
                 }
