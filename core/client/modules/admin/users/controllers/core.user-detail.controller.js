@@ -5,6 +5,9 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
     var USER = scope.metaManager.std.user;
     var NOTIFICATION = scope.metaManager.std.notification;
 
+    $scope.NOTIFICATIONS = scope.metaManager.notifications;
+    $scope.NOTIFICATIONS_PUBLIC = scope.metaManager.notifications.public;
+
     $scope.currentUser = user;
     $scope.currentPage = 1;
 

@@ -42,6 +42,9 @@ post.validate = function () {
         } else if (type == USER.signUpTypeNormalId) {
             req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
+        } else if (type == USER.signUpTypeAuthCi) {
+            req.check('ci', '400_51').len(USER.minCiLength, USER.maxCiLength);
+            req.check('di', '400_51').len(USER.minDiLength, USER.maxDiLength);
         }
 
         if (req.body.name !== undefined) {
@@ -108,6 +111,49 @@ post.validate = function () {
 
         req.utils.common.checkError(req, res, next);
         next();
+    };
+};
+
+post.checkCi = function () {
+    return function (req, res, next) {
+        var USER = req.meta.std.user;
+
+        var ci = req.body.ci;
+
+        if (req.body.type == USER.signUpTypeAuthCi) {
+            req.models.AuthCi.findDataWithQuery({
+                where: {
+                    ci: ci
+                }
+            }, function (status, data) {
+
+                if (status == 200) {
+
+                    req.models.User.findDataWithQuery({
+                        where: {
+                            ci: ci
+                        }
+                    }, function (status, data) {
+
+                        if (status == 404) {
+                            next();
+                        } else {
+                            res.hjson(req, next, 409, {
+                                code: '409_7'
+                            });
+                        }
+                    });
+
+                } else {
+                    res.hjson(req, next, 409, {
+                        code: '400_62'
+                    });
+                }
+
+            });
+        } else {
+            next();
+        }
     };
 };
 

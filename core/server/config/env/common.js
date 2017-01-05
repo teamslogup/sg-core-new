@@ -74,5 +74,8 @@ module.exports = {
             "pass": "",
             "name": ""
         }
+    },
+    "authCi": {
+        "allowedIp": ''
     }
 };

@@ -45,51 +45,7 @@
                         </div>
                     </div>
 
-                    <div class="sg-dashboard-chart-body">
-                        <div class="sg-dashboard-chart-body-top">
-                            <div class="sg-dashboard-chart-body-top-img"
-                                 style="background-image: url('/pages/admin/assets/images/dashboard_date_k_24.png')">
-
-                            </div>
-                            <div class="sg-dashboard-chart-body-top-title">
-                                월간 접속, 회원수
-                            </div>
-                            <div class="sg-dashboard-chart-body-filter">
-
-                            </div>
-                        </div>
-                        <div class="sg-dashboard-chart-body-main">
-                            <div class="sg-dashboard-chart-body-main-left">
-                                <canvas class="chart chart-line" chart-data="loginChart.data"
-                                        chart-labels="loginChart.labels" chart-series="loginChart.series"
-                                        chart-options="loginChart.options"
-                                        chart-dataset-override="loginChart.datasetOverride"
-                                        chart-colors="loginChart.colors"
-                                        chart-click="loginChart.onClick">
-                                </canvas>
-                            </div>
-                            <div class="sg-dashboard-chart-body-main-right">
-                                <div class="sg-dashboard-chart-body-main-right-item">
-                                    <div class="sg-dashboard-chart-body-main-right-item-img"
-                                         style="background-color: #6d8fe4; border: solid 1px #9b9b9b;">
-
-                                    </div>
-                                    <div class="sg-dashboard-chart-body-main-right-item-title">
-                                        로그인 수
-                                    </div>
-                                </div>
-                                <div class="sg-dashboard-chart-body-main-right-item">
-                                    <div class="sg-dashboard-chart-body-main-right-item-img"
-                                         style="background-color: #dcdcdc; border: solid 1px #9b9b9b;">
-
-                                    </div>
-                                    <div class="sg-dashboard-chart-body-main-right-item-title">
-                                        회원 수
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!--solvedReports-->
 
                     <div class="sg-dashboard-chart-body">
                         <div class="sg-dashboard-chart-body-top">
@@ -102,7 +58,7 @@
                         </div>
                         <div class="sg-dashboard-chart-body-main">
                             <div class="sg-dashboard-chart-body-main-left">
-                                <canvas class="chart chart-pie" chart-data="userAgeChart.data"
+                                <canvas class="chart chart-bar" chart-data="userAgeChart.data"
                                         chart-labels="userAgeChart.labels"
                                         chart-colors="userAgeChart.colors"
                                         chart-options="userAgeChart.options">
@@ -169,43 +125,43 @@
                         </div>
                     </div>
 
-                    <div class="sg-dashboard-chart-body">
-                        <div class="sg-dashboard-chart-body-top">
-                            <div class="sg-dashboard-chart-body-top-img"
-                                 style="background-image: url('/pages/admin/assets/images/dashboard_gender_k_24.png')">
-                            </div>
-                            <div class="sg-dashboard-chart-body-top-title">
-                                유저 나이별 성별 비율
-                            </div>
-                        </div>
-                        <div class="sg-dashboard-chart-body-main">
-                            <div class="sg-dashboard-chart-body-main-left">
-                                <canvas class="chart chart-bar" chart-data="userGenderByAgeChart.data"
-                                        chart-labels="userGenderByAgeChart.labels"
-                                        chart-series="userGenderByAgeChart.series"
-                                        chart-colors="userGenderByAgeChart.colors">
-                                </canvas>
-                            </div>
-                            <div class="sg-dashboard-chart-body-main-right">
-                                <div class="sg-dashboard-chart-body-main-right-item">
-                                    <div class="sg-dashboard-chart-body-main-right-item-img"
-                                         style="background-color: #ff9d9d; border: solid 1px #9b9b9b;">
-                                    </div>
-                                    <div class="sg-dashboard-chart-body-main-right-item-title">
-                                        여성
-                                    </div>
-                                </div>
-                                <div class="sg-dashboard-chart-body-main-right-item">
-                                    <div class="sg-dashboard-chart-body-main-right-item-img"
-                                         style="background-color: #a6c0ff; border: solid 1px #9b9b9b;">
-                                    </div>
-                                    <div class="sg-dashboard-chart-body-main-right-item-title">
-                                        남성
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!--<div class="sg-dashboard-chart-body">-->
+                        <!--<div class="sg-dashboard-chart-body-top">-->
+                            <!--<div class="sg-dashboard-chart-body-top-img"-->
+                                 <!--style="background-image: url('/pages/admin/assets/images/dashboard_gender_k_24.png')">-->
+                            <!--</div>-->
+                            <!--<div class="sg-dashboard-chart-body-top-title">-->
+                                <!--유저 나이별 성별 비율-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div class="sg-dashboard-chart-body-main">-->
+                            <!--<div class="sg-dashboard-chart-body-main-left">-->
+                                <!--<canvas class="chart chart-bar" chart-data="userGenderByAgeChart.data"-->
+                                        <!--chart-labels="userGenderByAgeChart.labels"-->
+                                        <!--chart-series="userGenderByAgeChart.series"-->
+                                        <!--chart-colors="userGenderByAgeChart.colors">-->
+                                <!--</canvas>-->
+                            <!--</div>-->
+                            <!--<div class="sg-dashboard-chart-body-main-right">-->
+                                <!--<div class="sg-dashboard-chart-body-main-right-item">-->
+                                    <!--<div class="sg-dashboard-chart-body-main-right-item-img"-->
+                                         <!--style="background-color: #ff9d9d; border: solid 1px #9b9b9b;">-->
+                                    <!--</div>-->
+                                    <!--<div class="sg-dashboard-chart-body-main-right-item-title">-->
+                                        <!--여성-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                                <!--<div class="sg-dashboard-chart-body-main-right-item">-->
+                                    <!--<div class="sg-dashboard-chart-body-main-right-item-img"-->
+                                         <!--style="background-color: #a6c0ff; border: solid 1px #9b9b9b;">-->
+                                    <!--</div>-->
+                                    <!--<div class="sg-dashboard-chart-body-main-right-item-title">-->
+                                        <!--남성-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
                 </div>
             </div>

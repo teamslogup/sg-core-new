@@ -146,6 +146,25 @@ function extending() {
         return result;
     });
 
+    expressValidator.validator.extend('isEnumArray', function (str, enums) {
+        var result = true;
+        if (str === '') return true;
+        var arr = str.split(',');
+        var enumHash = {};
+
+        enums.forEach(function (item) {
+            enumHash[item] = true;
+        });
+
+        arr.forEach(function (item) {
+            if (!enumHash[item]) {
+                result = false;
+            }
+        });
+
+        return result;
+    });
+
     expressValidator.validator.extend('isBoolean', function (str) {
         var result = false;
         if (str === '') return true;

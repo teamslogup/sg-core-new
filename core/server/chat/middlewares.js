@@ -82,30 +82,15 @@ var middles = {
 
                     var roomId = body.roomId;
 
-                    // data.room.roomUsers.forEach(function (roomUser) {
-                    //
-                    //     sequelize.models.LoginHistory.findAllDataForQuery({
-                    //         where: {
-                    //             userId: roomUser.user.id
-                    //         }
-                    //     }, function (status, data) {
-                    //
-                    //         if (status == 200) {
-                    //             data.forEach(function (loginHistory) {
-                    //
-                    //                 if (io.sockets.connected[loginHistory.session]) {
-                    //                     var remoteSocket = io.sockets.connect[loginHistory.session];
-                    //
-                    //                     remoteSocket.join(roomId);
-                    //                 }
-                    //
-                    //             });
-                    //         }
-                    //
-                    //     });
-                    //
-                    // });
-
+                    if (data.room.isPrivate) {
+                        data.room.roomUsers.forEach(function (roomUser) {
+                            if (roomUser.userId != user.id) {
+                                socket.broadcast.to(STD.chat.userRoomPrefix + roomUser.userId).emit(STD.chat.serverRequestJoinRoom, {
+                                    roomId: roomId
+                                });
+                            }
+                        });
+                    }
                     socket.join(roomId);
                     socket.emit(STD.chat.serverJoinRoom, roomId);
                     socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, roomId);
@@ -120,6 +105,21 @@ var middles = {
 
             });
 
+        }
+    },
+    requestJoinRoom: function () {
+        return function (io, socket, payload, next) {
+
+            var user = socket.request.user;
+
+            var body = {
+                userId: user.id,
+                roomId: payload.roomId
+            };
+
+            socket.join(payload.roomId);
+
+            next();
         }
     },
     joinAllRoomsFromDB: function () {

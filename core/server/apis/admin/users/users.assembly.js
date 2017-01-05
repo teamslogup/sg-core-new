@@ -35,6 +35,7 @@ var api = {
                     gender: '성별 ' + STD.user.enumGenders.join(", ")
                 },
                 response: {rows: [resforms.user]},
+                role: STD.user.roleAdmin,
                 title: '유저 리스트 얻기',
                 state: 'staging'
             };
@@ -42,12 +43,12 @@ var api = {
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
-                apiCreator.add(req.middles.session.loggedIn());
                 apiCreator.add(req.middles.session.hasAuthorization());
                 apiCreator.add(gets.validate());
                 apiCreator.add(gets.getUsers());

@@ -37,6 +37,8 @@ module.exports.init = function (io) {
         console.log(socket.id + ' Client connected...');
         console.log('session', socket.request.session);
 
+        socket.join(STD.chat.userRoomPrefix + socket.request.session.passport.user);
+
         socket.on(STD.chat.clientCreateRoom, function (body) {
             var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
@@ -49,6 +51,13 @@ module.exports.init = function (io) {
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateJoinRoom());
             joinBinder.add(middles.joinRoom());
+            joinBinder.bind();
+        });
+
+        socket.on(STD.chat.clientRequestJoinRoom, function (body) {
+            var joinBinder = new Binder(io, socket, body);
+            joinBinder.add(middles.isLoggedIn());
+            joinBinder.add(middles.requestJoinRoom());
             joinBinder.bind();
         });
 
@@ -76,7 +85,6 @@ module.exports.init = function (io) {
         });
 
         socket.on(STD.chat.clientSendMessage, function (body) {
-
             var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateSendMessage());
@@ -88,7 +96,6 @@ module.exports.init = function (io) {
         });
 
         socket.on(STD.chat.clientReadMessage, function (body) {
-
             var joinBinder = new Binder(io, socket, body);
             joinBinder.add(middles.isLoggedIn());
             joinBinder.add(middles.validateReadMessage());

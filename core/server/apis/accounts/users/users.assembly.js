@@ -122,7 +122,9 @@ var api = {
                     'device',
                     'version',
                     'token',
-                    'optionalTerms'
+                    'optionalTerms',
+                    'di',
+                    'ci'
                 ],
                 essential: [
                     'type',
@@ -151,7 +153,9 @@ var api = {
                     'device': '휴대폰 기종',
                     'version': '앱버전',
                     'token': '푸시를 위한 디바이스토큰',
-                    'optionalTerms': '선택 약관 리스트'
+                    'optionalTerms': '선택 약관 리스트',
+                    'ci': 'di 값',
+                    'di': 'ci 값'
                 },
                 defaults: {
                     'type': USER.signUpTypeEmail,

@@ -112,6 +112,14 @@ module.exports = {
             'asReverse': 'user',
             'onDelete': 'cascade'
         },
+        'di': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'ci': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -1301,36 +1309,113 @@ module.exports = {
                 });
 
             },
-            'getUsersStatusByMonth': function (year, months, callback) {
+            'getUsersStatusByMonth': function (callback) {
 
-                var usersStatusByMonth = {};
+                var monthKey = '_month';
+
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = today.getMonth() + 1;
+
+                var thisYearMonths = [];
+                var lastYearMonths = [];
+
+                for (var i = 0; i < 5; i++) {
+                    if (month <= 0) {
+                        lastYearMonths.push(12 + month--);
+                    } else {
+                        thisYearMonths.push(month--);
+                    }
+                }
+
+                var thisYear = year;
+                var lastYear = year - 1;
+
+                var usersStatusByMonth = {
+                    createdUsers: {},
+                    deletedUsers: {}
+                };
+
+                thisYearMonths.forEach(function (thisMonth) {
+                    usersStatusByMonth.createdUsers[thisMonth + monthKey] = {
+                        month: thisMonth,
+                        count: 0
+                    };
+
+                    usersStatusByMonth.deletedUsers[thisMonth + monthKey] = {
+                        month: thisMonth,
+                        count: 0
+                    };
+                });
+
+                lastYearMonths.forEach(function (lastMonth) {
+                    usersStatusByMonth.createdUsers[lastMonth + monthKey] = {
+                        month: lastMonth,
+                        count: 0
+                    };
+                    usersStatusByMonth.deletedUsers[lastMonth + monthKey] = {
+                        month: lastMonth,
+                        count: 0
+                    };
+                });
+
+                var result = {
+                    createdUsers: [],
+                    deletedUsers: []
+                };
 
                 sequelize.transaction(function (t) {
-                    var query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                        '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
-                        'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY UsersByMonth.month ';
+
+                    var query;
+
+                    if (lastYearMonths.length == 0) {
+                        query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                            'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY UsersByMonth.month ';
+                    } else {
+                        query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                            'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY UsersByMonth.month ';
+                    }
 
                     return sequelize.query(query, {
                         type: sequelize.QueryTypes.SELECT,
                         raw: true
                     }).then(function (createdUser) {
-                        usersStatusByMonth.createdUsers = createdUser;
+                        result.createdUsers = createdUser;
 
-                        var query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
-                            'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY UsersByMonth.month ';
+                        var query;
+
+                        if (lastYearMonths.length == 0) {
+                            query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                                '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                                'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY UsersByMonth.month ';
+                        } else {
+                            query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                                '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                                'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY UsersByMonth.month ';
+                        }
 
                         return sequelize.query(query, {
                             type: sequelize.QueryTypes.SELECT,
                             raw: true
                         });
                     }).then(function (deletedUser) {
-                        usersStatusByMonth.deletedUsers = deletedUser;
+                        result.deletedUsers = deletedUser;
                         return true;
                     });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
+
+                        result.createdUsers.forEach(function (createdUser) {
+                            usersStatusByMonth.createdUsers[createdUser.month + monthKey] = createdUser;
+                        });
+
+                        result.deletedUsers.forEach(function (deletedUser) {
+                            usersStatusByMonth.deletedUsers[deletedUser.month + monthKey] = deletedUser;
+                        });
+
                         callback(200, usersStatusByMonth);
                     }
                 });
