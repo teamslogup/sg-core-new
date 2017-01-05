@@ -234,25 +234,91 @@ module.exports = {
                 });
 
             },
-            'getReportsStatusByMonth': function (year, months, callback) {
+            'getReportsStatusByMonth': function (callback) {
 
-                var reportsStatusByMonth = {};
+                var monthKey = '_month';
+
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = today.getMonth() + 1;
+
+                var thisYearMonths = [];
+                var lastYearMonths = [];
+
+                for (var i = 0; i < 5; i++) {
+                    if (month <= 0) {
+                        lastYearMonths.push(12 + month--);
+                    } else {
+                        thisYearMonths.push(month--);
+                    }
+                }
+
+                var thisYear = year;
+                var lastYear = year - 1;
+
+                var reportsStatusByMonth = {
+                    createdReports: {},
+                    solvedReports: {}
+                };
+
+                thisYearMonths.forEach(function (thisMonth) {
+                    reportsStatusByMonth.createdReports[thisMonth + monthKey] = {
+                        month: thisMonth,
+                        count: 0
+                    };
+
+                    reportsStatusByMonth.solvedReports[thisMonth + monthKey] = {
+                        month: thisMonth,
+                        count: 0
+                    };
+                });
+
+                lastYearMonths.forEach(function (lastMonth) {
+                    reportsStatusByMonth.createdReports[lastMonth + monthKey] = {
+                        month: lastMonth,
+                        count: 0
+                    };
+                    reportsStatusByMonth.solvedReports[lastMonth + monthKey] = {
+                        month: lastMonth,
+                        count: 0
+                    };
+                });
+
+                var result = {
+                    createdReports: [],
+                    solvedReports: []
+                };
 
                 sequelize.transaction(function (t) {
-                    var query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                        '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Reports) as ReportsByMonth ' +
-                        'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY ReportsByMonth.month ';
+
+                    var query;
+
+                    if (lastYearMonths.length == 0) {
+                        query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Reports) as ReportsByMonth ' +
+                            'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY ReportsByMonth.month ';
+                    } else {
+                        query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Reports) as ReportsByMonth ' +
+                            'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY ReportsByMonth.month ';
+                    }
 
                     return sequelize.query(query, {
                         type: sequelize.QueryTypes.SELECT,
                         raw: true,
                         transaction: t
                     }).then(function (createdReport) {
-                        reportsStatusByMonth.createdReports = createdReport;
+                        result.createdReports = createdReport;
 
-                        var query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
-                            'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY ReportsByMonth.month ';
+                        if (lastYearMonths.length == 0) {
+                            query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
+                                '(SELECT YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
+                                'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY ReportsByMonth.month ';
+                        } else {
+                            query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
+                                '(SELECT YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
+                                'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY ReportsByMonth.month ';
+                        }
 
                         return sequelize.query(query, {
                             type: sequelize.QueryTypes.SELECT,
@@ -260,12 +326,21 @@ module.exports = {
                             transaction: t
                         });
                     }).then(function (deletedReports) {
-                        reportsStatusByMonth.solvedReports = deletedReports;
+                        result.solvedReports = deletedReports;
                         return true;
                     });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
+
+                        result.createdReports.forEach(function (createdReport) {
+                            reportsStatusByMonth.createdReports[createdReport.month + monthKey] = createdReport;
+                        });
+
+                        result.solvedReports.forEach(function (solvedReport) {
+                            reportsStatusByMonth.solvedReports[solvedReport.month + monthKey] = solvedReport;
+                        });
+
                         callback(200, reportsStatusByMonth);
                     }
                 });

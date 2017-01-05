@@ -20,13 +20,19 @@ put.validateKey = function () {
     return function (req, res, next) {
         var NOTIFICATIONS = req.meta.notifications;
 
-        if (NOTIFICATIONS[req.body.key]) {
-            next();
-        } else {
+        if (!NOTIFICATIONS[req.body.key]) {
             return res.hjson(req, next, 400, {
                 code: '400_3'
             });
         }
+
+        if (!NOTIFICATIONS[req.body.key].isOption) {
+            return res.hjson(req, next, 400, {
+                code: '400_3'
+            });
+        }
+
+        next();
     }
 };
 

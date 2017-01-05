@@ -23,9 +23,8 @@ var api = {
                 acceptable: ['userId', 'last', 'size', 'offset'],
                 essential: [],
                 resettable: [],
-                explains: {},
+                explains: {'userId': '유저 id'},
                 response: {
-                    'userId': '유저 id',
                     rows: [resforms.notification]
                 },
                 // role: STD.role.account,

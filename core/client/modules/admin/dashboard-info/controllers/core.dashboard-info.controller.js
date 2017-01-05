@@ -15,7 +15,7 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
 
     function findDashboardInfo() {
         loadingHandler.startLoading(LOADING.spinnerKey, 'findDashboardInfo');
-        dashboardInfoManager.findDashboardInfo(getParams(), function (status, data) {
+        dashboardInfoManager.findDashboardInfo({}, function (status, data) {
             if (status == 200) {
                 $scope.dashboardInfo = data;
                 setUserChart();
@@ -29,29 +29,6 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
         });
     }
 
-    function getParams() {
-        var today = new Date();
-
-        var month = today.getMonth() + 1;
-        var months = [];
-
-        for (var i = 0; i < 5; i++) {
-
-            var temp = month - i;
-            if (month - i <= 0) {
-                temp += 12;
-            }
-            months.push(temp);
-        }
-
-        var params = {
-            year: today.getFullYear(),
-            months: months.join(',')
-        };
-
-        return params;
-    }
-
     function setUserChart() {
         var usersStatusByMonth = $scope.dashboardInfo.usersStatusByMonth;
         var createdUsers = usersStatusByMonth.createdUsers;
@@ -60,47 +37,20 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
         var labels = [];
         var data = [[], []];
 
-        var today = new Date();
-        var currentMonth = today.getMonth() + 1;
+        var key;
 
-        for (var i = 0; i < 5; i++) {
+        for (key in createdUsers) {
+            labels.unshift(createdUsers[key].month + $filter('translate')('month'));
+            data[0].unshift(createdUsers[key].count);
+        }
 
-            if (currentMonth == 0) {
-                currentMonth += 12;
-            }
-
-            labels.unshift(currentMonth + $filter('translate')('month'));
-
-            var createdUsersNotMatched = true;
-            for (var j = 0; j < createdUsers.length; j++) {
-                if (createdUsers[j].month == currentMonth) {
-                    data[0].unshift(createdUsers[j].count);
-                    createdUsersNotMatched = false;
-                }
-            }
-
-            if (createdUsersNotMatched) {
-                data[0].unshift(0);
-            }
-
-            var deletedUsersNotMatched = true;
-            for (var k = 0; k < deletedUsers.length; k++) {
-                if (deletedUsers[k].month == currentMonth) {
-                    data[1].unshift(deletedUsers[k].count);
-                    deletedUsersNotMatched = false;
-                }
-            }
-
-            if (deletedUsersNotMatched) {
-                data[1].unshift(0);
-            }
-
-            currentMonth--;
+        for (key in deletedUsers) {
+            data[1].unshift(deletedUsers[key].count);
         }
 
         $scope.userChart.labels = labels;
         $scope.userChart.data = data;
-    };
+    }
 
     function setUserAgeChart() {
 
@@ -137,7 +87,7 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
         }
 
         $scope.userAgeChart.data = data;
-    };
+    }
 
     function setReportChart() {
         var reportsStatusByMonth = $scope.dashboardInfo.reportsStatusByMonth;
@@ -147,42 +97,15 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
         var labels = [];
         var data = [[], []];
 
-        var today = new Date();
-        var currentMonth = today.getMonth() + 1;
+        var key;
 
-        for (var i = 0; i < 5; i++) {
+        for (key in createdReports) {
+            labels.unshift(createdReports[key].month + $filter('translate')('month'));
+            data[0].unshift(createdReports[key].count);
+        }
 
-            if (currentMonth == 0) {
-                currentMonth += 12;
-            }
-
-            labels.unshift(currentMonth + $filter('translate')('month'));
-
-            var createdReportsNotMatched = true;
-            for (var j = 0; j < createdReports.length; j++) {
-                if (createdReports[j].month == currentMonth) {
-                    data[0].unshift(createdReports[j].count);
-                    createdReportsNotMatched = false;
-                }
-            }
-
-            if (createdReportsNotMatched) {
-                data[0].unshift(0);
-            }
-
-            var solvedReportsNotMatched = true;
-            for (var k = 0; k < solvedReports.length; k++) {
-                if (solvedReports[k].month == currentMonth) {
-                    data[1].unshift(solvedReports[k].count);
-                    solvedReportsNotMatched = false;
-                }
-            }
-
-            if (solvedReportsNotMatched) {
-                data[1].unshift(0);
-            }
-
-            currentMonth--;
+        for (key in solvedReports) {
+            data[1].unshift(solvedReports[key].count);
         }
 
         $scope.reportChart.labels = labels;

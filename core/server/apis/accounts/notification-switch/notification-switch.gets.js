@@ -31,25 +31,27 @@ gets.getNotificationSwitch = function () {
             for (var key in NOTIFICATIONS) {
                 if (NOTIFICATIONS[key] && key != 'public') {
 
-                    for (var sendTypeKey in NOTIFICATIONS[key].sendTypes) {
-                        if (sendTypeKey == req.query.sendType) {
+                    if (NOTIFICATIONS[key].isOption) {
+                        for (var sendTypeKey in NOTIFICATIONS[key].sendTypes) {
+                            if (sendTypeKey == req.query.sendType) {
 
-                            var isSwitchOn = true;
+                                var isSwitchOn = true;
 
-                            for (var i = 0; i < data.length; i++) {
-                                if (key == data[i].key) {
-                                    isSwitchOn = false;
-                                    data.splice(i, 1);
+                                for (var i = 0; i < data.length; i++) {
+                                    if (key == data[i].key) {
+                                        isSwitchOn = false;
+                                        data.splice(i, 1);
+                                    }
                                 }
+
+                                notificationSwitch.push({
+                                    key: NOTIFICATIONS[key].key,
+                                    title: NOTIFICATIONS[key].boxTitle,
+                                    sendType: req.query.sendType,
+                                    switch: isSwitchOn
+                                });
+
                             }
-
-                            notificationSwitch.push({
-                                key: NOTIFICATIONS[key].key,
-                                title: NOTIFICATIONS[key].boxTitle,
-                                sendType: req.query.sendType,
-                                switch: isSwitchOn
-                            });
-
                         }
                     }
 

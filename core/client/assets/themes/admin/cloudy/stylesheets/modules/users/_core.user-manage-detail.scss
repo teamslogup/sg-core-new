@@ -570,43 +570,43 @@
                     @include after-clear();
                     .sg-user-manage-detail-login-history-list-top-type {
                         float: left;
-                        width: 70px;
+                        width: 100px;
                         text-align: center;
                     }
                     .sg-user-manage-detail-login-history-list-top-platform {
                         float: left;
-                        width: 70px;
+                        width: 100px;
                         text-align: center;
                     }
                     .sg-user-manage-detail-login-history-list-top-device {
                         float: left;
-                        width: 70px;
+                        width: 100px;
                         text-align: center;
 
                     }
                     .sg-user-manage-detail-login-history-list-top-browser {
                         float: left;
-                        width: 70px;
+                        width: 100px;
                         text-align: center;
                     }
                     .sg-user-manage-detail-login-history-list-top-ip {
                         float: left;
-                        width: 116px;
+                        width: 120px;
                         text-align: center;
                     }
                     .sg-user-manage-detail-login-history-list-top-updated-at {
                         float: left;
-                        width: 87px;
+                        width: 100px;
                         text-align: center;
                     }
                     .sg-user-manage-detail-login-history-list-top-created-at {
                         float: left;
-                        width: 87px;
+                        width: 100px;
                         text-align: center;
                     }
                     .sg-user-manage-detail-login-history-list-top-disconnect {
                         float: left;
-                        width: 90px;
+                        width: 138px;
                         text-align: center;
                     }
                 }
@@ -631,7 +631,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 70px;
+                            width: 100px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-type-title {
@@ -659,7 +659,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 70px;
+                            width: 100px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-platform-title {
@@ -686,7 +686,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 70px;
+                            width: 100px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-device-title {
@@ -713,7 +713,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 70px;
+                            width: 100px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-browser-title {
@@ -746,7 +746,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 116px;
+                            width: 120px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-ip-title {
@@ -773,7 +773,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 87px;
+                            width: 100px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-created-at-title {
@@ -800,7 +800,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             float: left;
-                            width: 87px;
+                            width: 100px;
                             text-align: center;
 
                             .sg-user-manage-detail-login-history-list-item-updated-at-title {
@@ -827,7 +827,7 @@
 
                         @media screen and (min-width: $web-container-size) {
                             margin-top: 8px;
-                            margin-left: 4px;
+                            margin-left: 34px;
 
                             float: left;
                             text-align: center;

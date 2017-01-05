@@ -15,18 +15,19 @@ gets.validate = function () {
         if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
 
         req.check('last', '400_18').isMicroTimestamp();
-        req.check('searchField', '400_28').isEnum(USER.enumSearchFields);
+        req.check('searchField', '400_3').isEnum(USER.enumSearchFields);
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
-        req.check('orderBy', '400_28').isEnum(USER.enumOrders);
-        req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
+        req.check('orderBy', '400_3').isEnum(USER.enumOrders);
+        req.check('sort', '400_3').isEnum(COMMON.enumSortTypes);
 
         if (req.query.role !== undefined) {
-            req.check('role', '400_28').isEnum(USER.enumRoles);
-        };
+            req.check('role', '400_3').isEnumArray(USER.enumRoles);
+            req.query.role = req.query.role.split(',');
+        }
 
         if (req.query.gender !== undefined) {
-            req.check('gender', '400_28').isEnum(USER.enumGenders);
-        };
+            req.check('gender', '400_3').isEnum(USER.enumGenders);
+        }
 
         req.utils.common.checkError(req, res, next);
         next();

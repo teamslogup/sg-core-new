@@ -21,13 +21,14 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['year', 'months'],
-                essential: ['year', 'months'],
+                acceptable: [],
+                essential: [],
                 resettable: [],
                 explains: {
                 },
                 response: {},
                 title: '단일 얻기',
+                role: STD.user.roleAdmin,
                 state: 'staging'
             };
 

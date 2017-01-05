@@ -21,9 +21,13 @@ put.validateKey = function () {
     return function (req, res, next) {
         var NOTIFICATIONS_PUBLIC = req.meta.notifications.public;
 
-        if (NOTIFICATIONS_PUBLIC[req.body.key]) {
-            next();
-        } else {
+        if (!NOTIFICATIONS_PUBLIC[req.body.key]) {
+            return res.hjson(req, next, 400, {
+                code: '400_3'
+            });
+        }
+
+        if (!NOTIFICATIONS_PUBLIC[req.body.key].isOption) {
             return res.hjson(req, next, 400, {
                 code: '400_3'
             });

@@ -34,25 +34,29 @@ gets.getNotificationSwitch = function () {
 
                 if (NOTIFICATIONS_PUBLIC[key] && key != NOTIFICATION.notificationTypeEmergency) {
 
-                    for (var sendTypeKey in NOTIFICATIONS_PUBLIC[key].sendTypes) {
-                        if (sendTypeKey == req.query.sendType) {
+                    if (NOTIFICATIONS_PUBLIC[key].isOption) {
 
-                            var isSwitchOn = true;
+                        for (var sendTypeKey in NOTIFICATIONS_PUBLIC[key].sendTypes) {
+                            if (sendTypeKey == req.query.sendType) {
 
-                            for (var i = 0; i < data.length; i++) {
-                                if (key == data[i].key) {
-                                    isSwitchOn = false;
-                                    data.splice(i, 1);
+                                var isSwitchOn = true;
+
+                                for (var i = 0; i < data.length; i++) {
+                                    if (key == data[i].key) {
+                                        isSwitchOn = false;
+                                        data.splice(i, 1);
+                                    }
                                 }
-                            }
 
-                            notificationPublicSwitch.push({
-                                key: NOTIFICATIONS_PUBLIC[key].key,
-                                title: NOTIFICATIONS_PUBLIC[key].boxTitle,
-                                sendType: req.query.sendType,
-                                switch: isSwitchOn
-                            });
+                                notificationPublicSwitch.push({
+                                    key: NOTIFICATIONS_PUBLIC[key].key,
+                                    title: NOTIFICATIONS_PUBLIC[key].boxTitle,
+                                    sendType: req.query.sendType,
+                                    switch: isSwitchOn
+                                });
+                            }
                         }
+
                     }
 
                 }
