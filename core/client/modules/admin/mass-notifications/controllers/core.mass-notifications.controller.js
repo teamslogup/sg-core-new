@@ -6,8 +6,11 @@ export default function MassNotificationCtrl ($scope, $rootScope, dialogHandler,
     var ADMIN = metaManager.std.admin;
     var prevQuery = null;
 
+    $scope.createMassNotification = createMassNotification;
     $scope.findMassNotifications = findMassNotifications;
     $scope.findMoreMassNotifications = findMoreMassNotifications;
+    $scope.deleteMassNotification = deleteMassNotification;
+    $scope.detailMassNotification = detailMassNotification;
 
     $scope.COMMON = metaManager.std.common;
     $scope.FLAG = metaManager.std.flag;
@@ -18,6 +21,15 @@ export default function MassNotificationCtrl ($scope, $rootScope, dialogHandler,
 
     $rootScope.$broadcast(ADMIN.kNavigation, {
         activeNav: ADMIN.moduleMassNotifications
+    });
+
+    $scope.$watch('form', function (newVal, oldVal) {
+        if (newVal.key != oldVal.key) {
+            findMassNotifications();
+        }
+        if (newVal.sendType != oldVal.sendType) {
+            findMassNotifications();
+        }
     });
 
     initEnum();
@@ -77,6 +89,25 @@ export default function MassNotificationCtrl ($scope, $rootScope, dialogHandler,
         if (query.searchField == all) delete query.searchField;
         if (query.sendType == all) delete query.sendType;
         return query;
+    }
+
+    function createMassNotification () {
+
+    }
+
+    function detailMassNotification (massNotification) {
+
+    }
+
+    function deleteMassNotification (massNotification) {
+        massNotificationsManager.deleteMassNotification(massNotification, function (status, data) {
+            if (status == 204) {
+                $scope.massNotifications.count--;
+                $scope.massNotifications.rows.splice($scope.massNotifications.rows.indexOf(massNotification));
+            } else {
+                return dialogHandler.alertError(status, data);
+            }
+        });
     }
 
     function initForm () {

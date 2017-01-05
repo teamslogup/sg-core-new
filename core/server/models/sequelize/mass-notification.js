@@ -45,6 +45,26 @@ module.exports = {
             'type': Sequelize.TEXT(STD.notification.bodyDataType),
             'allowNull': false
         },
+        'sendCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
+        'emptyDestinationCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
+        'wrongDestinationCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
+        'failCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -97,6 +117,35 @@ module.exports = {
                     order: [options.orderBy, options.sort],
                     where: where
                 };
+
+                if (options.searchField && options.searchItem) {
+                    if (options.searchField == STD.common.id) {
+                        where[options.searchField] = options.searchItem;
+                        countWhere[options.searchField] = options.searchItem;
+                    } else {
+                        where[options.searchField] = {
+                            "$like": "%" + options.searchItem + "%"
+                        };
+                        countWhere[options.searchField] = {
+                            "$like": "%" + options.searchItem + "%"
+                        };
+                    }
+                } else if (options.searchItem && STD.notification.enumSearchFields.length) {
+                    where.$or = [];
+                    countWhere.$or = [];
+                    for (var i=0; i<STD.notification.enumSearchFields.length; i++) {
+                        var body = {};
+                        if (STD.notification.enumSearchFields[i] == STD.common.id) {
+                            body[STD.notification.enumSearchFields[i]] = options.searchItem;
+                        } else {
+                            body[STD.notification.enumSearchFields[i]] = {
+                                "$like": "%" + options.searchItem + "%"
+                            };
+                        }
+                        where.$or.push(body);
+                        countWhere.$or.push(body);
+                    }
+                }
 
                 if (options.isStored !== undefined) {
                     countWhere.isStored = options.isStored;
