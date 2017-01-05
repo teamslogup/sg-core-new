@@ -240,6 +240,17 @@
   "infoManage": "회사정보 관리",
   "massNotificationManage": "전송 관리",
   "searchFieldTitle": "--검색--",
-  "massNotificationKeyTitle": "--전송 유형--"
+  "massNotificationKeyTitle": "--발송유형--",
+  "massNotificationSendTypeTitle": "--발송형태--",
+  "createMassNotification": "전송하기",
+  "totalCount": "Total",
+  "massNotificationTitle": "제목",
+  "massNotificationSendDate": "발송일자",
+  "massNotificationSendType": "발송형태",
+  "massNotificationSendCount": "발송건수",
+  "massNotificationSuccessCount": "성공건수",
+  "massNotificationFailCount": "실패건수",
+  "massNotificationCountUnit": "건",
+  "detail": "상세"
 }
 

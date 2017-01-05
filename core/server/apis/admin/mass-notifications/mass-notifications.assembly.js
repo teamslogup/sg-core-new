@@ -13,6 +13,7 @@ var resforms = require('../../../resforms');
 
 const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
+const NOTIFICATIONS = META.notifications;
 
 var api = {
     get : function(isOnlyParams) {
@@ -58,6 +59,8 @@ var api = {
 
             var params = {
                 acceptable: [
+                    "searchField",
+                    "searchItem",
                     "orderBy",
                     "sort",
                     "last",
@@ -69,11 +72,13 @@ var api = {
                 essential: [],
                 resettable: [],
                 explains: {
+                    "searchField": "검색 필드 " + STD.notification.enumSearchFields.join(", "),
+                    "searchItem": "검색 내용",
                     "orderBy": "정렬 기준 필드 " + STD.notification.enumOrderBys.join(", "),
                     "sort": "정렬 방식 " + STD.common.enumSortTypes.join(", "),
                     "last": "조회 기준 데이터 일자",
                     "size": "가져올 데이터 갯수",
-                    "key": "전송 유형",
+                    "key": "전송 유형 " + Object.keys(NOTIFICATIONS.public).join(", "),
                     "sendType": "전송 방식 " + STD.notification.enumSendTypes.join(", "),
                     "isStored": "Box 저장 여부 true, false"
                 },

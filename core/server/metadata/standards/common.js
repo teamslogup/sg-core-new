@@ -52,7 +52,8 @@ var standards = {
         "enumSearchFields": ["id", "title", "body"],
         "enumOrderBys": ["createdAt", "updatedAt"],
         "defaultOrderBy": "createdAt",
-        "bodyDataType": "long"
+        "bodyDataType": "long",
+        "defaultCount": 0
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
