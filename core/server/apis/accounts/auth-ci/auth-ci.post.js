@@ -5,16 +5,9 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
-        console.log(req.body.gender);
-        console.log(req.body.birthYear);
-        console.log(req.body.birthMonth);
-        console.log(req.body.birthDay);
-        console.log(req.body.phoneNum);
-
         if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
             return res.hjson(req, next, 403);
         }
-        console.log('asdfdsfa');
 
         var USER = req.meta.std.user;
 
@@ -23,6 +16,7 @@ post.validate = function () {
         }
 
         if (req.body.gender !== undefined) req.check('gender', '400_3').isEnum(USER.enumGenders);
+        console.log(req.body.gender);
         if (req.body.birthYear !== undefined && req.body.birthMonth !== undefined && req.body.birthDay !== undefined) {
             req.check('birthYear', '400_35').isYear();
             req.check('birthMonth', '400_36').isMonth();
@@ -31,8 +25,12 @@ post.validate = function () {
             req.sanitize('birthMonth').toInt();
             req.sanitize('birthDay').toInt();
         }
+        console.log(req.body.birthYear);
+        console.log(req.body.birthMonth);
+        console.log(req.body.birthDay);
 
         req.check('phoneNum', '400_7').len(5, 18);
+        console.log(req.body.phoneNum);
 
         req.utils.common.checkError(req, res, next);
 

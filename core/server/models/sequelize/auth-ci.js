@@ -39,9 +39,17 @@ module.exports = {
             'type': Sequelize.STRING,
             'allowNull': false
         },
-        'birth': {
+        'birthYear': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
+        },
+        'birthMonth': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'birthDay': {
+            'type': Sequelize.STRING,
+            'allowNull': true
         },
         'gender': {
             'type': Sequelize.STRING,
@@ -62,7 +70,7 @@ module.exports = {
 
                 var authCi;
 
-                sequelize.models.LoginCount.upsert(body).then(function (data) {
+                sequelize.models.AuthCi.upsert(body).then(function (data) {
                     authCi = data;
                     return true;
 
