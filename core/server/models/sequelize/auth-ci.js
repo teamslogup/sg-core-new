@@ -56,28 +56,43 @@ module.exports = {
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            'upsertAuthCi': function (body, callback) {
 
-            // 'checkCi': function (ci, callback) {
-            //
-            //     sequelize.models.AuthCi.findOne({
-            //         where: {
-            //             ci: ci
-            //         }
-            //     }).then(function (data) {
-            //
-            //         if (data) {
-            //             return true;
-            //         } else {
-            //             throw new errorHandler.CustomSequelizeError(404);
-            //         }
-            //
-            //     }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
-            //         if (isSuccess) {
-            //             callback(204);
-            //         }
-            //     });
-            //
-            // }
+                var authCi;
+
+                sequelize.models.LoginCount.upsert(body).then(function (data) {
+                    authCi = data;
+                    return true;
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, authCi);
+                    }
+                });
+            },
+            'findOneAuthCi': function (ci, callback) {
+
+                var authCi;
+
+                sequelize.models.AuthCi.findOne({
+                    where: {
+                        ci: ci
+                    }
+                }).then(function (data) {
+
+                    if (data) {
+                        authCi = data;
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, authCi);
+                    }
+                });
+
+            }
         })
     }
 };

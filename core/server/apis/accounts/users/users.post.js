@@ -44,7 +44,6 @@ post.validate = function () {
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         } else if (type == USER.signUpTypeAuthCi) {
             req.check('ci', '400_51').len(USER.minCiLength, USER.maxCiLength);
-            req.check('di', '400_51').len(USER.minDiLength, USER.maxDiLength);
         }
 
         if (req.body.name !== undefined) {
@@ -121,13 +120,14 @@ post.checkCi = function () {
         var ci = req.body.ci;
 
         if (req.body.type == USER.signUpTypeAuthCi) {
-            req.models.AuthCi.findDataWithQuery({
-                where: {
-                    ci: ci
-                }
-            }, function (status, data) {
+            req.models.AuthCi.findOneAuthCi(ci, function (status, data) {
 
                 if (status == 200) {
+
+                    req.body.name = data.name;
+                    req.body.birth = data.birth;
+                    req.body.gender = data.gender;
+                    req.body.phoneNum = data.phoneNum;
 
                     req.models.User.findDataWithQuery({
                         where: {
