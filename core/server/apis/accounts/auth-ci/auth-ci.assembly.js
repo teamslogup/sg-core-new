@@ -17,7 +17,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['ci', 'di', 'transactionNo', 'name', 'birth', 'gender', 'phoneNum'],
+                acceptable: ['ci', 'di', 'transactionNo', 'name', 'birthYear', 'birthMonth', 'birthDay', 'gender', 'phoneNum'],
                 essential: ['ci', 'name', 'phoneNum'],
                 resettable: [],
                 explains: {
@@ -25,7 +25,9 @@ var api = {
                     'di': 'di 값',
                     'transactionNo': '거래번호',
                     'name': '이름',
-                    'birth': '생년월일',
+                    'birthYear': '생일 년',
+                    'birthMonth': '생일 년',
+                    'birthDay': '생일 년',
                     'gender': '성별',
                     'phoneNum': '핸드폰번호'
                 },
