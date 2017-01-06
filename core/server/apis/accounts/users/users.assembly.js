@@ -123,7 +123,7 @@ var api = {
                     'version',
                     'token',
                     'optionalTerms',
-                    'ci'
+                    'transactionNo'
                 ],
                 essential: [
                     'type',
@@ -153,7 +153,7 @@ var api = {
                     'version': '앱버전',
                     'token': '푸시를 위한 디바이스토큰',
                     'optionalTerms': '선택 약관 리스트',
-                    'ci': 'ci 값'
+                    'transactionNo': '거래번호'
                 },
                 defaults: {
                     'type': USER.signUpTypeEmail,

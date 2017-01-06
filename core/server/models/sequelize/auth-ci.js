@@ -28,10 +28,12 @@ module.exports = {
         'di': {
             'type': Sequelize.STRING,
             'allowNull': true,
+            'unique': true
         },
         'transactionNo': {
             'type': Sequelize.STRING,
             'allowNull': true,
+            'unique': true
         },
         'name': {
             'type': Sequelize.STRING,
@@ -63,19 +65,20 @@ module.exports = {
                 sequelize.models.LoginCount.upsert(body).then(function (data) {
                     authCi = data;
                     return true;
+
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(200, authCi);
                     }
                 });
             },
-            'findOneAuthCi': function (ci, callback) {
+            'findOneAuthCi': function (transactionNo, callback) {
 
                 var authCi;
 
                 sequelize.models.AuthCi.findOne({
                     where: {
-                        ci: ci
+                        transactionNo: transactionNo
                     }
                 }).then(function (data) {
 

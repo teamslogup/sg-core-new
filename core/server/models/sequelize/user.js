@@ -749,9 +749,60 @@ module.exports = {
 
                     this.createUserWithNormalId(data, callback);
                 }
+                else if(data.type == STD.user.signUpTypeAuthCi){
+
+                    data.aid = data.uid;
+
+                    delete data.provider;
+                    delete data.uid;
+
+                    this.createUserWithAuthCi(data, callback);
+                }
                 else {
                     this.createUserWithProvider(data, callback);
                 }
+            },
+            /**
+             * 일반 id 가입 생성
+             * @param data
+             * @param callback
+             */
+            'createUserWithAuthCi': function (data, callback) {
+                var createdUser = null;
+                sequelize.transaction(function (t) {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
+
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
+
+                            var history = data.history;
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                type: history.type,
+                                browser: history.browser,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
+                            }, {transaction: t}).then(function () {
+
+                            });
+                        });
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                    if (createdUser) {
+                        sequelize.models.User.findUserByAid(createdUser.aid, callback);
+                    }
+                });
             },
             /**
              * 일반 id 가입 생성

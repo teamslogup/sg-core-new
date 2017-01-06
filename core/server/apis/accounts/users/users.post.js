@@ -43,7 +43,9 @@ post.validate = function () {
             req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         } else if (type == USER.signUpTypeAuthCi) {
-            req.check('ci', '400_51').len(USER.minCiLength, USER.maxCiLength);
+            req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
+            req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
+            req.check('transactionNo', '400_51').len(USER.minCiLength, USER.maxCiLength);
         }
 
         if (req.body.name !== undefined) {
@@ -117,10 +119,10 @@ post.checkCi = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
 
-        var ci = req.body.ci;
+        var transactionNo = req.body.transactionNo;
 
         if (req.body.type == USER.signUpTypeAuthCi) {
-            req.models.AuthCi.findOneAuthCi(ci, function (status, data) {
+            req.models.AuthCi.findOneAuthCi(transactionNo, function (status, data) {
 
                 if (status == 200) {
 
@@ -131,7 +133,7 @@ post.checkCi = function () {
 
                     req.models.User.findDataWithQuery({
                         where: {
-                            ci: ci
+                            ci: data.ci
                         }
                     }, function (status, data) {
 

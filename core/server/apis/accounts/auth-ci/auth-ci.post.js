@@ -5,9 +5,16 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
+        console.log(req.body.gender);
+        console.log(req.body.birthYear);
+        console.log(req.body.birthMonth);
+        console.log(req.body.birthDay);
+        console.log(req.body.phoneNum);
+
         if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
             return res.hjson(req, next, 403);
         }
+        console.log('asdfdsfa');
 
         var USER = req.meta.std.user;
 
