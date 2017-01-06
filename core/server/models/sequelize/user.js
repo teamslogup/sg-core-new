@@ -749,7 +749,7 @@ module.exports = {
 
                     this.createUserWithNormalId(data, callback);
                 }
-                else if(data.type == STD.user.signUpTypeAuthCi){
+                else if (data.type == STD.user.signUpTypeAuthCi) {
 
                     data.aid = data.uid;
 
@@ -796,10 +796,19 @@ module.exports = {
 
                             });
                         });
+                    }).then(function () {
+                        return sequelize.models.AuthCi.destroy({
+                            where: {
+                                ci: createdUser.ci
+                            },
+                            transaction: t
+                        });
+                    }).then(function () {
+                        return true;
                     });
 
-                }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    if (createdUser) {
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
                         sequelize.models.User.findUserByAid(createdUser.aid, callback);
                     }
                 });

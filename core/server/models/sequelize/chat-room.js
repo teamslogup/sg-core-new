@@ -164,7 +164,7 @@ module.exports = {
                     rows: []
                 };
 
-                var query = "SELECT v1.roomId as id, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
+                var query = "SELECT v1.roomId as id, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
                     "FROM (SELECT a.roomId, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +
                     "FROM `ChatRooms` as room " +
                     "LEFT JOIN `ChatRoomUsers` as roomUser ON room.id = roomUser.roomId " +
@@ -172,7 +172,7 @@ module.exports = {
                     "LEFT JOIN `Users` as user ON user.id = roomUser.userId " +
                     "WHERE room.isPrivate = TRUE AND roomUser.userId = " + options.userId + " AND roomUser.deletedAt IS NULL " +
                     "ORDER BY chatHistory.createdAt DESC) AS a GROUP BY a.roomId ) as v1 " +
-                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, userImages.id as userImageId, image.folder as folder, image.dateFolder as dateFolder, image.name as name FROM ChatRoomUsers as roomUser " +
+                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, userImages.id as userImageId, image.id as imageId, image.folder as folder, image.dateFolder as dateFolder, image.name as name FROM ChatRoomUsers as roomUser " +
                     "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
                     "LEFT JOIN Images as image ON image.id = userImages.imageId " +
