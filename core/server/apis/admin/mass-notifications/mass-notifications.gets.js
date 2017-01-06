@@ -7,6 +7,7 @@ gets.validate = function(){
     return function(req, res, next){
         var COMMON = req.meta.std.common;
         var NOTIFICATION = req.meta.std.notification;
+        var NOTIFICATIONS = req.meta.notifications;
         if (req.query.orderBy === undefined) req.query.orderBy = NOTIFICATION.defaultOrderBy;
         if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
         if (req.query.size === undefined) req.query.size = COMMON.loadingMaxLength;
@@ -18,6 +19,8 @@ gets.validate = function(){
             }
         }
 
+        if (req.query.searchField !== undefined) req.check("searchField", "400_3").isEnum(NOTIFICATION.enumSearchFields);
+        if (req.query.searchItem !== undefined) req.check("searchItem", "400_8").len(COMMON.minSearchLength, COMMON.maxSearchLength);
         if (req.query.orderBy !== undefined) req.check("orderBy", "400_3").isEnum(NOTIFICATION.enumOrderBys);
         if (req.query.sort !== undefined) req.check("sort", "400_3").isEnum(COMMON.enumSortTypes);
         if (req.query.last !== undefined) req.check("last", "400_18").isMicroTimestamp();
@@ -25,7 +28,7 @@ gets.validate = function(){
             min: 1,
             max: COMMON.loadingMaxLength
         });
-        if (req.query.notificationType !== undefined) req.check("notificationType", "400_3").isEnum(NOTIFICATION.enumPublicNotificationTypes);
+        if (req.query.key !== undefined) req.check("key", "400_3").isEnum(Object.keys(NOTIFICATIONS.public));
         if (req.query.sendType !== undefined) req.check("sendType", "400_3").isEnum(NOTIFICATION.enumSendTypes);
         if (req.query.isStored !== undefined) {
             req.check("isStored", "400_20").isBoolean();

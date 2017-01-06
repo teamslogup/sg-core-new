@@ -30,7 +30,6 @@ var standards = {
         "includeProfileItems": []
     },
     "notification": {
-        "enumPublicNotificationTypes": ["notice", "event", "emergency"],
         "notificationTypeNotice": "notice",
         "notificationTypeEvent": "event",
         "notificationTypeEmergency": "emergency",
@@ -51,8 +50,11 @@ var standards = {
         "minImgLength": 1,
         "maxDescriptionLength": 60,
         "minDescriptionLength": 1,
+        "enumSearchFields": ["id", "title", "body"],
         "enumOrderBys": ["createdAt", "updatedAt"],
-        "defaultOrderBy": "createdAt"
+        "defaultOrderBy": "createdAt",
+        "bodyDataType": "long",
+        "defaultCount": 0
     },
     "notificationBox": {
         "defaultLoadingLength": 8,

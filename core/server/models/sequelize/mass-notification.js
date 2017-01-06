@@ -6,17 +6,24 @@
 var Sequelize = require('sequelize');
 var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
+var NOTIFICATIONS = require('../../../../bridge/metadata/notifications');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
-        'notificationType': {
+        'authorId': {
+            'reference': 'User',
+            'referenceKey': 'id',
+            'as': 'author',
+            'asReverse': 'massNotifications',
+            'allowNull': false
+        },
+        'key': {
             'type': Sequelize.ENUM,
-            'allowNull': false,
-            'values': STD.notification.enumPublicNotificationTypes,
-            'defaultValue': STD.notification.notificationTypeNotice,
-            'comment': "노티피케이션의 형태"
+            'values': Object.keys(NOTIFICATIONS.public),
+            'defaultValue': Object.keys(NOTIFICATIONS.public)[0],
+            'allowNull': false
         },
         'sendType': {
             'type': Sequelize.ENUM,
@@ -29,6 +36,34 @@ module.exports = {
             'allowNull': false,
             'defaultValue': true,
             'comment': "formApplication form일때 notification-box에 저장할 지 여부"
+        },
+        'title': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'body': {
+            'type': Sequelize.TEXT(STD.notification.bodyDataType),
+            'allowNull': false
+        },
+        'sendCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
+        'emptyDestinationCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
+        'wrongDestinationCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
+        'failCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -45,8 +80,11 @@ module.exports = {
     },
     options: {
         "indexes": [{
-            name: 'notificationType',
-            fields: ['notificationType']
+            name: 'authorId',
+            fields: ['authorId']
+        }, {
+            name: 'key',
+            fields: ['key']
         }, {
             name: 'sendType',
             fields: ['sendType']
@@ -72,6 +110,7 @@ module.exports = {
             "findMassNotificationsByOptions": function (options, callback) {
                 var count = 0;
                 var foundData = [];
+                var countWhere = {};
                 var where = {};
                 var query = {
                     limit: parseInt(options.size),
@@ -79,19 +118,63 @@ module.exports = {
                     where: where
                 };
 
+                if (options.searchField && options.searchItem) {
+                    if (options.searchField == STD.common.id) {
+                        where[options.searchField] = options.searchItem;
+                        countWhere[options.searchField] = options.searchItem;
+                    } else {
+                        where[options.searchField] = {
+                            "$like": "%" + options.searchItem + "%"
+                        };
+                        countWhere[options.searchField] = {
+                            "$like": "%" + options.searchItem + "%"
+                        };
+                    }
+                } else if (options.searchItem && STD.notification.enumSearchFields.length) {
+                    where.$or = [];
+                    countWhere.$or = [];
+                    for (var i=0; i<STD.notification.enumSearchFields.length; i++) {
+                        var body = {};
+                        if (STD.notification.enumSearchFields[i] == STD.common.id) {
+                            body[STD.notification.enumSearchFields[i]] = options.searchItem;
+                        } else {
+                            body[STD.notification.enumSearchFields[i]] = {
+                                "$like": "%" + options.searchItem + "%"
+                            };
+                        }
+                        where.$or.push(body);
+                        countWhere.$or.push(body);
+                    }
+                }
+
                 if (options.isStored !== undefined) {
+                    countWhere.isStored = options.isStored;
                     where.isStored = options.isStored;
                 }
 
-                if (options.notificationType !== undefined) {
-                    where.notificationType = options.notificationType;
+                if (options.key !== undefined) {
+                    countWhere.key = options.key;
+                    where.key = options.key;
                 }
 
                 if (options.sendType !== undefined) {
+                    countWhere.sendType = options.sendType;
                     where.sendType = options.sendType;
                 }
 
-                sequelize.models.MassNotification.count(query).then(function (data) {
+                if (options.sort == STD.common.DESC) {
+                    where[options.orderBy] = {
+                        "$lt": options.last
+                    };
+                } else {
+                    where[options.orderBy] = {
+                        "$gt": options.last
+                    };
+                }
+
+                sequelize.models.MassNotification.count({
+                    where: countWhere
+                }).then(function (data) {
                     count = data;
                     if (count > 0) {
                         return sequelize.models.MassNotification.findAll(query).then(function (data) {

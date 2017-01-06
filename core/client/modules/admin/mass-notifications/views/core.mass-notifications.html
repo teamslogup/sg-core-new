@@ -1,5 +1,77 @@
 <div id="sgc-mass-notification-wrap" ng-controller="MassNotificationsCtrl">
     <div class="sgc-container" data-ng-class="{'sgc-responsive': FLAG.isResponsive}">
+        <h2 class="sgc-mass-notification-title sgc-titles">
+            {{ 'massNotificationManage' | translate }}
+        </h2>
 
+        <div class="sgc-mass-notification-menu">
+            <select data-ng-model="form.searchField" class="sgc-mass-notification-search-option sgc-option">
+                <option value="" disabled hidden selected>{{ 'searchFieldTitle' | translate }}</option>
+                <option data-ng-repeat="item in searchFields" value="{{ item }}">
+                    {{ item | translate }}
+                </option>
+            </select>
+            <div class="sgc-mass-notification-search">
+                <form>
+                    <input type="text" class="sgc-search-input" data-ng-model="form.searchItem">
+                    <button type="submit" data-ng-click="findMassNotifications()"></button>
+                </form>
+            </div>
+            <button type="button" class="sgc-btn-action" data-ng-click="createMassNotification()">
+                {{ 'createMassNotification' | translate }}
+            </button>
+        </div>
+
+        <div class="sgc-mass-notification-content-wrap">
+            <div class="sgc-mass-notification-content-menu">
+                <select data-ng-model="form.key" class="sgc-filter">
+                    <option value="" hidden selected disabled>{{ 'massNotificationKeyTitle' | translate }}</option>
+                    <option data-ng-repeat="item in keys" value="{{ item }}">
+                        {{ item | translate }}
+                    </option>
+                </select>
+                <select data-ng-model="form.sendType" class="sgc-filter">
+                    <option value="" hidden selected disabled>{{ 'massNotificationSendTypeTitle' | translate }}</option>
+                    <option data-ng-repeat="item in sendTypes" value="{{ item }}">
+                        {{ item | translate }}
+                    </option>
+                </select>
+                <p class="sgc-total">{{ 'totalCount' | translate }} <span>{{ massNotifications.count }}</span></p>
+            </div>
+            <div class="sgc-mass-notification-content-list">
+                <div class="sgc-mass-notification-content-title">
+                    <h6>{{ 'massNotificationSendDate' | translate }}</h6>
+                    <h6>{{ 'massNotificationTitle' | translate }}</h6>
+                    <h6>{{ 'massNotificationSendType' | translate }}</h6>
+                    <h6>{{ 'massNotificationSendCount' | translate }}</h6>
+                    <h6>{{ 'massNotificationSuccessCount' | translate }}</h6>
+                    <h6>{{ 'massNotificationFailCount' | translate }}</h6>
+                </div>
+                <ul>
+                    <li class="sgc-mass-notification-item" data-ng-repeat="item in massNotifications.rows">
+                        <span>{{ item.createdAt | microTimeToDate }}</span>
+                        <span>{{ item.title }}</span>
+                        <span>{{ item.sendType | translate }}</span>
+                        <span>{{ item.sendCount }} {{ 'massNotificationCountUnit' | translate }}</span>
+                        <span>{{ item.sendCount - item.emptyDestinationCount - item.wrongDestinationCount - item.failCount }} {{ 'massNotificationCountUnit' | translate }}</span>
+                        <span>{{ item.emptyDestinationCount + item.wrongDestinationCount + item.failCount }} {{ 'massNotificationCountUnit' | translate }}</span>
+                        <button type="button" class="sgc-list-menu-button">
+                            <i></i>
+                            <i></i>
+                            <i></i>
+                            <span class="sgc-list-menu">
+                                <span data-ng-click="detailMassNotification(item)">{{ 'detail' | translate }}</span>
+                                <span data-ng-click="deleteMassNotification(item)">{{ 'delete' | translate }}</span>
+                            </span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="sgc-mass-notification-content-more-wrap">
+                <button class="sgc-mass-notification-content-more sgc-btn-more" data-ng-if="more" data-ng-click="findMoreMassNotifications()">
+                    {{ 'more' | translate }}
+                </button>
+            </div>
+        </div>
     </div>
 </div>

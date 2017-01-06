@@ -117,6 +117,7 @@ module.exports = {
                 }
             } else {
                 //키에 해당하는 밸류가 널이면 인덱스에 null을 줘서 객체를 생성하지 않는다
+                refinedResult[key] = null;
                 indexes[key].index = null;
                 indexes[key].currentId = null;
             }
@@ -151,6 +152,8 @@ module.exports = {
                     } else {
                         if (currentItem[temp[i]]) {
                             currentItem = currentItem[temp[i]];
+                        } else {
+                            return false;
                         }
 
                         currentIndex = currentIndex[temp[i]];

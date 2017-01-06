@@ -9,7 +9,7 @@ for (var k in commonStandard) {
         }
     } else if (std instanceof Object) {
         for (var kk in std) {
-            if (std[kk]) {
+            if (std[kk] !== undefined) {
                 commonStandard[k][kk] = std[kk];
             }
         }

@@ -79,7 +79,7 @@ var notifications = {
         "emergency": {
             "key": "emergency",
             "isStored": false,
-            "isOption": true,
+            "isOption": false,
             "boxTitle": "kNotiEmergencyTitle",
             "boxBody": "kNotiEmergencyBody",
             "sendTypes": {
