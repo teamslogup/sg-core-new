@@ -140,7 +140,7 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
 
     $scope.userAgeChart = {
         labels: ["10대", "20대", "30대", "40대", "50대", "60대 이상", "미입력"],
-        data: [65, 59, 80, 81, 56, 55],
+        data: [0, 0, 0, 0, 0, 0],
         colors: ["#dae1f1", "#6d8fe4", "#62bbdb", "#6be1cf", "#b4ff91", "#f6ff6d", "#ff9d9d"],
         options: {
             responsive: true,
