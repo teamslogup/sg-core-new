@@ -26,11 +26,13 @@ var ChatRoom = require('./chat-room');
 var ChatRoomUser = require('./chat-room-user');
 var LoginCount = require('./login-count');
 var MassNotification = require('./mass-notification');
+var AuthCi = require('./auth-ci');
 
 var models = {
     User: User,
     Provider: Provider,
     Auth: Auth,
+    AuthCi: AuthCi,
     Report: Report,
     Notice: Notice,
     Board: Board,
