@@ -117,7 +117,13 @@ module.exports = {
                 }
             } else {
                 //키에 해당하는 밸류가 널이면 인덱스에 null을 줘서 객체를 생성하지 않는다
-                refinedResult[key] = null;
+
+                if (refinedResult[key] instanceof Array) {
+                    refinedResult[key] = [];
+                } else {
+                    refinedResult[key] = null;
+                }
+
                 indexes[key].index = null;
                 indexes[key].currentId = null;
             }
