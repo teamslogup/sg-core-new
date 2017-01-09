@@ -268,9 +268,14 @@ module.exports = {
                         if (data && data[0]) {
                             chatRoom = data[0].room;
 
-                            data[0].setDataValue('createdAt', micro.now());
-                            data[0].setDataValue('deletedAt', null);
-                            return data[0].save({paranoid: false});
+                            if (data[0].deletedAt != null) {
+                                data[0].setDataValue('createdAt', micro.now());
+                                data[0].setDataValue('deletedAt', null);
+                                return data[0].save({paranoid: false});
+                            } else {
+                                return true;
+                            }
+
                         } else {
 
                             return sequelize.models.ChatRoom.create({
@@ -298,7 +303,7 @@ module.exports = {
 
                             });
                         }
-                    }).then(function (data) {
+                    }).then(function () {
                         return true;
                     })
 
