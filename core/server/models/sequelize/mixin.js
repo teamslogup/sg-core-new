@@ -74,6 +74,25 @@ var mixin = {
         },
         'classMethods': {
             /**
+             * 생성시 include 포함해서 반환
+             * @param body
+             * @param include
+             * @param callback
+             */
+            'createDataIncluding': function (body, include, callback) {
+                var createdData = null;
+                this.create(body, {
+                    include: include
+                }).then(function (data) {
+                    createdData = data;
+                    return true;
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(201, createdData);
+                    }
+                });
+            },
+            /**
              * raw 쿼리를 통해서 데이터를 찾음
              * @param raw
              * @param Model
