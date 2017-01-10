@@ -5,7 +5,7 @@ export default function routes($stateProvider) {
     var ADMIN = window.meta.std.admin;
     $stateProvider
         .state(PREFIX.admin + '.' +ADMIN.moduleDashboardInfo, {
-            url: '/',
+            url: '',
             templateUrl: '/modules/admin/dashboard-info/views/core.' + ADMIN.moduleDashboardInfo + '.html'
         });
 }
