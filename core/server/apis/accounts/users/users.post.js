@@ -140,13 +140,16 @@ post.checkCi = function () {
 
                         if (status == 404) {
 
-                            if (data.phoneNum == req.body.phoneNum) {
-                                res.hjson(req, next, 409, {
-                                    code: '409_1'
-                                });
-                            } else {
-                                next();
-                            }
+                            req.models.User.findUserByPhoneNumber(req.body.phoneNum, function (status, data) {
+                                if (status == 404) {
+                                    next();
+                                } else {
+                                    res.hjson(req, next, 409, {
+                                        code: '409_1'
+                                    });
+                                }
+
+                            });
 
                         } else {
                             res.hjson(req, next, 409, {
