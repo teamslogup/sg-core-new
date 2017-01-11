@@ -126,6 +126,7 @@ post.checkCi = function () {
 
                 if (status == 200) {
 
+                    req.body.ci = data.ci;
                     req.body.name = data.name;
                     req.body.birth = data.birth;
                     req.body.gender = data.gender;
@@ -138,7 +139,15 @@ post.checkCi = function () {
                     }, function (status, data) {
 
                         if (status == 404) {
-                            next();
+
+                            if (data.phoneNum == req.body.phoneNum) {
+                                res.hjson(req, next, 409, {
+                                    code: '409_1'
+                                });
+                            } else {
+                                next();
+                            }
+
                         } else {
                             res.hjson(req, next, 409, {
                                 code: '409_7'
