@@ -184,17 +184,22 @@ module.exports = {
                     raw: true
                 }).then(function (result) {
 
-                    chatRoom.count = result.length;
-                    chatRoom.rows = coreUtils.objectify.convert(result, {
-                        user: {
-                            userImages: [{
-                                image: {}
-                            }]
-                        },
-                        chatHistories: [{}]
-                    });
+                    if (result.length > 0) {
+                        chatRoom.count = result.length;
+                        chatRoom.rows = coreUtils.objectify.convert(result, {
+                            user: {
+                                userImages: [{
+                                    image: {}
+                                }]
+                            },
+                            chatHistories: [{}]
+                        });
 
-                    return true;
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(200, chatRoom);
