@@ -27,13 +27,11 @@ module.exports = {
         },
         'di': {
             'type': Sequelize.STRING,
-            'allowNull': true,
-            'unique': true
+            'allowNull': true
         },
         'transactionNo': {
             'type': Sequelize.STRING,
-            'allowNull': true,
-            'unique': true
+            'allowNull': true
         },
         'name': {
             'type': Sequelize.STRING,
@@ -61,6 +59,10 @@ module.exports = {
         }
     },
     options: {
+        "indexes": [{
+            unique: true,
+            fields: ['ci', 'di', 'transactionNo']
+        }],
         'charset': 'utf8',
         'paranoid': false,
         'hooks': {},
@@ -70,15 +72,28 @@ module.exports = {
 
                 var authCi;
 
-                sequelize.models.AuthCi.upsert(body).then(function (data) {
-                    authCi = data;
-                    return true;
+                sequelize.transaction(function (t) {
+
+                    return sequelize.models.AuthCi.destroy({
+                        where: {
+                            ci: body.ci
+                        },
+                        transaction: t
+                    }).then(function () {
+                        return sequelize.models.AuthCi.create(body, {
+                            transaction: t
+                        });
+                    }).then(function (data) {
+                        authCi = data;
+                        return true;
+                    });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(200, authCi);
                     }
                 });
+
             },
             'findOneAuthCi': function (transactionNo, callback) {
 

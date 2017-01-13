@@ -91,8 +91,8 @@ export default function ImagesCtrl($scope, $rootScope, $filter, imagesManager, d
         dialogHandler.show('', $filter('translate')('sureDelete'), '삭제', true, function () {
             loadingHandler.startLoading(LOADING.spinnerKey, 'deleteImage');
             imagesManager.deleteImage(image, function (status, data) {
-                if (status == 200) {
-                    $scope.imageList = $scope.imageList.slice($index, 1);
+                if (status == 204) {
+                    $scope.imageList.splice($index, 1);
                 } else {
                     dialogHandler.alertError(status, data);
                 }

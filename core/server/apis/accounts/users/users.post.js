@@ -126,8 +126,12 @@ post.checkCi = function () {
 
                 if (status == 200) {
 
+                    req.body.ci = data.ci;
+                    req.body.di = data.di;
                     req.body.name = data.name;
-                    req.body.birth = data.birth;
+                    req.body.birthYear = data.birthYear;
+                    req.body.birthMonth = data.birthMonth;
+                    req.body.birthDay = data.birthDay;
                     req.body.gender = data.gender;
                     req.body.phoneNum = data.phoneNum;
 
@@ -138,7 +142,18 @@ post.checkCi = function () {
                     }, function (status, data) {
 
                         if (status == 404) {
-                            next();
+
+                            req.models.User.findUserByPhoneNumber(req.body.phoneNum, function (status, data) {
+                                if (status == 404) {
+                                    next();
+                                } else {
+                                    res.hjson(req, next, 409, {
+                                        code: '409_1'
+                                    });
+                                }
+
+                            });
+
                         } else {
                             res.hjson(req, next, 409, {
                                 code: '409_7'
@@ -207,6 +222,12 @@ post.createUser = function () {
 
         if (req.body.type == USER.signUpTypePhoneEmail) {
             data.email = req.body.aid;
+        }
+
+        if (req.body.type == USER.signUpTypeAuthCi) {
+            data.ci = req.body.ci;
+            data.di = req.body.di;
+            data.phoneNum = req.body.phoneNum;
         }
 
         data.history = req.models.LoginHistory.parseLoginHistory(req, req.body);
