@@ -81,9 +81,7 @@ module.exports = {
 
                 var chatHistory;
 
-                sequelize.transaction(function (t) {
-
-                    return sequelize.models.ChatHistory.create(body, {
+                sequelize.models.ChatHistory.create(body, {
                         'include': [{
                             model: sequelize.models.User,
                             as: 'user',
@@ -110,8 +108,7 @@ module.exports = {
                             'where': {
                                 roomId: body.roomId
                             },
-                            'paranoid': false,
-                            'transaction': t
+                            'paranoid': false
                         }).then(function (data) {
                             if (data[0] > 0) {
                                 return true;
@@ -130,8 +127,7 @@ module.exports = {
                                 userId: body.userId,
                                 roomId: body.roomId
                             },
-                            'paranoid': false,
-                            'transaction': t
+                            'paranoid': false
                         }).then(function (data) {
 
                             if (data[0] > 0 || data[1][0]) {
@@ -142,8 +138,6 @@ module.exports = {
 
                         });
 
-                    });
-
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         chatHistory.reload().then(function () {
@@ -151,6 +145,8 @@ module.exports = {
                         });
                     }
                 });
+
+
             },
             'findChatHistoriesByOptions': function (options, userId, callback) {
 
