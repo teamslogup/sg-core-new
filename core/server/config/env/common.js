@@ -63,8 +63,7 @@ module.exports = {
             "retry": 20
         },
         "fcm": {
-            token: "",
-            id: ""
+            "key": ""
         },
         "email": {
             "host": "",

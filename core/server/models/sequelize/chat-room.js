@@ -56,35 +56,6 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            // 'findChatRoomsByOption': function (options, callback) {
-            //     var where = {};
-            //
-            //     where.createdAt = {
-            //         '$lt': options.last
-            //     };
-            //
-            //     sequelize.transaction(function (t) {
-            //
-            //         return sequelize.models.ChatRoom.findAndCountAll({
-            //             'offset': parseInt(options.offset),
-            //             'limit': parseInt(options.size),
-            //             'where': where,
-            //             'order': [[options.orderBy, options.sort]],
-            //             'transaction': t
-            //         }).then(function (data) {
-            //             if (data.rows.length > 0) {
-            //                 return data;
-            //             } else {
-            //                 throw new errorHandler.CustomSequelizeError(404);
-            //             }
-            //         });
-            //
-            //     }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-            //         if (data) {
-            //             callback(200, data);
-            //         }
-            //     });
-            // },
             'findChatRoomsByOption': function (options, callback) {
 
                 var where = {};
@@ -96,68 +67,6 @@ module.exports = {
                 where.createdAt = {
                     '$lt': options.last
                 };
-
-                // sequelize.transaction(function (t) {
-                //
-                //     return sequelize.models.ChatRoom.findAll({
-                //         'order': [[options.orderBy, options.sort]],
-                //         'paranoid': true,
-                //         include: [{
-                //             model: sequelize.models.ChatRoomUser,
-                //             as: 'roomUsers',
-                //             where: where
-                //         }],
-                //         'transaction': t
-                //     }).then(function (data) {
-                //         if (data.length > 0) {
-                //
-                //             var roomIds = [];
-                //
-                //             for (var i = 0; i < data.length; i++) {
-                //                 roomIds.push(data[i].id);
-                //             }
-                //
-                //             return sequelize.models.ChatRoomUser.findAll({
-                //                 where: {
-                //                     roomId: roomIds,
-                //                     userId: {
-                //                         $ne: options.userId
-                //                     }
-                //                 },
-                //                 paranoid: false,
-                //                 include: [{
-                //                     model: sequelize.models.User,
-                //                     as: 'user',
-                //                     attributes: sequelize.models.User.getUserFields(),
-                //                     paranoid: false,
-                //                     include: [{
-                //                         model: sequelize.models.UserImage,
-                //                         as: 'userImages',
-                //                         include: {
-                //                             model: sequelize.models.Image,
-                //                             as: 'image'
-                //                         }
-                //                     }]
-                //                 }],
-                //                 transaction: t
-                //             });
-                //
-                //         } else {
-                //             throw new errorHandler.CustomSequelizeError(404);
-                //         }
-                //
-                //     }).then(function (data) {
-                //         return data;
-                //     });
-                //
-                // }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                //     if (data) {
-                //         callback(200, {
-                //             count: data.length,
-                //             rows: data
-                //         });
-                //     }
-                // });
 
                 var chatRoom = {
                     count: 0,
@@ -212,41 +121,6 @@ module.exports = {
                 var chatRoom;
 
                 sequelize.transaction(function (t) {
-
-                    // return sequelize.models.ChatRoom.findAll({
-                    //     'where': {
-                    //         isPrivate: true
-                    //     },
-                    //     'include': {
-                    //         model: sequelize.models.ChatRoomUser,
-                    //         as: 'roomUsers',
-                    //         paranoid: false,
-                    //         where: {
-                    //             $or: [{
-                    //                 userId: userId
-                    //             }, {
-                    //                 userId: partnerId
-                    //             }]
-                    //         }
-                    //     },
-                    //     'transaction': t
-                    // }).then(function (data) {
-                    //     if (data) {
-                    //         chatRoom = data;
-                    //         for (var i = 0; i < data.roomUsers.length; i++) {
-                    //             var roomUser = data.roomUsers[i];
-                    //             if (roomUser.userId == userId && roomUser.deletedAt !== null) {
-                    //                 roomUser.setDataValue('createdAt', micro.now());
-                    //                 roomUser.setDataValue('deletedAt', null);
-                    //                 return roomUser.save({paranoid: false});
-                    //             }
-                    //         }
-                    //     } else {
-                    //         return true;
-                    //     }
-                    // }).then(function () {
-                    //     return true;
-                    // })
 
                     return sequelize.models.ChatRoomUser.findAll({
                         'where': {
