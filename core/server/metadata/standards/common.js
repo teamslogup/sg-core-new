@@ -134,6 +134,8 @@ var standards = {
         "maxCiLength": 1000,
         "minDiLength": 1,
         "maxDiLength": 1000,
+        "minTransactionLength": 1,
+        "maxTransactionLength": 1000,
         "enableProvider": ["facebook"],
         "defaultAgreedEmail": true,
         "defaultAgreedPhoneNum": true,

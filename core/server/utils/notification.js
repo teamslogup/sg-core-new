@@ -47,10 +47,10 @@ module.exports = {
 
                                 _this.replaceMagicKey(sendTypes[key], payload, user.language, function (isSuccess, title, body) {
 
+                                    payload['notificationKey'] = notification.key;
+
                                     if (isSuccess) {
-                                        _this.send(user, key, title, body, {
-                                            'notificationKey': notification.key
-                                        }, function (status, data) {
+                                        _this.send(user, key, title, body, payload, function (status, data) {
                                             if (status == 204) {
                                                 if (callback) callback(status, data);
                                             } else {

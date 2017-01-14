@@ -258,7 +258,8 @@ var middles = {
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
 
                     coreUtils.notification.all.sendNotification(data.userId, NOTIFICATIONS.chat, {
-                        userNick: user.nick
+                        userNick: user.nick,
+                        roomId: payload.roomId
                     });
 
                 } else {
