@@ -35,22 +35,22 @@ module.exports = {
 
                     _this.createdNotificationBox(user, notification, payload, function (status, data) {
 
-                        if (status == 200) {
+                        if (status == 204) {
 
                             var sendTypes = notification.sendTypes;
 
-                            for (var key in sendTypes) {
+                            for (var sendType in sendTypes) {
 
-                                if (!_this.isNotificationSwitchOn(user, key)) {
+                                if (!_this.isNotificationSwitchOn(user, notification.key, sendType)) {
                                     continue;
                                 }
 
-                                _this.replaceMagicKey(sendTypes[key], payload, user.language, function (isSuccess, title, body) {
+                                _this.replaceMagicKey(sendTypes[sendType], payload, user.language, function (isSuccess, title, body) {
 
                                     payload['notificationKey'] = notification.key;
 
                                     if (isSuccess) {
-                                        _this.send(user, key, title, body, payload, function (status, data) {
+                                        _this.send(user, sendType, title, body, payload, function (status, data) {
                                             if (status == 204) {
                                                 if (callback) callback(status, data);
                                             } else {
@@ -91,9 +91,9 @@ module.exports = {
                 });
                 notificationBox.create(function (status, data) {
                     if (status == 200) {
-                        callback(status, data);
-                    } else {
                         callback(204);
+                    } else {
+                        callback(status);
                     }
                 });
             } else {
@@ -101,12 +101,23 @@ module.exports = {
             }
 
         },
-        isNotificationSwitchOn: function (user, sendType) {
+        isNotificationSwitchOn: function (user, notificationKey, sendType) {
 
             var notificationSwitch = user.notificationSwitches;
             for (var i = 0; i < notificationSwitch.length; ++i) {
-                if (notificationSwitch[i].sendType == sendType) {
-                    return false;
+                if (notificationSwitch[i].key == notificationKey) {
+                    if (notificationSwitch[i].sendType == sendType) {
+                        return false;
+                    }
+                }
+            }
+
+            var notificationPublicSwitch = user.notificationPublicSwitches;
+            for (var i = 0; i < notificationPublicSwitch.length; ++i) {
+                if (notificationSwitch[i].key == notificationKey) {
+                    if (notificationPublicSwitch[i].sendType == sendType) {
+                        return false;
+                    }
                 }
             }
 

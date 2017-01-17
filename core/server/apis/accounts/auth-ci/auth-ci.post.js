@@ -5,9 +5,9 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
-        if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
-            return res.hjson(req, next, 403);
-        }
+        // if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
+        //     return res.hjson(req, next, 403);
+        // }
 
         var USER = req.meta.std.user;
 
@@ -23,7 +23,9 @@ post.validate = function () {
             req.check('name', '400_8').len(USER.minNameLength, USER.maxNameLength);
         }
 
-        if (req.body.gender !== undefined) req.check('gender', '400_3').isEnum(USER.enumGenders);
+        if (req.body.gender !== undefined) {
+            req.check('gender', '400_3').isEnum(USER.enumGenders);
+        }
         if (req.body.birthYear !== undefined && req.body.birthMonth !== undefined && req.body.birthDay !== undefined) {
             req.check('birthYear', '400_35').isYear();
             req.check('birthMonth', '400_36').isMonth();
@@ -53,7 +55,9 @@ post.setParams = function () {
             if (status == 200) {
 
                 req.models.User.updateDataById(data.id, {
-                    phoneNum: req.query.phoneNum
+                    phoneNum: req.query.phoneNum,
+                    ci: req.query.ci,
+                    di: req.query.di
                 }, function (status, data) {
                     if (status == 204) {
                         next();

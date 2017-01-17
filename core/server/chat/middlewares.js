@@ -257,9 +257,15 @@ var middles = {
                     socket.emit(STD.chat.serverCheckMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
 
-                    coreUtils.notification.all.sendNotification(data.userId, NOTIFICATIONS.chat, {
-                        userNick: user.nick,
-                        roomId: payload.roomId
+                    data.room.roomUsers.forEach(function (roomUser) {
+                        if (roomUser.userId != user.id) {
+                            coreUtils.notification.all.sendNotification(roomUser.userId, NOTIFICATIONS.chat, {
+                                roomId: payload.roomId,
+                                type: data.type,
+                                message: data.message,
+                                userNick: user.nick,
+                            });
+                        }
                     });
 
                 } else {

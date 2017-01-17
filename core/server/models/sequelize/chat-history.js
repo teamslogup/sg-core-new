@@ -97,6 +97,18 @@ module.exports = {
                         }, {
                             model: sequelize.models.Image,
                             as: 'image'
+                        },  {
+                            model: sequelize.models.ChatRoom,
+                            as: 'room',
+                            include: [{
+                                model: sequelize.models.ChatRoomUser,
+                                as: 'roomUsers',
+                                include: [{
+                                    model: sequelize.models.User,
+                                    as: 'user',
+                                    attributes: sequelize.models.User.getUserFields(),
+                                }]
+                            }]
                         }]
                     }).then(function (data) {
 
