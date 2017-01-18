@@ -5,6 +5,8 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
+        console.log('query', req.query);
+
         // if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
         //     return res.hjson(req, next, 403);
         // }
@@ -52,6 +54,7 @@ post.setParams = function () {
                 ci: body.ci
             }
         }, function (status, data) {
+            console.log(status, data);
             if (status == 200) {
 
                 req.models.User.updateDataById(data.id, {
@@ -59,6 +62,7 @@ post.setParams = function () {
                     ci: req.query.ci,
                     di: req.query.di
                 }, function (status, data) {
+                    console.log(status, data);
                     if (status == 204) {
                         next();
                     } else {
@@ -69,6 +73,7 @@ post.setParams = function () {
             } else {
 
                 req.models.AuthCi.upsertAuthCi(body, function (status, data) {
+                    console.log(status, data);
                     if (status == 200) {
                         next();
                     } else {
