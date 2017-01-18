@@ -86,7 +86,7 @@ var api = {
                 apiCreator.add(put.validate());
                 apiCreator.add(put.validateKey());
                 apiCreator.add(top.hasAuthorization());
-                apiCreator.add(put.updateReport());
+                apiCreator.add(put.update());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 

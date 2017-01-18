@@ -32,10 +32,12 @@ put.validateKey = function () {
                 code: '400_3'
             });
         }
+
+        next();
     }
 };
 
-put.updateReport = function () {
+put.update = function () {
     return function (req, res, next) {
 
         var body = {
@@ -47,7 +49,6 @@ put.updateReport = function () {
         if (req.body.switch) {
 
             req.models.NotificationPublicSwitch.deleteNotificationPublicSwitch(body, function (status, data) {
-
                 if (status == 204) {
                     next();
                 } else {
