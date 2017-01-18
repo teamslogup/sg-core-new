@@ -65,6 +65,12 @@ put.sendNotifications = function () {
         if (req.body.isSolved !== undefined && req.body.isSolved == true && req.body.reply !== undefined && req.report.authorId != null) {
 
             var user;
+            var payload = {
+                userId: req.report.userId,
+                nick: req.report.nick,
+                body: req.report.body,
+                reply: req.report.reply
+            };
 
             req.models.User.findUserNotificationInfo(req.report.authorId, function (status, data) {
                 if (status == 200) {
@@ -92,17 +98,14 @@ put.sendNotifications = function () {
                             }
                         }
 
-                        if (req.coreUtils.notification.all.isNotificationSwitchOn(user, key)) {
+                        if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
 
-                            req.coreUtils.notification.all.replaceMagicKey(sendType, {
-                                userId: req.report.userId,
-                                nick: req.report.nick,
-                                body: req.report.body,
-                                reply: req.report.reply
-                            }, user.language, function (isSuccess, title, body) {
+                            req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
+
+                                payload['notificationKey'] = notificationReport.key;
 
                                 if (isSuccess) {
-                                    req.coreUtils.notification.all.send(user, key, title, body, function (status, data) {
+                                    req.coreUtils.notification.all.send(user, key, title, body, payload, function (status, data) {
                                         console.log('reportNoti', status);
                                     });
                                 }

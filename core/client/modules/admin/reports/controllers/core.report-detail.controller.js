@@ -36,10 +36,10 @@ export default function ReportDetailCtrl($scope, $uibModalInstance, scope, repor
         scope.reportsManager.updateReportById($scope.currentReport.id, body, function (status, data) {
             if (status == 200) {
 
-                scope.reportList[$scope.currentIndex] = data;
+                scope.reportList[scope.currentIndex] = data;
 
                 if (scope.isSolved == REPORT.unsolved) {
-                    scope.reportList.splice($scope.currentIndex, 1);
+                    scope.reportList.splice(scope.currentIndex, 1);
                 }
 
                 $uibModalInstance.close(data);
