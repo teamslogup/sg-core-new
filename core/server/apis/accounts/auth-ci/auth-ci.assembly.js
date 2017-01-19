@@ -17,10 +17,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['ci', 'di', 'transactionNo', 'name', 'birthYear', 'birthMonth', 'birthDay', 'gender', 'phoneNum'],
-                essential: ['ci', 'name', 'phoneNum'],
+                acceptable: ['type', 'userId', 'ci', 'di', 'transactionNo', 'name', 'birthYear', 'birthMonth', 'birthDay', 'gender', 'phoneNum'],
+                essential: ['type', 'ci', 'name', 'phoneNum'],
                 resettable: [],
                 explains: {
+                    'type': 'singup, addPhone',
+                    'userId': '유저 id',
                     'ci': 'ci 값',
                     'di': 'di 값',
                     'transactionNo': '거래번호',

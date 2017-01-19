@@ -7,11 +7,19 @@ post.validate = function () {
 
         console.log('query', req.query);
 
-        // if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
-        //     return res.hjson(req, next, 403);
-        // }
+        if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
+            return res.hjson(req, next, 403);
+        }
 
         var USER = req.meta.std.user;
+
+        if (req.body.type !== undefined) {
+            req.check('type', '400_3').isEnum(USER.enumAuthType);
+        }
+
+        if (req.body.userId !== undefined) {
+            req.check('gender', '400_12').isInt();
+        }
 
         req.check('ci', '400_51').len(USER.minCiLength, USER.maxCiLength);
         if (req.body.di !== undefined) {
@@ -47,42 +55,37 @@ post.validate = function () {
 
 post.setParams = function () {
     return function (req, res, next) {
+        var USER = req.meta.std.user;
+
         var body = req.body;
 
-        req.models.User.findDataWithQuery({
-            where: {
-                ci: body.ci
-            }
-        }, function (status, data) {
-            console.log(status, data);
-            if (status == 200) {
+        if (req.body.type == USER.authTypeSingUp) {
 
-                req.models.User.updateDataById(data.id, {
-                    phoneNum: req.query.phoneNum,
-                    ci: req.query.ci,
-                    di: req.query.di
-                }, function (status, data) {
-                    console.log(status, data);
-                    if (status == 204) {
-                        next();
-                    } else {
-                        return res.hjson(req, next, status, data);
-                    }
-                });
+            req.models.AuthCi.upsertAuthCi(body, function (status, data) {
+                if (status == 200) {
+                    next();
+                } else {
+                    return res.hjson(req, next, status, data);
+                }
+            });
 
-            } else {
+        }
 
-                req.models.AuthCi.upsertAuthCi(body, function (status, data) {
-                    console.log(status, data);
-                    if (status == 200) {
-                        next();
-                    } else {
-                        return res.hjson(req, next, status, data);
-                    }
-                });
+        if (req.body.type == USER.authTypeAddPhone) {
 
-            }
-        });
+            req.models.User.updateDataById(req.body.userId, {
+                phoneNum: req.query.phoneNum,
+                ci: req.query.ci,
+                di: req.query.di
+            }, function (status, data) {
+                if (status == 204) {
+                    next();
+                } else {
+                    return res.hjson(req, next, status, data);
+                }
+            });
+
+        }
 
     };
 };
