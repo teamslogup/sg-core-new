@@ -5,7 +5,7 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
-        console.log('query', req.query);
+        console.log('query', req.body);
 
         if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
             return res.hjson(req, next, 403);
@@ -18,7 +18,7 @@ post.validate = function () {
         }
 
         if (req.body.userId !== undefined) {
-            req.check('gender', '400_12').isInt();
+            req.check('userId', '400_12').isInt();
         }
 
         req.check('ci', '400_51').len(USER.minCiLength, USER.maxCiLength);
@@ -69,9 +69,7 @@ post.setParams = function () {
                 }
             });
 
-        }
-
-        if (req.body.type == USER.authTypeAddPhone) {
+        } else if (req.body.type == USER.authTypeAddPhone) {
 
             req.models.User.updateDataById(req.body.userId, {
                 phoneNum: req.query.phoneNum,
@@ -85,6 +83,8 @@ post.setParams = function () {
                 }
             });
 
+        } else {
+            return res.hjson(req, next, 400);
         }
 
     };

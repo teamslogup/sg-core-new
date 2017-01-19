@@ -154,7 +154,7 @@ var standards = {
         "quiescenceUserPivotDay": 365,
         "modalSize": "lg",
         "enumAuthType": ["signup", "addPhone"],
-        "authTypeSingUp": "singup",
+        "authTypeSingUp": "signup",
         "authTypeAddPhone": "addPhone"
     },
     "replaceApi": {

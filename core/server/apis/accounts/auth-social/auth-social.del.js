@@ -18,14 +18,12 @@ del.removeProvider = function () {
         var isSearched = false;
         var providers = req.loadedUser.providers;
 
-
         // 연동아이디가 하나뿐이면서, 아이디 비번 로그인, 폰번호 불가능할 경우
         if (!req.loadedUser.aid && !req.loadedUser.phoneNum && providers.length == 1) {
             return res.hjson(req, next, 400, {
                 code: '400_50'
             });
         }
-
 
         var body = req.body;
         for (var i = 0; i < providers.length; ++i) {
