@@ -5,11 +5,11 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
-        console.log('query', req.body);
+        console.log('body', req.body);
 
-        if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
-            return res.hjson(req, next, 403);
-        }
+        // if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
+        //     return res.hjson(req, next, 403);
+        // }
 
         var USER = req.meta.std.user;
 
@@ -72,9 +72,9 @@ post.setParams = function () {
         } else if (req.body.type == USER.authTypeAddPhone) {
 
             req.models.User.updateDataById(req.body.userId, {
-                phoneNum: req.query.phoneNum,
-                ci: req.query.ci,
-                di: req.query.di
+                phoneNum: req.body.phoneNum,
+                ci: req.body.ci,
+                di: req.body.di
             }, function (status, data) {
                 if (status == 204) {
                     next();
