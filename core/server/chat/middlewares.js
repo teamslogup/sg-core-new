@@ -133,8 +133,10 @@ var middles = {
             sequelize.models.ChatRoomUser.findChatRoomUsersByOptions(body, function (status, data) {
                 if (status == 200) {
 
-                    for (var i = 0; i < data.length; i++) {
-                        socket.join(data[i].roomId);
+                    var roomUsers = data.rows;
+
+                    for (var i = 0; i < roomUsers.length; i++) {
+                        socket.join(roomUsers[i].roomId);
                     }
 
                     socket.emit(STD.chat.serverJoinAllRooms, data);
