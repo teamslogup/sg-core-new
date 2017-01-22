@@ -38,6 +38,7 @@ module.exports.init = function (io) {
         console.log('session', socket.request.session);
 
         socket.join(STD.chat.userRoomPrefix + socket.request.session.passport.user);
+        // socket.emit('connect');
 
         socket.on(STD.chat.clientCreateRoom, function (body) {
             var joinBinder = new Binder(io, socket, body);
@@ -104,7 +105,7 @@ module.exports.init = function (io) {
         });
 
         socket.on('disconnect', function () {
-            console.log('disconnect');
+            console.log('disconnect', socket.request.session);
             socket.disconnect();
         });
 

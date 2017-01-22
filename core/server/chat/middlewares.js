@@ -92,7 +92,7 @@ var middles = {
                         });
                     }
                     socket.join(roomId);
-                    socket.emit(STD.chat.serverJoinRoom, roomId);
+                    socket.emit(STD.chat.serverJoinRoom, body);
                     socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, roomId);
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 

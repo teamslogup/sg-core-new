@@ -58,23 +58,13 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'findChatRoomsByOption': function (options, callback) {
 
-                var where = {};
-
-                if (options.userId !== undefined) {
-                    where.userId = options.userId
-                }
-
-                where.createdAt = {
-                    '$lt': options.last
-                };
-
                 var chatRoom = {
                     count: 0,
                     rows: []
                 };
 
-                var query = "SELECT v1.roomId as id, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
-                    "FROM (SELECT a.roomId, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +
+                var query = "SELECT v1.roomId as id, v1.updatedAt as updatedAt, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
+                    "FROM (SELECT a.roomId, a.updatedAt, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, room.updatedAt as updatedAt, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +
                     "FROM `ChatRooms` as room " +
                     "LEFT JOIN `ChatRoomUsers` as roomUser ON room.id = roomUser.roomId " +
                     "LEFT JOIN (SELECT chatHistory.* FROM ChatHistories as chatHistory LEFT JOIN ChatRoomUsers as roomUser ON chatHistory.roomId = roomUser.roomId WHERE roomUser.userId = " + options.userId + " AND chatHistory.createdAt > roomUser.createdAt) as chatHistory ON room.id = chatHistory.roomId " +
@@ -85,30 +75,48 @@ module.exports = {
                     "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
                     "LEFT JOIN Images as image ON image.id = userImages.imageId " +
-                    "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId GROUP BY roomUserId " +
-                    "ORDER BY chatCreatedAt DESC";
+                    "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId " +
+                    "WHERE v1.updatedAt < " + options.last + " " +
+                    "GROUP BY roomUserId " +
+                    "ORDER BY updatedAt DESC LIMIT " + options.size;
 
-                sequelize.query(query, {
-                    type: sequelize.QueryTypes.SELECT,
-                    raw: true
-                }).then(function (result) {
+                sequelize.transaction(function (t) {
+                    return sequelize.models.ChatRoomUser.count({
+                        where: {
+                            userId: options.userId
+                        },
+                        transaction: t
+                    }).then(function (count) {
 
-                    if (result.length > 0) {
-                        chatRoom.count = result.length;
-                        chatRoom.rows = coreUtils.objectify.convert(result, {
-                            user: {
-                                userImages: [{
-                                    image: {}
-                                }]
-                            },
-                            chatHistories: [{}]
-                        });
+                        if (count > 0) {
+                            chatRoom.count = count;
 
-                        return true;
-                    } else {
-                        throw new errorHandler.CustomSequelizeError(404);
-                    }
+                            return sequelize.query(query, {
+                                type: sequelize.QueryTypes.SELECT,
+                                raw: true,
+                                transaction: t
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
 
+                    }).then(function (result) {
+
+                        if (result.length > 0) {
+                            chatRoom.rows = coreUtils.objectify.convert(result, {
+                                user: {
+                                    userImages: [{
+                                        image: {}
+                                    }]
+                                },
+                                chatHistories: [{}]
+                            });
+
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+                    });
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(200, chatRoom);
@@ -150,7 +158,10 @@ module.exports = {
                             if (data[0].deletedAt != null) {
                                 data[0].setDataValue('createdAt', micro.now());
                                 data[0].setDataValue('deletedAt', null);
-                                return data[0].save({paranoid: false});
+                                return data[0].save({paranoid: false}).then(function () {
+                                    chatRoom.setDataValue('updatedAt', micro.now());
+                                    return chatRoom.save({paranoid: false});
+                                });
                             } else {
                                 return true;
                             }
