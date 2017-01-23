@@ -64,44 +64,102 @@ module.exports = {
             }
         }),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            getProviderFields: function() {
+            getProviderFields: function () {
                 var fields = ['id', 'type', 'uid'];
                 return fields;
             },
-            updateToken: function(type, userId, uid, secret, callback) {
-                socialValidator[type + 'Validadtor'](uid, secret, function(status, data) {
+            updateToken: function (type, userId, uid, secret, callback) {
+                socialValidator[type + 'Validadtor'](uid, secret, function (status, data) {
                     if (status == 200) {
                         var createdProvider = null;
-                        var provider = sequelize.models.Provider.build({
-                            type: type,
-                            uid: uid,
-                            token: secret,
-                            userId: userId
-                        });
-                        provider.tokenEncryption();
+                        // var provider = sequelize.models.Provider.build({
+                        //     type: type,
+                        //     uid: uid,
+                        //     token: secret,
+                        //     userId: userId
+                        // });
+                        // provider.tokenEncryption();
+                        //
+                        // // 2. 프로바이더생성
+                        // return provider.save().then(function (data) {
+                        //     if (data) {
+                        //         createdProvider = data;
+                        //     }
+                        // });
 
-                        // 2. 프로바이더생성
-                        return provider.save().then(function (data) {
-                            if (data) {
+                        sequelize.transaction(function (t) {
+
+                            return sequelize.models.Provider.findOne({
+                                where: {
+                                    userId: userId,
+                                    type: type
+                                },
+                                transaction: t
+                            }).then(function (data) {
+                                if (data) {
+                                    throw new errorHandler.CustomSequelizeError(409, {
+                                        code: '409_4'
+                                    });
+                                } else {
+                                    return sequelize.models.Provider.findOne({
+                                        where: {
+                                            type: type,
+                                            uid: uid
+                                        },
+                                        transaction: t
+                                    });
+                                }
+                            }).then(function (data) {
+                                if (data) {
+                                    throw new errorHandler.CustomSequelizeError(409, {
+                                        code: '409_8'
+                                    });
+                                } else {
+                                    // return sequelize.models.Provider.create({
+                                    //     type: type,
+                                    //     uid: uid,
+                                    //     token: secret,
+                                    //     userId: userId
+                                    // }, {
+                                    //     transaction: t
+                                    // });
+
+                                    var provider = sequelize.models.Provider.build({
+                                        type: type,
+                                        uid: uid,
+                                        token: secret,
+                                        userId: userId
+                                    });
+
+                                    provider.tokenEncryption();
+
+                                    return provider.save({
+                                        transaction: t
+                                    });
+                                }
+                            }).then(function (data) {
                                 createdProvider = data;
-                            }
+
+                            });
+
                         }).catch(errorHandler.catchCallback(callback)).done(function () {
                             if (createdProvider) {
                                 callback(200, createdProvider);
                             }
                         });
+
                     } else {
                         callback(status, data);
                     }
                 });
             },
-            checkAndRefreshToken: function(type, uid, secret, callback) {
-                socialValidator[type + 'Validadtor'](uid, secret, function(status, data) {
+            checkAndRefreshToken: function (type, uid, secret, callback) {
+                socialValidator[type + 'Validadtor'](uid, secret, function (status, data) {
                     if (status == 200) {
                         sequelize.models.Provider.updateDataByKey('uid', uid, {
                             uid: uid,
                             token: secret
-                        }, function(status, data) {
+                        }, function (status, data) {
                             if (status == 404 || status == 204) {
                                 callback(200);
                             } else {
