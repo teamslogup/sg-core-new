@@ -5,6 +5,7 @@
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
+var maxLength = 1000;
 
 module.exports = function(config) {
 
@@ -90,24 +91,55 @@ module.exports = function(config) {
 
             if (req.files) {
                 var files = req.files;
-                var deleteObject = {
-                    Objects: []
-                };
 
-                for (var i = 0; i < files.length; ++i) {
-                    var path = files[i].path;
-                    deleteObject.Objects.push({
-                        Key: path
-                    });
+                var funcs = [];
+
+                var splitLength = Math.floor(files.length / maxLength);
+                var restLength = 0;
+                if (files.length % maxLength) {
+                    restLength = files.length % maxLength;
+                    splitLength++;
                 }
 
-                s3.deleteObjects({
-                    Bucket: bucket,
-                    Delete: deleteObject
-                }, function (err, data) {
-                    if (err) {
-                        logger.e(err);
-                    }
+                for (var i = 0; i < splitLength; ++i) {
+                    (function (currentTime) {
+
+                        funcs.push(function (callback) {
+                            var deleteObject = {
+                                Objects: []
+                            };
+
+                            var length = 0;
+                            if (currentTime == splitLength - 1) {
+                                length = restLength;
+                            } else {
+                                length = maxLength;
+                            }
+
+                            for (var j=0; j < length; ++j) {
+                                var path = files[currentTime * maxLength + j].path;
+                                deleteObject.Objects.push({
+                                    Key: path
+                                });
+                            }
+
+                            s3.deleteObjects({
+                                Bucket: bucket,
+                                Delete: deleteObject
+                            }, function (err, data) {
+                                if (err) {
+                                    logger.e(err);
+                                }
+                                callback(null, true);
+                            });
+
+                        });
+
+                    })(i);
+                }
+
+                async.series(funcs, function (err, results) {
+
                 });
             }
 
