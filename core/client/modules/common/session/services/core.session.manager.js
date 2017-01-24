@@ -16,7 +16,7 @@ export default function sessionManager(Session, SocialSession, usersManager, met
 
     function sendFindPassEmail(email, callback) {
         var body = {
-            type: metaManager.std.user.emailSenderTypeFindPass,
+            type: metaManager.std.user.authEmailFindPass,
             email: email
         };
         var senderEmail = new SenderEmail(body);
