@@ -50,6 +50,7 @@ module.exports = {
             'referenceKey': 'id',
             'referenceType': 'one',
             'as': 'image',
+            'asReverse': 'chatHistories',
             'allowNull': true
         },
         'createdAt': {

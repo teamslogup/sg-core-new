@@ -10,6 +10,9 @@ var standards = {
         "rootUrl": "",
         "staticsUrl": ""
     },
+    "replaceApi": {
+        "userDel": ""
+    },
     "admin": {
         "kNavigation": "navigation",
         "modules": ["users", "notices", "reports", "terms", "images", "notification", "company-info", "dashboard-info"],

@@ -1194,7 +1194,6 @@ module.exports = {
                 });
             },
             destroyUser: function (id, transactionFuncs, callback) {
-                var isSuccess = false;
                 var self = this;
 
                 /*
@@ -1203,15 +1202,14 @@ module.exports = {
                  */
                 sequelize.transaction(function (t) {
                     var loadedData = null;
-                    var query = {
+
+                    return self.findOne({
                         transaction: t,
                         where: {
                             id: id
                         },
                         include: sequelize.models.User.getIncludeUser()
-                    };
-
-                    return self.find(query).then(function (data) {
+                    }).then(function (data) {
                         loadedData = data;
 
                         var deletedUserPrefix = ENV.app.deletedUserPrefix;
@@ -1220,7 +1218,9 @@ module.exports = {
                             email: deletedUserPrefix + id,
                             phoneNum: deletedUserPrefix + id,
                             name: deletedUserPrefix + id,
-                            nick: deletedUserPrefix + id
+                            nick: deletedUserPrefix + id,
+                            ci: deletedUserPrefix + id,
+                            di: deletedUserPrefix + id,
                         }, {
                             transaction: t,
                             where: {
@@ -1229,65 +1229,108 @@ module.exports = {
                         }).then(function (data) {
                             if (data && data[0]) {
 
-                                var historyTasks = [];
-                                if (!loadedData.loginHistories) {
-                                    loadedData.loginHistories = [];
-                                }
-                                loadedData.loginHistories.forEach(function (history) {
-                                    historyTasks.push(history.destroy({transaction: t}));
-                                });
-                                var providerTasks = [];
-                                if (!loadedData.providers) {
-                                    loadedData.providers = [];
-                                }
-
-                                loadedData.providers.forEach(function (provider) {
-                                    providerTasks.push(provider.destroy({transaction: t}));
-                                });
-
-                                historyTasks.push(sequelize.models.Profile.destroy({
+                                return sequelize.models.Provider.destroy({
                                     where: {
-                                        id: loadedData.profileId
+                                        userId: id
                                     },
                                     transaction: t
-                                }));
-
-                                function nextCallback(t, id, loadedData) {
-                                    // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
-                                    if (STD.user.deletedUserStoringDay > 0) {
-                                        var userDel = sequelize.models.ExtinctUser.build({
-                                            userId: id,
-                                            data: JSON.stringify(loadedData)
-                                        });
-                                        return userDel.save({transaction: t}).then(function () {
-                                            isSuccess = true;
-                                        });
-                                    } else {
-                                        isSuccess = true;
-                                    }
-                                }
-
-                                return Promise.all(historyTasks).then(function (devices) {
-                                    return Promise.all(providerTasks).then(function (providers) {
-                                        return loadedData.destroy({
-                                            where: {id: id},
-                                            cascade: true,
-                                            transaction: t
-                                        }).then(function (data) {
-                                            if (transactionFuncs) {
-                                                return transactionFuncs(t, function (t) {
-                                                    return nextCallback(t, id, loadedData);
-                                                });
-                                            } else {
-                                                return nextCallback(t, id, loadedData);
-                                            }
-                                        });
-                                    });
                                 });
+
+                                // var historyTasks = [];
+                                // if (!loadedData.loginHistories) {
+                                //     loadedData.loginHistories = [];
+                                // }
+                                // loadedData.loginHistories.forEach(function (history) {
+                                //     historyTasks.push(history.destroy({transaction: t}));
+                                // });
+                                //
+                                //
+                                // var providerTasks = [];
+                                // if (!loadedData.providers) {
+                                //     loadedData.providers = [];
+                                // }
+                                //
+                                // loadedData.providers.forEach(function (provider) {
+                                //     providerTasks.push(provider.destroy({transaction: t}));
+                                // });
+                                //
+                                // historyTasks.push(sequelize.models.Profile.destroy({
+                                //     where: {
+                                //         id: loadedData.profileId
+                                //     },
+                                //     transaction: t
+                                // }));
+
+
+                                // return Promise.all(historyTasks).then(function (devices) {
+                                //     return Promise.all(providerTasks).then(function (providers) {
+                                //         return loadedData.destroy({
+                                //             where: {id: id},
+                                //             cascade: true,
+                                //             transaction: t
+                                //         }).then(function (data) {
+                                //             if (transactionFuncs) {
+                                //                 return transactionFuncs(t, function (t) {
+                                //                     return nextCallback(t, id, loadedData);
+                                //                 });
+                                //             } else {
+                                //                 return nextCallback(t, id, loadedData);
+                                //             }
+                                //         });
+                                //     });
+                                // });
                             }
+                        }).then(function () {
+                            return sequelize.models.LoginHistory.destroy({
+                                where: {
+                                    userId: id
+                                },
+                                transaction: t
+                            });
+                        }).then(function () {
+                            return sequelize.models.Profile.destroy({
+                                where: {
+                                    id: loadedData.profileId
+                                },
+                                transaction: t
+                            });
+                        }).then(function () {
+                            return loadedData.destroy({
+                                where: {id: id},
+                                cascade: true,
+                                transaction: t
+                            }).then(function (data) {
+
+                            });
+                        }).then(function (data) {
+                            if (transactionFuncs) {
+                                return transactionFuncs(t, function (t) {
+                                    return true;
+                                });
+                            } else {
+                                return true;
+                            }
+                        }).then(function () {
+
+                            // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
+                            if (STD.user.deletedUserStoringDay > 0) {
+
+                                return sequelize.models.ExtinctUser.create({
+                                    userId: id,
+                                    data: JSON.stringify(loadedData)
+                                }, {
+                                    transaction: t
+                                }).then(function () {
+                                    return true;
+                                });
+
+                            } else {
+                                return true;
+                            }
+
                         });
                     });
-                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(204);
                     }
