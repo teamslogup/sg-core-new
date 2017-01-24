@@ -134,6 +134,8 @@ var standards = {
         "maxCiLength": 1000,
         "minDiLength": 1,
         "maxDiLength": 1000,
+        "minTransactionLength": 1,
+        "maxTransactionLength": 1000,
         "enableProvider": ["facebook"],
         "defaultAgreedEmail": true,
         "defaultAgreedPhoneNum": true,
@@ -150,7 +152,10 @@ var standards = {
         "defaultPfImg": "http://d16s4e1wnewfvs.cloudfront.net/user/thumb_static_sloger.png",
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
-        "modalSize": "lg"
+        "modalSize": "lg",
+        "enumAuthType": ["signup", "addPhone"],
+        "authTypeSingUp": "signup",
+        "authTypeAddPhone": "addPhone"
     },
     "replaceApi": {
         'userDel': ""

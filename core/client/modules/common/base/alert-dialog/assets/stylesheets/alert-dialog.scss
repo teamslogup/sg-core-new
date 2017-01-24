@@ -116,6 +116,7 @@ $sg-alert-dialog-container-top: 200px;
                 }
 
                 .sg-alert-dialog-bottom-container-action-btn {
+                    margin-left: 12px;
                     background-color: $alert-dialog-action-btn-color;
                     &:hover {
                         background-color: $alert-dialog-action-btn-hover-color;
@@ -130,7 +131,6 @@ $sg-alert-dialog-container-top: 200px;
                 }
 
                 .sg-alert-dialog-bottom-container-cancel-btn {
-                    margin-right: 12px;
                     background-color: $alert-dialog-cancel-btn-color;
                     &:hover {
                         background-color: $alert-dialog-cancel-btn-hover-color;

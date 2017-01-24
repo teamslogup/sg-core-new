@@ -254,28 +254,23 @@ module.exports = {
 
                 var chatRoomUser;
 
-                sequelize.transaction(function (t) {
+                sequelize.models.ChatRoomUser.update({
+                    noView: 0,
+                    updatedAt: micro.now()
+                }, {
+                    'where': {
+                        userId: userId,
+                        roomId: roomId
+                    },
+                    'paranoid': false
+                }).then(function (data) {
 
-                    return sequelize.models.ChatRoomUser.update({
-                        noView: 0,
-                        updatedAt: micro.now()
-                    }, {
-                        'where': {
-                            userId: userId,
-                            roomId: roomId
-                        },
-                        'paranoid': false,
-                        'transaction': t
-                    }).then(function (data) {
-
-                        if (data[0] > 0 || data[1][0]) {
-                            chatRoomUser = data[1][0];
-                            return true;
-                        } else {
-                            throw new errorHandler.CustomSequelizeError(400);
-                        }
-
-                    });
+                    if (data[0] > 0 || data[1][0]) {
+                        chatRoomUser = data[1][0];
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(400);
+                    }
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {

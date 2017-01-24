@@ -63,8 +63,8 @@ module.exports = {
         },
         'token': {
             'type': Sequelize.STRING,
-            'allowNull': true
-            // 'indicesType': 'SPATIAL'
+            'allowNull': true,
+            'unique': true
         },
         'ip': {
             'type': Sequelize.STRING,

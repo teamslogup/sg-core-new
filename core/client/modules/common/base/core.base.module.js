@@ -13,6 +13,8 @@ import Upload from './upload-manager/core.base.upload.model';
 import Image from './upload-manager/core.base.image.model';
 import uploadManager from './upload-manager/core.base.upload-manager';
 
+import Focus from './alert-dialog/services/core.focus.service';
+
 import loadingHandlerService from './loading-handler/services/core.loading-handler.service';
 import LoadingHandlerCtrl from './loading-handler/controllers/core.loading-handler.controller';
 
@@ -36,6 +38,7 @@ export default angular.module("core.base", [
     .constant('coreBaseUploadResources', coreBaseUploadResources)
     .factory('Upload', Upload)
     .factory('Image', Image)
+    .factory('Focus', Focus)
     .service('uploadManager', uploadManager)
     .service('dialogHandler', alertDialogService)
     .service('loadingHandler', loadingHandlerService)

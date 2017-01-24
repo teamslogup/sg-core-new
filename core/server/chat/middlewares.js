@@ -92,7 +92,7 @@ var middles = {
                         });
                     }
                     socket.join(roomId);
-                    socket.emit(STD.chat.serverJoinRoom, roomId);
+                    socket.emit(STD.chat.serverJoinRoom, body);
                     socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, roomId);
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 
@@ -133,8 +133,10 @@ var middles = {
             sequelize.models.ChatRoomUser.findChatRoomUsersByOptions(body, function (status, data) {
                 if (status == 200) {
 
-                    for (var i = 0; i < data.length; i++) {
-                        socket.join(data[i].roomId);
+                    var roomUsers = data.rows;
+
+                    for (var i = 0; i < roomUsers.length; i++) {
+                        socket.join(roomUsers[i].roomId);
                     }
 
                     socket.emit(STD.chat.serverJoinAllRooms, data);
@@ -257,8 +259,15 @@ var middles = {
                     socket.emit(STD.chat.serverCheckMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
 
-                    coreUtils.notification.all.sendNotification(data.userId, NOTIFICATIONS.chat, {
-                        userNick: user.nick
+                    data.room.roomUsers.forEach(function (roomUser) {
+                        if (roomUser.userId != user.id) {
+                            coreUtils.notification.all.sendNotification(roomUser.userId, NOTIFICATIONS.chat, {
+                                roomId: payload.roomId,
+                                type: data.type,
+                                message: data.message,
+                                userNick: user.nick,
+                            });
+                        }
                     });
 
                 } else {

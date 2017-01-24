@@ -18,6 +18,9 @@ module.exports = {
                     result.push({});
                     indexes.currentId = row['id'];
                     indexes.index = result.length - 1;
+
+                    //부모가 다른경우 인덱스를 초기화해서 자식아이디가 같아도 추가할수 있게한다.
+                    this.setIndexes(keyPattern, indexes);
                 }
             }
 

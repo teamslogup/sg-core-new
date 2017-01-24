@@ -1,4 +1,4 @@
-export default function AlertDialogCtrl($scope, dialogHandler, metaManager) {
+export default function AlertDialogCtrl($scope, dialogHandler, metaManager, Focus) {
     var vm = $scope.vm;
     vm.DIALOG = metaManager.std.dialog;
     dialogHandler.init(vm);
@@ -13,6 +13,8 @@ export default function AlertDialogCtrl($scope, dialogHandler, metaManager) {
         vm.alertTitle = title;
         vm.alertMsg = body;
         vm.isCloseBtnVisible = isCloseBtnVisible;
+
+        Focus('alertConfirmButton');
 
         if (actionText) {
             vm.alertAction = actionText;

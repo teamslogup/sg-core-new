@@ -51,7 +51,7 @@ module.exports = {
         },
         'gender': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'phoneNum': {
             'type': Sequelize.STRING,

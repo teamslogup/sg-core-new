@@ -45,7 +45,7 @@ post.validate = function () {
         } else if (type == USER.signUpTypeAuthCi) {
             req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
-            req.check('transactionNo', '400_51').len(USER.minCiLength, USER.maxCiLength);
+            req.check('transactionNo', '400_51').len(USER.minTransactionLength, USER.maxTransactionLength);
         }
 
         if (req.body.name !== undefined) {
