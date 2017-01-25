@@ -7,14 +7,14 @@ var config = require('../../../bridge/config/env');
 
 module.exports = function (app) {
     var server = {
-        isUseHttps: false
+        http: null,
+        https: null
     };
     server.http = http.createServer(app);
     if (STD.flag.isUseHttps) {
         var keyPath = __dirname + "/../../../app/server/config/ssl/" + config.app.keyFile,
             certPath = __dirname + "/../../../app/server/config/ssl/" + config.app.crtFile;
         if (fs.existsSync(keyPath) && fs.existsSync(certPath)) {
-            server.isUseHttps = true;
             server.https = https.createServer({
                 key: fs.readFileSync(keyPath, 'utf8'),
                 cert: fs.readFileSync(certPath, 'utf8')
