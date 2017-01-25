@@ -1,4 +1,6 @@
 export default function inputPass() {
+    "ngInject";
+
     return {
         restrict: 'EA',
         templateUrl: 'components/input-pass/core.common.input-pass.html',

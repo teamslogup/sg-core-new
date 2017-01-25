@@ -1,4 +1,5 @@
 export default function companyInfoManager(CompanyInfo, metaManager, loadingHandler) {
+    "ngInject";
 
     var LOADING = metaManager.std.loading;
     var MAGIC = metaManager.std.magic;

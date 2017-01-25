@@ -1,4 +1,6 @@
 export default function ImagesCtrl($scope, $rootScope, $filter, imagesManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
+
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;

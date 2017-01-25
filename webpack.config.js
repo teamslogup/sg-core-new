@@ -1,5 +1,6 @@
 
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 
 var webpack = require('webpack');
 
@@ -67,11 +68,14 @@ config.plugins = [
 
 if (ENV == 'production') {
     config.plugins.push(
-        // new webpack.optimize.UglifyJsPlugin({
-        //     compressor: {
-        //         warnings: false
-        //     }
-        // }),
+        new ngAnnotatePlugin({
+            add: true
+        }),
+        new webpack.optimize.UglifyJsPlugin({
+            compressor: {
+                warnings: false
+            }
+        }),
         new webpack.optimize.DedupePlugin()
     )
 } else {

@@ -1,6 +1,8 @@
 Notification.$inject = ['$resource', 'usersResources'];
 
 export default function Notification($resource, usersResources) {
+    "ngInject";
+
     return $resource(usersResources.NOTIFICATION + '/:id', {
         id: '@id'
     }, {

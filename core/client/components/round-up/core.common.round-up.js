@@ -1,4 +1,6 @@
 export default function roundUp() {
+    "ngInject";
+
     return function (input) {
 
         function isFloat(n) {

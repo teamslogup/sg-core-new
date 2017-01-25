@@ -1,4 +1,6 @@
 export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboardInfoManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
+
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;

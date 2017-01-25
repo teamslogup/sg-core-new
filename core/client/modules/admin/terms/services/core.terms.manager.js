@@ -1,4 +1,6 @@
 export default function termsManager(Terms, metaManager, loadingHandler, $filter) {
+    "ngInject";
+
 
     var LOADING = metaManager.std.loading;
     var MAGIC = metaManager.std.magic;

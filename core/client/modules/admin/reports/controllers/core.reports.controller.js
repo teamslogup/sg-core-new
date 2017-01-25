@@ -1,4 +1,6 @@
 export default function ReportsCtrl($scope, $rootScope, $filter, $uibModal, reportsManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
+
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;

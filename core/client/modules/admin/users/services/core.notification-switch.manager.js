@@ -1,4 +1,6 @@
 export default function notificationSwitchManager(NotificationSwitch) {
+    "ngInject";
+
     this.findAllNotificationSwitch = findAllNotificationSwitch;
     this.findNotificationSwitchById = findNotificationSwitchById;
     this.updateNotificationSwitch = updateNotificationSwitch;
