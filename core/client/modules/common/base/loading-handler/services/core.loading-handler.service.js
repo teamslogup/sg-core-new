@@ -1,6 +1,8 @@
 LoadingHandlerService.$inject = ['metaManager'];
 
 export default function LoadingHandlerService(metaManager) {
+    "ngInject";
+
     this.vm = {};
 
     this.init = function (vm) {

@@ -1,4 +1,6 @@
 export default function microTimeToDateTime() {
+    "ngInject";
+
     return function (input) {
 
         function calc(microtime) {

@@ -1,4 +1,6 @@
 export default function notificationBody(metaManager) {
+    "ngInject";
+
     return function (notificationBox, language) {
 
         var LANGUAGES = metaManager.langs;

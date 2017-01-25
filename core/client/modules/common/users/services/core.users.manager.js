@@ -1,4 +1,6 @@
 export default function usersManager(User) {
+    "ngInject";
+
     this.findAllUsers = findAllUsers;
     this.findUserById = findUserById;
     this.updateUserById = updateUserById;

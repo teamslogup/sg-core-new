@@ -1,4 +1,6 @@
 export default function reportsManager (Report) {
+    "ngInject";
+
     this.findReportById = findReportById;
     this.updateReportById = updateReportById;
     this.findReports = findReports;

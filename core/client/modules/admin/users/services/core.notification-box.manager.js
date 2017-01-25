@@ -1,4 +1,6 @@
 export default function notificationBoxManager(NotificationBox) {
+    "ngInject";
+
     this.findAllNotificationBox = findAllNotificationBox;
     this.findNotificationBoxById = findNotificationBoxById;
     this.updateNotificationBoxById = updateNotificationBoxById;

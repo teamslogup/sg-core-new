@@ -1,4 +1,6 @@
 export default function reportsManager($filter, Report, metaManager, dialogHandler) {
+    "ngInject";
+
     var MAGIC = metaManager.std.magic;
     var COMMON = metaManager.std.common;
 

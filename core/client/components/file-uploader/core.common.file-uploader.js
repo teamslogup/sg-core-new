@@ -1,4 +1,6 @@
 export default function fileUploader ($http) {
+    "ngInject";
+
     this.upload = function (prefix, data, files, uploadUrl) {
         var fd = new FormData();
         for (var i=0; i<files.length; i++) {

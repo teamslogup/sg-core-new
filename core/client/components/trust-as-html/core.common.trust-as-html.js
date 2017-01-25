@@ -1,4 +1,6 @@
 export default function trustAsHtml($sce) {
+    "ngInject";
+
     return function (string) {
 
         var result = '';

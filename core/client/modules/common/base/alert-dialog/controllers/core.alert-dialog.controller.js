@@ -1,4 +1,6 @@
 export default function AlertDialogCtrl($scope, dialogHandler, metaManager, Focus) {
+    "ngInject";
+
     var vm = $scope.vm;
     vm.DIALOG = metaManager.std.dialog;
     dialogHandler.init(vm);

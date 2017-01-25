@@ -1,6 +1,8 @@
 AlertDialogService.$inject = ['$filter', 'sessionManager', '$rootScope'];
 
 export default function AlertDialogService($filter, sessionManager, $rootScope) {
+    "ngInject";
+
     this.vm = {};
     this.listenCallback = undefined;
     this.actionCallback = undefined;

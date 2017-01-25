@@ -1,6 +1,8 @@
 
 svgImage.$inject = ['$http'];
 export default function svgImage($http) {
+    "ngInject";
+
     return {
         restrict: 'E',
         link: function (scope, element) {

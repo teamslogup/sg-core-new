@@ -1,4 +1,5 @@
 export default function TermsCtrl($scope, $rootScope, $filter, $uibModal, termsManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
 
     var LOADING = metaManager.std.loading;
     var ADMIN = metaManager.std.admin;
