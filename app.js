@@ -34,34 +34,29 @@ passport();
 console.log('database info : ', config.db);
 sequelize.sync({force: config.db.force}).then(function (err) {
     initializeDatabase(function () {
-        if (env === 'production') {
-            if (server.isUseHttps) {
-                if (STD.flag.isUseCluster) {
-                    cluster.startCluster(server.https);
-                } else {
-                    server.http.listen(config.app.port);
-                    server.https.listen(config.app.httpsPort);
-                }
-            } else {
-                if (STD.flag.isUseCluster) {
-                    cluster.startCluster(server.http);
-                } else {
-                    server.http.listen(config.app.port);
-                }
-            }
-            console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
-        } else {
-            if (server.isUseHttps) {
-                server.http.listen(config.app.port);
-                server.https.listen(config.app.httpsPort);
-            } else {
-                server.http.listen(config.app.port);
-            }
-            console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
-        }
+        listenServer(server);
     });
 }, function (err) {
     console.log('Unable to connect to the database:', err);
 });
+
+function listenServer (server) {
+    if (!server.http && !server.https) {
+        console.log("server setting error");
+    } else {
+        if (env == 'production' && STD.flag.isUseCluster) {
+            cluster.startCluster(server);
+        } else {
+            if (server.http) {
+                server.http.listen(config.app.port);
+                console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
+            }
+            if (server.https) {
+                server.https.listen(config.app.httpsPort);
+                console.log('Server running at ' + config.app.httpsPort + ' ' + env + ' mode. logging: ' + config.db.logging);
+            }
+        }
+    }
+}
 
 module.exports = app;

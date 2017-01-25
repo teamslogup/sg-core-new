@@ -10,10 +10,11 @@ var restartWorkers = []; // que of restart workers
 var TIMEOUT = 120 * 1000; // 2 minutes
 var timeout;
 
-function inItWorker (worker) {
+function initWorker (worker) {
     worker.on("message", function (msg) {
         if (msg.cmd && msg.cmd == "workerStart") {
             console.log("(pid: " + msg.pid + ") Server running at " + config.app.port + " " + env + " mode. logging: " + config.db.logging);
+
             if (restartWorkers.length > 0) {
                 if (restartWorkers.length == workers.length) {
                     restartWorkers = [];
@@ -50,16 +51,22 @@ function closeWorker (worker) {
     timeout = setTimeout(worker.kill, TIMEOUT);
 }
 
-function gracefulCloseServer (server, app, code) {
+function gracefulCloseServer (server, code, callback) {
     server.close(function () {
         console.log("exit worker with code: ", code);
-        process.exit(code);
+        callback(code);
     });
 
     setTimeout(function () {
         console.log("forcefully exit worker with code: ", code);
-        process.exit(code);
+        callback(code);
     }, TIMEOUT);
+}
+
+function processExit (serverCheck, code) {
+    if (!serverCheck.http && !serverCheck.https) {
+        process.exit(code);
+    }
 }
 
 module.exports = {
@@ -69,32 +76,43 @@ module.exports = {
         
         if (cluster.isMaster) {
             workers = [];
+
+            console.log("isMaster process running, cpu length:", os.cpus().length);
             
             os.cpus().forEach(function (cpu) {
-                workers.push(inItWorker(cluster.fork()));
+                workers.push(initWorker(cluster.fork()));
             });
     
             cluster.on("exit", function (worker, code, signal) {
-                console.log("exit worker pid : " + worker.process.pid);
-                console.log("exit worker code : " + code);
-                console.log("exit worker signal : " + signal);
+                // console.log("exit worker pid : " + worker.process.pid);
+                // console.log("exit worker code : " + code);
+                // console.log("exit worker signal : " + signal);
 
                 workers.splice(workers.indexOf(worker), 1);
                 if (code == 200) {
                     restartWorkers.push(worker);
-                    workers.push(inItWorker(cluster.fork()));
+                    console.log("restart workers length:", restartWorkers.length);
+                    workers.push(initWorker(cluster.fork()));
                 } else if (code == 100) {
+                    console.log("rest workers length:", workers.length);
                     if (workers.length > 0) closeWorker(workers[0]);
                 }
                 
             });
 
         } else if (cluster.isWorker) {
-            var server = null;
-            if (server.isUseHttps) {
-                server = app.listen(config.app.port);
-            } else {
-                server = app.listen(config.app.port);
+
+            var serverHttp = null;
+            var serverHttps = null;
+            var serverCheck = {};
+
+            if (app.http) {
+                serverCheck.http = true;
+                serverHttp = app.http.listen(config.app.port);
+            }
+            if (app.https) {
+                serverCheck.https = true;
+                serverHttps = app.https.listen(config.app.httpsPort);
             }
 
             process.send({cmd: "workerStart", pid: cluster.worker.process.pid});
@@ -104,12 +122,34 @@ module.exports = {
                     process.send({cmd: "workerClose", pid: cluster.worker.process.pid});
 
                     // initiate graceful close
-                    gracefulCloseServer(server, app, 100);
+                    if (app.http) {
+                        gracefulCloseServer(serverHttp, 100, function (code) {
+                            delete serverCheck.http;
+                            processExit(serverCheck, code);
+                        });
+                    }
+                    if (app.https) {
+                        gracefulCloseServer(serverHttps, 100, function (code) {
+                            delete serverCheck.https;
+                            processExit(serverCheck, code);
+                        });
+                    }
                 } else if (msg.cmd && msg.cmd == "restart") {
                     process.send({cmd: "workerRestart", pid: cluster.worker.process.pid});
 
                     // initiate graceful close
-                    gracefulCloseServer(server, app, 200);
+                    if (app.http) {
+                        gracefulCloseServer(serverHttp, 200, function (code) {
+                            delete serverCheck.http;
+                            processExit(serverCheck, code);
+                        });
+                    }
+                    if (app.https) {
+                        gracefulCloseServer(serverHttps, 200, function (code) {
+                            delete serverCheck.https;
+                            processExit(serverCheck, code);
+                        });
+                    }
                 }
             });
         } else {
