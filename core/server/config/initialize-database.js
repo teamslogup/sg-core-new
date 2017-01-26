@@ -3,5 +3,11 @@ var sequelize = require('../config/sequelize');
 var coreUtils = require('../utils');
 
 module.exports = function (callback) {
-    callback();
+    coreUtils.initialization.initialize(function (status, data) {
+        if (status == 204) {
+            return callback();
+        } else {
+            console.log(status, data);
+        }
+    });
 };
