@@ -1,4 +1,6 @@
 export default function imagesManager(Image, metaManager) {
+    "ngInject";
+
     var COMMON = metaManager.std.common;
 
     this.findImageById = findImageById;

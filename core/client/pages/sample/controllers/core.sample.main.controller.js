@@ -5,6 +5,7 @@ MainCtrl.$inject = ['$scope', '$translate', '$location'];
 
 
 class Hwarang {
+    /*@ngInject*/
     constructor(age) {
         this.age = age;
     }
@@ -20,6 +21,8 @@ class Hwarang {
 }
 
 export default function MainCtrl($scope, $location) {
+    "ngInject";
+
     // staticLoader.get('route1.json', function (status, data) {
     //     $scope.contents = data;
     // });

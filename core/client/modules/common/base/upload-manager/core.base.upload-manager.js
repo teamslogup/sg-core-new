@@ -1,4 +1,6 @@
 export default function uploadManager (fileUploader, Upload, Image, coreBaseUploadResources) {
+    "ngInject";
+
     this.uploadImages = uploadImages;
     this.deleteImages = deleteImages;
     this.findImageById = findImageById;

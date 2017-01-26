@@ -1,4 +1,6 @@
 export default function ckEditor() {
+    "ngInject";
+
     return {
         require: '?ngModel',
         link: function(scope, elm, attr, ngModel) {

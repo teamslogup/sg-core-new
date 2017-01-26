@@ -1,4 +1,5 @@
 export default function profileManager(Profile) {
+    "ngInject";
 
     this.updateProfileByUserId = updateProfileByUserId;
 

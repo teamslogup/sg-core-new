@@ -1,4 +1,6 @@
 export default function microTimeTo12hoursTime($filter) {
+    "ngInject";
+
     return function (input) {
 
         function calc(microtime) {

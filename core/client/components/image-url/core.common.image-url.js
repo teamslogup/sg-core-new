@@ -1,4 +1,6 @@
 export default function imageUrl (metaManager) {
+    "ngInject";
+
     return function (image, prefix) {
         if (image && image.authorized) {
             var imageName = image.name;

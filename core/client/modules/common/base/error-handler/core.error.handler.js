@@ -1,6 +1,8 @@
 errorHandler.$inject = ['$filter', '$location'];
 
 export default function errorHandler($filter, metaManager, $location) {
+    "ngInject";
+
     this.alertError = alertError;
     this.refineError = refineError;
     this.getErrorObject = getErrorObject;

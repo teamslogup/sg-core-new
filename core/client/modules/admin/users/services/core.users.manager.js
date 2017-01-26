@@ -1,4 +1,6 @@
 export default function usersManager(User, AdminUser, metaManager) {
+    "ngInject";
+
     var USER = metaManager.std.user;
 
     this.findAllUsers = findAllUsers;

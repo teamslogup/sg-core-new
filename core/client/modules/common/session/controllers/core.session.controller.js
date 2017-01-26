@@ -1,4 +1,6 @@
 export default function SessionCtrl($scope, $rootScope, $location, $filter, sessionManager, errorHandler, metaManager, oauthManager) {
+    "ngInject";
+
     var translate = $filter('translate');
     var vm = $scope.vm = {};
     $scope.pass1 = "";

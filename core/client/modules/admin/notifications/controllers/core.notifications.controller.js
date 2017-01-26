@@ -1,4 +1,5 @@
 export default function NotificationsCtrl($scope, $rootScope, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
 
     var ADMIN = metaManager.std.admin;
 

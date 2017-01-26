@@ -1,4 +1,5 @@
 export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal, noticesManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
 
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;

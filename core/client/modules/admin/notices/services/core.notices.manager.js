@@ -1,4 +1,6 @@
 export default function noticesManager($filter, Notice, dialogHandler) {
+    "ngInject";
+
     this.findNoticeById = findNoticeById;
     this.updateNoticeById = updateNoticeById;
     this.findNotices = findNotices;

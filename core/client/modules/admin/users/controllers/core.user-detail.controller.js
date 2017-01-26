@@ -1,4 +1,5 @@
 export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope, user, isEditMode) {
+    "ngInject";
 
     var LOADING = scope.metaManager.std.loading;
     var COMMON = scope.metaManager.std.common;

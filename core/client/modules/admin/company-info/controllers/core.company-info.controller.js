@@ -1,4 +1,6 @@
 export default function CompanyInfoCtrl($scope, $rootScope, $filter, companyInfoManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
+
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;

@@ -1,4 +1,6 @@
 export default function metaManager() {
+    "ngInject";
+
     var meta = window.meta;
     var mix = JSON.parse(JSON.stringify(meta.langs));
     var codes = meta.codes;

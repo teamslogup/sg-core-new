@@ -102,6 +102,8 @@
     "morgan": "*",
     "multi-views": "*",
     "mysql": "*",
+    "ng-annotate": "^1.2.1",
+    "ng-annotate-webpack-plugin": "^0.2.1-pre",
     "node-sass": "^3.8.0",
     "passport": "*",
     "passport-custom": "*",

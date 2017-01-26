@@ -1,6 +1,8 @@
 routes.$inject = ['$stateProvider'];
 
 export default function routes($stateProvider) {
+    "ngInject";
+
     var PREFIX = window.meta.std.prefix;
     var ADMIN = window.meta.std.admin;
     $stateProvider

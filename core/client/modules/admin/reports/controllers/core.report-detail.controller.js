@@ -1,4 +1,5 @@
 export default function ReportDetailCtrl($scope, $uibModalInstance, scope, report) {
+    "ngInject";
 
     var LOADING = scope.metaManager.std.loading;
     var REPORT = scope.metaManager.std.report;

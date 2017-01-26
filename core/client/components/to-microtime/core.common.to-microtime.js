@@ -1,4 +1,6 @@
 export default function toMicrotime() {
+    "ngInject";
+
     return function (time) {
         var microtime;
         if (time instanceof Date) {

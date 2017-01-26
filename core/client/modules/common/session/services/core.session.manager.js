@@ -1,4 +1,6 @@
 export default function sessionManager(Session, SocialSession, usersManager, metaManager, SenderEmail, Pass) {
+    "ngInject";
+
     var currentSession = window.session || null;
     this.session = (currentSession.id && currentSession) || null;
     this.isLoggedIn = isLoggedIn;
@@ -16,7 +18,7 @@ export default function sessionManager(Session, SocialSession, usersManager, met
 
     function sendFindPassEmail(email, callback) {
         var body = {
-            type: metaManager.std.user.emailSenderTypeFindPass,
+            type: metaManager.std.user.authEmailFindPass,
             email: email
         };
         var senderEmail = new SenderEmail(body);

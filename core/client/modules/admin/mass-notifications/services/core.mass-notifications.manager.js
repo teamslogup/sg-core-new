@@ -1,4 +1,6 @@
 export default function massNotificationsManager (MassNotification) {
+    "ngInject";
+
     this.findMassNotificationById = findMassNotificationById;
     this.findMassNotifications = findMassNotifications;
     this.deleteMassNotification = deleteMassNotification;

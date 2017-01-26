@@ -1,4 +1,6 @@
 export default function MassNotificationCtrl ($scope, $rootScope, dialogHandler, loadingHandler, metaManager, massNotificationsManager) {
+    "ngInject";
+
     var vm = {};
     if ($scope.vm) {
         vm = $scope.vm;
