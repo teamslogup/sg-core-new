@@ -160,9 +160,6 @@ var standards = {
         "authTypeSingUp": "signup",
         "authTypeAddPhone": "addPhone"
     },
-    "replaceApi": {
-        'userDel': ""
-    },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.
         "isAutoVerifiedEmail": false,
@@ -449,6 +446,13 @@ var standards = {
     "timeZone": 0,
     "loginHistory": {
         "maxDuplicateLoginCount": 10
+    },
+    "mobile": {
+        "enumOsType": ["android", "ios"],
+        "osTypeAndroid": "android",
+        "osTypeIos": "ios",
+        "minVersionLength": 5,
+        "maxVersionLength": 15
     }
 };
 

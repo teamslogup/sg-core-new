@@ -12,14 +12,36 @@ get.validate = function () {
     };
 };
 
+get.getMobileVersion = function () {
+    return function (req, res, next) {
+        req.models.MobileVersion.findMobileVersions(function (status, data) {
+            if (status == 200) {
+                req.mobileVersion = data;
+
+                if (data.android) {
+                    res.set('X-SG-Android-Version', req.mobileVersion.android);
+                }
+
+                if (data.ios) {
+                    res.set('X-SG-Ios-Version', req.mobileVersion.ios);
+                }
+
+            }
+            next();
+        });
+    };
+};
+
 get.sendMeta = function () {
     return function (req, res, next) {
         res.set('X-SG-Version', packageJSON.version);
         res.set('X-SG-App-Version', packageAppJSON.version);
+
         var data = req.meta;
         if (req.query.type !== undefined) {
             data = data[req.query.type];
         }
+
         res.hjson(req, next, 200, data);
     };
 };
