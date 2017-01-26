@@ -10,6 +10,9 @@ var standards = {
         "rootUrl": "",
         "staticsUrl": ""
     },
+    "replaceApi": {
+        "userDel": ""
+    },
     "admin": {
         "kNavigation": "navigation",
         "modules": ["users", "notices", "reports", "terms", "images", "notification", "company-info", "dashboard-info"],
@@ -156,9 +159,6 @@ var standards = {
         "enumAuthType": ["signup", "addPhone"],
         "authTypeSingUp": "signup",
         "authTypeAddPhone": "addPhone"
-    },
-    "replaceApi": {
-        'userDel': ""
     },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.
@@ -446,6 +446,13 @@ var standards = {
     "timeZone": 0,
     "loginHistory": {
         "maxDuplicateLoginCount": 10
+    },
+    "mobile": {
+        "enumOsType": ["android", "ios"],
+        "osTypeAndroid": "android",
+        "osTypeIos": "ios",
+        "minVersionLength": 5,
+        "maxVersionLength": 15
     }
 };
 

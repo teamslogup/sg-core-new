@@ -45,7 +45,9 @@ put.checkToken = function () {
                     if (data.expiredAt < now || data.token.toString() != req.body.token.toString()) {
                         data.delete(function (status, data) {
                         });
-                        return res.hjson(req, next, 403);
+                        return res.hjson(req, next, 403, {
+                            code: '403_1'
+                        });
                     }
                     req.loadedAuth = data;
                     next();
@@ -59,7 +61,9 @@ put.checkToken = function () {
             if (req.user.authenticate(req.body.token)) {
                 next();
             } else {
-                return res.hjson(req, next, 403);
+                return res.hjson(req, next, 403, {
+                    code: '403_1'
+                });
             }
         }
     };

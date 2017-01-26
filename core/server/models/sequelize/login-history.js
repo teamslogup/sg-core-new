@@ -241,6 +241,28 @@ module.exports = {
                         callback(200, deletedLoginHistories);
                     }
                 });
+            },
+            updateLoginHistoryTokenBySession: function (session, token, callback) {
+
+                sequelize.models.LoginHistory.update({
+                    token: token
+                }, {
+                    where: {
+                        session: session
+                    }
+                }).then(function (data) {
+
+                    if (data[0] > 0) {
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(204);
+                    }
+                });
             }
         })
     }

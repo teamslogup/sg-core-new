@@ -43,7 +43,9 @@ post.checkAuth = function () {
         }).then(function (auth) {
             req.loadedAuth = auth;
         }).catch(req.sequeCatch(req, res, next)).done(function () {
-            if (!req.loadedAuth) return res.hjson(req, next, 404);
+            if (!req.loadedAuth) return res.hjson(req, next, 400, {
+                code: '400_13'
+            });
             else {
                 if (req.loadedAuth.token == req.body.token && req.loadedAuth.expiredAt >= new Date()) {
                     next();
@@ -74,11 +76,19 @@ post.updateUser = function () {
             });
         } else if (req.body.type == USER.authPhoneFindId || req.body.type == USER.authPhoneFindPass) {
             req.models.User.findUserByPhoneNumber(req.loadedAuth.key, function (status, data) {
-                if (status == 200 && data.aid) {
-                    req.user = data;
-                    next();
+                if (status == 200) {
+
+                    if (data.aid) {
+                        req.user = data;
+                        next();
+                    } else {
+                        res.hjson(req, next, 400, {
+                            code: '400_63'
+                        });
+                    }
+
                 } else {
-                    res.hjson(req, next, 404);
+                    res.hjson(req, next, status, data);
                 }
             });
         } else {

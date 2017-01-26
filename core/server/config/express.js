@@ -211,7 +211,7 @@ module.exports.init = function (sequelize) {
     }));
 
     app.use(cookieParser(CONFIG.app.secret));
-    app.use(session(sessionSettings));
+    app.use(sessionMiddleware);
 
     app.use(flash());
     app.use(sgcResponder.connect());
