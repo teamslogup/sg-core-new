@@ -7,3 +7,4 @@ module.exports.session = require('./session');
 module.exports.socketIo = require('./socket-io');
 module.exports.file = require('./file');
 module.exports.objectify = require('./objectify');
+module.exports.initialization = require('./initialization');
