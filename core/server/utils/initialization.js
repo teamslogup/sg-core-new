@@ -4,10 +4,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     initialize: function (callback) {
-        sequelize.transaction(function (t) {
-            if (STD.flag.isUseRedis) {
-                return true;
-            } else {
+        if (STD.flag.isUseRedis) {
+            sequelize.transaction(function (t) {
                 console.log("initLoginHistories");
                 return sequelize.models.LoginHistory.destroy({
                     where: {},
@@ -16,13 +14,17 @@ module.exports = {
                     var query = 'ALTER TABLE LoginHistories AUTO_INCREMENT = 1';
                     return sequelize.query(query, {
                         transaction: t
+                    }).then(function () {
+                        return true;
                     });
                 });
-            }
-        }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
-            if (isSuccess) {
-                callback(204);
-            }
-        });
+            }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                if (isSuccess) {
+                    callback(204);
+                }
+            });
+        } else {
+            callback(204);
+        }
     }
 };
