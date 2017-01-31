@@ -63,6 +63,19 @@ module.exports = {
                     rows: []
                 };
 
+                var searchItemQuery = "";
+
+                if (options.searchItem !== undefined) {
+                    searchItemQuery = " AND user.nick LIKE '" + options.searchItem + "%'";
+                }
+
+                var countQuery = "SELECT count(v1.`id`) as count FROM (SELECT * FROM `ChatRoomUsers` AS `ChatRoomUser` WHERE `ChatRoomUser`.`deletedAt` IS NULL AND `ChatRoomUser`.`userId` = " + options.userId + ") as v1 " +
+                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, userImages.id as userImageId, image.id as imageId, image.folder as folder, image.dateFolder as dateFolder, image.name as name FROM ChatRoomUsers as roomUser " +
+                    "LEFT JOIN Users as user ON user.id = roomUser.userId " +
+                    "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
+                    "LEFT JOIN Images as image ON image.id = userImages.imageId " +
+                    "WHERE roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId;";
+
                 var query = "SELECT v1.roomId as id, v1.updatedAt as updatedAt, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
                     "FROM (SELECT a.roomId, a.updatedAt, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, room.updatedAt as updatedAt, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +
                     "FROM `ChatRooms` as room " +
@@ -75,21 +88,20 @@ module.exports = {
                     "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
                     "LEFT JOIN Images as image ON image.id = userImages.imageId " +
-                    "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId " +
+                    "WHERE roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId " +
                     "WHERE v1.updatedAt < " + options.last + " " +
                     "GROUP BY roomUserId " +
                     "ORDER BY updatedAt DESC LIMIT " + options.size;
 
                 sequelize.transaction(function (t) {
-                    return sequelize.models.ChatRoomUser.count({
-                        where: {
-                            userId: options.userId
-                        },
+                    return sequelize.query(countQuery, {
+                        type: sequelize.QueryTypes.SELECT,
+                        raw: true,
                         transaction: t
-                    }).then(function (count) {
+                    }).then(function (data) {
 
-                        if (count > 0) {
-                            chatRoom.count = count;
+                        if (data[0].count > 0) {
+                            chatRoom.count = data[0].count;
 
                             return sequelize.query(query, {
                                 type: sequelize.QueryTypes.SELECT,
