@@ -51,6 +51,8 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
     $scope.deleteSessionRemote = deleteSessionRemote;
     $scope.updateProfile = updateProfile;
 
+    $scope.cancel = cancel;
+
     if (isEditMode) {
         startEditMode();
     }
