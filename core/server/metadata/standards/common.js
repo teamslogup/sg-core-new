@@ -116,6 +116,8 @@ var standards = {
         "enumLinkIdPassTypes": ["email", "normal"],
         "linkIdPassEmail": "email",
         "linkIdPassNormal": "normal",
+        "minAidLength": 2,
+        "maxAidLength": 40,
         "minNickLength": 2,
         "maxNickLength": 14,
         "minNameLength": 2,

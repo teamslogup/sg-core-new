@@ -533,7 +533,7 @@ module.exports = {
              * @param {Object} size - 찾을 유저 수
              * @param {responseCallback} callback - 응답콜백
              */
-            'findUsersByOption': function (searchItem, searchField, last, size, order, sort, callback) {
+            'findUsersByOption': function (searchItem, searchField, last, size, order, sort, roles, callback) {
                 var where = {};
 
                 var query = {
@@ -556,7 +556,6 @@ module.exports = {
                     }
                 }
 
-
                 if (order == STD.user.orderUpdate) {
                     query.where.updatedAt = {
                         '$lt': last
@@ -567,6 +566,10 @@ module.exports = {
                         '$lt': last
                     };
                     query.order = [['createdAt', sort]];
+                }
+
+                if (roles !== undefined) {
+                    query.where.role = roles;
                 }
 
                 query.include = [{
