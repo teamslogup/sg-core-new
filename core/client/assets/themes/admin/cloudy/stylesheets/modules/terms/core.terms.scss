@@ -625,7 +625,7 @@ button.sg-core-button {
 
 button.sg-core-modal-exit {
     position: absolute;
-    top: -30px;
+    top: -34px;
     right: 0;
     width: 30px;
     height: 30px;
@@ -634,11 +634,11 @@ button.sg-core-modal-exit {
     i {
         position: absolute;
         display: block;
-        top: calc(50% - 1.5px);
+        top: calc(50% - 1px);
         left: 10%;
-        border-radius: 1.5px;
+        border-radius: 1px;
         width: 80%;
-        height: 3px;
+        height: 2px;
         background-color: white;
         &:nth-of-type(1) {
             -webkit-transform: rotate(45deg);
