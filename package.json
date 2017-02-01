@@ -133,7 +133,7 @@
     "ua-parser-js": "^0.7.10"
   },
   "engines": {
-    "node": ">=4.6.0"
+    "node": "6.5.0"
   },
   "scripts": {
     "build-dev-sample": "gulp build --ejs ./core/server/views/sample.ejs --env development",
