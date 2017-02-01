@@ -64,6 +64,7 @@
                         <div>
                             <!--<label for="pass" class="col-sm-4 control-label">{{ 'pass' | translate }}</label>-->
                             <input-pass id="pass"
+                                        ng-flag="vm.form.flag"
                                         ng-model="vm.form.pass"
                                         min-length="{{vm.STD.user.minSecretLength}}"
                                         good-length="{{vm.STD.user.goodSecretLength}}"

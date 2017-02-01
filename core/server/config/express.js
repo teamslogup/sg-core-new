@@ -242,15 +242,15 @@ module.exports.init = function (sequelize) {
     app.use(sgcSender.connect(CONFIG.sender));
     app.use(sgcSequelizeErrorHandler.connect());
 
+    if (hasAppDir) {
+        app.use(express.static('app/client'));
+    }
+
     app.use(express.static('core/client'));
     app.use(express.static('dist'));
 
     if (!META.std.flag.isUseS3Bucket) {
         app.use('/', express.static("uploads"));
-    }
-
-    if (hasAppDir) {
-        app.use(express.static('app/client'));
     }
 
     app.use(passport.initialize());
