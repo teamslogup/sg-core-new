@@ -27,14 +27,15 @@ export default function usersManager(User) {
         });
     }
 
-    function findAllUsers(searchItem, option, last, size, order, sorted, callback) {
+    function findAllUsers(searchItem, option, last, size, order, sorted, roles, callback) {
         User.query({
             searchItem: searchItem || '',
             option: option || '',
             last: last || '',
             size: size || '',
             order: order || '',
-            sorted: sorted || ''
+            sorted: sorted || '',
+            roles: roles || ''
         }, function (data) {
             callback(200, data);
         }, function (data) {
