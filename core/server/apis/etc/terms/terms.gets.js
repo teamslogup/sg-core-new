@@ -22,6 +22,18 @@ gets.validate = function () {
     };
 };
 
+gets.checkExistTerms = function () {
+    return function (req, res, next) {
+        req.models.Terms.findDataWithQuery({}, function (status, data) {
+            if (status == 200) {
+                next();
+            } else {
+                return res.hjson(req, next, status, data);
+            }
+        });
+    };
+};
+
 gets.setParam = function () {
     return function (req, res, next) {
 
