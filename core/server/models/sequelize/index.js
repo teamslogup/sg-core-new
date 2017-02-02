@@ -28,6 +28,7 @@ var LoginCount = require('./login-count');
 var MassNotification = require('./mass-notification');
 var AuthCi = require('./auth-ci');
 var MobileVersion = require('./mobile-version');
+var DomainRender = require('./domain-render');
 
 var models = {
     User: User,
@@ -58,7 +59,8 @@ var models = {
     ChatRoomUser: ChatRoomUser,
     LoginCount: LoginCount,
     MassNotification: MassNotification,
-    MobileVersion: MobileVersion
+    MobileVersion: MobileVersion,
+    DomainRender: DomainRender
 };
 
 module.exports = models;
