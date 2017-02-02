@@ -96,14 +96,21 @@ module.exports = {
             },
             "findNewNotificationCount": function (userId, callback) {
 
+                var boxCount;
+
                 sequelize.models.NotificationBox.count({
                     where: {
                         userId: userId,
                         view: false
                     }
-                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                    if (data) {
-                        callback(200, data);
+                }).then(function (count) {
+
+                    boxCount = count;
+                    return true;
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, boxCount);
                     }
                 });
 
