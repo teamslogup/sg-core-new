@@ -15,7 +15,7 @@ module.exports.init = function (io) {
         var redisAuth;
         var redisUrl = url.parse(CONFIG.db.socketRedis);
 
-        if (redisUrl.auth) {
+        // if (redisUrl.auth) {
             // redisAuth = redisUrl.auth.split(':');
 
             var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
@@ -28,7 +28,7 @@ module.exports.init = function (io) {
             });
 
             io.adapter(redisAdapter({pubClient: pub, subClient: sub}));
-        }
+        // }
     }
 
     io.set('authorization', middles.authorization);
