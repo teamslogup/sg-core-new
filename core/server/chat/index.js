@@ -12,13 +12,11 @@ var middles = require('./middlewares');
 module.exports.init = function (io) {
 
     if (STD.flag.isUseRedis) {
-        var redisAuth;
+        var redisAuth = ["", ""];
         var redisUrl = url.parse(CONFIG.db.socketRedis);
 
-        redisAuth = redisUrl.auth.split(':');
-
-        if (!redisAuth) {
-            redisAuth = ["", ""];
+        if (redisUrl.auth) {
+            redisAuth = redisUrl.auth.split(':');
         }
 
         var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
