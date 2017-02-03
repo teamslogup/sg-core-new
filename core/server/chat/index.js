@@ -16,15 +16,15 @@ module.exports.init = function (io) {
         var redisUrl = url.parse(CONFIG.db.socketRedis);
 
         if (redisUrl.auth) {
-            redisAuth = redisUrl.auth.split(':');
+            // redisAuth = redisUrl.auth.split(':');
 
             var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
-                auth_pass: redisAuth[1]
+                // auth_pass: redisAuth[1]
             });
 
             var sub = redis.createClient(redisUrl.port, redisUrl.hostname, {
                 detect_buffers: true,
-                auth_pass: redisAuth[1]
+                // auth_pass: redisAuth[1]
             });
 
             io.adapter(redisAdapter({pubClient: pub, subClient: sub}));
