@@ -11,6 +11,8 @@ var middles = {
 
     authorization: function (handshake, callback) {
 
+        console.log(handshake.session);
+
         if (handshake.session && handshake.session.passport && handshake.session.passport.user) {
 
             var userId = handshake.session.passport.user;
