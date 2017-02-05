@@ -15,7 +15,8 @@ module.exports = {
     fields: {
         'domain': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': false,
+            'unique': true
         },
         'render': {
             'type': Sequelize.ENUM,
@@ -24,10 +25,6 @@ module.exports = {
         }
     },
     options: {
-        'indexes': [{
-            name: 'domain',
-            fields: ['domain']
-        }],
         'timestamps': true,
         'charset': 'utf8',
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
