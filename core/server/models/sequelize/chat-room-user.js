@@ -113,6 +113,8 @@ module.exports = {
                             return sequelize.models.ChatRoomUser.update({
                                 userId: body.userId,
                                 roomId: body.roomId,
+                                noView: 0,
+                                updatedAt: micro.now(),
                                 deletedAt: null
                             }, {
                                 where: {

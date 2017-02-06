@@ -93,9 +93,10 @@ var middles = {
                             }
                         });
                     }
+
                     socket.join(roomId);
                     socket.emit(STD.chat.serverJoinRoom, body);
-                    socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, roomId);
+                    socket.broadcast.to(roomId).emit(STD.chat.serverReadMessage, data);
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 
                 } else {
@@ -290,9 +291,7 @@ var middles = {
 
             sequelize.models.ChatRoomUser.updateChatRoomUserUpdatedAt(user.id, payload.roomId, function (status, data) {
                 if (status == 204) {
-                    socket.emit(STD.chat.serverReadMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReadMessage, data);
-
                 } else {
                     return socket.emit(STD.chat.serverRequestFail, status, data);
                 }

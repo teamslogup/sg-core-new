@@ -51,7 +51,7 @@ var sessionSettings = {
     resave: false,
     cookie: {
         path: '/',
-        httpOnly: false,
+        httpOnly: true,
         secure: false,
         maxAge: CONFIG.app.sessionExpiredSeconds,
         expires: CONFIG.app.sessionExpiredSeconds * 1000

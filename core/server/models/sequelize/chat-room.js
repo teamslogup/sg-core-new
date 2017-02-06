@@ -69,9 +69,9 @@ module.exports = {
                     searchItemQuery = " AND user.nick LIKE '" + options.searchItem + "%'";
                 }
 
-                var countQuery = "SELECT count(v1.`id`) as count FROM (SELECT * FROM `ChatRoomUsers` AS `ChatRoomUser` WHERE `ChatRoomUser`.`deletedAt` IS NULL AND `ChatRoomUser`.`userId` = " + options.userId + ") as v1 " +
-                    "INNER JOIN (SELECT roomUser.roomId as roomId FROM ChatRoomUsers as roomUser " +
-                    "WHERE roomUser.deletedAt IS NULL AND roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId;";
+                var countQuery = "SELECT count(result.id) as count FROM (SELECT v1.id FROM (SELECT * FROM ChatRoomUsers AS chatRoomUser WHERE chatRoomUser.deletedAt IS NULL AND chatRoomUser.userId = " + options.userId + ") as v1 " +
+                    "LEFT JOIN (SELECT roomUser.roomId as roomId FROM ChatRoomUsers as roomUser " +
+                    "WHERE roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId GROUP BY v1.id) as result;";
 
                 var query = "SELECT v1.roomId as id, v1.updatedAt as updatedAt, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
                     "FROM (SELECT a.roomId, a.updatedAt, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, room.updatedAt as updatedAt, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +

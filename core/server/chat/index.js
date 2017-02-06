@@ -20,10 +20,12 @@ module.exports.init = function (io) {
         }
 
         var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
+            return_buffers: true,
             auth_pass: redisAuth[1]
         });
 
         var sub = redis.createClient(redisUrl.port, redisUrl.hostname, {
+            return_buffers: true,
             detect_buffers: true,
             auth_pass: redisAuth[1]
         });
