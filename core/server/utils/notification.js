@@ -204,7 +204,7 @@ module.exports = {
                 var histories = user.loginHistories;
                 histories.forEach(function (history) {
                     if (history.token) {
-                        sendNoti.fcm(history.token, title, body, badge, data, function (err) {
+                        sendNoti.fcm(history.token, title, body, badge, data, history.platform, function (err) {
                             if (err) {
                                 callback(500, err);
                             } else {
