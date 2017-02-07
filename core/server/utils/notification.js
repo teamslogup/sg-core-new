@@ -47,7 +47,7 @@ module.exports = {
 
                                 _this.replaceMagicKey(sendTypes[sendType], payload, user.language, function (isSuccess, title, body) {
 
-                                    payload['notificationKey'] = notification.key;
+                                    payload['key'] = notification.key;
 
                                     if (isSuccess) {
 

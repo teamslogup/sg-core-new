@@ -269,6 +269,8 @@ var middles = {
                                 type: data.type,
                                 message: data.message,
                                 userNick: user.nick,
+                                imageName: user.userImages.length > 0 ? user.userImages[0].image.name : '',
+                                dateFolder: user.userImages.length > 0 ? user.userImages[0].image.dateFolder : ''
                             });
                         }
                     });
