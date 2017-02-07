@@ -81,6 +81,9 @@ module.exports = function () {
             // 요청 쿼리의 숫자가 정해진 데이터의 숫자보다 많을 때 (필요없는 쿼리문이 껴잇을경우) 예외처리.
             if (essencialDataCnt < dataCnt) {
                 bSuccess = false;
+                if (req.files && req.files.length && req.removeFiles) {
+                    req.removeFiles(function () {});
+                }
                 return res.hjson(req, next, 400, {
                     code: '400_15'
                 });
@@ -90,6 +93,9 @@ module.exports = function () {
             for (var i = 0; i < aEssentialKeys.length; ++i) {
                 if (!data[aEssentialKeys[i]]) {
                     bSuccess = false;
+                    if (req.files && req.files.length && req.removeFiles) {
+                        req.removeFiles(function () {});
+                    }
                     return res.hjson(req, next, 400, {
                         code: '400_14'
                     });
