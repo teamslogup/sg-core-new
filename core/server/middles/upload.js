@@ -31,6 +31,10 @@ module.exports = function () {
                     req.fileNames.push(path.basename(file.path));
                 });
 
+                if (req.removeLocalFiles) {
+                    req.removeFiles = req.removeLocalFiles;
+                }
+
                 next();
             });
         };
@@ -43,6 +47,11 @@ module.exports = function () {
                 if (!max) max = 99999;
                 var len = req.files.length;
                 if (len < min || len > max) {
+
+                    if (req.removeLocalFiles) {
+                        req.removeLocalFiles(function (err) {});
+                    }
+
                     return res.hjson(req, next, 400, {code: '400_21'});
                 }
             }
@@ -61,6 +70,9 @@ module.exports = function () {
                     var regexp = new RegExp(".(" + joinedTypes + ")$", "i");
 
                     if (!name.match(regexp)) {
+                        if (req.removeLocalFiles) {
+                            req.removeLocalFiles(function (err) {});
+                        }
                         return res.hjson(req, next, 400, {code: '400_22'});
                     }
                 }
@@ -80,6 +92,9 @@ module.exports = function () {
                     var regexp = new RegExp(".(" + joinedTypes + ")$", "i");
 
                     if (name.match(regexp)) {
+                        if (req.removeLocalFiles) {
+                            req.removeLocalFiles(function (err) {});
+                        }
                         return res.hjson(req, next, 400, {code: '400_22'});
                     }
                 }
