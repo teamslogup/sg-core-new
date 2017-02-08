@@ -6,6 +6,7 @@
 var Sequelize = require('sequelize');
 var sequelize = require('../../../../core/server/config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
+var LOCAL = require('../../../../bridge/metadata/localization');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
@@ -21,6 +22,11 @@ module.exports = {
         'render': {
             'type': Sequelize.ENUM,
             'values': PAGE_UTIL.getPages(),
+            'allowNull': false
+        },
+        'language': {
+            'type': Sequelize.ENUM,
+            'values': Object.keys(LOCAL.languages),
             'allowNull': false
         }
     },
