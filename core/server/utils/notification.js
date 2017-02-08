@@ -242,7 +242,7 @@ module.exports = {
 
             function sendSMS(callback) {
                 if (user.phoneNum) {
-                    sendNoti.sms(user.phoneNum, title, body, function (err) {
+                    sendNoti.sms(null, user.phoneNum, title, body, function (err) {
                         if (err) {
                             callback(err.status, phoneErrorRefiner(err));
                         } else {
@@ -345,7 +345,7 @@ module.exports = {
             msg = msg.replace(MAGIC.minute, min);
             console.log(phoneNum, token, msg);
             if (req.sendNoti.sms) {
-                req.sendNoti.sms(phoneNum, '', msg, function (err) {
+                req.sendNoti.sms(null, phoneNum, '', msg, function (err) {
                     if (err) {
                         callback(err.status, req.phoneErrorRefiner(err));
                     } else {
@@ -364,7 +364,7 @@ module.exports = {
             msg = msg.replace(MAGIC.pass, pass);
             console.log(phoneNum, msg);
             if (req.sendNoti.sms) {
-                req.sendNoti.sms(phoneNum, '', msg, function (err) {
+                req.sendNoti.sms(null, phoneNum, '', msg, function (err) {
                     if (err) {
                         callback(err.status, req.phoneErrorRefiner(err));
                     } else {
