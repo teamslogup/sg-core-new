@@ -520,11 +520,11 @@ module.exports = {
                 }]
             },
             'getUserFields': function () {
-                var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt', 'deletedAt'];
+                var fields = ['id', 'profileId', 'nick', 'name', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt', 'deletedAt'];
                 return fields;
             },
             'getFullUserFields': function () {
-                var fields = ['id', 'email', 'phoneNum', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'agreedPhoneNum', 'passUpdatedAt', 'deletedAt'];
+                var fields = ['id', 'profileId', 'email', 'phoneNum', 'nick', 'name', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'agreedPhoneNum', 'passUpdatedAt', 'deletedAt'];
                 return fields;
             },
             /**
