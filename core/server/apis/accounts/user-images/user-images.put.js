@@ -34,7 +34,6 @@ put.update = function () {
         }
         req.models.UserImage.updateUserImages(update, function (status, data) {
             if (status == 200) {
-                req.data = data;
                 next();
             } else {
                 res.hjson(req, next, status, data);
@@ -72,7 +71,7 @@ put.findImagesToBeDeleted = function () {
 
 put.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.data);
+        res.hjson(req, next, 204);
     };
 };
 
