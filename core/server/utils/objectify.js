@@ -1,4 +1,25 @@
 module.exports = {
+    query: {
+        select: function (tableName, aliasArray, fieldArray) {
+            var query = "";
+            if (typeof tableName == "string" && aliasArray instanceof Array && fieldArray instanceof Array) {
+                var alias = aliasArray.join('.');
+                for (var i=0; i<fieldArray.length; i++) {
+                    if (i) {
+                        query += ", ";
+                    }
+                    query += tableName + "." + fieldArray[i];
+                    if (alias) {
+                        query += " AS '" + alias + "." + fieldArray[i] + "'";
+                    }
+                }
+                return query;
+            } else {
+                console.log("generate query select parameter error");
+                return query;
+            }
+        }
+    },
     convert: function (data, keyPattern) {
 
         var result = [];
