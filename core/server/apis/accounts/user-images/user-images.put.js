@@ -33,7 +33,7 @@ put.update = function () {
             }
         }
         req.models.UserImage.updateUserImages(update, function (status, data) {
-            if (status == 204) {
+            if (status == 200) {
                 req.data = data;
                 next();
             } else {
