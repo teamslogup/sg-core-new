@@ -43,7 +43,10 @@ module.exports = {
                 } else {
                     return sequelize.models.MobileVersion.create({
                         type: STD.mobile.osTypeAndroid,
-                        version: '0.0.1'
+                        majorVersion: 0,
+                        minorVersion: 0,
+                        hotfixVersion: 1,
+                        forceUpdate: false
                     }, {
                         transaction: t
                     });
@@ -65,7 +68,10 @@ module.exports = {
                 } else {
                     return sequelize.models.MobileVersion.create({
                         type: STD.mobile.osTypeIos,
-                        version: '0.0.1'
+                        majorVersion: 0,
+                        minorVersion: 0,
+                        hotfixVersion: 1,
+                        forceUpdate: false
                     }, {
                         transaction: t
                     });
