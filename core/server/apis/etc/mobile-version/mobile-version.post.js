@@ -4,10 +4,13 @@ var logger = new Logger(__filename);
 
 post.validate = function () {
     return function (req, res, next) {
-        var MOBILE = req.meta.std.mobile;
+        var USER = req.meta.std.user;
 
-        req.check('type', '400_3').isEnum(MOBILE.enumOsType);
-        req.check('version', '400_3').len(MOBILE.minVersionLength, MOBILE.maxVersionLength);
+        req.check('type', '400_3').isEnum(USER.enumPhones);
+
+        req.check('majorVersion', '400_51').len(1, 2);
+        req.check('minorVersion', '400_51').len(1, 2);
+        req.check('hotfixVersion', '400_51').len(1, 2);
 
         req.utils.common.checkError(req, res, next);
         next();

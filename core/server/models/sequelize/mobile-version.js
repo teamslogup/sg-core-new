@@ -20,9 +20,22 @@ module.exports = {
             'values': STD.mobile.enumOsType,
             'allowNull': false
         },
-        'version': {
-            'type': Sequelize.STRING,
+        'majorVersion': {
+            'type': Sequelize.INTEGER,
             'allowNull': false
+        },
+        'minorVersion': {
+            'type': Sequelize.INTEGER,
+            'allowNull': false
+        },
+        'hotfixVersion': {
+            'type': Sequelize.INTEGER,
+            'allowNull': false
+        },
+        'forceUpdate': {
+            'type': Sequelize.BOOLEAN,
+            'allowNull': false,
+            'default': false
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -40,7 +53,7 @@ module.exports = {
     options: {
         "indexes": [{
             unique: true,
-            fields: ['type', 'version']
+            fields: ['type', 'majorVersion', 'minorVersion', 'hotfixVersion']
         }],
         'timestamps': true,
         'updatedAt': false,
@@ -54,9 +67,11 @@ module.exports = {
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'getMobileVersionField': function () {
-                return ['version'];
+                return ['majorVersion', 'minorVersion', 'hotfixVersion'];
             },
-            'findMobileVersionByType': function (type, callback) {
+            'findMobileVersionByType': function (type, majorVersion, minorVersion, hotfixVersion, callback) {
+
+                var mobileVersion;
 
                 sequelize.models.MobileVersion.findOne({
                     where: {
@@ -68,14 +83,52 @@ module.exports = {
                 }).then(function (data) {
 
                     if (data) {
-                        return data;
+
+                        mobileVersion = data;
+
+                        return sequelize.models.MobileVersion.findAll({
+                            where: {
+                                $or: [{
+                                    majorVersion: {
+                                        $gt: majorVersion
+                                    }
+                                }, {
+                                    $and: [{
+                                        majorVersion: majorVersion,
+                                        minorVersion: {
+                                            $gt: minorVersion
+                                        }
+                                    }]
+                                }, {
+                                    $and: [{
+                                        majorVersion: majorVersion,
+                                        minorVersion: minorVersion,
+                                        hotfixVersion: {
+                                            $gt: hotfixVersion
+                                        }
+                                    }]
+                                }],
+                                forceUpdate: true
+                            }
+                        });
+
                     } else {
                         throw new errorHandler.CustomSequelizeError(404);
                     }
 
-                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                    if (data) {
-                        callback(200, data);
+                }).then(function (data) {
+
+                    if (data.length > 0) {
+                        mobileVersion.dataValues.forceUpdate = true;
+                    } else {
+                        mobileVersion.dataValues.forceUpdate = false;
+                    }
+
+                    return true
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, mobileVersion);
                     }
                 });
 
