@@ -56,14 +56,15 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['type', 'majorVersion', 'minorVersion', 'hotfixVersion'],
-                essential: ['type', 'majorVersion', 'minorVersion', 'hotfixVersion'],
+                acceptable: ['type', 'majorVersion', 'minorVersion', 'hotfixVersion', 'forceUpdate'],
+                essential: ['type', 'majorVersion', 'minorVersion', 'hotfixVersion', 'forceUpdate'],
                 resettable: [],
                 explains: {
                     'type': '모바일 플랫폼 ' + STD.mobile.enumOsType.join(", "),
                     'majorVersion': '기기의 메이저 버전',
                     'minorVersion': '기기의 마이너 버전',
-                    'hotfixVersion': '기기의 핫픽스 버전'
+                    'hotfixVersion': '기기의 핫픽스 버전',
+                    'forceUpdate': '강제업데이트 여부'
                 },
                 title: '모바일 버전 갱신',
                 state: 'staging'

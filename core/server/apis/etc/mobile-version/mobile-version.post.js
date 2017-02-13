@@ -12,6 +12,9 @@ post.validate = function () {
         req.check('minorVersion', '400_51').len(1, 2);
         req.check('hotfixVersion', '400_51').len(1, 2);
 
+        req.check('forceUpdate', '400_20').isBoolean();
+        req.sanitize('forceUpdate').toBoolean();
+
         req.utils.common.checkError(req, res, next);
         next();
     };
