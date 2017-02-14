@@ -1,10 +1,11 @@
+var CONFIG = require('../../../bridge/config/env');
 var STD = require('../../../bridge/metadata/standards');
 var sequelize = require('../../../core/server/config/sequelize');
 var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     initialize: function (callback) {
-        if (STD.flag.isUseRedis) {
+        if (CONFIG.flag.isUseRedis) {
             callback(204);
         } else {
             sequelize.transaction(function (t) {

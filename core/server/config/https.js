@@ -12,7 +12,7 @@ module.exports = function (app) {
         https: null
     };
     server.http = http.createServer(app);
-    if (STD.flag.isUseHttps) {
+    if (config.flag.isUseHttps) {
 
         var keyPath = path.join(__dirname + "/../../../app/server/config/ssl/" + config.app.keyFile),
             certPath = path.join(__dirname + "/../../../app/server/config/ssl/" + config.app.crtFile);
