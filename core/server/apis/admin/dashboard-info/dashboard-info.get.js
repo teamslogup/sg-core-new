@@ -11,7 +11,6 @@ get.validate = function () {
         // req.check('months', '400_28').isMonthArray(DASHBOARD_INFO.minMonthArrayLength, DASHBOARD_INFO.maxMonthArrayLength);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

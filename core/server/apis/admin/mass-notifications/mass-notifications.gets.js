@@ -35,7 +35,6 @@ gets.validate = function(){
             req.sanitize("isStored").toBoolean();
         }
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

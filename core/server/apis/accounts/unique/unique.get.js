@@ -7,7 +7,6 @@ get.validate = function () {
         req.check('key', '400_3').isEnum(['email', 'phoneNum', 'nick', 'aid']);
         req.query.value = decodeURIComponent(req.query.value);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

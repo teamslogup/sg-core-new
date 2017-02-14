@@ -108,6 +108,7 @@ module.exports = {
                                 model: sequelize.models.User,
                                 as: 'user',
                                 attributes: sequelize.models.User.getUserFields(),
+                                include: sequelize.models.User.getIncludeUser()
                             }]
                         }]
                     }]

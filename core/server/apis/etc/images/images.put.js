@@ -6,7 +6,6 @@ put.validate = function () {
     return function (req, res, next) {
         req.check('authorized', '400_20').isBoolean();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

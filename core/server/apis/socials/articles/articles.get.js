@@ -8,7 +8,6 @@ get.validate = function () {
         req.check('slug', '400_8').isAlphanumeric();
         req.check('categoryId', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

@@ -93,6 +93,27 @@ module.exports = {
                         callback(200, data);
                     }
                 });
+            },
+            "findNewNotificationCount": function (userId, callback) {
+
+                var boxCount;
+
+                sequelize.models.NotificationBox.count({
+                    where: {
+                        userId: userId,
+                        view: false
+                    }
+                }).then(function (count) {
+
+                    boxCount = count;
+                    return true;
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, boxCount);
+                    }
+                });
+
             }
         })
     }

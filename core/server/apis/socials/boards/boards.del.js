@@ -6,7 +6,6 @@ del.validate = function () {
     return function (req, res, next) {
         req.check('slug', '400_8').isAlphanumeric();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

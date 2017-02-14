@@ -41,7 +41,7 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
             $rootScope.$broadcast("core.alert-dialog.callback", {
                 type: '401'
             });
-        } else if(status == 403 && data.code == "403_20") {
+        } else if(status == 403 && data && data.code == "403_20") {
             $rootScope.$broadcast("core.alert-dialog.callback", {
                 type: '403_20'
             });

@@ -10,7 +10,6 @@ post.validate = function () {
         req.check('provider', '400_3').isEnum(USER.enumProviders);
         req.check('accessToken', '400_8').len(1, 1000);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

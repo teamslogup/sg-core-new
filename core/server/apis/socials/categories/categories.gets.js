@@ -11,7 +11,6 @@ gets.validate = function () {
         req.check('size', '400_5').isInt();
         req.check('slug', '400_8').isAlphanumeric();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

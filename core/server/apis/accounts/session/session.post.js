@@ -47,7 +47,6 @@ post.validate = function () {
         }
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

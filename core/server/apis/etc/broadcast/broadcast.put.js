@@ -25,7 +25,6 @@ put.validate = function () {
         if (req.body.img !== undefined) req.check('img', '400_8').len(NOTIFICATION.minImgLength, NOTIFICATION.maxImgLength);
         if (req.body.description !== undefined) req.check('description', '400_8').len(NOTIFICATION.minDescriptionLength, NOTIFICATION.maxDescriptionLength);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

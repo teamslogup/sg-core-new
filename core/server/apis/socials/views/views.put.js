@@ -9,7 +9,6 @@ put.validate = function () {
         req.check('articleId', '400_3').isInt();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

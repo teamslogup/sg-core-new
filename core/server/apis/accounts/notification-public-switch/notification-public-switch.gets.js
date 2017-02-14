@@ -10,7 +10,6 @@ gets.validate = function () {
         req.check('sendType', '400_28').isEnum(NOTIFICATION.enumSendTypes);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

@@ -47,16 +47,29 @@ module.exports = {
 
                                 _this.replaceMagicKey(sendTypes[sendType], payload, user.language, function (isSuccess, title, body) {
 
-                                    payload['notificationKey'] = notification.key;
+                                    payload['key'] = notification.key;
 
                                     if (isSuccess) {
-                                        _this.send(user, sendType, title, body, payload, function (status, data) {
-                                            if (status == 204) {
-                                                if (callback) callback(status, data);
+
+                                        _this.getNewNotificationCount(user.id, function (isSuccess, result) {
+
+                                            var badge = result.newNotificationCount + result.newChatMessageCount;
+                                            payload['newNotificationCount'] = result.newNotificationCount;
+                                            payload['newChatMessageCount'] = result.newChatMessageCount;
+
+                                            if (isSuccess) {
+                                                _this.send(user, sendType, title, body, badge, payload, function (status, data) {
+                                                    if (status == 204) {
+                                                        if (callback) callback(status, data);
+                                                    } else {
+                                                        console.log(status, data);
+                                                        if (callback) callback(status, data);
+                                                    }
+                                                });
                                             } else {
-                                                console.log(status, data);
-                                                if (callback) callback(status, data);
+                                                if (callback)callback(204);
                                             }
+
                                         });
 
                                     } else {
@@ -151,7 +164,31 @@ module.exports = {
             return callback(false);
 
         },
-        send: function (user, sendType, title, body, data, callback) {
+        getNewNotificationCount: function (userId, callback) {
+
+            var result = {};
+
+            sequelize.models.NotificationBox.findNewNotificationCount(userId, function (status, data) {
+                if (status == 200) {
+                    result.newNotificationCount = data;
+
+                    sequelize.models.ChatRoomUser.getNewChatMessageCount(userId, function (status, data) {
+                        if (status == 200 || status == 404) {
+                            result.newChatMessageCount = data;
+
+                            return callback(true, result);
+                        } else {
+                            return callback(false);
+                        }
+                    });
+
+                } else {
+                    return callback(false);
+                }
+            });
+
+        },
+        send: function (user, sendType, title, body, badge, data, callback) {
 
             if (sendType == NOTIFICATION.sendTypeEmail) {
                 sendEmail(callback);
@@ -167,7 +204,7 @@ module.exports = {
                 var histories = user.loginHistories;
                 histories.forEach(function (history) {
                     if (history.token) {
-                        sendNoti.fcm(history.token, title, body, data, function (err) {
+                        sendNoti.fcm(history.token, title, body, badge, data, history.platform, function (err) {
                             if (err) {
                                 callback(500, err);
                             } else {

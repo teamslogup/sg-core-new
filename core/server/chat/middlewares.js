@@ -11,6 +11,8 @@ var middles = {
 
     authorization: function (handshake, callback) {
 
+        console.log(handshake.session);
+
         if (handshake.session && handshake.session.passport && handshake.session.passport.user) {
 
             var userId = handshake.session.passport.user;
@@ -91,9 +93,10 @@ var middles = {
                             }
                         });
                     }
+
                     socket.join(roomId);
                     socket.emit(STD.chat.serverJoinRoom, body);
-                    socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, roomId);
+                    socket.broadcast.to(roomId).emit(STD.chat.serverReadMessage, data);
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 
                 } else {
@@ -266,6 +269,8 @@ var middles = {
                                 type: data.type,
                                 message: data.message,
                                 userNick: user.nick,
+                                imageName: user.userImages.length > 0 ? user.userImages[0].image.name : '',
+                                dateFolder: user.userImages.length > 0 ? user.userImages[0].image.dateFolder : ''
                             });
                         }
                     });
@@ -288,9 +293,7 @@ var middles = {
 
             sequelize.models.ChatRoomUser.updateChatRoomUserUpdatedAt(user.id, payload.roomId, function (status, data) {
                 if (status == 204) {
-                    socket.emit(STD.chat.serverReadMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReadMessage, data);
-
                 } else {
                     return socket.emit(STD.chat.serverRequestFail, status, data);
                 }

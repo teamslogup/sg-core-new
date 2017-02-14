@@ -8,7 +8,6 @@ del.validate = function () {
         var FILE = req.meta.std.file;
         req.check('folder', '400_3').isEnum(FILE.enumAudioFolders);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

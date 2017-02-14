@@ -10,7 +10,6 @@ post.validate = function () {
             return res.hjson(req, next, 403);
         }
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

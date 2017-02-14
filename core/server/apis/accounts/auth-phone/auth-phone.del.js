@@ -6,8 +6,6 @@ del.validate = function () {
     return function (req, res, next) {
         req.check('id', '400_12').isInt();
 
-        req.utils.common.checkError(req, res, next);
-
         // 아이디 비번 로그인, 소셜로그인도 불가능할 경우
         if (!req.loadedUser.aid && (!req.loadedUser.providers || req.loadedUser.providers.length == 0)) {
             return res.hjson(req, next, 400, {
@@ -15,7 +13,7 @@ del.validate = function () {
             });
         }
 
-        next();
+        req.utils.common.checkError(req, res, next);
     };
 };
 

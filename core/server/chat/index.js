@@ -12,23 +12,25 @@ var middles = require('./middlewares');
 module.exports.init = function (io) {
 
     if (STD.flag.isUseRedis) {
-        var redisAuth;
+        var redisAuth = ["", ""];
         var redisUrl = url.parse(CONFIG.db.socketRedis);
 
         if (redisUrl.auth) {
             redisAuth = redisUrl.auth.split(':');
-
-            var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
-                auth_pass: redisAuth[1]
-            });
-
-            var sub = redis.createClient(redisUrl.port, redisUrl.hostname, {
-                detect_buffers: true,
-                auth_pass: redisAuth[1]
-            });
-
-            io.adapter(redisAdapter({pubClient: pub, subClient: sub}));
         }
+
+        var pub = redis.createClient(redisUrl.port, redisUrl.hostname, {
+            return_buffers: true,
+            auth_pass: redisAuth[1]
+        });
+
+        var sub = redis.createClient(redisUrl.port, redisUrl.hostname, {
+            return_buffers: true,
+            detect_buffers: true,
+            auth_pass: redisAuth[1]
+        });
+
+        io.adapter(redisAdapter({pubClient: pub, subClient: sub}));
     }
 
     io.set('authorization', middles.authorization);

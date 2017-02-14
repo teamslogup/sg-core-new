@@ -13,7 +13,6 @@ get.validate = function () {
         req.check('hotfixVersion', '400_51').len(1, 2);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

@@ -13,7 +13,6 @@ post.validate = function () {
         }
         req.check('body', '400_8').len(COMMENT.minBodyLength, COMMENT.maxBodyLength);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

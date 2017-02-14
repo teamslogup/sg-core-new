@@ -9,7 +9,6 @@ post.validate = function () {
     return function (req, res, next) {
         req.check('folder', '400_3').isEnum(req.meta.std.file.enumFolders);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
