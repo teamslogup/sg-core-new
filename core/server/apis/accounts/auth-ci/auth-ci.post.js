@@ -48,8 +48,6 @@ post.validate = function () {
         req.check('phoneNum', '400_7').len(5, 18);
 
         req.utils.common.checkError(req, res, next);
-
-        next();
     };
 };
 

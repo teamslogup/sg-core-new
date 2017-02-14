@@ -14,7 +14,6 @@ post.validate = function () {
         if (req.body.errorRedirect !== undefined) req.check('errorRedirect', '400_3').len(1, 500);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

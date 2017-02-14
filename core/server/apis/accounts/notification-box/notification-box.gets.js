@@ -35,7 +35,6 @@ gets.validate = function () {
         req.check('userId', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

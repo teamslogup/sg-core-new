@@ -9,7 +9,6 @@ del.validate = function () {
         req.check('provider', '400_3').isEnum(USER.enumProviders);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

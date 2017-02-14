@@ -8,7 +8,6 @@ get.validate = function () {
     return function (req, res, next) {
         if (req.query.type !== undefined) req.check('type', '400_3').isEnum(req.meta.std.metadata.enumMetaTypes);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

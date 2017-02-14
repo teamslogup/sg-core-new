@@ -11,7 +11,6 @@ post.validate = function () {
         req.body.folder = FILE.folderCk;
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

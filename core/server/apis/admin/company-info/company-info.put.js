@@ -18,7 +18,6 @@ put.validate = function () {
         if (req.body.email !== undefined) req.check('email', '400_8').len(COMPANY_INFO.minEmailLength, COMPANY_INFO.maxEmailLength);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

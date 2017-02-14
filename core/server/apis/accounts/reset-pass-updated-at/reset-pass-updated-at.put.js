@@ -6,7 +6,6 @@ var micro = require('microtime-nodejs');
 put.validate = function () {
     return function (req, res, next) {
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

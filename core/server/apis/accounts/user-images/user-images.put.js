@@ -14,7 +14,6 @@ put.validate = function () {
         if (req.body.imageIdsToBeDeleted !== undefined) req.check('imageIdsToBeDeleted', '400_12').isNumberIds(USER.maxImageCount);
 
         req.utils.common.checkError(req, res, next);
-        next();
 
     };
 };

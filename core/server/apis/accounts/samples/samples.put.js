@@ -8,7 +8,6 @@ put.validate = function () {
         req.check('id', '400_12').isInt();
         req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

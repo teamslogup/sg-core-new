@@ -8,7 +8,6 @@ put.validate = function () {
         req.check('userId', '400_12').isInt();
         req.check('role', '400_3').isEnum(USER.enumRoles);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

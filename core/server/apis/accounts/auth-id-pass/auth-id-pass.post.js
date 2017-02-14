@@ -13,7 +13,6 @@ post.validate = function () {
         }
         req.check('pass', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

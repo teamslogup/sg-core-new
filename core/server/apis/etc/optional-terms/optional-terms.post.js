@@ -10,7 +10,6 @@ post.validate = function () {
         req.check('termsIds', '400_12').isNumberIds(TERMS.maxOptionalTermsCount);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

@@ -7,7 +7,6 @@ del.validate = function () {
     return function (req, res, next) {
         req.check('id', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

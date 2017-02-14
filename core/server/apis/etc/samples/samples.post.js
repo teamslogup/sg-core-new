@@ -7,7 +7,6 @@ post.validate = function () {
         var REPORT = req.meta.std.report;
         req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

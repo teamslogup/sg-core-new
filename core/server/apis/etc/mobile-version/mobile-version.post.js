@@ -16,7 +16,6 @@ post.validate = function () {
         req.sanitize('forceUpdate').toBoolean();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

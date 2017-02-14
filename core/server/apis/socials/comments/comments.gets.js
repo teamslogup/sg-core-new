@@ -17,7 +17,6 @@ gets.validate = function(){
         req.sanitize('last').toInt();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

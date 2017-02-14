@@ -8,7 +8,6 @@ put.validate = function () {
         if (req.body.id !== undefined) req.check('id', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

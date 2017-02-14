@@ -9,7 +9,6 @@ del.validate = function(){
 
         req.check('folder','400_3').isEnum(req.meta.std.file.enumFolders);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

@@ -24,7 +24,6 @@ put.validate = function () {
 
         // todo category names
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

@@ -9,7 +9,6 @@ get.validate = function () {
         req.check('key', '400_12').len(NOTIFICATION.minKeyLength, NOTIFICATION.maxKeyLength);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

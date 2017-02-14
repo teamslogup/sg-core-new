@@ -13,7 +13,6 @@ put.validate = function () {
         req.sanitize('switch').toBoolean();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

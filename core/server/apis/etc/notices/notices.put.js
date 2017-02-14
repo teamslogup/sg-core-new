@@ -19,7 +19,6 @@ put.validate = function () {
         if (req.body.smallImageId !== undefined) req.check('smallImageId', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

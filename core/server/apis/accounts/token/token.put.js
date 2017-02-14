@@ -7,7 +7,6 @@ put.validate = function () {
         req.check('token', '400_2').len(1, 2000);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

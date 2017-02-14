@@ -22,7 +22,6 @@ post.validate = function () {
         req.check('description', '400_8').len(NOTIFICATION.minDescriptionLength, NOTIFICATION.maxDescriptionLength);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
