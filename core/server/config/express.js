@@ -243,23 +243,23 @@ module.exports.init = function (sequelize) {
     app.use(sgcSequelizeErrorHandler.connect());
 
     var staticOptions = {};
-    if (process.env.NODE_ENV !== 'production') {
+    if (process.env.NODE_ENV == 'production') {
         staticOptions = {
             maxage: '2400h'
         }
-    } else if (process.env.NODE_ENV === 'production') {
+    } else if (process.env.NODE_ENV === 'development') {
 
     }
 
     if (hasAppDir) {
-        app.use(express.static('app/client'), staticOptions);
+        app.use(express.static('app/client', staticOptions));
     }
 
-    app.use(express.static('core/client'), staticOptions);
-    app.use(express.static('dist'), staticOptions);
+    app.use(express.static('core/client', staticOptions));
+    app.use(express.static('dist', staticOptions));
 
     if (!META.std.flag.isUseS3Bucket) {
-        app.use('/', express.static("uploads"), staticOptions);
+        app.use('/', express.static("uploads", staticOptions));
     }
 
     app.use(passport.initialize());
