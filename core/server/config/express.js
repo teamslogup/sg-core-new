@@ -58,7 +58,7 @@ var sessionSettings = {
     }
 };
 
-if (META.std.flag.isUseRedis) {
+if (CONFIG.flag.isUseRedis) {
     var urlObj = url.parse(CONFIG.db.redis);
     var auth = urlObj.auth;
     var auth = (auth && auth.split(":")) || null;

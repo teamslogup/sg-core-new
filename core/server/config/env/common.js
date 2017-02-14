@@ -19,6 +19,13 @@ module.exports = {
         "logging": false,
         "force": false
     },
+    "flag": {
+        "isUseHttps": false,
+        "isUseRedis": false,
+        "isUseCluster": false,
+        "isDuplicatedLogin": false,
+        "isAutoVerifiedEmail": false
+    },
     "facebook": {
         "clientID": "",
         "clientSecret": "",

@@ -268,7 +268,7 @@ post.createOptionalTerms = function () {
 post.sendEmailAuth = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
-        var FLAG = req.meta.std.flag;
+        var FLAG = req.config.flag;
 
         if (req.body.type == USER.signUpTypeEmail && !FLAG.isAutoVerifiedEmail) {
             req.coreUtils.notification.email.signup(req, {}, req.createdUser.auth, req.createdUser, function (status, data) {
