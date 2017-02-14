@@ -10,7 +10,7 @@ for (var k in commonConfig) {
         }
     } else if (conf instanceof Object) {
         for (var kk in conf) {
-            if (conf[kk]) {
+            if (conf[kk] !== undefined) {
                 commonConfig[k][kk] = conf[kk];
             }
         }
