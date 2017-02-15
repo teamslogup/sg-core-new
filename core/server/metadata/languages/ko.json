@@ -212,7 +212,7 @@
   "kNotiChatTitle": "채팅 알림",
   "kNotiChatBody": ":userNick:님이 메세지를 남기셨습니다.",
   "kNotiReportTitle": "문의 알림",
-  "kNotiReportBody": "",
+  "kNotiReportBody": "문의에 대한 답변이 완료되었습니다.",
   "kNotiReportEmailTitle": "문의 알림",
   "kNotiReportEmailBody": ":reply:",
   "kNotiReportPushTitle": "문의 알림",

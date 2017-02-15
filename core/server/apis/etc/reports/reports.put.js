@@ -75,6 +75,42 @@ put.sendNotifications = function () {
                 if (status == 200) {
                     user = data;
 
+                    function sendNoti(key, user, payload) {
+
+                        req.coreUtils.notification.all.createdNotificationBox(user, notificationReport, payload, function (status, data) {
+
+                            if (status == 204) {
+                                if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
+
+                                    req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
+
+                                        payload['key'] = notificationReport.key;
+
+                                        if (isSuccess) {
+
+                                            req.coreUtils.notification.all.getNewNotificationCount(user.id, function (isSuccess, result) {
+
+                                                var badge = result.newNotificationCount + result.newChatMessageCount;
+                                                payload['newNotificationCount'] = result.newNotificationCount;
+                                                payload['newChatMessageCount'] = result.newChatMessageCount;
+
+                                                if (isSuccess) {
+                                                    req.coreUtils.notification.all.send(user, key, title, body, badge, payload, function (status, data) {
+                                                        console.log('reportNoti', status);
+                                                    });
+                                                }
+
+                                            });
+
+                                        }
+
+                                    });
+                                }
+                            }
+                        });
+
+                    }
+
                     for (var key in notificationReport.sendTypes) {
 
                         var sendType = notificationReport.sendTypes[key];
@@ -97,20 +133,8 @@ put.sendNotifications = function () {
                             }
                         }
 
-                        if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
+                        sendNoti(key, user, payload);
 
-                            req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
-
-                                payload['notificationKey'] = notificationReport.key;
-
-                                if (isSuccess) {
-                                    req.coreUtils.notification.all.send(user, key, title, body, payload, function (status, data) {
-                                        console.log('reportNoti', status);
-                                    });
-                                }
-
-                            });
-                        }
                     }
                 }
 
