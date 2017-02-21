@@ -267,6 +267,7 @@ module.exports.init = function (sequelize) {
             tokens['date'](req, res),
             tokens.method(req, res),
             tokens.url(req, res),
+            JSON.stringify(req.body),
             tokens.status(req, res),
             tokens['response-time'](req, res), 'ms'
         ].join(' ')
