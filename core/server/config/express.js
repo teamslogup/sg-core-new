@@ -238,7 +238,7 @@ module.exports.init = function (sequelize) {
     var staticOptions = {};
     if (process.env.NODE_ENV == 'production') {
         staticOptions = {
-            maxage: '2400h'
+            // maxage: '2400h'
         }
     } else if (process.env.NODE_ENV === 'development') {
 
