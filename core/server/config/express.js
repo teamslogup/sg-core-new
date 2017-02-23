@@ -153,13 +153,6 @@ module.exports.init = function (sequelize) {
 
     globalVariables.board(app);
 
-    if (process.env.NODE_ENV !== 'production') {
-        app.use(morgan('dev'))
-    } else if (process.env.NODE_ENV === 'production') {
-        //app.use(compress());
-        //app.use(minify());
-    }
-
     app.use(function () {
         return function (req, res, next) {
             req.originalUrl = unescape(req.originalUrl);
@@ -249,7 +242,7 @@ module.exports.init = function (sequelize) {
     var staticOptions = {};
     if (process.env.NODE_ENV == 'production') {
         staticOptions = {
-            maxage: '2400h'
+            // maxage: '2400h'
         }
     } else if (process.env.NODE_ENV === 'development') {
 
@@ -269,6 +262,20 @@ module.exports.init = function (sequelize) {
     app.use(passport.initialize());
     app.use(passport.session());
 
+    app.use(morgan(function (tokens, req, res) {
+        return [
+            (req.user && req.user.id) || 'X',
+            (req.user && req.user.nick) || '',
+            tokens['remote-addr'](req, res),
+            tokens['remote-user'](req, res),
+            tokens['date'](req, res),
+            tokens.method(req, res),
+            tokens.url(req, res),
+            JSON.stringify(req.body),
+            tokens.status(req, res),
+            tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+    }));
     // security
 
     app.use(blacklist.blockRequests('blacklist.txt'));
