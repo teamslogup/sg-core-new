@@ -6,6 +6,13 @@ var webpack = require('webpack');
 
 var path = require('path');
 var fs = require('fs');
+var pagesPath = path.resolve(__dirname, "./app/client/pages");
+var pages = fs.readdirSync(pagesPath);
+var entry = {};
+
+pages.forEach(function (page) {
+    entry['sg-'+page] = "./app/client/pages/" + page + "/app." + page + ".module.js"
+});
 
 var ENV = process.env.NODE_ENV;
 
@@ -16,11 +23,7 @@ config.stats = {
     reasons: false
 };
 
-config.entry = {
-    'sg-sample': './core/client/pages/sample/core.sample.module.js',
-    'sg-main': './app/client/pages/main/app.main.module.js',
-    'sg-admin': './app/client/pages/admin/app.admin.module.js'
-};
+config.entry = entry;
 
 config.resolve = {
     modulesDirectories: [

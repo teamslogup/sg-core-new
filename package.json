@@ -136,16 +136,8 @@
     "node": "6.5.0"
   },
   "scripts": {
-    "build-dev-sample": "gulp build --ejs ./core/server/views/sample.ejs --env development",
-    "build-dev-admin": "gulp build --ejs ./app/server/views/admin.ejs --env development",
-    "build-dev-main": "gulp build --ejs ./app/server/views/main.ejs --env development",
-    "bs": "gulp build --ejs ./core/server/views/sample.ejs --env development",
-    "ba": "gulp build --ejs ./app/server/views/admin.ejs --env development",
-    "bm": "gulp build --ejs ./app/server/views/main.ejs --env development",
-    "build-sample": "gulp build --ejs ./core/server/views/sample.ejs --env production",
-    "build-admin": "gulp build --ejs ./app/server/views/admin.ejs --env production",
-    "build-main": "gulp build --ejs ./app/server/views/main.ejs --env production",
-    "build-dev": "gulp build --ejs ./app/server/views/main.ejs --env development | gulp build --ejs ./app/server/views/admin.ejs --env development",
+    "build-dev": "gulp build --env development",
+    "build": "gulp build --env production",
     "start": "NODE_ENV=production pm2 start app",
     "log": "pm2 logs app",
     "test": "gulp test",
