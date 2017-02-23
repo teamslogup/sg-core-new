@@ -230,7 +230,11 @@ module.exports.init = function (sequelize) {
     app.use(function (req, res, next) {
         var country = req.country;
         req.meta = META;
-        req.meta.std = bridgeUtils.mix(META.std, META.stdLocal[country]);
+        var stdLocal = {};
+        if (META.stdLocal[country]) {
+            stdLocal = META.stdLocal[country];
+        }
+        req.meta.std = bridgeUtils.mix(META.std, stdLocal);
         req.config = CONFIG;
         req.models = models;
         req.sequelize = sequelize;
