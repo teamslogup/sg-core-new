@@ -181,10 +181,10 @@ function callPagesBuild(page, afterInjection, url) {
         ], {read: false});
 
         return src.pipe(inject(source))
-            .pipe(injectString.replace('sg-lib.js', "sg-lib.js?v=" + corePackage.version))
+            .pipe(injectString.replace('sg-lib.js', "/sg-lib.js?v=" + corePackage.version))
             .pipe(injectString.replace('\"/dist/', "\""))
-            .pipe(injectString.replace('sg-' + page + '.js', "sg-" + page + ".js?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
-            .pipe(injectString.replace('sg-' + page + '.css', "sg-" + page + ".css?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
+            .pipe(injectString.replace('sg-' + page + '.js', "/sg-" + page + ".js?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
+            .pipe(injectString.replace('sg-' + page + '.css', "/sg-" + page + ".css?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
             .pipe(gulp.dest('./' + getRootType() + '/server/views/dist'));
     });
 
