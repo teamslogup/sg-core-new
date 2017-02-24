@@ -53,7 +53,7 @@ post.validate = function () {
         }
 
         if (req.body.nick !== undefined) {
-            req.check('nick', '40400_260_8').len(USER.minNickLength, USER.maxNickLength);
+            req.check('nick', '400_8').len(USER.minNickLength, USER.maxNickLength);
         }
 
         if (req.body.gender !== undefined) req.check('gender', '400_3').isEnum(USER.enumGenders);
