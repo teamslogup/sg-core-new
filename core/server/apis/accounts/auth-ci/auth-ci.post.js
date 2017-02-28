@@ -67,7 +67,7 @@ post.setParams = function () {
                 }
             });
 
-        } else if (req.body.type == USER.authTypeAddPhone) {
+        } else if (req.body.type == USER.authTypeAddPhone || req.body.type == USER.authTypeChangePhone) {
 
             req.models.User.updateDataById(req.body.userId, {
                 phoneNum: req.body.phoneNum,
