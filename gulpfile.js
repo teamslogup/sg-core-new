@@ -176,12 +176,13 @@ function callPagesBuild(page, afterInjection, url) {
     gulp.task('injection-' + page, [afterInjection], () => {
         var src = gulp.src(url);
         var source = gulp.src([
-            './dist/sg-lib.js', './dist/sg-' + page + '.js',
-            './dist/sg-lib.css', './dist/sg-' + page + '.css'
+            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
+            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
         ], {read: false});
 
         return src.pipe(inject(source))
-            .pipe(injectString.replace('sg-lib.js', "/sg-lib.js?v=" + corePackage.version))
+            .pipe(injectString.replace('sg-' + page + '-core.js', '/sg-' + page + '-core.js?v=' + corePackage.version))
+            .pipe(injectString.replace('sg-' + page + '-core.css', '/sg-' + page + '-core.css?v=' + corePackage.version))
             .pipe(injectString.replace('\"/dist/', "\""))
             .pipe(injectString.replace('sg-' + page + '.js', "/sg-" + page + ".js?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
             .pipe(injectString.replace('sg-' + page + '.css', "/sg-" + page + ".css?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
