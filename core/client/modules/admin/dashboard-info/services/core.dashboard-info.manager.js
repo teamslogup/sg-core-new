@@ -1,4 +1,6 @@
 export default function dashboardInfoManager(DashboardInfo) {
+    "ngInject";
+
     this.findDashboardInfo = findDashboardInfo;
 
     function findDashboardInfo(data, callback) {

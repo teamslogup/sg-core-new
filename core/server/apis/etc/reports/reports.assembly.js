@@ -18,14 +18,14 @@ const META = require('../../../../../bridge/metadata');
 const STD = META.std;
 
 var api = {
-    get : function(isOnlyParams) {
-        return function(req, res, next) {
+    get: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: [],
                 essential: [],
                 resettable: [],
-                explains : {
+                explains: {
                     'id': '데이터를 얻을 리소스의 id'
                 },
                 role: STD.user.roleAdmin,
@@ -48,21 +48,21 @@ var api = {
                 apiCreator.add(get.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
             }
         };
     },
-    gets : function(isOnlyParams) {
-        return function(req, res, next) {
+    gets: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: ['searchItem', 'searchField', 'last', 'size', 'authorId', 'isSolved', 'sort'],
                 essential: [],
                 resettable: [],
-                explains : {
+                explains: {
                     searchItem: '검색할 내용',
                     searchField: '검색할 항목 ' + STD.report.enumSearchFields.join(", "),
                     last: '마지막 데이터',
@@ -90,28 +90,26 @@ var api = {
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
             }
         };
     },
-    post : function(isOnlyParams) {
-        return function(req, res, next) {
+    post: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: ['body', 'nick', 'email'],
                 essential: ['body'],
                 resettable: [],
-                explains : {
+                explains: {
                     'body': '신고내용',
                     'nick': '이름',
                     'email': '이메일'
                 },
-                defaults: {
-
-                },
+                defaults: {},
                 title: '신고하기',
                 state: 'staging'
             };
@@ -129,24 +127,27 @@ var api = {
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
             }
         };
     },
-    put : function(isOnlyParams) {
-        return function(req, res, next) {
+    put: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
-                acceptable: ['body', 'reply', 'isSolved'],
+                acceptable: ['body', 'reply', 'isSolved', 'isPushOn', 'isEmailOn', 'isMessageOn'],
                 essential: [],
                 resettable: ['reply'],
-                explains : {
+                explains: {
                     'body': '수정할 신고 내용',
                     'reply': '답변',
                     'isSolved': '해결 여부',
+                    'isPushOn': '푸시 알림 여부',
+                    'isEmailOn': '메일 알림 여부',
+                    'isMessageOn': '문자 알림 여부',
                     'id': '데이터 리소스의 id'
                 },
                 role: STD.user.roleAdmin,
@@ -167,23 +168,24 @@ var api = {
                 apiCreator.add(put.validate());
                 apiCreator.add(top.hasAuthorization());
                 apiCreator.add(put.updateReport());
+                apiCreator.add(put.sendNotifications());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;
             }
         };
     },
-    delete : function(isOnlyParams) {
-        return function(req, res, next) {
+    delete: function (isOnlyParams) {
+        return function (req, res, next) {
             var params = {
                 acceptable: [],
                 essential: [],
                 resettable: [],
-                explains : {
+                explains: {
                     'id': '데이터 리소스의 id'
                 },
                 role: STD.user.roleAdmin,
@@ -207,7 +209,7 @@ var api = {
                 apiCreator.add(del.supplement());
                 apiCreator.run();
 
-                
+
             }
             else {
                 return params;

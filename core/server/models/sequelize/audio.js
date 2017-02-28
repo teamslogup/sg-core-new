@@ -24,6 +24,10 @@ module.exports = {
             'type': Sequelize.STRING,
             'allowNull': false
         },
+        'dateFolder': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
         'name': {
             'type': Sequelize.STRING,
             'allowNull': false

@@ -26,7 +26,6 @@ post.validate = function () {
         if (req.body.kcp_site_logo !== undefined) req.check('kcp_site_logo', '400_8');
         if (req.body.kcp_site_img !== undefined) req.check('kcp_site_img', '400_8');
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

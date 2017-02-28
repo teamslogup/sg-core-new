@@ -14,7 +14,6 @@ put.validate = function () {
         if (req.body.imageIdsToBeDeleted !== undefined) req.check('imageIdsToBeDeleted', '400_12').isNumberIds(USER.maxImageCount);
 
         req.utils.common.checkError(req, res, next);
-        next();
 
     };
 };
@@ -33,8 +32,7 @@ put.update = function () {
             }
         }
         req.models.UserImage.updateUserImages(update, function (status, data) {
-            if (status == 204) {
-                req.data = data;
+            if (status == 200) {
                 next();
             } else {
                 res.hjson(req, next, status, data);
@@ -72,7 +70,7 @@ put.findImagesToBeDeleted = function () {
 
 put.supplement = function () {
     return function (req, res, next) {
-        res.hjson(req, next, 200, req.data);
+        res.hjson(req, next, 204);
     };
 };
 

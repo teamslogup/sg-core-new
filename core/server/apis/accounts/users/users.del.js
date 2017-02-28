@@ -7,7 +7,6 @@ del.validate = function () {
     return function (req, res, next) {
         req.check('id', '400_17').isInt();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -42,7 +41,7 @@ del.destroyUser = function () {
 
             var requestAPI = req.coreUtils.common.requestAPI(req, res, next);
             requestAPI({
-                resource: req.meta.std.user.deleteApiUrl,
+                resource: req.meta.std.replaceApi.userDel,
                 method: 'delete',
                 data: req.body,
                 params: {
@@ -52,7 +51,7 @@ del.destroyUser = function () {
                 if (status == 204) {
                     next();
                 } else {
-                    res.hjson(req, next, 200, req.data);
+                    res.hjson(req, next, status, data);
                 }
             });
 

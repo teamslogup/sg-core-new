@@ -1,4 +1,6 @@
 export default function fileModel($parse) {
+    "ngInject";
+
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {

@@ -1,4 +1,6 @@
 export default function sessionRemoteManager(SessionRemote) {
+    "ngInject";
+
     this.deleteSessionRemote = deleteSessionRemote;
 
     function deleteSessionRemote(loginHistory, callback) {

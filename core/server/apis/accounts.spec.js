@@ -2,6 +2,7 @@ var app = require('../../../app');
 var request = require('supertest');
 var should = require('should');
 
+var CONFIG = require('../../../bridge/config/env');
 var META = require('../../../bridge/metadata/index');
 var STD = META.std;
 var commonUtils = require('../utils/common');
@@ -492,7 +493,7 @@ describe('Email Accounts Api Tests', function () {
 
     it('should logout for remote', function (done) {
         var phoneUserId = phoneUser.getData('loginHistories')[0].id;
-        if (STD.flag.isDuplicatedLogin) {
+        if (CONFIG.flag.isDuplicatedLogin) {
             phoneUserClone.remoteLogout(phoneUserId, done);
         } else {
             phoneUserClone.remoteLogoutFail(phoneUserId, done);

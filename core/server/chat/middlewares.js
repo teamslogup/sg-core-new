@@ -1,12 +1,17 @@
 var async = require('async');
 var sequelize = require('../../server/config/sequelize');
 
+var validateManager = require('./validateManager');
 var coreUtils = require('../utils');
 var STD = require('../../../bridge/metadata/standards');
+var NOTIFICATIONS = require('../../../bridge/metadata/notifications');
+var errorHandler = require('sg-sequelize-error-handler');
 
 var middles = {
 
     authorization: function (handshake, callback) {
+
+        console.log(handshake.session);
 
         if (handshake.session && handshake.session.passport && handshake.session.passport.user) {
 
@@ -29,7 +34,7 @@ var middles = {
 
     },
     isLoggedIn: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
             if (socket.request.session) {
                 next();
             } else {
@@ -38,7 +43,7 @@ var middles = {
         }
     },
     createRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var body = {
                 name: ''
@@ -64,7 +69,7 @@ var middles = {
         }
     },
     joinRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -79,9 +84,19 @@ var middles = {
 
                     var roomId = body.roomId;
 
+                    if (data.room.isPrivate) {
+                        data.room.roomUsers.forEach(function (roomUser) {
+                            if (roomUser.userId != user.id) {
+                                socket.broadcast.to(STD.chat.userRoomPrefix + roomUser.userId).emit(STD.chat.serverRequestJoinRoom, {
+                                    roomId: roomId
+                                });
+                            }
+                        });
+                    }
+
                     socket.join(roomId);
-                    socket.emit(STD.chat.serverJoinRoom, roomId);
-                    socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, roomId);
+                    socket.emit(STD.chat.serverJoinRoom, body);
+                    socket.broadcast.to(roomId).emit(STD.chat.serverReadMessage, data);
                     console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 
                 } else {
@@ -95,8 +110,23 @@ var middles = {
 
         }
     },
+    requestJoinRoom: function () {
+        return function (io, socket, payload, next) {
+
+            var user = socket.request.user;
+
+            var body = {
+                userId: user.id,
+                roomId: payload.roomId
+            };
+
+            socket.join(payload.roomId);
+
+            next();
+        }
+    },
     joinAllRoomsFromDB: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
             var user = socket.request.user;
 
             var body = {
@@ -106,8 +136,10 @@ var middles = {
             sequelize.models.ChatRoomUser.findChatRoomUsersByOptions(body, function (status, data) {
                 if (status == 200) {
 
-                    for (var i = 0; i < data.length; i++) {
-                        socket.join(data[i].roomId);
+                    var roomUsers = data.rows;
+
+                    for (var i = 0; i < roomUsers.length; i++) {
+                        socket.join(roomUsers[i].roomId);
                     }
 
                     socket.emit(STD.chat.serverJoinAllRooms, data);
@@ -122,7 +154,7 @@ var middles = {
         }
     },
     leaveRoom: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
             var roomId = payload.roomId;
@@ -144,26 +176,57 @@ var middles = {
 
         }
     },
+    validateJoinRoom: function () {
+        return function (io, socket, payload, next) {
+
+            validateManager.check('roomId', '400_12').isId();
+
+            validateManager.checkError(socket, payload, next);
+        }
+    },
+    validateLeaveRoom: function () {
+        return function (io, socket, payload, next) {
+
+            validateManager.check('roomId', '400_12').isId();
+
+            validateManager.checkError(socket, payload, next);
+        }
+    },
+    validateTyping: function () {
+        return function (io, socket, payload, next) {
+
+            validateManager.check('roomId', '400_12').isId();
+            validateManager.check('isTyping', '400_20').isBoolean();
+
+            validateManager.checkError(socket, payload, next);
+        }
+    },
     validateSendMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
+            var CHAT_HISTORY = STD.chatHistory;
+            validateManager.check('roomId', '400_12').isId();
+            validateManager.check('type', '400_20').isEnum(CHAT_HISTORY.chatHistoryEnum);
+            validateManager.check('isPrivate', '400_20').isBoolean();
 
-            if (!payload.roomId) {
-                return socket.emit(STD.chat.serverRequestFail, 400, {});
+            if (payload.type == STD.chatHistory.text) {
+                validateManager.check('message', '400_51').len(CHAT_HISTORY.minMessageLength, CHAT_HISTORY.maxMessageLength);
+            }
+            if (payload.type == STD.chatHistory.image) {
+                validateManager.check('imageId', '400_12').isId();
             }
 
-            if (!payload.message) {
-                return socket.emit(STD.chat.serverRequestFail, 400, {});
-            }
+            validateManager.checkError(socket, payload, next);
+        }
+    },
+    validateReadMessage: function () {
+        return function (io, socket, payload, next) {
+            validateManager.check('roomId', '400_12').isId();
 
-            if (!payload.type) {
-                return socket.emit(STD.chat.serverRequestFail, 400, {});
-            }
-
-            next();
+            validateManager.checkError(socket, payload, next);
         }
     },
     checkPrivateChatRoomUser: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             if (payload.isPrivate) {
                 var user = socket.request.user;
@@ -182,16 +245,16 @@ var middles = {
         }
     },
     sendMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
-            var notification = socket.request.notification;
             var user = socket.request.user;
 
             var body = {
                 userId: user.id,
                 roomId: payload.roomId,
                 message: payload.message,
-                type: payload.type
+                type: payload.type,
+                imageId: payload.imageId
             };
 
             sequelize.models.ChatHistory.createChatHistory(body, function (status, data) {
@@ -199,8 +262,17 @@ var middles = {
                     socket.emit(STD.chat.serverCheckMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReceiveMessage, data);
 
-                    coreUtils.notification.all.sendNotification(data.user, notification, {
-                        user: user.nick
+                    data.room.roomUsers.forEach(function (roomUser) {
+                        if (roomUser.userId != user.id) {
+                            coreUtils.notification.all.sendNotification(roomUser.userId, NOTIFICATIONS.chat, {
+                                roomId: payload.roomId,
+                                type: data.type,
+                                message: data.message,
+                                userNick: user.nick,
+                                imageName: user.userImages.length > 0 ? user.userImages[0].image.name : '',
+                                dateFolder: user.userImages.length > 0 ? user.userImages[0].image.dateFolder : ''
+                            });
+                        }
                     });
 
                 } else {
@@ -215,15 +287,13 @@ var middles = {
         }
     },
     readMessage: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
             sequelize.models.ChatRoomUser.updateChatRoomUserUpdatedAt(user.id, payload.roomId, function (status, data) {
                 if (status == 204) {
-                    socket.emit(STD.chat.serverReadMessage, data);
                     socket.broadcast.to(payload.roomId).emit(STD.chat.serverReadMessage, data);
-
                 } else {
                     return socket.emit(STD.chat.serverRequestFail, status, data);
                 }
@@ -234,7 +304,7 @@ var middles = {
         }
     },
     onTyping: function () {
-        return function (socket, payload, next) {
+        return function (io, socket, payload, next) {
 
             var user = socket.request.user;
 
@@ -245,20 +315,6 @@ var middles = {
             });
 
             next();
-        }
-    },
-    loadNotification: function (key, options) {
-        return function (socket, payload, next) {
-
-            sequelize.models.Notification.loadNotification(key, options, function (status, data) {
-                if (status == 200) {
-                    socket.request.notification = data;
-                    next();
-                } else {
-                    return socket.emit(STD.chat.serverRequestFail, status, data);
-                }
-            });
-
         }
     }
 };

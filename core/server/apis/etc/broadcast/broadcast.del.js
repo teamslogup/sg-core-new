@@ -7,7 +7,6 @@ del.validate = function () {
         var NOTIFICATION = req.meta.std.notification;
         req.check('key', '400_8').len(NOTIFICATION.minKeyLength, NOTIFICATION.maxKeyLength);
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

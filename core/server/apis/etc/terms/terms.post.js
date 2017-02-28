@@ -13,7 +13,6 @@ post.validate = function () {
         if (req.body.content !== undefined) req.check("content", "400_8").len(TERMS.minContentLength, TERMS.maxContentLength);
         req.check("startDate", "400_18").isMicroTimestamp();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

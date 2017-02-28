@@ -1,0 +1,164 @@
+$alert-dialog-action-btn-color: #1fc9c6;
+$alert-dialog-action-btn-hover-color: #45a19f;
+$alert-dialog-cancel-btn-color: #6f8690;
+$alert-dialog-cancel-btn-hover-color: #3C535D;
+
+$mobile-max-width: 425px;
+$sg-alert-dialog-container-top: 200px;
+
+.sg-alert-dialog {
+    z-index: 2000;
+
+    position: fixed;
+    top: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .sg-alert-dialog-container {
+        position: relative;
+        overflow: hidden;
+
+        margin-left: 8px;
+        margin-right: 8px;
+
+        padding-top: 32px;
+        padding-bottom: 18px;
+
+        border-radius: 5px;
+
+        background: white;
+        box-shadow: 0 0 29.6px 10.4px rgba(4, 0, 0, 0.1);
+
+        &.sg-alert-dialog-animation {
+            animation-name: alertDialogAnimation;
+            -webkit-animation-name: alertDialogAnimation;
+            -moz-animation-name: alertDialogAnimation;
+            -o-animation-name: alertDialogAnimation;
+
+            animation-duration: .4s;
+            -webkit-animation-duration: .4s;
+            -moz-animation-duration: .4s;
+            -o-animation-duration: .4s;
+
+            animation-timing-function: ease-in-out;
+            -webkit-animation-timing-function: ease-in-out;
+            -moz-animation-timing-function: ease-in-out;
+            -o-animation-timing-function: ease-in-out;
+
+            animation-delay: 0s;
+            -webkit-animation-delay: 0s;
+            -moz-animation-delay: 0s;
+            -o-animation-delay: 0s;
+
+            animation-fill-mode: forwards;
+            -webkit-animation-fill-mode: forwards;
+            -moz-animation-fill-mode: forwards;
+            -o-animation-fill-mode: forwards;
+        }
+
+        @media screen and (min-width: $mobile-max-width) {
+            width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .sg-alert-dialog-top {
+            padding: 16px;
+            background-color: $alert-dialog-action-btn-color;
+
+            .sg-alert-dialog-top-text {
+                color: white;
+            }
+        }
+
+        .sg-alert-dialog-body {
+            width: inherit;
+            padding: 16px;
+            .sg-alert-dialog-body-text {
+                text-align: center;
+                white-space: pre-wrap;
+            }
+        }
+
+        .sg-alert-dialog-bottom {
+            width: inherit;
+            padding: 16px;
+            .sg-alert-dialog-bottom-container {
+                margin: auto;
+                display: table;
+
+                &:after {
+                    display: block;
+                    content: "";
+                    clear: both;
+                }
+
+                button {
+                    float: left;
+
+                    width: 120px;
+                    height: 40px;
+
+                    border-radius: 3px;
+                    color: white;
+
+                    line-height: 40px;
+                    text-align: center;
+
+                    cursor: pointer;
+                }
+
+                .sg-alert-dialog-bottom-container-action-btn {
+                    margin-left: 12px;
+                    background-color: $alert-dialog-action-btn-color;
+                    &:hover {
+                        background-color: $alert-dialog-action-btn-hover-color;
+                    }
+                }
+
+                .sg-alert-dialog-bottom-container-close-btn {
+                    background-color: $alert-dialog-action-btn-color;
+                    &:hover {
+                        background-color: $alert-dialog-action-btn-hover-color;
+                    }
+                }
+
+                .sg-alert-dialog-bottom-container-cancel-btn {
+                    background-color: $alert-dialog-cancel-btn-color;
+                    &:hover {
+                        background-color: $alert-dialog-cancel-btn-hover-color;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@-webkit-keyframes alertDialogAnimation {
+    from {
+        transform: translateY(-$sg-alert-dialog-container-top);
+        opacity: 0
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1
+    }
+}
+
+@keyframes alertDialogAnimation {
+    from {
+        transform: translateY(-$sg-alert-dialog-container-top);
+        opacity: 0
+    }
+    to {
+        transform: translateY(0px);
+        opacity: 1
+    }
+}

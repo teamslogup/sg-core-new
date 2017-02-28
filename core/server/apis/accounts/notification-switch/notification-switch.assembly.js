@@ -19,15 +19,15 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId'],
-                essential: ['userId'],
+                acceptable: ['userId', 'sendType'],
+                essential: ['userId', 'sendType'],
                 resettable: [],
                 explains: {
-                    'userId': 'userId'
+                    'userId': '유저 id',
+                    'sendType': '알림 전송 형태 ' + STD.notification.enumSendTypes.join(',')
                 },
-                response: {rows:[resforms.notification]},
-                role: STD.role.account,
-                title: '노티피케이션 전체 얻기',
+                response: {rows: [resforms.notification]},
+                title: '알림 전체 얻기',
                 state: 'development'
             };
 
@@ -35,16 +35,15 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.role.account));
+                apiCreator.add(top.hasAuthorization());
+                // apiCreator.add(req.middles.role.userIdChecker('query', 'userId', STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(gets.validate());
-                apiCreator.add(gets.getNotification());
-                apiCreator.add(gets.getUserNotification());
-                apiCreator.add(gets.getUserPublicNotification());
+                apiCreator.add(gets.getNotificationSwitch());
                 apiCreator.add(gets.supplement());
                 apiCreator.run();
             }
@@ -57,18 +56,17 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId', 'notificationId', 'switch', 'type'],
-                essential: ['userId', 'switch', 'type'],
+                acceptable: ['userId', 'key', 'sendType', 'switch'],
+                essential: ['userId', 'key', 'sendType', 'switch'],
                 resettable: [],
                 explains: {
-                    'userId': '유저 아이디',
-                    'notificationId': "노티피케이션 아이디, type이 appication일 경우만 가능함.",
-                    'switch': '온오프 여부',
-                    'type': "노티피케이션 형태 " + STD.notification.enumForms.join(", ")
+                    'userId': '유저 id',
+                    'key': "노티피케이션 키",
+                    'sendType': "노티피케이션 알림 종류 " + STD.notification.enumSendTypes,
+                    'switch': '스위치 on/off'
                 },
                 response: resforms.notification,
-                role: STD.role.account,
-                title: '노티피케이션 스위칭',
+                title: '알림 수신 설정',
                 state: 'development'
             };
 
@@ -76,15 +74,14 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedIn());
-                apiCreator.add(req.middles.role.userIdChecker('body', 'userId', STD.role.account));
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(put.validate());
-                apiCreator.add(top.hasAuthorization());
-                apiCreator.add(put.updateReport());
+                apiCreator.add(put.validateKey());
+                apiCreator.add(put.updateNotificationSwitch());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 

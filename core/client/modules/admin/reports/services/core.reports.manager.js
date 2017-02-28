@@ -1,4 +1,6 @@
-export default function reportsManager(Report, metaManager) {
+export default function reportsManager($filter, Report, metaManager, dialogHandler) {
+    "ngInject";
+
     var MAGIC = metaManager.std.magic;
     var COMMON = metaManager.std.common;
 
@@ -9,13 +11,21 @@ export default function reportsManager(Report, metaManager) {
     this.createReport = createReport;
 
     function updateReportById(id, report, callback) {
-        var where = {id: id};
-        if (!report.reply) report.reply = MAGIC.reset;
-        Report.update(where, report, function (data) {
-            callback(200, data);
-        }, function (data) {
-            callback(data.status, data.data);
-        });
+
+        if (isFormValidate(report)) {
+            var where = {id: id};
+            if (!report.reply) report.reply = MAGIC.reset;
+            Report.update(where, report, function (data) {
+                callback(200, data);
+            }, function (data) {
+                callback(data.status, data.data);
+            });
+        } else {
+            callback(400, {
+                code: "400_53"
+            });
+        }
+
     }
 
     function findReportById(reportId, callback) {
@@ -60,5 +70,18 @@ export default function reportsManager(Report, metaManager) {
         }, function (data) {
             callback(data.status, data.data);
         });
+    }
+
+    function isFormValidate(form) {
+
+        var isValidate = true;
+
+        if (form.reply === undefined || form.reply === null || form.reply === '') {
+            isValidate = false;
+            dialogHandler.show('', $filter('translate')('requireBody'), '', true);
+            return isValidate;
+        }
+
+        return isValidate;
     }
 }

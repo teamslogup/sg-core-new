@@ -20,8 +20,12 @@ gets.validate = function () {
         req.check('orderBy', '400_28').isEnum(USER.enumOrders);
         req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
 
+        if (req.query.roles !== undefined) {
+            req.check("roles", "400_3").isEnumArray(USER.enumRoles);
+            req.utils.common.toArray(req.query, "roles");
+        }
+
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -34,6 +38,7 @@ gets.getUsers = function () {
             req.query.size,
             req.query.orderBy,
             req.query.sort,
+            req.query.roles,
             function (status, data) {
                 if (status == 200) {
                     req.users = data;

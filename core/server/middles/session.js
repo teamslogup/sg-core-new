@@ -22,16 +22,6 @@ module.exports = function () {
         }
     };
 
-    Session.prototype.loggedIn = function () {
-        return function (req, res, next) {
-            if (req.isAuthenticated()) {
-                next();
-            } else {
-                res.hjson(req, next, 401);
-            }
-        }
-    };
-
     Session.prototype.loggedInPoint = function (point) {
         return function (req, res, next) {
             if (req.isAuthenticated() && req.user.point >= point) {

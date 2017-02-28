@@ -6,7 +6,7 @@ var utils = require('../utils');
 var coreValidator = require('../../core/server/config/extend-validator');
 var appValidator = null;
 
-if (fs.exists(path.resolve(__dirname, '../../app/server/config/extend-validator'))) {
+if (fs.existsSync(path.resolve(__dirname, '../../app/server/config/extend-validator.js'))) {
     appValidator = require('../../app/server/config/extend-validator');
 }
 

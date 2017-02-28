@@ -15,7 +15,6 @@ post.validate = function () {
         }
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -48,7 +47,9 @@ post.checkPhoneNumber = function () {
                 }
                 // 유저가 없다면 에러.
                 else if (status == 404) {
-                    return res.hjson(req, next, 404);
+                    return res.hjson(req, next, 404, {
+                        code: '404_2'
+                    });
                 }
             }
 

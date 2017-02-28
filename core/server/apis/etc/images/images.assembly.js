@@ -75,7 +75,7 @@ var api = {
                     size: '몇개 로드할지에 대한 사이즈',
                     orderBy: '정렬 옵션 ex) ' + IMAGE.enumOrders.join(", "),
                     sort: '정렬 순서 ex) ' + COMMON.enumSortTypes.join(", "),
-                    folder: '폴더명 ex) ' + FILE.enumFolders.join(", "),
+                    folder: '폴더명 ex) ' + FILE.enumImageFolders.join(", "),
                     authorized: '인증, 비인증 여부'
                 },
                 response: {
@@ -114,7 +114,7 @@ var api = {
                 essential: ['folder'],
                 resettable: [],
                 explains : {
-                    'folder': '이미지를 올릴 폴더 ' + FILE.enumFolders.join(", "),
+                    'folder': '이미지를 올릴 폴더 ' + FILE.enumImageFolders.join(", "),
                     'offsetX': 'x 위치',
                     'offsetY': 'y 위치',
                     'width': '너비',
@@ -140,6 +140,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(req.middles.upload.generateFolder(FILE.folderImages));
                 apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
                 apiCreator.add(req.middles.upload.checkFileCount(FILE.minCount, FILE.maxCount));
                 apiCreator.add(req.middles.upload.createPrefixName());
@@ -226,6 +227,7 @@ var api = {
                     params.essential,
                     params.resettable
                 ));
+                apiCreator.add(del.validate());
                 apiCreator.add(del.getImages());
                 apiCreator.add(del.checkSession());
                 apiCreator.add(del.setParam());

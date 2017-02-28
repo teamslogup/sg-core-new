@@ -33,16 +33,25 @@ module.exports = {
             'referenceKey': 'id',
             'referenceType': 'one',
             'as': 'room',
+            'asReverse': 'chatHistories',
             'allowNull': false
         },
         'message': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'type': {
             'type': Sequelize.ENUM,
             'values': STD.chatHistory.chatHistoryEnum,
             'allowNull': false
+        },
+        'imageId': {
+            'reference': 'Image',
+            'referenceKey': 'id',
+            'referenceType': 'one',
+            'as': 'image',
+            'asReverse': 'chatHistories',
+            'allowNull': true
         },
         'createdAt': {
             'type': Sequelize.BIGINT,
@@ -73,74 +82,84 @@ module.exports = {
 
                 var chatHistory;
 
-                sequelize.transaction(function (t) {
-
-                    return sequelize.models.ChatHistory.create(body, {
-                        'include': [{
-                            model: sequelize.models.User,
-                            as: 'user',
-                            attributes: sequelize.models.User.getUserFields(),
+                sequelize.models.ChatHistory.create(body, {
+                    'include': [{
+                        model: sequelize.models.User,
+                        as: 'user',
+                        attributes: sequelize.models.User.getUserFields(),
+                        include: [{
+                            model: sequelize.models.UserImage,
+                            as: 'userImages',
+                            include: {
+                                model: sequelize.models.Image,
+                                as: 'image'
+                            }
+                        }]
+                    }, {
+                        model: sequelize.models.Image,
+                        as: 'image'
+                    }, {
+                        model: sequelize.models.ChatRoom,
+                        as: 'room',
+                        include: [{
+                            model: sequelize.models.ChatRoomUser,
+                            as: 'roomUsers',
                             include: [{
-                                model: sequelize.models.LoginHistory,
-                                as: 'loginHistories',
-                            }, {
-                                model: sequelize.models.UserNotification,
-                                as: 'userNotifications',
-                                attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                            }, {
-                                model: sequelize.models.UserPublicNotification,
-                                as: 'userPublicNotifications',
-                                attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                            }, {
-                                model: sequelize.models.UserImage,
-                                as: 'userImages',
-                                include: {
-                                    model: sequelize.models.Image,
-                                    as: 'image'
-                                }
+                                model: sequelize.models.User,
+                                as: 'user',
+                                attributes: sequelize.models.User.getUserFields(),
+                                include: sequelize.models.User.getIncludeUser()
                             }]
                         }]
+                    }]
+                }).then(function (data) {
+
+                    chatHistory = data;
+
+                    return sequelize.models.ChatRoom.update({
+                        updatedAt: micro.now()
+                    }, {
+                        'where': {
+                            id: data.roomId
+                        },
+                        'paranoid': false
+                    });
+
+                }).then(function () {
+
+                    return sequelize.models.ChatRoomUser.update({
+                        noView: sequelize.literal('noView + 1')
+                    }, {
+                        'where': {
+                            roomId: body.roomId
+                        },
+                        'paranoid': false
+                    }).then(function (data) {
+                        if (data[0] > 0) {
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(400);
+                        }
+                    });
+
+                }).then(function () {
+
+                    return sequelize.models.ChatRoomUser.update({
+                        noView: 0,
+                        updatedAt: micro.now()
+                    }, {
+                        'where': {
+                            userId: body.userId,
+                            roomId: body.roomId
+                        },
+                        'paranoid': false
                     }).then(function (data) {
 
-                        chatHistory = data;
-
-                        return sequelize.models.ChatRoomUser.update({
-                            noView: sequelize.literal('noView + 1')
-                        }, {
-                            'where': {
-                                roomId: body.roomId
-                            },
-                            'paranoid': false,
-                            'transaction': t
-                        }).then(function (data) {
-                            if (data[0] > 0) {
-                                return true;
-                            } else {
-                                throw new errorHandler.CustomSequelizeError(400);
-                            }
-                        });
-
-                    }).then(function () {
-
-                        return sequelize.models.ChatRoomUser.update({
-                            noView: 0,
-                            updatedAt: micro.now()
-                        }, {
-                            'where': {
-                                userId: body.userId,
-                                roomId: body.roomId
-                            },
-                            'paranoid': false,
-                            'transaction': t
-                        }).then(function (data) {
-
-                            if (data[0] > 0 || data[1][0]) {
-                                return true;
-                            } else {
-                                throw new errorHandler.CustomSequelizeError(400);
-                            }
-
-                        });
+                        if (data[0] > 0 || data[1][0]) {
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(400);
+                        }
 
                     });
 
@@ -151,14 +170,12 @@ module.exports = {
                         });
                     }
                 });
+
+
             },
             'findChatHistoriesByOptions': function (options, userId, callback) {
 
                 var where = {};
-
-                if (options.userId !== undefined) {
-                    where.userId = options.userId
-                }
 
                 if (options.roomId !== undefined) {
                     where.roomId = options.roomId
@@ -198,6 +215,9 @@ module.exports = {
                                 }, {
                                     model: sequelize.models.ChatRoom,
                                     as: 'room'
+                                }, {
+                                    model: sequelize.models.Image,
+                                    as: 'image'
                                 }],
                                 'transaction': t
                             });

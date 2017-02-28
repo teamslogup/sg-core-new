@@ -1,4 +1,6 @@
 export default function notificationSwitchManager(NotificationSwitch) {
+    "ngInject";
+
     this.findAllNotificationSwitch = findAllNotificationSwitch;
     this.findNotificationSwitchById = findNotificationSwitchById;
     this.updateNotificationSwitch = updateNotificationSwitch;
@@ -7,7 +9,7 @@ export default function notificationSwitchManager(NotificationSwitch) {
     function updateNotificationSwitch(notificationSwitch, callback) {
 
         NotificationSwitch.update({}, notificationSwitch, function (data) {
-            callback(200, data);
+            callback(204, data);
         }, function (data) {
             callback(data.status, data.data);
         });
@@ -25,7 +27,8 @@ export default function notificationSwitchManager(NotificationSwitch) {
 
     function findAllNotificationSwitch(data, callback) {
         NotificationSwitch.query({
-            userId: data.userId || ''
+            userId: data.userId || '',
+            sendType: data.sendType || '',
         }, function (data) {
             callback(200, data);
         }, function (data) {

@@ -8,36 +8,17 @@ top.hasAuthorization = function () {
             return next();
         }
 
-        if (req.user.id == req.body.userId) {
-            return next();
+        if (req.method == 'GET') {
+            if (req.user.id == req.query.userId) {
+                return next();
+            }
         } else {
-            res.hjson(req, next, 403);
+            if (req.user.id == req.body.userId) {
+                return next();
+            }
         }
 
-        // if (req.params.type == req.meta.std.formApplication) {
-        //
-        //     req.models.UserNotification.findDataByAuthenticatedId(req.params.id, 'userId', req.user.id, function (status, data) {
-        //         if (status == 200) {
-        //             req.data = data;
-        //             next();
-        //         } else {
-        //             res.hjson(req, next, status, data);
-        //         }
-        //     });
-        //
-        // } else {
-        //
-        //     req.models.UserPublicNotification.findDataByAuthenticatedId(req.params.id, 'userId', req.user.id, function (status, data) {
-        //         if (status == 200) {
-        //             req.data = data;
-        //             next();
-        //         } else {
-        //             res.hjson(req, next, status, data);
-        //         }
-        //     });
-        //
-        // }
-
+        res.hjson(req, next, 403);
     };
 };
 

@@ -1,15 +1,10 @@
-var appRootPath = require("app-root-path");
-
 module.exports = {
     "app": {
         "secret": "secre2tsecr2et123",
         "maxUploadFileSize": 100 * 1024 * 1024,
         "maxUploadFileSizeMBVersion": "100mb",
-        "uploadFileDir": appRootPath.path + "/uploads",
-        "tempFileDir": appRootPath.path + "/temp",
         "port": 3001,
         "apiName": "api",
-        "rootUrl": "http://localhost:3001",
         "isServerChecking": false,
         "deletedUserPrefix": "deletedUser0323",
         "sessionExpiredSeconds": 60 * 60 * 24 * 100
@@ -19,9 +14,17 @@ module.exports = {
         "off": false,
         "mongodb": "mongodb://localhost/slogup",
         "redis": "redis://localhost:6379/slogup",
+        "socketRedis": "",
         "mysql": "mysql://slogup:123123@localhost:3306/core",
         "logging": false,
         "force": false
+    },
+    "flag": {
+        "isUseHttps": false,
+        "isUseRedis": false,
+        "isUseCluster": false,
+        "isDuplicatedLogin": false,
+        "isAutoVerifiedEmail": false
     },
     "facebook": {
         "clientID": "",
@@ -67,8 +70,7 @@ module.exports = {
             "retry": 20
         },
         "fcm": {
-            token: "",
-            id: ""
+            "key": ""
         },
         "email": {
             "host": "",
@@ -78,5 +80,8 @@ module.exports = {
             "pass": "",
             "name": ""
         }
+    },
+    "authCi": {
+        "allowedIp": ''
     }
 };

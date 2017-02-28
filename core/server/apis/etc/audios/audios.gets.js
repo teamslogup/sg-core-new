@@ -33,7 +33,7 @@ gets.validate = function () {
         req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
 
         if (req.query.folder !== undefined) {
-            req.check('folder', '400_12').isEnum(FILE.enumFolders);
+            req.check('folder', '400_12').isEnum(FILE.enumAudioFolders);
         }
 
         if (req.query.authorized !== undefined) {
@@ -42,7 +42,6 @@ gets.validate = function () {
         }
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

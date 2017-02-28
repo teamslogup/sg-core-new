@@ -18,14 +18,11 @@ module.exports = {
             asReverse: 'reports',
             allowNull: false
         },
-        'notificationId': {
-            reference: 'Notification',
-            referenceKey: 'id',
-            as: 'notification',
-            asReverse: 'notifications',
-            allowNull: false
+        'key': {
+            'type': Sequelize.STRING,
+            'allowNull': false
         },
-        'data': {
+        'payload': {
             'type': Sequelize.STRING,
             'allowNull': false
         },
@@ -66,7 +63,7 @@ module.exports = {
                     as: 'notification'
                 }]
             },
-            'findNotificationBoxesByOptions': function (options, callback) {
+            'findNotificationBoxesByOptions': function (options, userId, callback) {
 
                 var where = {};
 
@@ -74,7 +71,7 @@ module.exports = {
                     '$lt': options.last
                 };
 
-                where.userId = options.userId;
+                where.userId = userId;
 
                 sequelize.transaction(function (t) {
                     return sequelize.models.NotificationBox.findAndCountAll({
@@ -82,7 +79,6 @@ module.exports = {
                         'limit': parseInt(options.size),
                         'where': where,
                         'order': [[options.orderBy, options.sort]],
-                        'include': sequelize.models.NotificationBox.getNotificationBoxInclude(),
                         'transaction': t
                     }).then(function (data) {
                         if (data && data.rows.length > 0) {
@@ -97,6 +93,27 @@ module.exports = {
                         callback(200, data);
                     }
                 });
+            },
+            "findNewNotificationCount": function (userId, callback) {
+
+                var boxCount;
+
+                sequelize.models.NotificationBox.count({
+                    where: {
+                        userId: userId,
+                        view: false
+                    }
+                }).then(function (count) {
+
+                    boxCount = count;
+                    return true;
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, boxCount);
+                    }
+                });
+
             }
         })
     }

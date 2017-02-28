@@ -9,6 +9,7 @@ var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var config = require('./bridge/config/env');
 var express = require('./bridge/config/express');
+var initializeDatabase = require('./bridge/config/initialize-database');
 var https = require('./core/server/config/https');
 var socketIo = require('./core/server/config/socket-io');
 var cluster = require('./core/server/config/cluster');
@@ -24,11 +25,6 @@ if (!process.env.AWS_SECRET_ACCESS_KEY) {
     process.env.AWS_SECRET_ACCESS_KEY = config.aws.secretAccessKey;
 }
 
-var stat = fs.existsSync(config.app.uploadFileDir);
-if (!stat) {
-    fs.mkdirSync(config.app.uploadFileDir);
-}
-
 var app = express(sequelize);
 var server = https(app);
 server = socketIo(server, app);
@@ -37,33 +33,30 @@ passport();
 
 console.log('database info : ', config.db);
 sequelize.sync({force: config.db.force}).then(function (err) {
-    if (env === 'production') {
-        if (server.isUseHttps) {
-            if (STD.flag.isUseCluster) {
-                cluster.startCluster(server.https);
-            } else {
-                server.http.listen(config.app.port);
-                server.https.listen(config.app.httpsPort);
-            }
-        } else {
-            if (STD.flag.isUseCluster) {
-                cluster.startCluster(server.http);
-            } else {
-                server.http.listen(config.app.port);
-            }
-        }
-        console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
-    } else {
-        if (server.isUseHttps) {
-            server.http.listen(config.app.port);
-            server.https.listen(config.app.httpsPort);
-        } else {
-            server.http.listen(config.app.port);
-        }
-        console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
-    }
+    initializeDatabase(function () {
+        listenServer(server);
+    });
 }, function (err) {
     console.log('Unable to connect to the database:', err);
 });
+
+function listenServer (server) {
+    if (!server.http && !server.https) {
+        console.log("server setting error");
+    } else {
+        if (env == 'production' && config.flag.isUseCluster) {
+            cluster.startCluster(server);
+        } else {
+            if (server.http) {
+                server.http.listen(config.app.port);
+                console.log('Server running at ' + config.app.port + ' ' + env + ' mode. logging: ' + config.db.logging);
+            }
+            if (server.https) {
+                server.https.listen(config.app.httpsPort);
+                console.log('Server running at ' + config.app.httpsPort + ' ' + env + ' mode. logging: ' + config.db.logging);
+            }
+        }
+    }
+}
 
 module.exports = app;

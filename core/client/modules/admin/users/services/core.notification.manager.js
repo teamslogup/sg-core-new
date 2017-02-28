@@ -1,4 +1,6 @@
 export default function notificationManager(Notification) {
+    "ngInject";
+
     this.findAllNotification = findAllNotification;
     this.findNotificationById = findNotificationById;
     this.updateNotificationById = updateNotificationById;

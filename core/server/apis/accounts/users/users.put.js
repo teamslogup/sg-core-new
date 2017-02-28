@@ -11,6 +11,10 @@ put.validate = function () {
         var isBirthParam = false;
 
         req.check('id', '400_17').isInt();
+        if (req.body.aid !== undefined) {
+            isEmpty = true;
+            req.check("aid", "400_8").len(USER.minAidLength, USER.maxAidLength);
+        }
         if (req.body.nick !== undefined && req.body.nick !== MAGIC.reset) {
             isEmpty = true;
             req.check('nick', '400_26').len(USER.minNickLength, USER.maxNickLength);
@@ -103,7 +107,6 @@ put.validate = function () {
         }
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -131,6 +134,7 @@ put.dataSet = function () {
         if (req.body.name !== undefined) update.name = req.body.name;
         if (req.body.phoneNum !== undefined) update.phoneNum = req.body.phoneNum;
         if (req.body.nick !== undefined) update.nick = req.body.nick;
+        if (req.body.aid !== undefined) update.aid = req.body.aid;
 
         for (var k in update) {
             if (update[k] == MAGIC.reset) {

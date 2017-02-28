@@ -146,11 +146,30 @@ function extending() {
         return result;
     });
 
+    expressValidator.validator.extend('isEnumArray', function (str, enums) {
+        var result = true;
+        if (str === '') return true;
+        var arr = str.split(',');
+        var enumHash = {};
+
+        enums.forEach(function (item) {
+            enumHash[item] = true;
+        });
+
+        arr.forEach(function (item) {
+            if (!enumHash[item]) {
+                result = false;
+            }
+        });
+
+        return result;
+    });
+
     expressValidator.validator.extend('isBoolean', function (str) {
         var result = false;
         if (str === '') return true;
         str = str + "";
-        var booleans = ['true', 'false'];
+        var booleans = ['true', 'false', '0', '1'];
         for (var i = 0; i < booleans.length; ++i) {
             booleans[i] = booleans[i] + "";
             if (booleans[i] === str) {

@@ -1,9 +1,14 @@
 routes.$inject = ['$stateProvider'];
 
 export default function routes($stateProvider) {
+    "ngInject";
+
+    var PREFIX = window.meta.std.prefix;
+    var ADMIN = window.meta.std.admin;
     $stateProvider
-        .state('terms.manage', {
-            url: '/manage',
-            templateUrl: 'modules/admin/terms/views/core.terms-manage.html'
+        .state(PREFIX.admin + '.' + ADMIN.moduleTerms, {
+            url: '/' + ADMIN.moduleTerms,
+            templateUrl: '/modules/admin/terms/views/core.' + ADMIN.moduleTerms + '.html'
         });
+
 }

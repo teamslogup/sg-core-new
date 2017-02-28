@@ -60,7 +60,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'searchField', 'last', 'size', 'orderBy', 'sort'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'orderBy', 'sort', 'roles'],
                 essential: [],
                 resettable: [],
                 explains: {
@@ -69,7 +69,8 @@ var api = {
                     last: '마지막 데이터',
                     size: '몇개 로드할지에 대한 사이즈',
                     orderBy: '정렬 기준 필드' + STD.user.enumOrders.join(", "),
-                    sort: '정렬 순서' + STD.common.enumSortTypes.join(", ")
+                    sort: '정렬 순서' + STD.common.enumSortTypes.join(", "),
+                    roles: '권한 (,)로 구분'
                 },
                 response: {rows: [resforms.user]},
                 title: '유저 리스트 얻기',
@@ -122,7 +123,8 @@ var api = {
                     'device',
                     'version',
                     'token',
-                    'optionalTerms'
+                    'optionalTerms',
+                    'transactionNo'
                 ],
                 essential: [
                     'type',
@@ -151,7 +153,8 @@ var api = {
                     'device': '휴대폰 기종',
                     'version': '앱버전',
                     'token': '푸시를 위한 디바이스토큰',
-                    'optionalTerms': '선택 약관 리스트'
+                    'optionalTerms': '선택 약관 리스트',
+                    'transactionNo': '거래번호'
                 },
                 defaults: {
                     'type': USER.signUpTypeEmail,
@@ -190,6 +193,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(post.checkCi());
                 apiCreator.add(post.checkSocialProvider());
                 apiCreator.add(post.createUser());
                 apiCreator.add(post.createOptionalTerms());
@@ -206,11 +210,12 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum'],
+                acceptable: ['aid', 'nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum'],
                 essential: [],
-                resettable: ['nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
+                resettable: ['aid', 'nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
                 explains: {
                     'id': '데이터 리소스의 id',
+                    'aid': '회원계정',
                     'nick': '닉네임',
                     'name': '이름',
                     'gender': '성별 (수퍼어드민이상만 가능)' + USER.enumGenders.join(", "),

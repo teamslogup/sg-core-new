@@ -112,6 +112,14 @@ module.exports = {
             'asReverse': 'user',
             'onDelete': 'cascade'
         },
+        'di': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'ci': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -342,7 +350,7 @@ module.exports = {
                     }).then(function (user) {
                         if (!user) {
                             return self.updateAttributes({
-                                isVerifiedEmail: STD.flag.isAutoVerifiedEmail,
+                                isVerifiedEmail: ENV.flag.isAutoVerifiedEmail,
                                 email: email
                             }, {transaction: t}).then(function (user) {
                                 if (!user) {
@@ -351,7 +359,7 @@ module.exports = {
                                 }
                                 updatedUser = user;
 
-                                if (!STD.flag.isAutoVerifiedEmail) {
+                                if (!ENV.flag.isAutoVerifiedEmail) {
                                     return sequelize.models.Auth.upsert({
                                         type: STD.user.authEmailAdding,
                                         key: email,
@@ -378,7 +386,7 @@ module.exports = {
                         }
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    var isAutoVerifiedEmail = STD.flag.isAutoVerifiedEmail;
+                    var isAutoVerifiedEmail = ENV.flag.isAutoVerifiedEmail;
                     if ((updatedUser && isAutoVerifiedEmail) ||
                         (updatedUser && updatedUser.auth && !isAutoVerifiedEmail)) {
                         callback(200, updatedUser);
@@ -483,14 +491,6 @@ module.exports = {
                     as: 'providers',
                     attributes: sequelize.models.Provider.getProviderFields()
                 }, {
-                    model: sequelize.models.UserNotification,
-                    as: 'userNotifications',
-                    attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                }, {
-                    model: sequelize.models.UserPublicNotification,
-                    as: 'userPublicNotifications',
-                    attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                }, {
                     model: sequelize.models.UserImage,
                     as: 'userImages',
                     include: [{
@@ -511,14 +511,6 @@ module.exports = {
                     model: sequelize.models.LoginHistory,
                     as: 'loginHistories',
                 }, {
-                    model: sequelize.models.UserNotification,
-                    as: 'userNotifications',
-                    attributes: sequelize.models.UserNotification.getUserNotificationFields()
-                }, {
-                    model: sequelize.models.UserPublicNotification,
-                    as: 'userPublicNotifications',
-                    attributes: sequelize.models.UserPublicNotification.getUserPublicNotificationFields()
-                }, {
                     model: sequelize.models.UserImage,
                     as: 'userImages',
                     include: [{
@@ -528,11 +520,11 @@ module.exports = {
                 }]
             },
             'getUserFields': function () {
-                var fields = ['id', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt'];
+                var fields = ['id', 'profileId', 'nick', 'name', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'passUpdatedAt', 'deletedAt'];
                 return fields;
             },
             'getFullUserFields': function () {
-                var fields = ['id', 'email', 'phoneNum', 'nick', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'agreedPhoneNum', 'passUpdatedAt'];
+                var fields = ['id', 'profileId', 'email', 'phoneNum', 'nick', 'name', 'gender', 'birth', 'role', 'country', 'language', 'agreedEmail', 'agreedPhoneNum', 'passUpdatedAt', 'deletedAt'];
                 return fields;
             },
             /**
@@ -541,7 +533,7 @@ module.exports = {
              * @param {Object} size - 찾을 유저 수
              * @param {responseCallback} callback - 응답콜백
              */
-            'findUsersByOption': function (searchItem, searchField, last, size, order, sort, callback) {
+            'findUsersByOption': function (searchItem, searchField, last, size, order, sort, roles, callback) {
                 var where = {};
 
                 var query = {
@@ -564,7 +556,6 @@ module.exports = {
                     }
                 }
 
-
                 if (order == STD.user.orderUpdate) {
                     query.where.updatedAt = {
                         '$lt': last
@@ -575,6 +566,10 @@ module.exports = {
                         '$lt': last
                     };
                     query.order = [['createdAt', sort]];
+                }
+
+                if (roles !== undefined) {
+                    query.where.role = roles;
                 }
 
                 query.include = [{
@@ -710,13 +705,22 @@ module.exports = {
                 sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
             },
             /**
+             * nick으로 유저 찾기
+             * @param {Object} aid - 찾을 유저의 aid
+             * @param {responseCallback} callback - 응답콜백
+             */
+            'findUserByNick': function (nick, callback) {
+                var where = {nick: nick};
+                sequelize.models.User.findDataIncluding(where, sequelize.models.User.getIncludeUser(), callback);
+            },
+            /**
              * 범용 유저생성
              * @param {Object} data - 유저 생성을 위한 유저 필드
              * @param {responseCallback} callback - 응답콜백
              * @todo testing
              */
             'createUserWithType': function (data, callback) {
-                data.isVerifiedEmail = STD.flag.isAutoVerifiedEmail;
+                data.isVerifiedEmail = ENV.flag.isAutoVerifiedEmail;
                 if (data.type == STD.user.signUpTypeEmail) {
 
                     delete data.aid;
@@ -748,9 +752,69 @@ module.exports = {
 
                     this.createUserWithNormalId(data, callback);
                 }
+                else if (data.type == STD.user.signUpTypeAuthCi) {
+
+                    data.aid = data.uid;
+
+                    delete data.provider;
+                    delete data.uid;
+
+                    this.createUserWithAuthCi(data, callback);
+                }
                 else {
                     this.createUserWithProvider(data, callback);
                 }
+            },
+            /**
+             * 일반 id 가입 생성
+             * @param data
+             * @param callback
+             */
+            'createUserWithAuthCi': function (data, callback) {
+                var createdUser = null;
+                sequelize.transaction(function (t) {
+                    var profile = sequelize.models.Profile.build({});
+                    return profile.save({transaction: t}).then(function () {
+                        data.profileId = profile.id;
+
+                        var user = sequelize.models.User.build(data);
+                        user.encryption();
+                        return user.save({transaction: t}).then(function () {
+                            createdUser = user;
+
+                            var history = data.history;
+                            return sequelize.models.LoginHistory.upsert({
+                                userId: user.id,
+                                type: history.type,
+                                browser: history.browser,
+                                platform: history.platform,
+                                device: history.device,
+                                version: history.version,
+                                token: history.token,
+                                ip: history.ip,
+                                session: history.session,
+                                createdAt: MICRO.now(),
+                                updatedAt: MICRO.now()
+                            }, {transaction: t}).then(function () {
+
+                            });
+                        });
+                    }).then(function () {
+                        return sequelize.models.AuthCi.destroy({
+                            where: {
+                                ci: createdUser.ci
+                            },
+                            transaction: t
+                        });
+                    }).then(function () {
+                        return true;
+                    });
+
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        sequelize.models.User.findUserByAid(createdUser.aid, callback);
+                    }
+                });
             },
             /**
              * 일반 id 가입 생성
@@ -827,7 +891,7 @@ module.exports = {
                                 createdAt: MICRO.now(),
                                 updatedAt: MICRO.now()
                             }, {transaction: t}).then(function () {
-                                if (!STD.flag.isAutoVerifiedEmail) {
+                                if (!ENV.flag.isAutoVerifiedEmail) {
                                     var authData = {
                                         type: type,
                                         key: createdUser.email,
@@ -845,7 +909,7 @@ module.exports = {
                         sequelize.models.User.findUserByEmail(createdUser.email, function (status, data) {
                             if (status == 200) {
                                 createdUser = data;
-                                if (!STD.flag.isAutoVerifiedEmail) {
+                                if (!ENV.flag.isAutoVerifiedEmail) {
                                     sequelize.models.Auth.findDataIncluding({
                                         type: type,
                                         key: createdUser.email
@@ -1133,7 +1197,6 @@ module.exports = {
                 });
             },
             destroyUser: function (id, transactionFuncs, callback) {
-                var isSuccess = false;
                 var self = this;
 
                 /*
@@ -1142,15 +1205,14 @@ module.exports = {
                  */
                 sequelize.transaction(function (t) {
                     var loadedData = null;
-                    var query = {
+
+                    return self.findOne({
                         transaction: t,
                         where: {
                             id: id
                         },
                         include: sequelize.models.User.getIncludeUser()
-                    };
-
-                    return self.find(query).then(function (data) {
+                    }).then(function (data) {
                         loadedData = data;
 
                         var deletedUserPrefix = ENV.app.deletedUserPrefix;
@@ -1159,7 +1221,9 @@ module.exports = {
                             email: deletedUserPrefix + id,
                             phoneNum: deletedUserPrefix + id,
                             name: deletedUserPrefix + id,
-                            nick: deletedUserPrefix + id
+                            nick: deletedUserPrefix + id,
+                            ci: deletedUserPrefix + id,
+                            di: deletedUserPrefix + id,
                         }, {
                             transaction: t,
                             where: {
@@ -1168,65 +1232,108 @@ module.exports = {
                         }).then(function (data) {
                             if (data && data[0]) {
 
-                                var historyTasks = [];
-                                if (!loadedData.loginHistories) {
-                                    loadedData.loginHistories = [];
-                                }
-                                loadedData.loginHistories.forEach(function (history) {
-                                    historyTasks.push(history.destroy({transaction: t}));
-                                });
-                                var providerTasks = [];
-                                if (!loadedData.providers) {
-                                    loadedData.providers = [];
-                                }
-
-                                loadedData.providers.forEach(function (provider) {
-                                    providerTasks.push(provider.destroy({transaction: t}));
-                                });
-
-                                historyTasks.push(sequelize.models.Profile.destroy({
+                                return sequelize.models.Provider.destroy({
                                     where: {
-                                        id: loadedData.profileId
+                                        userId: id
                                     },
                                     transaction: t
-                                }));
-
-                                function nextCallback(t, id, loadedData) {
-                                    // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
-                                    if (STD.user.deletedUserStoringDay > 0) {
-                                        var userDel = sequelize.models.ExtinctUser.build({
-                                            userId: id,
-                                            data: JSON.stringify(loadedData)
-                                        });
-                                        return userDel.save({transaction: t}).then(function () {
-                                            isSuccess = true;
-                                        });
-                                    } else {
-                                        isSuccess = true;
-                                    }
-                                }
-
-                                return Promise.all(historyTasks).then(function (devices) {
-                                    return Promise.all(providerTasks).then(function (providers) {
-                                        return loadedData.destroy({
-                                            where: {id: id},
-                                            cascade: true,
-                                            transaction: t
-                                        }).then(function (data) {
-                                            if (transactionFuncs) {
-                                                return transactionFuncs(t, function (t) {
-                                                    return nextCallback(t, id, loadedData);
-                                                });
-                                            } else {
-                                                return nextCallback(t, id, loadedData);
-                                            }
-                                        });
-                                    });
                                 });
+
+                                // var historyTasks = [];
+                                // if (!loadedData.loginHistories) {
+                                //     loadedData.loginHistories = [];
+                                // }
+                                // loadedData.loginHistories.forEach(function (history) {
+                                //     historyTasks.push(history.destroy({transaction: t}));
+                                // });
+                                //
+                                //
+                                // var providerTasks = [];
+                                // if (!loadedData.providers) {
+                                //     loadedData.providers = [];
+                                // }
+                                //
+                                // loadedData.providers.forEach(function (provider) {
+                                //     providerTasks.push(provider.destroy({transaction: t}));
+                                // });
+                                //
+                                // historyTasks.push(sequelize.models.Profile.destroy({
+                                //     where: {
+                                //         id: loadedData.profileId
+                                //     },
+                                //     transaction: t
+                                // }));
+
+
+                                // return Promise.all(historyTasks).then(function (devices) {
+                                //     return Promise.all(providerTasks).then(function (providers) {
+                                //         return loadedData.destroy({
+                                //             where: {id: id},
+                                //             cascade: true,
+                                //             transaction: t
+                                //         }).then(function (data) {
+                                //             if (transactionFuncs) {
+                                //                 return transactionFuncs(t, function (t) {
+                                //                     return nextCallback(t, id, loadedData);
+                                //                 });
+                                //             } else {
+                                //                 return nextCallback(t, id, loadedData);
+                                //             }
+                                //         });
+                                //     });
+                                // });
                             }
+                        }).then(function () {
+                            return sequelize.models.LoginHistory.destroy({
+                                where: {
+                                    userId: id
+                                },
+                                transaction: t
+                            });
+                        }).then(function () {
+                            return sequelize.models.Profile.destroy({
+                                where: {
+                                    id: loadedData.profileId
+                                },
+                                transaction: t
+                            });
+                        }).then(function () {
+                            return loadedData.destroy({
+                                where: {id: id},
+                                cascade: true,
+                                transaction: t
+                            }).then(function (data) {
+
+                            });
+                        }).then(function (data) {
+                            if (transactionFuncs) {
+                                return transactionFuncs(t, function (t) {
+                                    return true;
+                                });
+                            } else {
+                                return true;
+                            }
+                        }).then(function () {
+
+                            // 탈퇴유저 개인정보 보관 일 수가 0보다 클때는 저장해야함.
+                            if (STD.user.deletedUserStoringDay > 0) {
+
+                                return sequelize.models.ExtinctUser.create({
+                                    userId: id,
+                                    data: JSON.stringify(loadedData)
+                                }, {
+                                    transaction: t
+                                }).then(function () {
+                                    return true;
+                                });
+
+                            } else {
+                                return true;
+                            }
+
                         });
                     });
-                }).catch(errorHandler.catchCallback(callback)).done(function () {
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(204);
                     }
@@ -1308,36 +1415,113 @@ module.exports = {
                 });
 
             },
-            'getUsersStatusByMonth': function (year, months, callback) {
+            'getUsersStatusByMonth': function (callback) {
 
-                var usersStatusByMonth = {};
+                var monthKey = '_month';
+
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = today.getMonth() + 1;
+
+                var thisYearMonths = [];
+                var lastYearMonths = [];
+
+                for (var i = 0; i < 5; i++) {
+                    if (month <= 0) {
+                        lastYearMonths.push(12 + month--);
+                    } else {
+                        thisYearMonths.push(month--);
+                    }
+                }
+
+                var thisYear = year;
+                var lastYear = year - 1;
+
+                var usersStatusByMonth = {
+                    createdUsers: {},
+                    deletedUsers: {}
+                };
+
+                thisYearMonths.forEach(function (thisMonth) {
+                    usersStatusByMonth.createdUsers[thisMonth + monthKey] = {
+                        month: thisMonth,
+                        count: 0
+                    };
+
+                    usersStatusByMonth.deletedUsers[thisMonth + monthKey] = {
+                        month: thisMonth,
+                        count: 0
+                    };
+                });
+
+                lastYearMonths.forEach(function (lastMonth) {
+                    usersStatusByMonth.createdUsers[lastMonth + monthKey] = {
+                        month: lastMonth,
+                        count: 0
+                    };
+                    usersStatusByMonth.deletedUsers[lastMonth + monthKey] = {
+                        month: lastMonth,
+                        count: 0
+                    };
+                });
+
+                var result = {
+                    createdUsers: [],
+                    deletedUsers: []
+                };
 
                 sequelize.transaction(function (t) {
-                    var query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                        '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
-                        'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY UsersByMonth.month ';
+
+                    var query;
+
+                    if (lastYearMonths.length == 0) {
+                        query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                            'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY UsersByMonth.month ';
+                    } else {
+                        query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                            'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY UsersByMonth.month ';
+                    }
 
                     return sequelize.query(query, {
                         type: sequelize.QueryTypes.SELECT,
                         raw: true
                     }).then(function (createdUser) {
-                        usersStatusByMonth.createdUsers = createdUser;
+                        result.createdUsers = createdUser;
 
-                        var query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
-                            'WHERE year = ' + year + ' AND month IN ( + ' + months + ') GROUP BY UsersByMonth.month ';
+                        var query;
+
+                        if (lastYearMonths.length == 0) {
+                            query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                                '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                                'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY UsersByMonth.month ';
+                        } else {
+                            query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
+                                '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                                'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY UsersByMonth.month ';
+                        }
 
                         return sequelize.query(query, {
                             type: sequelize.QueryTypes.SELECT,
                             raw: true
                         });
                     }).then(function (deletedUser) {
-                        usersStatusByMonth.deletedUsers = deletedUser;
+                        result.deletedUsers = deletedUser;
                         return true;
                     });
 
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
+
+                        result.createdUsers.forEach(function (createdUser) {
+                            usersStatusByMonth.createdUsers[createdUser.month + monthKey] = createdUser;
+                        });
+
+                        result.deletedUsers.forEach(function (deletedUser) {
+                            usersStatusByMonth.deletedUsers[deletedUser.month + monthKey] = deletedUser;
+                        });
+
                         callback(200, usersStatusByMonth);
                     }
                 });
@@ -1361,6 +1545,40 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
                     if (isSuccess) {
                         callback(200, usersAgeGroup);
+                    }
+                });
+
+            },
+            'findUserNotificationInfo': function (userId, callback) {
+
+                var user;
+
+                sequelize.models.User.findOne({
+                    where: {
+                        id: userId
+                    },
+                    include: [{
+                        model: sequelize.models.LoginHistory,
+                        as: 'loginHistories'
+                    }, {
+                        model: sequelize.models.NotificationSwitch,
+                        as: 'notificationSwitches',
+                        attributes: sequelize.models.NotificationSwitch.getUserNotificationFields()
+                    }, {
+                        model: sequelize.models.NotificationPublicSwitch,
+                        as: 'notificationPublicSwitches',
+                        attributes: sequelize.models.NotificationPublicSwitch.getUserPublicNotificationFields()
+                    }]
+                }).then(function (data) {
+                    if (data) {
+                        user = data;
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, user);
                     }
                 });
 

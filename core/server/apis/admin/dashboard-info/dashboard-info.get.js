@@ -5,13 +5,12 @@ var MICRO = require('microtime-nodejs');
 get.validate = function () {
     return function (req, res, next) {
 
-        var DASHBOARD_INFO = req.meta.std.dashboardInfo;
-
-        req.check('year', '400_28').isYear();
-        req.check('months', '400_28').isMonthArray(DASHBOARD_INFO.minMonthArrayLength, DASHBOARD_INFO.maxMonthArrayLength);
+        // var DASHBOARD_INFO = req.meta.std.dashboardInfo;
+        //
+        // req.check('year', '400_28').isYear();
+        // req.check('months', '400_28').isMonthArray(DASHBOARD_INFO.minMonthArrayLength, DASHBOARD_INFO.maxMonthArrayLength);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -34,17 +33,16 @@ get.getUsersStatus = function () {
 
 get.getUsersStatusByMonth = function () {
     return function (req, res, next) {
-        req.query.months = req.query.months.split(',');
 
-        req.models.User.getUsersStatusByMonth(req.query.year, req.query.months, function (status, data) {
-                if (status == 200) {
-                    req.data.usersStatusByMonth = data;
-                    next();
-                } else {
-                    res.hjson(req, next, status, data);
-                }
+        req.models.User.getUsersStatusByMonth(function (status, data) {
+            if (status == 200) {
+                req.data.usersStatusByMonth = data;
+                next();
+            } else {
+                res.hjson(req, next, status, data);
             }
-        );
+        });
+
     };
 };
 
@@ -80,7 +78,7 @@ get.getReportsStatus = function () {
 get.getReportsStatusByMonth = function () {
     return function (req, res, next) {
 
-        req.models.Report.getReportsStatusByMonth(req.query.year, req.query.months, function (status, data) {
+        req.models.Report.getReportsStatusByMonth(function (status, data) {
                 if (status == 200) {
                     req.data.reportsStatusByMonth = data;
                     next();

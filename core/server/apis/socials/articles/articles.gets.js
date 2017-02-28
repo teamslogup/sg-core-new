@@ -31,7 +31,6 @@ gets.validate = function () {
         if (req.query.title !== undefined) req.check('title', '400_8').len(ARTICLE.minTitleLength, ARTICLE.maxTitleLength);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

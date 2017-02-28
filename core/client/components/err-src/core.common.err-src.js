@@ -1,5 +1,7 @@
 
 export default function errSrc() {
+    "ngInject";
+
     return {
         link: function (scope, element, attrs) {
             element.bind('error', function () {

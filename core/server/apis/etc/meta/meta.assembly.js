@@ -37,6 +37,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(get.validate());
+                apiCreator.add(get.getMobileVersion());
                 apiCreator.add(get.sendMeta());
                 apiCreator.run();
 

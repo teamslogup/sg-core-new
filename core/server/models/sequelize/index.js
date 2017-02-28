@@ -16,21 +16,25 @@ var ExtinctUser = require('./extinct-user');
 var Terms = require('./terms');
 var OptionalTerms = require('./optional-terms');
 var LoginHistory = require('./login-history');
-var Notification = require('./notification');
 var NotificationBox = require('./notification-box');
-var UserNotification = require('./user-notification');
-var UserPublicNotification = require('./user-public-notification');
+var NotificationSwitch = require('./notification-switch');
+var NotificationPublicSwitch = require('./notification-public-switch');
 var UserImage = require('./user-image');
 var CompanyInfo = require('./company-info');
 var ChatHistory = require('./chat-history');
 var ChatRoom = require('./chat-room');
 var ChatRoomUser = require('./chat-room-user');
 var LoginCount = require('./login-count');
+var MassNotification = require('./mass-notification');
+var AuthCi = require('./auth-ci');
+var MobileVersion = require('./mobile-version');
+var DomainRender = require('./domain-render');
 
 var models = {
     User: User,
     Provider: Provider,
     Auth: Auth,
+    AuthCi: AuthCi,
     Report: Report,
     Notice: Notice,
     Board: Board,
@@ -45,16 +49,18 @@ var models = {
     Terms: Terms,
     OptionalTerms: OptionalTerms,
     LoginHistory: LoginHistory,
-    Notification: Notification,
     NotificationBox: NotificationBox,
-    UserNotification: UserNotification,
-    UserPublicNotification: UserPublicNotification,
+    NotificationSwitch: NotificationSwitch,
+    NotificationPublicSwitch: NotificationPublicSwitch,
     UserImage: UserImage,
     CompanyInfo: CompanyInfo,
     ChatHistory: ChatHistory,
     ChatRoom: ChatRoom,
     ChatRoomUser: ChatRoomUser,
-    LoginCount: LoginCount
+    LoginCount: LoginCount,
+    MassNotification: MassNotification,
+    MobileVersion: MobileVersion,
+    DomainRender: DomainRender
 };
 
 module.exports = models;

@@ -2,6 +2,8 @@ var path = require('path');
 var fs = require('fs');
 var async = require('async');
 var gm = require('gm').subClass({imageMagick: true});
+var STD = require('../../../bridge/metadata/standards');
+var appRootPath = require("app-root-path").path;
 
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
@@ -29,6 +31,10 @@ module.exports = function () {
                     req.fileNames.push(path.basename(file.path));
                 });
 
+                if (req.removeLocalFiles) {
+                    req.removeFiles = req.removeLocalFiles;
+                }
+
                 next();
             });
         };
@@ -41,6 +47,11 @@ module.exports = function () {
                 if (!max) max = 99999;
                 var len = req.files.length;
                 if (len < min || len > max) {
+
+                    if (req.removeLocalFiles) {
+                        req.removeLocalFiles(function (err) {});
+                    }
+
                     return res.hjson(req, next, 400, {code: '400_21'});
                 }
             }
@@ -59,6 +70,9 @@ module.exports = function () {
                     var regexp = new RegExp(".(" + joinedTypes + ")$", "i");
 
                     if (!name.match(regexp)) {
+                        if (req.removeLocalFiles) {
+                            req.removeLocalFiles(function (err) {});
+                        }
                         return res.hjson(req, next, 400, {code: '400_22'});
                     }
                 }
@@ -78,6 +92,9 @@ module.exports = function () {
                     var regexp = new RegExp(".(" + joinedTypes + ")$", "i");
 
                     if (name.match(regexp)) {
+                        if (req.removeLocalFiles) {
+                            req.removeLocalFiles(function (err) {});
+                        }
                         return res.hjson(req, next, 400, {code: '400_22'});
                     }
                 }
@@ -146,8 +163,10 @@ module.exports = function () {
                                 return n(err, null);
                             }
 
-                            if (req.body.width == 0) req.body.width = value.width;
-                            if (req.body.height == 0) req.body.height = value.height;
+                            if (req.body.width === undefined) req.body.width = value.width;
+                            if (req.body.height === undefined) req.body.height = value.height;
+                            if (req.body.offsetX === undefined) req.body.offsetX = 0;
+                            if (req.body.offsetY === undefined) req.body.offsetY = 0;
 
                             gm(filePath).crop(req.body.width, req.body.height, req.body.offsetX, req.body.offsetY).stream(function (err, stdout, stderr) {
                                 if (err) {
@@ -215,15 +234,36 @@ module.exports = function () {
 
     Upload.prototype.removeLocalFiles = function () {
         return function (req, res, next) {
+            if (!STD.flag.isUseS3Bucket) {
+                var localPath = path.join(__dirname, "../../../" + STD.local.uploadUrl + '/');
+                for (var i=0; i<req.files.length; i++) {
+                    if (req.files[i].path) {
+                        req.files[i].path = localPath + req.files[i].path;
+                    }
+                }
+            }
             req.removeLocalFiles(function (err) {
                 next();
             });
         };
     };
 
+    Upload.prototype.generateFolder = function (parentFolder) {
+        return function (req, res, next) {
+            var now = new Date();
+            req.dateFolder = now.getUTCFullYear() + '-' + req.coreUtils.common.attachZero(now.getUTCMonth() + 1) + '-' + req.coreUtils.common.attachZero(now.getUTCDate());
+            req.folder = parentFolder + '/' + req.body.folder + '/' + req.dateFolder;
+            next();
+        };
+    };
+
     Upload.prototype.moveFileDir = function () {
         return function (req, res, next) {
-            if (req.files) {
+            if (req.files && req.folder) {
+                var stat = fs.existsSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
+                if (!stat) {
+                    fs.mkdirSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
+                }
 
                 var files = req.files;
                 var funcs = [];
@@ -233,7 +273,7 @@ module.exports = function () {
                     (function (file) {
                         funcs.push(function (n) {
                             var originPath = file.path;
-                            file.path = file.path.replace("uploads/", "uploads/" + req.body.folder + "/");
+                            file.path = file.path.replace(STD.local.uploadUrl + '/', STD.local.uploadUrl + '/' + req.folder + '/');
                             fs.rename(originPath, file.path, function (err) {
                                 if (err) {
                                     n(err, null);

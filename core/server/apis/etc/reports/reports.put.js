@@ -11,10 +11,27 @@ put.validate = function () {
 
         if (req.body.body !== undefined) req.check('body', '400_8').len(REPORT.minBodyLength, REPORT.maxBodyLength);
         if (req.body.reply !== undefined && req.body.reply !== MAGIC.reset) req.check('reply', '400_8').len(REPORT.minReplyLength, REPORT.maxReplyLength);
-        if (req.body.isSolved !== undefined) req.check('isSolved', '400_20').isBoolean();
+        if (req.body.isSolved !== undefined) {
+            req.check('isSolved', '400_20').isBoolean();
+            req.sanitize('isSolved').toBoolean();
+        }
+
+        if (req.body.isPushOn !== undefined) {
+            req.check('isPushOn', '400_20').isBoolean();
+            req.sanitize('isPushOn').toBoolean();
+        }
+
+        if (req.body.isEmailOn !== undefined) {
+            req.check('isEmailOn', '400_20').isBoolean();
+            req.sanitize('isEmailOn').toBoolean();
+        }
+
+        if (req.body.isMessageOn !== undefined) {
+            req.check('isMessageOn', '400_20').isBoolean();
+            req.sanitize('isMessageOn').toBoolean();
+        }
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -39,6 +56,94 @@ put.updateReport = function () {
 };
 
 put.sendNotifications = function () {
+    return function (req, res, next) {
+
+        var NOTIFICATION = req.meta.std.notification;
+        var notificationReport = req.meta.notifications.report;
+
+        if (req.body.isSolved !== undefined && req.body.isSolved == true && req.body.reply !== undefined && req.report.authorId != null) {
+
+            var user;
+            var payload = {
+                userId: req.report.userId,
+                nick: req.report.nick,
+                body: req.report.body,
+                reply: req.report.reply
+            };
+
+            req.models.User.findUserNotificationInfo(req.report.authorId, function (status, data) {
+                if (status == 200) {
+                    user = data;
+
+                    function sendNoti(key, user, payload) {
+
+                        req.coreUtils.notification.all.createdNotificationBox(user, notificationReport, payload, function (status, data) {
+
+                            if (status == 204) {
+                                if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
+
+                                    req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
+
+                                        payload['key'] = notificationReport.key;
+
+                                        if (isSuccess) {
+
+                                            req.coreUtils.notification.all.getNewNotificationCount(user.id, function (isSuccess, result) {
+
+                                                var badge = result.newNotificationCount + result.newChatMessageCount;
+                                                payload['newNotificationCount'] = result.newNotificationCount;
+                                                payload['newChatMessageCount'] = result.newChatMessageCount;
+
+                                                if (isSuccess) {
+                                                    req.coreUtils.notification.all.send(user, key, title, body, badge, payload, function (status, data) {
+                                                        console.log('reportNoti', status);
+                                                    });
+                                                }
+
+                                            });
+
+                                        }
+
+                                    });
+                                }
+                            }
+                        });
+
+                    }
+
+                    for (var key in notificationReport.sendTypes) {
+
+                        var sendType = notificationReport.sendTypes[key];
+
+                        if (key == NOTIFICATION.sendTypeEmail) {
+                            if (!req.body.isEmailOn) {
+                                continue;
+                            }
+                        }
+
+                        if (key == NOTIFICATION.sendTypePush) {
+                            if (!req.body.isPushOn) {
+                                continue;
+                            }
+                        }
+
+                        if (key == NOTIFICATION.sendTypeMessage) {
+                            if (!req.body.isMessageOn) {
+                                continue;
+                            }
+                        }
+
+                        sendNoti(key, user, payload);
+
+                    }
+                }
+
+            });
+        }
+
+        next();
+
+    }
 
 };
 

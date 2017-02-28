@@ -18,7 +18,18 @@ gets.validate = function () {
         }
 
         req.utils.common.checkError(req, res, next);
-        next();
+    };
+};
+
+gets.checkExistTerms = function () {
+    return function (req, res, next) {
+        req.models.Terms.findDataWithQuery({}, function (status, data) {
+            if (status == 200) {
+                next();
+            } else {
+                return res.hjson(req, next, status, data);
+            }
+        });
     };
 };
 

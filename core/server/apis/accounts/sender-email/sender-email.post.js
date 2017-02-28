@@ -14,7 +14,6 @@ post.validate = function () {
         if (req.body.errorRedirect !== undefined) req.check('errorRedirect', '400_3').len(1, 500);
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
@@ -30,7 +29,7 @@ post.additionalValidate = function () {
         }
 
         // 이메일 연동은 자동으로 승인되는 형식일때는 지원하지 않는다.
-        if (type == USER.authEmailAdding && req.meta.std.flag.isAutoVerifiedEmail == true) {
+        if (type == USER.authEmailAdding && req.config.flag.isAutoVerifiedEmail == true) {
             return res.hjson(req, next, 400, {
                 code: '400_38'
             });

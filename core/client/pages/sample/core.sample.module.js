@@ -1,5 +1,5 @@
 
-import coreBaseModule from '../../modules/base/core.base.module';
+import coreBaseModule from '../../modules/common/base/core.base.module';
 
 import config from './config/core.sample.config';
 import routing from './config/core.sample.route';

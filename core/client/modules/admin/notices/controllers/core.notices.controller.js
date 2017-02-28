@@ -1,15 +1,16 @@
-export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialogHandler, loadingHandler, metaManager) {
+export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal, noticesManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
 
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;
+    var ADMIN = metaManager.std.admin;
 
-    $scope.isNoticeCreateVisible = false;
-    $scope.isNoticeEditMode = false;
-    $scope.isNoticeDetailVisible = false;
-    $scope.isNoticeDetailFirstTime = true;
+    $scope.noticesManager = noticesManager;
+    $scope.dialogHandler = dialogHandler;
+    $scope.loadingHandler = loadingHandler;
+    $scope.metaManager = metaManager;
 
     $scope.params = {};
-    $scope.form = {};
 
     $scope.noticeList = [];
     $scope.noticeListTotal = 0;
@@ -23,139 +24,36 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
 
     $scope.more = false;
 
-    $scope.showNoticeCreate = function () {
-        $scope.form.type = $scope.noticeTypes[0];
-        $scope.form.country = $scope.noticeCountries[0];
-        $scope.isNoticeCreateVisible = true;
-        $scope.isNoticeDetailFirstTime = false;
-    };
+    $scope.showItemOption = showItemOption;
+    $scope.hideItemOption = hideItemOption;
+    $scope.findNotices = findNotices;
+    $scope.findNoticesMore = findNoticesMore;
+    $scope.deleteNotice = deleteNotice;
+    $scope.showNoticeDetailAndStartEditMode = showNoticeDetailAndStartEditMode;
+    $scope.openCreateModal = openCreateModal;
+    $scope.openDetailModal = openDetailModal;
 
-    $scope.hideNoticeCreate = function () {
-        $scope.isNoticeCreateVisible = false;
-        $scope.form = {};
-    };
-
-    $scope.showNoticeDetail = function (index) {
-        $scope.currentIndex = index;
-        $scope.form = {
-            title: $scope.noticeList[index].title,
-            body: $scope.noticeList[index].body,
-            type: $scope.noticeList[index].type,
-            country: $scope.noticeList[index].country
-        };
-        $scope.isNoticeDetailVisible = true;
-        $scope.isNoticeDetailFirstTime = false;
-    };
-
-    $scope.hideNoticeDetail = function () {
-        $scope.isNoticeDetailVisible = false;
-        $scope.form = {};
-        $scope.exitEditMode();
-    };
-
-    $scope.$on('$locationChangeStart', function (event, next, current) {
-        if (next != current) {
-            if ($scope.isNoticeDetailVisible) {
-                event.preventDefault();
-                $scope.hideNoticeDetail();
-            }
-        }
-    });
-
-    $scope.startEditMode = function () {
-        $scope.isNoticeEditMode = true;
-    };
-
-    $scope.exitEditMode = function () {
-        $scope.isNoticeEditMode = false;
-    };
+    // $scope.$on('$locationChangeStart', function (event, next, current) {
+    //     if (next != current) {
+    //         if ($scope.isNoticeDetailVisible) {
+    //             event.preventDefault();
+    //             $scope.hideNoticeDetail();
+    //         }
+    //     }
+    // });
 
     $scope.currentOption = undefined;
 
-    $scope.showItemOption = function ($event, notice) {
+    function showItemOption($event, notice) {
         $event.stopPropagation();
         $scope.currentOption = notice.id;
-    };
+    }
 
-    $scope.hideItemOption = function () {
+    function hideItemOption() {
         $scope.currentOption = undefined;
-    };
+    }
 
-    $scope.isFormValidate = function () {
-
-        var isValidate = true;
-
-        if ($scope.form.title === undefined || $scope.form.title === '') {
-            isValidate = false;
-            dialogHandler.show('', $filter('translate')('requireTitle'), '', true);
-            return isValidate;
-        }
-
-        if ($scope.form.body === undefined || $scope.form.body === '') {
-            isValidate = false;
-            dialogHandler.show('', $filter('translate')('requireBody'), '', true);
-            return isValidate;
-        }
-        if ($scope.form.type === undefined || $scope.form.type === '') {
-            isValidate = false;
-            dialogHandler.show('', $filter('translate')('requireType'), '', true);
-            return isValidate;
-        }
-        if ($scope.form.country === undefined || $scope.form.country === '') {
-            isValidate = false;
-            dialogHandler.show('', $filter('translate')('requireCountry'), '', true);
-            return isValidate;
-        }
-
-        return isValidate;
-    };
-
-    $scope.createNotice = function () {
-
-        if ($scope.isFormValidate()) {
-            var body = angular.copy($scope.form);
-
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
-            noticesManager.createNotice(body, function (status, data) {
-                if (status == 201) {
-                    $scope.noticeList.unshift(data);
-                    $scope.hideNoticeCreate();
-                } else {
-                    dialogHandler.alertError(status, data);
-                }
-                loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
-            });
-        }
-
-    };
-
-    $scope.updateNotice = function () {
-
-        var notice = $scope.noticeList[$scope.currentIndex];
-
-        if ($scope.isFormValidate()) {
-            var body = angular.copy($scope.form);
-
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
-            noticesManager.updateNoticeById(notice.id, body, function (status, data) {
-                if (status == 200) {
-                    $scope.noticeList[$scope.currentIndex] = data;
-
-                    if ($scope.params.type != body.type) {
-                        $scope.noticeList.splice($scope.currentIndex, 1);
-                    }
-
-                    $scope.exitEditMode();
-                } else {
-                    dialogHandler.alertError(status, data);
-                }
-                loadingHandler.endLoading(LOADING.spinnerKey, 'updateNotice');
-            });
-        }
-
-    };
-
-    $scope.findNotices = function () {
+    function findNotices() {
         $scope.noticeListTotal = 0;
         $scope.noticeList = [];
 
@@ -175,9 +73,9 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findNotices');
         });
-    };
+    }
 
-    $scope.findNoticesMore = function () {
+    function findNoticesMore() {
         if ($scope.noticeList.length > 0) {
             $scope.params.last = $scope.noticeList[$scope.noticeList.length - 1].createdAt;
         }
@@ -195,9 +93,9 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findNoticesMore');
         });
-    };
+    }
 
-    $scope.deleteNotice = function (index) {
+    function deleteNotice(index) {
 
         dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
 
@@ -218,18 +116,74 @@ export default function NoticesCtrl($scope, $sce, $filter, noticesManager, dialo
 
         });
 
-    };
+    }
 
-    $scope.showNoticeDetailAndStartEditMode = function (index) {
-        $scope.showNoticeDetail(index);
-        $scope.startEditMode();
-    };
+    function showNoticeDetailAndStartEditMode(index) {
+        openDetailModal(index, true);
+    }
 
-    $scope.findNotices();
+    function openCreateModal() {
+
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreNoticeCreate.html',
+            controller: 'NoticeCreateCtrl',
+            size: NOTICE.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                }
+            }
+        });
+
+        createInstance.result.then(function (result) {
+
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
+
+    function openDetailModal(index, isEditMode) {
+        $scope.currentIndex = index;
+        var notice = $scope.noticeList[index];
+
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreNoticeDetail.html',
+            controller: 'NoticeDetailCtrl',
+            size: NOTICE.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                notice: function () {
+                    return notice;
+                },
+                isEditMode: function () {
+                    return isEditMode
+                }
+            }
+        });
+
+        createInstance.result.then(function (result) {
+
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
 
     $scope.$watch('params.type', function (newVal, oldVal) {
         if (newVal != oldVal) {
             $scope.findNotices();
         }
     }, true);
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleNotices
+    });
+
+    findNotices();
+
 }

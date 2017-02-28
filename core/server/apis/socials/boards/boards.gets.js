@@ -32,7 +32,6 @@ gets.validate = function () {
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 

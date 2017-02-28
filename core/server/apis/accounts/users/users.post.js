@@ -12,7 +12,7 @@ post.validate = function () {
 
         var USER = req.meta.std.user;
         var SMS = req.meta.std.sms;
-        var OPTIONAL_TERMS = req.meta.std.optionalTerms;
+        var TERMS = req.meta.std.terms;
 
         req.check('type', '400_3').isEnum(USER.enumSignUpTypes);
 
@@ -42,6 +42,10 @@ post.validate = function () {
         } else if (type == USER.signUpTypeNormalId) {
             req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
             req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
+        } else if (type == USER.signUpTypeAuthCi) {
+            req.check('uid', '400_55').len(USER.minIdLength, USER.maxIdLength);
+            req.check('secret', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
+            req.check('transactionNo', '400_51').len(USER.minTransactionLength, USER.maxTransactionLength);
         }
 
         if (req.body.name !== undefined) {
@@ -49,7 +53,7 @@ post.validate = function () {
         }
 
         if (req.body.nick !== undefined) {
-            req.check('nick', '40400_260_8').len(USER.minNickLength, USER.maxNickLength);
+            req.check('nick', '400_8').len(USER.minNickLength, USER.maxNickLength);
         }
 
         if (req.body.gender !== undefined) req.check('gender', '400_3').isEnum(USER.enumGenders);
@@ -103,11 +107,69 @@ post.validate = function () {
         }
 
         if (req.body.optionalTerms !== undefined) {
-            req.check('optionalTerms', '400_12').isNumberIds(OPTIONAL_TERMS.maxOptionalTermsCount);
+            req.check('optionalTerms', '400_12').isNumberIds(TERMS.maxOptionalTermsCount);
         }
 
         req.utils.common.checkError(req, res, next);
-        next();
+    };
+};
+
+post.checkCi = function () {
+    return function (req, res, next) {
+        var USER = req.meta.std.user;
+
+        var transactionNo = req.body.transactionNo;
+
+        if (req.body.type == USER.signUpTypeAuthCi) {
+            req.models.AuthCi.findOneAuthCi(transactionNo, function (status, data) {
+
+                if (status == 200) {
+
+                    req.body.ci = data.ci;
+                    req.body.di = data.di;
+                    req.body.name = data.name;
+                    req.body.birthYear = data.birthYear;
+                    req.body.birthMonth = data.birthMonth;
+                    req.body.birthDay = data.birthDay;
+                    req.body.gender = data.gender;
+                    req.body.phoneNum = data.phoneNum;
+
+                    req.models.User.findDataWithQuery({
+                        where: {
+                            ci: data.ci
+                        }
+                    }, function (status, data) {
+
+                        if (status == 404) {
+
+                            req.models.User.findUserByPhoneNumber(req.body.phoneNum, function (status, data) {
+                                if (status == 404) {
+                                    next();
+                                } else {
+                                    res.hjson(req, next, 409, {
+                                        code: '409_1'
+                                    });
+                                }
+
+                            });
+
+                        } else {
+                            res.hjson(req, next, 409, {
+                                code: '409_7'
+                            });
+                        }
+                    });
+
+                } else {
+                    res.hjson(req, next, 400, {
+                        code: '400_62'
+                    });
+                }
+
+            });
+        } else {
+            next();
+        }
     };
 };
 
@@ -161,6 +223,12 @@ post.createUser = function () {
             data.email = req.body.aid;
         }
 
+        if (req.body.type == USER.signUpTypeAuthCi) {
+            data.ci = req.body.ci;
+            data.di = req.body.di;
+            data.phoneNum = req.body.phoneNum;
+        }
+
         data.history = req.models.LoginHistory.parseLoginHistory(req, req.body);
 
         req.models.User.createUserWithType(data, function (status, user) {
@@ -200,7 +268,7 @@ post.createOptionalTerms = function () {
 post.sendEmailAuth = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
-        var FLAG = req.meta.std.flag;
+        var FLAG = req.config.flag;
 
         if (req.body.type == USER.signUpTypeEmail && !FLAG.isAutoVerifiedEmail) {
             req.coreUtils.notification.email.signup(req, {}, req.createdUser.auth, req.createdUser, function (status, data) {

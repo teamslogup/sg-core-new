@@ -35,14 +35,13 @@ gets.validate = function () {
         req.check('userId', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
 gets.setParam = function () {
     return function (req, res, next) {
 
-        req.models.NotificationBox.findNotificationBoxesByOptions(req.query, function (status, data) {
+        req.models.NotificationBox.findNotificationBoxesByOptions(req.query, req.query.userId, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();

@@ -39,7 +39,6 @@ post.validate = function () {
                 }
 
                 req.utils.common.checkError(req, res, next);
-                next();
             } else {
                 return res.hjson(req, next, status, data);
             }

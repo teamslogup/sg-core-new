@@ -32,6 +32,7 @@ module.exports = {
             'referenceKey': 'id',
             'referenceType': 'one',
             'as': 'image',
+            'asReverse': 'userImages',
             'allowNull': false
         },
         'createdAt': {
@@ -58,10 +59,12 @@ module.exports = {
             'getIncludeUserImage': function () {
                 return [{
                     'model': sequelize.models.User,
-                    'as': 'user'
+                    'as': 'user',
+                    'attributes': sequelize.models.User.getUserFields()
                 }, {
                     'model': sequelize.models.Image,
-                    'as': 'image'
+                    'as': 'image',
+                    'attributes': sequelize.models.User.getFieldsImage()
                 }];
             },
             'updateUserImages': function (body, callback) {

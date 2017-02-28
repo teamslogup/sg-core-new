@@ -1,4 +1,6 @@
-export default function UsersCtrl($scope, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, sessionRemoteManager, profileManager, dialogHandler, loadingHandler, metaManager) {
+export default function UsersCtrl($scope, $rootScope, $uibModal, $filter, usersManager, notificationManager, notificationBoxManager, notificationSwitchManager, notificationPublicSwitchManager, sessionRemoteManager, profileManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
+
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -10,19 +12,34 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
         vm.CDN = metaManager.std.cdn;
     }
 
-    var NOTIFICATION = metaManager.std.notification;
+    $scope.usersManager = usersManager;
+    $scope.dialogHandler = dialogHandler;
+    $scope.loadingHandler = loadingHandler;
+    $scope.metaManager = metaManager;
+    $scope.notificationBoxManager = notificationBoxManager;
+    $scope.notificationSwitchManager = notificationSwitchManager;
+    $scope.notificationPublicSwitchManager = notificationPublicSwitchManager;
+    $scope.sessionRemoteManager = sessionRemoteManager;
+    $scope.profileManager = profileManager;
+
+    $scope.openModal = openModal;
+
+    $scope.showItemOption = showItemOption;
+    $scope.hideItemOption = hideItemOption;
+    $scope.showUserDetailAndStartEditMode = showUserDetailAndStartEditMode;
+
+    $scope.deleteUser = deleteUser;
+
+    $scope.findUsersMore = findUsersMore;
+
     var LOADING = metaManager.std.loading;
     var USER = metaManager.std.user;
-    var COMMON = metaManager.std.common;
+    var ADMIN = metaManager.std.admin;
 
-    $scope.currentPage = 1;
-
-    $scope.isUserDetailVisible = false;
-    $scope.isUserDetailFirstTime = true;
+    $scope.currentOption = undefined;
     $scope.isUserEditMode = false;
 
     $scope.params = {};
-    $scope.form = {};
 
     $scope.userList = [];
     $scope.userListTotal = 0;
@@ -31,169 +48,25 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
     $scope.params.searchField = $scope.userEnumSearchFields[0];
 
     $scope.userEnumRoles = angular.copy(USER.enumRoles);
-    $scope.userEnumRoles.unshift(COMMON.all);
-    $scope.params.role = COMMON.all;
+    $scope.userEnumRoles.unshift(USER.roleAll);
+    $scope.params.role = USER.roleAll;
 
     $scope.userEnumGender = angular.copy(USER.enumGenders);
-    $scope.userEnumGender.unshift(COMMON.all);
-    $scope.params.gender = COMMON.all;
-
-    $scope.userDetailEnumGender = angular.copy(USER.enumGenders);
-
-    $scope.enumCountries = Object.keys(metaManager.local.countries);
-    $scope.enumLanguages = Object.keys(metaManager.local.languages);
+    $scope.userEnumGender.unshift(USER.genderAll);
+    $scope.params.gender = USER.genderAll;
 
     $scope.more = false;
 
-    $scope.showUserDetail = function (index) {
-        $scope.currentUserIndex = index;
-        $scope.currentUser = $scope.userList[index];
-
-        for (var i = 0; i < $scope.currentUser.providers.length; i++) {
-            if ($scope.currentUser.providers[i].type == 'facebook') {
-                $scope.currentUser.providerFacebookIndex = i;
-            } else if ($scope.currentUser.providers[i].type == 'kakao') {
-                $scope.currentUser.providerKakaoIndex = i;
-            }
-        }
-
-        $scope.form = {
-            nick: $scope.currentUser.nick,
-            name: $scope.currentUser.name,
-            gender: $scope.currentUser.gender,
-            birthYear: $scope.currentUser.birthYear,
-            birthMonth: $scope.currentUser.birthMonth,
-            birthDay: $scope.currentUser.birthDay,
-            country: $scope.currentUser.country,
-            language: $scope.currentUser.language,
-            role: $scope.currentUser.role,
-            agreedEmail: $scope.currentUser.agreedEmail,
-            agreedPhoneNum: $scope.currentUser.agreedPhoneNum
-        };
-        splitBirth($scope.currentUser.birth);
-
-        delete $scope.currentUser.profile.createdAt;
-        delete $scope.currentUser.profile.updatedAt;
-        delete $scope.currentUser.profile.deletedAt;
-        delete $scope.currentUser.profile.id;
-
-        $scope.isUserDetailVisible = true;
-        $scope.isUserDetailFirstTime = false;
-
-        $scope.findAllNotification($scope.currentUser.id);
-        $scope.findAllNotificationBox($scope.currentUser.id);
-
-    };
-
-    function obejctToArray(object) {
-
-        var array = [];
-
-        for (var key in object) {
-            // skip loop if the property is from prototype
-            if (!object.hasOwnProperty(key)) continue;
-            array.push(object[key]);
-        }
-
-    }
-
-    function splitBirth(str) {
-        if (str) {
-            var date = str.split("-");
-
-            $scope.form.birthYear = Number(date[0]);
-            $scope.form.birthMonth = Number(date[1]);
-            $scope.form.birthDay = Number(date[2]);
-        }
-    }
-
-    $scope.hideUserDetail = function () {
-        $scope.isUserDetailVisible = false;
-        $scope.form = {};
-        $scope.exitEditMode();
-    };
-
-    $scope.$on('$locationChangeStart', function (event, next, current) {
-        if (next != current) {
-            if ($scope.isUserDetailVisible) {
-                event.preventDefault();
-                $scope.hideUserDetail();
-            }
-        }
-    });
-
-    $scope.startEditMode = function () {
-        $scope.isUserEditMode = true;
-    };
-
-    $scope.exitEditMode = function () {
-        $scope.isUserEditMode = false;
-    };
-
-    $scope.currentOption = undefined;
-
-    $scope.showItemOption = function ($event, user) {
+    function showItemOption($event, user) {
         $event.stopPropagation();
         $scope.currentOption = user.id;
-    };
+    }
 
-    $scope.hideItemOption = function () {
+    function hideItemOption() {
         $scope.currentOption = undefined;
-    };
+    }
 
-
-    $scope.isFormValidate = function () {
-
-        var isValidate = true;
-
-        if ($scope.form.nick === undefined || $scope.form.nick === '') {
-            isValidate = false;
-            dialogHandler.show('', $filter('translate')('requireNick'), '', true);
-            return isValidate;
-        }
-
-        return isValidate;
-    };
-
-    $scope.updateUser = function (index) {
-
-        var user = $scope.userList[index];
-
-        if ($scope.isFormValidate()) {
-            var body = angular.copy($scope.form);
-
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateUserById');
-            usersManager.updateUserById(user.id, body, function (status, data) {
-                if (status == 200) {
-                    $scope.userList[index].nick = body.nick;
-                    $scope.userList[index].name = body.name;
-                    $scope.userList[index].gender = body.gender;
-                    $scope.userList[index].birth = data.birth;
-                    $scope.userList[index].country = body.country;
-                    $scope.userList[index].language = body.language;
-                    $scope.userList[index].role = body.role;
-                    $scope.userList[index].agreedEmail = body.agreedEmail;
-                    $scope.userList[index].agreedPhoneNum = body.agreedPhoneNum;
-
-                    if ($scope.params.role != COMMON.all && $scope.params.role != body.role) {
-                        $scope.userList.splice(index, 1);
-                    }
-
-                    if ($scope.params.gender != COMMON.all && $scope.params.gender != body.gender) {
-                        $scope.userList.splice(index, 1);
-                    }
-
-                    $scope.exitEditMode();
-                } else {
-                    dialogHandler.alertError(status, data);
-                }
-                loadingHandler.endLoading(LOADING.spinnerKey, 'updateUserById');
-            });
-        }
-
-    };
-
-    $scope.findUsers = function () {
+    function findUsers() {
 
         $scope.userListTotal = 0;
         $scope.userList = [];
@@ -214,9 +87,9 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findAllUsers');
         });
-    };
+    }
 
-    $scope.findUsersMore = function () {
+    function findUsersMore() {
 
         if ($scope.userList.length > 0) {
             $scope.params.last = $scope.userList[$scope.userList.length - 1].createdAt;
@@ -235,231 +108,9 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
             loadingHandler.endLoading(LOADING.spinnerKey, 'findUsersMore');
         });
-    };
-
-    $scope.findUsers();
-
-    $scope.$watch('params.type', function (newVal, oldVal) {
-        if (newVal != oldVal) {
-            $scope.findUsers();
-        }
-    }, true);
-
-    //Notification
-
-    $scope.notifications = [];
-
-    $scope.notificationSwitchs = {};
-    $scope.notificationPublicSwitchs = {};
-
-    var notificationEnumForm = NOTIFICATION.enumForms;
-
-    for (var i = 0; i < notificationEnumForm.length; i++) {
-        if (notificationEnumForm[i] == NOTIFICATION.formApplication) {
-            notificationEnumForm.splice(i, 1);
-        }
     }
 
-    for (var i = 0; i < notificationEnumForm.length; i++) {
-        $scope.notificationPublicSwitchs[notificationEnumForm[i]] = {
-            switch: true,
-            type: notificationEnumForm[i]
-        };
-    }
-
-    $scope.findAllNotification = function (userId) {
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotification');
-        notificationManager.findAllNotification({}, function (status, data) {
-            if (status == 200) {
-
-                $scope.notifications = data.rows;
-
-                for (var i = 0; i < $scope.notifications.length; i++) {
-                    $scope.notificationSwitchs[$scope.notifications[i].key] = {
-                        switch: true,
-                        key: $scope.notifications[i].key,
-                        title: $scope.notifications[i].title,
-                        notificationId: $scope.notifications[i].id
-                    };
-
-                }
-
-                $scope.findAllNotificationSwitch(userId);
-
-            } else if (status == 404) {
-
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-
-        });
-        loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotification');
-    };
-
-    //NotificationBox
-
-    $scope.findAllNotificationBox = function (userId) {
-        $scope.notificationBoxListTotal = 0;
-        $scope.notificationBoxList = [];
-
-        $scope.params.last = undefined;
-        $scope.params.userId = userId;
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotificationBox');
-        notificationBoxManager.findAllNotificationBox($scope.params, function (status, data) {
-            if (status == 200) {
-                $scope.notificationBoxListTotal = data.count;
-                $scope.notificationBoxList = $scope.notificationBoxList.concat(data.rows);
-
-                $scope.notificationBoxMore = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
-            } else if (status == 404) {
-                $scope.notificationBoxMore = false;
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationBox');
-        });
-    };
-
-    $scope.notificationBoxList = [];
-    $scope.notificationBoxListTotal = 0;
-
-    $scope.notificationBoxMore = false;
-
-    $scope.findNotificationBoxMore = function () {
-
-        if ($scope.notificationBoxList.length > 0) {
-            $scope.params.last = $scope.notificationBoxList[$scope.notificationBoxList.length - 1].createdAt;
-        }
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findNotificationBoxMore');
-        notificationBoxManager.findAllNotificationBox($scope.params, function (status, data) {
-            if (status == 200) {
-                $scope.notificationBoxList = $scope.notificationBoxList.concat(data.rows);
-                $scope.notificationBoxMore = $scope.notificationBoxListTotal > $scope.notificationBoxList.length;
-            } else if (status == 404) {
-                $scope.notificationBoxMore = false;
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findNotificationBoxMore');
-        });
-    };
-
-    //NotificationSwitch
-
-    $scope.findAllNotificationSwitch = function (userId) {
-        var query = {
-            userId: userId
-        };
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'findAllNotificationSwitch');
-        notificationSwitchManager.findAllNotificationSwitch(query, function (status, data) {
-            if (status == 200) {
-
-                for (var i = 0; i < data.application.length; i++) {
-                    if ($scope.notificationSwitchs.hasOwnProperty(data.application[i].notification.key)) {
-                        $scope.notificationSwitchs[data.application[i].notification.key].switch = data.application[i].switch;
-                    }
-                }
-
-                for (var i = 0; i < data.public.length; i++) {
-                    if ($scope.notificationPublicSwitchs.hasOwnProperty(data.public[i].type)) {
-                        $scope.notificationPublicSwitchs[data.public[i].type].switch = data.public[i].switch;
-                    }
-                }
-
-            } else if (status == 404) {
-
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'findAllNotificationSwitch');
-        });
-    };
-
-    $scope.deleteUser = function (index) {
-
-        dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
-            var user = $scope.userList[index];
-
-            loadingHandler.startLoading(LOADING.spinnerKey, 'deleteUser');
-            usersManager.deleteUser(user, function (status, data) {
-                if (status == 200) {
-                    $scope.userList.splice(index, 1);
-                } else {
-                    dialogHandler.alertError(status, data);
-                }
-
-                loadingHandler.endLoading(LOADING.spinnerKey, 'deleteUser');
-            });
-        });
-
-    };
-
-    $scope.updateAppNotificationSwitch = function (notificationSwitch) {
-
-        var body = {
-            userId: $scope.currentUser.id,
-            notificationId: notificationSwitch.notificationId,
-            switch: notificationSwitch.switch,
-            type: vm.NOTIFICATION.formApplication
-        };
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'updateAppNotificationSwitch');
-        notificationSwitchManager.updateNotificationSwitch(body, function (status, data) {
-            if (status == 200) {
-
-            } else {
-                notificationSwitch.switch = !notificationSwitch.switch;
-                dialogHandler.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'updateAppNotificationSwitch');
-        });
-    };
-
-    $scope.updatePublicNotificationSwitch = function (notificationPublicSwitch) {
-
-        var body = {
-            userId: $scope.currentUser.id,
-            switch: notificationPublicSwitch.switch,
-            type: notificationPublicSwitch.type
-        };
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'updatePublicNotificationSwitch');
-        notificationSwitchManager.updateNotificationSwitch(body, function (status, data) {
-            if (status == 200) {
-
-            } else {
-                notificationPublicSwitch.switch = !notificationPublicSwitch.switch;
-                dialogHandler.alertError(status, data);
-            }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'updatePublicNotificationSwitch');
-        });
-    };
-
-    $scope.deleteSessionRemote = function (index) {
-
-        var loginHistory = $scope.currentUser.loginHistories[index];
-
-        loadingHandler.startLoading(LOADING.spinnerKey, 'deleteSessionRemote');
-        sessionRemoteManager.deleteSessionRemote(loginHistory, function (status, data) {
-            if (status == 200) {
-                $scope.currentUser.loginHistories.splice(index, 1);
-            } else {
-                dialogHandler.alertError(status, data);
-            }
-            loadingHandler.endLoading(LOADING.spinnerKey, 'deleteSessionRemote');
-        });
-
-    };
-
-    $scope.deleteUser = function (index) {
+    function deleteUser(index) {
 
         dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
 
@@ -480,40 +131,64 @@ export default function UsersCtrl($scope, $filter, usersManager, notificationMan
 
         });
 
-    };
+    }
 
-    $scope.updateProfile = function (user) {
+    function showUserDetailAndStartEditMode(index) {
+        openModal(index, true);
+    }
 
-        loadingHandler.startLoading(LOADING.spinnerKey, 'updateProfile');
-        profileManager.updateProfileByUserId(user.id, user.profile, function (status, data) {
+    function openModal(index, isEditMode) {
+        $scope.currentUserIndex = index;
+        var user = $scope.userList[index];
 
-            if (status == 200) {
-                $scope.exitEditMode();
-            } else {
-                dialogHandler.alertError(status, data);
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreUserDetail.html',
+            controller: 'UserDetailCtrl',
+            size: USER.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                user: function () {
+                    return user;
+                },
+                isEditMode: function () {
+                    return isEditMode
+                }
             }
-
-            loadingHandler.endLoading(LOADING.spinnerKey, 'updateProfile');
-
         });
 
-    };
+        createInstance.result.then(function (result) {
 
-    $scope.showUserDetailAndStartEditMode = function (index) {
-        $scope.showUserDetail(index);
-        $scope.startEditMode();
-    };
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
+
+    $scope.$watch('params.type', function (newVal, oldVal) {
+        if (newVal != oldVal) {
+            findUsers();
+        }
+    }, true);
 
     $scope.$watch('params.role', function (newVal, oldVal) {
         if (newVal != oldVal) {
-            $scope.findUsers();
+            findUsers();
         }
     }, true);
 
     $scope.$watch('params.gender', function (newVal, oldVal) {
         if (newVal != oldVal) {
-            $scope.findUsers();
+            findUsers();
         }
     }, true);
+
+    findUsers();
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleUsers
+    });
 
 }

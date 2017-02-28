@@ -1,4 +1,6 @@
-export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler, loadingHandler, metaManager) {
+export default function ImagesCtrl($scope, $rootScope, $filter, imagesManager, dialogHandler, loadingHandler, metaManager) {
+    "ngInject";
+
     var vm = null;
     if ($scope.vm !== undefined) {
         vm = $scope.vm;
@@ -10,12 +12,13 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
     var LOADING = metaManager.std.loading;
     var COMMON = metaManager.std.common;
     var IMAGE = metaManager.std.image;
+    var ADMIN = metaManager.std.admin;
 
     $scope.form = {};
     $scope.imageList = [];
     $scope.imageListTotal = 0;
 
-    $scope.imageFolders = angular.copy(metaManager.std.file.enumFolders);
+    $scope.imageFolders = angular.copy(metaManager.std.file.enumImageFolders);
     $scope.imageFolders.unshift(COMMON.all);
     $scope.form.folder = $scope.imageFolders[0];
 
@@ -90,8 +93,8 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
         dialogHandler.show('', $filter('translate')('sureDelete'), '삭제', true, function () {
             loadingHandler.startLoading(LOADING.spinnerKey, 'deleteImage');
             imagesManager.deleteImage(image, function (status, data) {
-                if (status == 200) {
-                    $scope.imageList = $scope.imageList.slice($index, 1);
+                if (status == 204) {
+                    $scope.imageList.splice($index, 1);
                 } else {
                     dialogHandler.alertError(status, data);
                 }
@@ -182,5 +185,9 @@ export default function ImagesCtrl($scope, $filter, imagesManager, dialogHandler
         if (args.type == 'delete') {
             $scope.imageList.splice($scope.imageList.indexOf(args.data), 1);
         }
+    });
+
+    $rootScope.$broadcast(ADMIN.kNavigation, {
+        activeNav: ADMIN.moduleImages
     });
 }

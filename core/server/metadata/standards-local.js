@@ -1,5 +1,5 @@
 var standardsLocal = {
-    KR: {
+    kr: {
 
     }
 };

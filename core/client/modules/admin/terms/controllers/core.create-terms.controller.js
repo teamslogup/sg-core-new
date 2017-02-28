@@ -1,4 +1,6 @@
 export default function CreateTermsCtrl ($scope, $uibModalInstance, scope, terms) {
+    "ngInject";
+
     var now = new Date();
     $scope.localNow = (new Date(now.getTime() + 24*60*60*1000)).toDateString();
 

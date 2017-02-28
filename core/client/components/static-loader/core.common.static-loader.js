@@ -1,4 +1,5 @@
 export default class StaticLoader {
+    /*@ngInject*/
     constructor() {
         this.rootPath = "";
         this.cacheMap = {};

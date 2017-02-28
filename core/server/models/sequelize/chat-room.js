@@ -19,6 +19,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 var micro = require('microtime-nodejs');
 
+var coreUtils = require('../../utils');
+
 module.exports = {
     fields: {
         'name': {
@@ -54,94 +56,79 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            // 'findChatRoomsByOption': function (options, callback) {
-            //     var where = {};
-            //
-            //     where.createdAt = {
-            //         '$lt': options.last
-            //     };
-            //
-            //     sequelize.transaction(function (t) {
-            //
-            //         return sequelize.models.ChatRoom.findAndCountAll({
-            //             'offset': parseInt(options.offset),
-            //             'limit': parseInt(options.size),
-            //             'where': where,
-            //             'order': [[options.orderBy, options.sort]],
-            //             'transaction': t
-            //         }).then(function (data) {
-            //             if (data.rows.length > 0) {
-            //                 return data;
-            //             } else {
-            //                 throw new errorHandler.CustomSequelizeError(404);
-            //             }
-            //         });
-            //
-            //     }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-            //         if (data) {
-            //             callback(200, data);
-            //         }
-            //     });
-            // },
             'findChatRoomsByOption': function (options, callback) {
 
-                // var where = {};
-                //
-                // if (options.userId !== undefined) {
-                //     where.userId = options.userId
-                // }
-                //
-                // where.createdAt = {
-                //     '$lt': options.last
-                // };
-                //
-                // sequelize.transaction(function (t) {
-                //
-                //     return sequelize.models.ChatRoomUser.findAll({
-                //         'offset': parseInt(options.offset),
-                //         'limit': parseInt(options.size),
-                //         'where': where,
-                //         'order': [[options.orderBy, options.sort]],
-                //         'include': sequelize.models.ChatRoomUser.getIncludeChatRoomUser(),
-                //         'paranoid': true,
-                //         'transaction': t
-                //     }).then(function (data) {
-                //         if (data.length > 0) {
-                //             return data;
-                //         } else {
-                //             throw new errorHandler.CustomSequelizeError(404);
-                //         }
-                //     });
-                //
-                // }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                //     if (data) {
-                //         callback(200, data);
-                //     }
-                // });
+                var chatRoom = {
+                    count: 0,
+                    rows: []
+                };
 
-                var query = "SELECT v1.roomId as roomId, v2.nick as title, v2.deletedAt as deletedAt, v1.count as noReadCount, v2.folder as folder, v2.url as url " +
-                    "FROM (SELECT room.id as roomId, count(case when chatHistory.createdAt > roomUser.updatedAt then 1 else null end) as count, max(chatHistory.createdAt) as createdAt " +
+                var searchItemQuery = "";
+
+                if (options.searchItem !== undefined) {
+                    searchItemQuery = " AND user.nick LIKE '" + options.searchItem + "%'";
+                }
+
+                var countQuery = "SELECT count(result.id) as count FROM (SELECT v1.id FROM (SELECT * FROM ChatRoomUsers AS chatRoomUser WHERE chatRoomUser.deletedAt IS NULL AND chatRoomUser.userId = " + options.userId + ") as v1 " +
+                    "LEFT JOIN (SELECT roomUser.roomId as roomId FROM ChatRoomUsers as roomUser " +
+                    "WHERE roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId GROUP BY v1.id) as result;";
+
+                var query = "SELECT v1.roomId as id, v1.updatedAt as updatedAt, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
+                    "FROM (SELECT a.roomId, a.updatedAt, a.chatId, a.chatType, a.chatMessage, a.chatCreatedAt, count(case when a.chatCreatedAt > a.roomUserUpdatedAt then 1 else null end) as count FROM (SELECT room.id as roomId, room.updatedAt as updatedAt, chatHistory.id as chatId, chatHistory.type as chatType, chatHistory.message as chatMessage, chatHistory.createdAt as chatCreatedAt, roomUser.updatedAt as roomUserUpdatedAt " +
                     "FROM `ChatRooms` as room " +
                     "LEFT JOIN `ChatRoomUsers` as roomUser ON room.id = roomUser.roomId " +
-                    "LEFT JOIN `ChatHistories` as chatHistory ON room.id = chatHistory.roomId " +
+                    "LEFT JOIN (SELECT chatHistory.* FROM ChatHistories as chatHistory LEFT JOIN ChatRoomUsers as roomUser ON chatHistory.roomId = roomUser.roomId WHERE roomUser.userId = " + options.userId + " AND chatHistory.createdAt > roomUser.createdAt) as chatHistory ON room.id = chatHistory.roomId " +
                     "LEFT JOIN `Users` as user ON user.id = roomUser.userId " +
                     "WHERE room.isPrivate = TRUE AND roomUser.userId = " + options.userId + " AND roomUser.deletedAt IS NULL " +
-                    "GROUP BY room.id) as v1 " +
-                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, image.folder as folder, image.name as url FROM ChatRoomUsers as roomUser " +
+                    "ORDER BY chatHistory.createdAt DESC) AS a GROUP BY a.roomId ) as v1 " +
+                    "INNER JOIN (SELECT roomUser.roomId as roomId, user.nick as nick, user.id as roomUserId, user.deletedAt as deletedAt, userImages.id as userImageId, image.id as imageId, image.folder as folder, image.dateFolder as dateFolder, image.name as name FROM ChatRoomUsers as roomUser " +
                     "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "LEFT JOIN UserImages as userImages ON userImages.userId = user.id " +
                     "LEFT JOIN Images as image ON image.id = userImages.imageId " +
-                    "WHERE roomUser.userId <> " + options.userId + ") as v2 ON v1.roomId = v2.roomId GROUP BY roomUserId " +
-                    "ORDER BY createdAt DESC";
+                    "WHERE roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId " +
+                    "WHERE v1.updatedAt < " + options.last + " " +
+                    "GROUP BY roomUserId " +
+                    "ORDER BY updatedAt DESC LIMIT " + options.size;
 
-                sequelize.query(query, {
-                    type: sequelize.QueryTypes.SELECT,
-                    raw: true
-                }).then(function (result) {
-                    return result;
-                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
-                    if (data) {
-                        callback(200, data);
+                sequelize.transaction(function (t) {
+                    return sequelize.query(countQuery, {
+                        type: sequelize.QueryTypes.SELECT,
+                        raw: true,
+                        transaction: t
+                    }).then(function (data) {
+
+                        if (data[0].count > 0) {
+                            chatRoom.count = data[0].count;
+
+                            return sequelize.query(query, {
+                                type: sequelize.QueryTypes.SELECT,
+                                raw: true,
+                                transaction: t
+                            });
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+
+                    }).then(function (result) {
+
+                        if (result.length > 0) {
+                            chatRoom.rows = coreUtils.objectify.convert(result, {
+                                user: {
+                                    userImages: [{
+                                        image: {}
+                                    }]
+                                },
+                                chatHistories: [{}]
+                            });
+
+                            return true;
+                        } else {
+                            throw new errorHandler.CustomSequelizeError(404);
+                        }
+                    });
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, chatRoom);
                     }
                 });
 
@@ -151,41 +138,6 @@ module.exports = {
                 var chatRoom;
 
                 sequelize.transaction(function (t) {
-
-                    // return sequelize.models.ChatRoom.findAll({
-                    //     'where': {
-                    //         isPrivate: true
-                    //     },
-                    //     'include': {
-                    //         model: sequelize.models.ChatRoomUser,
-                    //         as: 'roomUsers',
-                    //         paranoid: false,
-                    //         where: {
-                    //             $or: [{
-                    //                 userId: userId
-                    //             }, {
-                    //                 userId: partnerId
-                    //             }]
-                    //         }
-                    //     },
-                    //     'transaction': t
-                    // }).then(function (data) {
-                    //     if (data) {
-                    //         chatRoom = data;
-                    //         for (var i = 0; i < data.roomUsers.length; i++) {
-                    //             var roomUser = data.roomUsers[i];
-                    //             if (roomUser.userId == userId && roomUser.deletedAt !== null) {
-                    //                 roomUser.setDataValue('createdAt', micro.now());
-                    //                 roomUser.setDataValue('deletedAt', null);
-                    //                 return roomUser.save({paranoid: false});
-                    //             }
-                    //         }
-                    //     } else {
-                    //         return true;
-                    //     }
-                    // }).then(function () {
-                    //     return true;
-                    // })
 
                     return sequelize.models.ChatRoomUser.findAll({
                         'where': {
@@ -212,9 +164,17 @@ module.exports = {
                         if (data && data[0]) {
                             chatRoom = data[0].room;
 
-                            data[0].setDataValue('createdAt', micro.now());
-                            data[0].setDataValue('deletedAt', null);
-                            return data[0].save({paranoid: false});
+                            if (data[0].deletedAt != null) {
+                                data[0].setDataValue('createdAt', micro.now());
+                                data[0].setDataValue('deletedAt', null);
+                                return data[0].save({paranoid: false}).then(function () {
+                                    chatRoom.setDataValue('updatedAt', micro.now());
+                                    return chatRoom.save({paranoid: false});
+                                });
+                            } else {
+                                return true;
+                            }
+
                         } else {
 
                             return sequelize.models.ChatRoom.create({
@@ -242,7 +202,7 @@ module.exports = {
 
                             });
                         }
-                    }).then(function (data) {
+                    }).then(function () {
                         return true;
                     })
 

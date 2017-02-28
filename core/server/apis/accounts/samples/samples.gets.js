@@ -11,7 +11,6 @@ gets.validate = function(){
         req.check('size', '400_5').isInt();
         if (req.query.userId !== undefined) req.check('userId', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
-        next();
     };
 };
 
