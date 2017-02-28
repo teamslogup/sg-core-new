@@ -158,9 +158,10 @@ var standards = {
         "deletedUserStoringDay": 10,
         "quiescenceUserPivotDay": 365,
         "modalSize": "lg",
-        "enumAuthType": ["signup", "addPhone"],
+        "enumAuthType": ["signup", "addPhone", "changePhone"],
         "authTypeSingUp": "signup",
-        "authTypeAddPhone": "addPhone"
+        "authTypeAddPhone": "addPhone",
+        "authTypeChangePhone": "changePhone"
     },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.

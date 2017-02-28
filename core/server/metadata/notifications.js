@@ -14,7 +14,7 @@ var notifications = {
     },
     "report": {
         "key": "report",
-        "isStored": false,
+        "isStored": true,
         "isOption": true,
         "boxTitle": "kNotiReportTitle",
         "boxBody": "kNotiReportBody",

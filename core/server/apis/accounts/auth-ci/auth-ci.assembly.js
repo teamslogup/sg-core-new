@@ -18,10 +18,10 @@ var api = {
 
             var params = {
                 acceptable: ['type', 'userId', 'ci', 'di', 'transactionNo', 'name', 'birthYear', 'birthMonth', 'birthDay', 'gender', 'phoneNum'],
-                essential: ['type', 'ci', 'name', 'phoneNum'],
+                essential: ['type', 'ci', 'name', 'birthYear', 'birthMonth', 'birthDay', 'gender', 'phoneNum'],
                 resettable: [],
                 explains: {
-                    'type': 'singup, addPhone',
+                    'type': STD.user.enumAuthType.join(','),
                     'userId': '유저 id',
                     'ci': 'ci 값',
                     'di': 'di 값',
