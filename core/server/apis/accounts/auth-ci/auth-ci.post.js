@@ -69,8 +69,13 @@ post.setParams = function () {
 
         } else if (req.body.type == USER.authTypeAddPhone || req.body.type == USER.authTypeChangePhone) {
 
+            var birth = req.utils.common.makeBirthString(req.body.birthYear, req.body.birthMonth, req.body.birthDay);
+
             req.models.User.updateDataById(req.body.userId, {
                 phoneNum: req.body.phoneNum,
+                name: req.body.name,
+                gender: req.body.gender,
+                birth: birth,
                 ci: req.body.ci,
                 di: req.body.di
             }, function (status, data) {
