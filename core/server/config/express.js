@@ -58,7 +58,7 @@ var sessionSettings = {
     }
 };
 
-if (META.std.flag.isUseRedis) {
+if (CONFIG.flag.isUseRedis) {
     var urlObj = url.parse(CONFIG.db.redis);
     var auth = urlObj.auth;
     var auth = (auth && auth.split(":")) || null;
@@ -153,13 +153,6 @@ module.exports.init = function (sequelize) {
 
     globalVariables.board(app);
 
-    if (process.env.NODE_ENV !== 'production') {
-        app.use(morgan('dev'))
-    } else if (process.env.NODE_ENV === 'production') {
-        //app.use(compress());
-        //app.use(minify());
-    }
-
     app.use(function () {
         return function (req, res, next) {
             req.originalUrl = unescape(req.originalUrl);
@@ -230,7 +223,11 @@ module.exports.init = function (sequelize) {
     app.use(function (req, res, next) {
         var country = req.country;
         req.meta = META;
-        req.meta.std = bridgeUtils.mix(META.std, META.stdLocal[country]);
+        var stdLocal = {};
+        if (META.stdLocal[country]) {
+            stdLocal = META.stdLocal[country];
+        }
+        req.meta.std = bridgeUtils.mix(META.std, stdLocal);
         req.config = CONFIG;
         req.models = models;
         req.sequelize = sequelize;
@@ -242,20 +239,43 @@ module.exports.init = function (sequelize) {
     app.use(sgcSender.connect(CONFIG.sender));
     app.use(sgcSequelizeErrorHandler.connect());
 
-    if (hasAppDir) {
-        app.use(express.static('app/client'));
+    var staticOptions = {};
+    if (process.env.NODE_ENV == 'production') {
+        staticOptions = {
+            // maxage: '2400h'
+        }
+    } else if (process.env.NODE_ENV === 'development') {
+
     }
 
-    app.use(express.static('core/client'));
-    app.use(express.static('dist'));
+    if (hasAppDir) {
+        app.use(express.static('app/client', staticOptions));
+    }
+
+    app.use(express.static('core/client', staticOptions));
+    app.use(express.static('dist', staticOptions));
 
     if (!META.std.flag.isUseS3Bucket) {
-        app.use('/', express.static("uploads"));
+        app.use('/', express.static("uploads", staticOptions));
     }
 
     app.use(passport.initialize());
     app.use(passport.session());
 
+    app.use(morgan(function (tokens, req, res) {
+        return [
+            (req.user && req.user.id) || 'X',
+            (req.user && req.user.nick) || '',
+            tokens['remote-addr'](req, res),
+            tokens['remote-user'](req, res),
+            tokens['date'](req, res),
+            tokens.method(req, res),
+            tokens.url(req, res),
+            JSON.stringify(req.body),
+            tokens.status(req, res),
+            tokens['response-time'](req, res), 'ms'
+        ].join(' ')
+    }));
     // security
 
     app.use(blacklist.blockRequests('blacklist.txt'));

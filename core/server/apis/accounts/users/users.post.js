@@ -53,7 +53,7 @@ post.validate = function () {
         }
 
         if (req.body.nick !== undefined) {
-            req.check('nick', '40400_260_8').len(USER.minNickLength, USER.maxNickLength);
+            req.check('nick', '400_8').len(USER.minNickLength, USER.maxNickLength);
         }
 
         if (req.body.gender !== undefined) req.check('gender', '400_3').isEnum(USER.enumGenders);
@@ -268,7 +268,7 @@ post.createOptionalTerms = function () {
 post.sendEmailAuth = function () {
     return function (req, res, next) {
         var USER = req.meta.std.user;
-        var FLAG = req.meta.std.flag;
+        var FLAG = req.config.flag;
 
         if (req.body.type == USER.signUpTypeEmail && !FLAG.isAutoVerifiedEmail) {
             req.coreUtils.notification.email.signup(req, {}, req.createdUser.auth, req.createdUser, function (status, data) {

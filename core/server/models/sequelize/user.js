@@ -350,7 +350,7 @@ module.exports = {
                     }).then(function (user) {
                         if (!user) {
                             return self.updateAttributes({
-                                isVerifiedEmail: STD.flag.isAutoVerifiedEmail,
+                                isVerifiedEmail: ENV.flag.isAutoVerifiedEmail,
                                 email: email
                             }, {transaction: t}).then(function (user) {
                                 if (!user) {
@@ -359,7 +359,7 @@ module.exports = {
                                 }
                                 updatedUser = user;
 
-                                if (!STD.flag.isAutoVerifiedEmail) {
+                                if (!ENV.flag.isAutoVerifiedEmail) {
                                     return sequelize.models.Auth.upsert({
                                         type: STD.user.authEmailAdding,
                                         key: email,
@@ -386,7 +386,7 @@ module.exports = {
                         }
                     });
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
-                    var isAutoVerifiedEmail = STD.flag.isAutoVerifiedEmail;
+                    var isAutoVerifiedEmail = ENV.flag.isAutoVerifiedEmail;
                     if ((updatedUser && isAutoVerifiedEmail) ||
                         (updatedUser && updatedUser.auth && !isAutoVerifiedEmail)) {
                         callback(200, updatedUser);
@@ -720,7 +720,7 @@ module.exports = {
              * @todo testing
              */
             'createUserWithType': function (data, callback) {
-                data.isVerifiedEmail = STD.flag.isAutoVerifiedEmail;
+                data.isVerifiedEmail = ENV.flag.isAutoVerifiedEmail;
                 if (data.type == STD.user.signUpTypeEmail) {
 
                     delete data.aid;
@@ -891,7 +891,7 @@ module.exports = {
                                 createdAt: MICRO.now(),
                                 updatedAt: MICRO.now()
                             }, {transaction: t}).then(function () {
-                                if (!STD.flag.isAutoVerifiedEmail) {
+                                if (!ENV.flag.isAutoVerifiedEmail) {
                                     var authData = {
                                         type: type,
                                         key: createdUser.email,
@@ -909,7 +909,7 @@ module.exports = {
                         sequelize.models.User.findUserByEmail(createdUser.email, function (status, data) {
                             if (status == 200) {
                                 createdUser = data;
-                                if (!STD.flag.isAutoVerifiedEmail) {
+                                if (!ENV.flag.isAutoVerifiedEmail) {
                                     sequelize.models.Auth.findDataIncluding({
                                         type: type,
                                         key: createdUser.email

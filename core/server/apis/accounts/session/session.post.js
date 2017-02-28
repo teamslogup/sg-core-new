@@ -115,7 +115,7 @@ post.getUser = function () {
 
 post.removeAllSessions = function () {
     return function (req, res, next) {
-        if (req.meta.std.flag.isDuplicatedLogin) {
+        if (req.config.flag.isDuplicatedLogin) {
             next();
         } else {
             req.coreUtils.session.removeAllLoginHistoriesAndSessions(req, req.loadedUser.id, function (status, data) {

@@ -44,7 +44,7 @@ function listenServer (server) {
     if (!server.http && !server.https) {
         console.log("server setting error");
     } else {
-        if (env == 'production' && STD.flag.isUseCluster) {
+        if (env == 'production' && config.flag.isUseCluster) {
             cluster.startCluster(server);
         } else {
             if (server.http) {

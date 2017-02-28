@@ -14,7 +14,7 @@ del.removeEmail = function () {
         if (req.loadedUser.email) {
             req.loadedUser.updateFields({
                 email: null,
-                isVerifiedEmail: req.meta.std.flag.isAutoVerifiedEmail
+                isVerifiedEmail: req.config.flag.isAutoVerifiedEmail
             }, function (status, data) {
                 if (status == 200) {
                     next();

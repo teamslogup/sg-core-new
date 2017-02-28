@@ -11,7 +11,7 @@ var middles = require('./middlewares');
 
 module.exports.init = function (io) {
 
-    if (STD.flag.isUseRedis) {
+    if (CONFIG.flag.isUseRedis) {
         var redisAuth = ["", ""];
         var redisUrl = url.parse(CONFIG.db.socketRedis);
 

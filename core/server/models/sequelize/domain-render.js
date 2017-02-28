@@ -28,6 +28,11 @@ module.exports = {
             'type': Sequelize.ENUM,
             'values': Object.keys(LOCAL.languages),
             'allowNull': false
+        },
+        'country': {
+            'type': Sequelize.ENUM,
+            'values': Object.keys(LOCAL.countries),
+            'allowNull': false
         }
     },
     options: {
