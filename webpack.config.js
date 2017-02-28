@@ -1,4 +1,3 @@
-
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var ngAnnotatePlugin = require('ng-annotate-webpack-plugin');
 
@@ -11,7 +10,10 @@ var pages = fs.readdirSync(pagesPath);
 var entry = {};
 
 pages.forEach(function (page) {
-    entry['sg-'+page] = "./app/client/pages/" + page + "/app." + page + ".module.js"
+    if (page != '.DS_Store') {
+        entry['sg-' + page] = "./app/client/pages/" + page + "/app." + page + ".module.js";
+        entry['sg-' + page + '-core'] = "./app/client/pages/" + page + "/app." + page + "-core.module.js";
+    }
 });
 
 var ENV = process.env.NODE_ENV;
@@ -63,7 +65,7 @@ config.module = {
 };
 
 config.plugins = [
-    new webpack.optimize.CommonsChunkPlugin('sg-lib.js'),
+    // new webpack.optimize.CommonsChunkPlugin('sg-lib.js'),
     new ExtractTextPlugin("[name].css", {
         allChunks: true
     })
