@@ -31,7 +31,7 @@ function sendToS3(file, bucket, folder, callback) {
             Bucket: bucket,
             Key: folder + '/' + bn,
             Body: fileData,
-            ContentType: file.type
+            ContentType: 'text'
         };
 
         s3.putObject(params, function (err, data) {
@@ -55,15 +55,17 @@ module.exports = function () {
 
             if (path.extname(log) === ".gz") {
 
-                var logPath = appRoot + '/' + LOG.folderName + '/' + log;
+                var file = {
+                    path: appRoot + '/' + LOG.folderName + '/' + log
+                };
 
-                sendToS3(logPath, CONFIG.aws.bucketName, LOG.folderName, function (error, data) {
+                sendToS3(file, CONFIG.aws.bucketName, LOG.folderName, function (error, data) {
                     if (error) {
                         logger.e(error.code);
                         console.log('error', error.code);
                     } else {
-                        fs.unlinkSync(logPath);
-                        console.log('deleted', logPath);
+                        fs.unlinkSync(file.path);
+                        console.log('deleted', file.path);
                     }
                 });
             }
