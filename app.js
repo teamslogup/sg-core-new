@@ -13,6 +13,7 @@ var initializeDatabase = require('./bridge/config/initialize-database');
 var https = require('./core/server/config/https');
 var socketIo = require('./core/server/config/socket-io');
 var cluster = require('./core/server/config/cluster');
+var log = require('./core/server/config/log');
 var passport = require('./core/server/config/passport');
 var sequelize = require('./core/server/config/sequelize');
 var models = require('./bridge/models/sequelize');
@@ -29,6 +30,7 @@ var app = express(sequelize);
 var server = https(app);
 server = socketIo(server, app);
 
+log();
 passport();
 
 console.log('database info : ', config.db);

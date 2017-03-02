@@ -78,6 +78,7 @@
     "connect-flash": "*",
     "connect-redis": "*",
     "cookie-parser": "*",
+    "cron": "^1.2.1",
     "ejs": "*",
     "ejs-locals": "*",
     "express": "*",
