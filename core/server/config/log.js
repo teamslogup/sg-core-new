@@ -6,7 +6,7 @@ var path = require('path');
 var fs = require('fs');
 var appRoot = require('app-root-path');
 
-var cron = require('cron');
+var cron = require('node-cron');
 var AWS = require('aws-sdk');
 AWS.config.update({
     accessKeyId: CONFIG.aws.accessKeyId,
@@ -47,7 +47,7 @@ function sendToS3(file, bucket, folder, callback) {
 }
 
 module.exports = function () {
-    new cron.CronJob('*/10 * * * * *', function () {
+    cron.schedule('*/10 * * * * *', function () {
 
         var logs = fs.readdirSync(appRoot + '/' + LOG.folderName);
 
@@ -62,7 +62,7 @@ module.exports = function () {
                         logger.e(error.code);
                         console.log('error', error.code);
                     } else {
-                        // fs.unlinkSync(logPath);
+                        fs.unlinkSync(logPath);
                         console.log('deleted', logPath);
                     }
                 });
