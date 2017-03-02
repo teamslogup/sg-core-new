@@ -1,4 +1,6 @@
 var CONFIG = require('../../../bridge/config/env');
+var META = require('../../../bridge/metadata');
+var LOG = META.std.log;
 
 var path = require('path');
 var fs = require('fs');
@@ -47,17 +49,15 @@ function sendToS3(file, bucket, folder, callback) {
 module.exports = function () {
     new cron.CronJob('*/10 * * * * *', function () {
 
-        var logFolderName = 'logs';
-
-        var logs = fs.readdirSync(appRoot + '/' + logFolderName);
+        var logs = fs.readdirSync(appRoot + '/' + LOG.folderName);
 
         logs.forEach(function (log) {
 
             if (path.extname(log) === ".gz") {
 
-                var logPath = appRoot + '/' + logFolderName + '/' + log;
+                var logPath = appRoot + '/' + LOG.folderName + '/' + log;
 
-                sendToS3(logPath, CONFIG.aws.bucketName, logFolderName, function (error, data) {
+                sendToS3(logPath, CONFIG.aws.bucketName, LOG.folderName, function (error, data) {
                     if (error) {
                         logger.e(error.code);
                         console.log('error', error.code);
@@ -66,10 +66,7 @@ module.exports = function () {
                         console.log('deleted', logPath);
                     }
                 });
-
             }
-
         });
-
     });
 };
