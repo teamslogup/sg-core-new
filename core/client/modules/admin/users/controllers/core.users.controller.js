@@ -30,6 +30,7 @@ export default function UsersCtrl($scope, $rootScope, $uibModal, $filter, usersM
 
     $scope.deleteUser = deleteUser;
 
+    $scope.findUsers = findUsers;
     $scope.findUsersMore = findUsersMore;
 
     var LOADING = metaManager.std.loading;
