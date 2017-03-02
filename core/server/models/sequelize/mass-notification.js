@@ -31,10 +31,15 @@ module.exports = {
             'allowNull': false,
             'defaultValue': STD.notification.sendTypeEmail
         },
+        'sendMethod': {
+            'type': Sequelize.ENUM,
+            'values': STD.notification.enumSendMethods,
+            'allowNull': true
+        },
         'isStored': {
             'type': Sequelize.BOOLEAN,
             'allowNull': false,
-            'defaultValue': true,
+            'defaultValue': false,
             'comment': "formApplication form일때 notification-box에 저장할 지 여부"
         },
         'title': {
@@ -65,6 +70,15 @@ module.exports = {
             'defaultValue': STD.notification.defaultCount,
             'allowNull': false
         },
+        'progress': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultProgress,
+            'allowNull': false
+        },
+        'errorCode': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
         'createdAt': {
             'type': Sequelize.BIGINT,
             'allowNull': true
@@ -89,11 +103,17 @@ module.exports = {
             name: 'sendType',
             fields: ['sendType']
         }, {
+            name: 'sendMethod',
+            fields: ['sendMethod']
+        }, {
             name: 'isStored',
             fields: ['isStored']
         }, {
             name: 'createdAt',
             fields: ['createdAt']
+        }, {
+            name: 'errorCode',
+            fields: ['errorCode']
         }],
         'timestamps': true,
         'charset': 'utf8',
@@ -107,6 +127,74 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
+            "getIncludeMassNotification": function () {
+                return [{
+                    "model": sequelize.models.MassNotificationImportHistory,
+                    "as": "massNotificationImportHistory"
+                }];
+            },
+            "createMassNotification": function (massNotification, callback) {
+                var createdData = null;
+
+                function createMassNotification (t) {
+                    return sequelize.models.MassNotification.create(massNotification, {
+                        include: sequelize.models.MassNotification.getIncludeMassNotification(),
+                        transaction: t
+                    }).then(function (data) {
+                        createdData = data;
+                        return {
+                            status: 201
+                        };
+                    });
+                }
+
+                function deleteAllMassNotificationPhoneNum (t) {
+                    var query = 'DELETE FROM MassNotificationPhoneNums';
+                    return sequelize.query(query, {
+                        transaction: t
+                    }).then(function () {
+                        var query = 'ALTER TABLE MassNotificationPhoneNums AUTO_INCREMENT = 1';
+                        return sequelize.query(query, {
+                            transaction: t
+                        }).then(function () {
+                            return createMassNotification(t);
+                        });
+                    });
+                }
+
+                function checkCanCreateMassNotification (t) {
+                    return sequelize.models.MassNotification.count({
+                        where: {
+                            progress: {
+                                "lt": 100
+                            },
+                            errorCode: null
+                        },
+                        transaction: t
+                    }).then(function (data) {
+                        if (data > 0) {
+                            return {
+                                status: 400,
+                                code: "400_65"
+                            };
+                        } else {
+                            return deleteAllMassNotificationPhoneNum(t);
+                        }
+                    });
+                }
+
+                sequelize.transaction(function (t) {
+                    return checkCanCreateMassNotification(t);
+                }).catch(errorHandler.catchCallback(callback)).done(function (data) {
+                    if (data.status == 201) {
+                        callback(201, createdData);
+                    } else if (data.status == 400) {
+                        callback(400, {
+                            code: data.code
+                        });
+                    }
+                });
+            },
             "findMassNotificationsByOptions": function (options, callback) {
                 var count = 0;
                 var foundData = [];

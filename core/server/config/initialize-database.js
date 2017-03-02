@@ -9,7 +9,15 @@ module.exports = function (callback) {
             coreUtils.initialization.initMobileVersion(function (status, data) {
 
                 if (status == 204) {
-                    return callback();
+
+                    coreUtils.initialization.initMassNotification(function (status, data) {
+                        if (status == 204) {
+                            return callback();
+                        } else {
+                            console.log(status, data);
+                        }
+                    });
+
                 } else {
                     console.log(status, data);
                 }
