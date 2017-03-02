@@ -29,6 +29,8 @@ var MassNotification = require('./mass-notification');
 var AuthCi = require('./auth-ci');
 var MobileVersion = require('./mobile-version');
 var DomainRender = require('./domain-render');
+var MassNotificationImportHistory = require('./mass-notification-import-history');
+var MassNotificationPhoneNum = require('./mass-notification-phone-num');
 
 var models = {
     User: User,
@@ -60,7 +62,9 @@ var models = {
     LoginCount: LoginCount,
     MassNotification: MassNotification,
     MobileVersion: MobileVersion,
-    DomainRender: DomainRender
+    DomainRender: DomainRender,
+    MassNotificationImportHistory: MassNotificationImportHistory,
+    MassNotificationPhoneNum: MassNotificationPhoneNum
 };
 
 module.exports = models;

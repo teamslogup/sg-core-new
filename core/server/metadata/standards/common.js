@@ -41,6 +41,10 @@ var standards = {
         "sendTypeEmail": "email",
         "sendTypePush": "push",
         "sendTypeMessage": "message",
+        "enumSendMethods": ["sms", "lms", "mms"],
+        "sendMethodSms": "sms",
+        "sendMethodLms": "lms",
+        "sendMethodMms": "mms",
         "maxKeyLength": 100,
         "minKeyLength": 1,
         "maxTitleLength": 60,
@@ -57,7 +61,14 @@ var standards = {
         "enumOrderBys": ["createdAt", "updatedAt"],
         "defaultOrderBy": "createdAt",
         "bodyDataType": "long",
-        "defaultCount": 0
+        "defaultCount": 0,
+        "defaultProgress": 0,
+        "wrongPhoneNum": "wrongPhoneNum",
+        "minMmsTitleLength": 1,
+        "maxMmsTitleLength": 30
+    },
+    "massNotificationImportHistory": {
+        "maxRawSize": 2000
     },
     "notificationBox": {
         "defaultLoadingLength": 8,
@@ -297,10 +308,10 @@ var standards = {
     },
     "file": {
         "enumFolders": ["images", "audios", "videos", "etc"],
-        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat", "ck"],
+        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat", "ck", "notification"],
         "enumAudioFolders": [],
         "enumVideoFolders": [],
-        "enumEtcFolders": [],
+        "enumEtcFolders": ["notification", "message"],
         "folderEtc": "etc",
         "folderImages": "images",
         "folderAudios": "audios",
@@ -312,8 +323,11 @@ var standards = {
         "folderBg": "bg",
         "folderChat": "chat",
         "folderCk": "ck",
+        "folderNotification": "notification",
+        "folderMessage": "message",
         "minCount": 1,
         "maxCount": 20,
+        "enumValidCsvExtensions": ["csv", "CSV"],
         "enumValidAudioExtensions": ["3GP", "AIFF", "AAC", "ALAC", "AMR", "ATRAC", "AU", "AWB", "dvf", "flac", "mmf", "mp3", "Mpc", "msv", "ogg", "Opus", "TTA", "VOX", "WAV", "wma"],
         "enumValidImageExtensions": ["jpg", "jpeg", "png", "gif"],
         "enumValidVideoExtensions": ["mp4", "mkv", "avi", "wmv", "flv", "ogv", "m4p", "m4v", "yuv", "mov"],
