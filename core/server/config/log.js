@@ -49,7 +49,7 @@ function sendToS3(file, bucket, folder, callback) {
 module.exports = function () {
     cron.schedule('*/10 * * * * *', function () {
 
-        var logRotateLogPath = appRoot + '../.pm2/logs';
+        var logRotateLogPath = appRoot + '/../.pm2/logs';
         var logPath = appRoot + '/' + LOG.folderName;
 
         var logRotateLogs = fs.readdirSync(logRotateLogPath);
