@@ -8,7 +8,7 @@ put.validate = function () {
         var USER = req.meta.std.user;
         var MAGIC = req.meta.std.magic;
 
-        if(req.body.imageIds !== MAGIC.reset) {
+        if (req.body.imageIds !== MAGIC.reset) {
             req.check('imageIds', '400_12').isNumberIds(USER.maxImageCount);
         }
         if (req.body.imageIdsToBeDeleted !== undefined) req.check('imageIdsToBeDeleted', '400_12').isNumberIds(USER.maxImageCount);
@@ -41,7 +41,8 @@ put.update = function () {
     };
 };
 
-put.findImagesToBeDeleted = function () {
+/**
+ put.findImagesToBeDeleted = function () {
     return function (req, res, next) {
         var FILE = req.meta.std.file;
 
@@ -50,14 +51,8 @@ put.findImagesToBeDeleted = function () {
 
             req.models.Image.findImagesByIds(imageIdsToBeDeleted, req.user, function (status, data) {
                 if (status == 200) {
-                    req.body.files = [];
-                    req.body.folder = FILE.folderPost;
-                    for (var j = 0; j < data.length; j++) {
-                        for (var i = 0; i < FILE.enumPrefixes.length; i++) {
-                            req.body.files.push(FILE.enumPrefixes[i] + data[j].name);
-                        }
-                        req.body.files.push(data[j].name);
-                    }
+
+                    req.coreUtils.file.setRemoveFiles(req, data, FILE.folderImages, FILE.enumPrefixes);
                 }
                 //왜 에러 리턴 안하지?
                 next();
@@ -67,6 +62,7 @@ put.findImagesToBeDeleted = function () {
         }
     };
 };
+ **/
 
 put.supplement = function () {
     return function (req, res, next) {
