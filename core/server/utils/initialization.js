@@ -28,6 +28,28 @@ module.exports = {
             });
         }
     },
+    initMassNotification: function (callback) {
+        sequelize.transaction(function (t) {
+            console.log("initMassNotifications");
+            return sequelize.models.MassNotification.update({
+                errorCode: "400_64"
+            }, {
+                where: {
+                    progress: {
+                        "lt": 100
+                    },
+                    errorCode: null
+                },
+                transaction: t
+            }).then(function () {
+                return true;
+            });
+        }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+            if (isSuccess) {
+                callback(204);
+            }
+        });
+    },
     initMobileVersion: function (callback) {
 
         sequelize.transaction(function (t) {

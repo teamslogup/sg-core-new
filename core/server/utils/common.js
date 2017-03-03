@@ -1,6 +1,10 @@
 var META = require('../../../bridge/metadata/index');
 var CODES = META.codes;
 var fs = require('fs');
+var path = require('path');
+var async = require('async');
+var Logger = require('sg-logger');
+var logger = new Logger(__filename);
 
 module.exports = {
     getAPIParams: function (url, method) {
@@ -151,5 +155,82 @@ module.exports = {
         } else {
             return null;
         }
+    },
+    sendToS3: function (file, folder, callback) {
+        var config = require('../../../bridge/config/env');
+        var AWS = require('aws-sdk');
+        AWS.config.update({
+            accessKeyId: config.aws.accessKeyId,
+            secretAccessKey: config.aws.secretAccessKey,
+            region: config.aws.region
+        });
+        var s3 = new AWS.S3();
+        var bucket = config.aws.bucketName;
+
+        fs.readFile(file.path, function (err, fileData) {
+
+            if (err) {
+                return callback(500, {code: '500_4'});
+            }
+            var bn = path.basename(file.path);
+            var params = {
+                Bucket: bucket,
+                Key: folder + '/' + bn,
+                Body: fileData,
+                ContentType: file.type
+            };
+
+            s3.putObject(params, function (err, data) {
+
+                if (err) {
+                    logger.e(err);
+                    return callback(500, {code: '500_5'});
+                } else {
+                    fs.unlink(file.path, function (err) {
+                        if (err) {
+                            console.log("delete local file fail: ", err);
+                        }
+                    });
+                }
+                callback(200, data);
+
+            });
+        });
+    },
+    removeLocalFiles: function (files, callback) {
+        if (files && files.length) {
+            var funcs = [];
+            for (var i=0; i<files.length; i++) {
+                (function (file) {
+                    funcs.push(function (n) {
+                        fs.unlink(file.path, function (err) {
+                            if (err) {
+                                n(err, null);
+                            } else {
+                                n(null, true);
+                            }
+                        });
+                    });
+                })(files[i]);
+            }
+            async.parallel(funcs, function (err, results) {
+                if (err) {
+                    callback(400, {code: err});
+                } else {
+                    callback(204);
+                }
+            });
+        } else {
+            callback(204);
+        }
+    },
+    moveFileDir: function (originPath, filePath, callback) {
+        fs.rename(originPath, filePath, function (err) {
+            if (err) {
+                callback(400, {code: err});
+            } else {
+                callback(204);
+            }
+        });
     }
 };

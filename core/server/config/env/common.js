@@ -48,6 +48,16 @@ module.exports = {
         "bucketName": ""
     },
     "sender": {
+        "infobankSMS": {
+            "senderName": "slogup",
+            "serviceId": "",
+            "servicePw": "",
+            "from": "",
+            "mmsSendUrl": "",
+            "tokenUrl": "",
+            "imageUploadUrl": "",
+            "mmsUse": "false"
+        },
         "apiStoreSMS": {
             "senderName": "slogup",
             "token": "",

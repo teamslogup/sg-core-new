@@ -1,5 +1,8 @@
 var meta = require('../../../bridge/metadata');
 var path = require('path');
+var fs = require('fs');
+var json2csv = require('json2csv');
+var async = require('async');
 
 var STD = require('../../../bridge/metadata/standards');
 var CONFIG = require('../../../bridge/config/env');
@@ -18,6 +21,14 @@ var errorHandler = require('sg-sequelize-error-handler');
 var NOTIFICATION = STD.notification;
 var NOTIFICATIONS = require('../../../bridge/metadata/notifications');
 var LANGUAGES = require('../../../bridge/metadata/languages');
+
+var changeExp = /[\r\n\s!@#$&%^*()\-=+\\\|\[\]{};:\'`"~,.<>\/?]/g;
+
+var correctPhoneNum = new RegExp("^[+]{1}821[016789]{1}[0-9]{7,8}$");
+var phoneNum1 = new RegExp("^1[016789]{1}[0-9]{7,8}$");
+var phoneNum2 = new RegExp("^821[016789]{1}[0-9]{7,8}$");
+var phoneNum3 = new RegExp("^8201[016789]{1}[0-9]{7,8}$");
+var phoneNum4 = new RegExp("^01[016789]{1}[0-9]{7,8}$");
 
 function makeAuthEmailUrl(redirects, auth) {
     return url + auth.token + "&type=" + auth.type + "&successRedirect=" + (redirects.successRedirect || "") + "&errorRedirect=" + (redirects.errorRedirect || "");
@@ -375,6 +386,161 @@ module.exports = {
             else {
                 callback(204);
             }
+        }
+    },
+    massNotification: {
+        message: {
+            returnPhoneNum: function (phoneNum) {
+                var temp = phoneNum + '';
+                temp = temp.replace(changeExp, '');
+
+                if (phoneNum1.test(temp)) {
+                    temp = '+82' + temp;
+                }
+
+                if (phoneNum2.test(temp)) {
+                    temp = temp.replace('82', '+82');
+                }
+
+                if (phoneNum3.test(temp)) {
+                    temp = temp.replace('820', '+82');
+                }
+
+                if (phoneNum4.test(temp)) {
+                    temp = temp.replace('01', '+821');
+                }
+
+                if (correctPhoneNum.test(temp)) {
+                    return temp;
+                } else {
+                    return STD.notification.wrongPhoneNum;
+                }
+            },
+            sendAll: function (req, array, file, callback) {
+                var _this = this;
+
+                var LOCAL = req.meta.std.local;
+                var FILE = req.meta.std.file;
+                var failArray = [];
+                var funcs = [];
+                var messageFilePath = LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.folderMessage + '/' + req.massNotification.id + '.csv';
+
+                for (var i=0; i<array.length; i++) {
+                    (function (currentTime) {
+                        funcs.push(function (subCallback) {
+                            _this.sendMessage(req, array[currentTime].phoneNum, array[currentTime].message, function (status, data) {
+                                if (status == 200) {
+                                    try {
+                                        var message = array[currentTime].phoneNum + ',' + JSON.parse(data).cmid;
+                                        fs.appendFile('./' + messageFilePath, message, function (err) {
+                                            if (err) {
+                                                console.log(err);
+                                            }
+                                        });
+                                    } catch (err) {
+
+                                    }
+                                } else if (status == 204) {
+                                    /**
+                                     * no send noti, no callback
+                                     */
+                                } else {
+                                    var errorMessage = "unexpected error";
+                                    if (data instanceof Object && data.message) {
+                                        errorMessage = data.message;
+                                    } else if (data instanceof String) {
+                                        errorMessage = data;
+                                    }
+                                    console.log("send message fail:", array[currentTime].phoneNum, errorMessage);
+                                    failArray.push({
+                                        phoneNum: array[currentTime].phoneNum,
+                                        errorCode: errorMessage
+                                    });
+                                }
+                                subCallback(null, true);
+                            }, file);
+                        });
+                    })(i);
+                }
+
+                async.series(funcs, function (errorCode, results) {
+                    callback(failArray);
+                });
+            },
+            sendMessage: function (req, phoneNum, message, callback, file) {
+                var _this = this;
+                var from = null;
+
+                // if (req.user.phoneNum) {
+                //     from = req.user.phoneNum;
+                // }
+
+                if (req.body.sendMethod == req.meta.std.notification.sendMethodMms) {
+                    _this.sendMms(req, from, phoneNum, message, file, callback);
+                } else {
+                    _this.sendSms(req, from, phoneNum, message, callback);
+                }
+            },
+            sendMms: function (req, from, phoneNum, message, file, callback) {
+                if (req.sendNoti.mms) {
+                    var title = '';
+                    if (req.body.mmsTitle !== undefined) {
+                        title = req.body.mmsTitle;
+                    }
+                    req.sendNoti.mms(from, phoneNum, title, message, file, function (err, body) {
+                        if (err) {
+                            callback(err.status, req.phoneErrorRefiner(err));
+                        } else {
+                            callback(200, body);
+                        }
+                    });
+                } else {
+                    callback(204);
+                }
+            },
+            sendSms: function (req, from, phoneNum, message, callback) {
+                if (req.sendNoti.sms) {
+                    var title = '';
+                    if (req.body.mmsTitle !== undefined) {
+                        title = req.body.mmsTitle;
+                    }
+                    req.sendNoti.sms(from, phoneNum, title, message, function (err, body) {
+                        if (err) {
+                            callback(err.status, req.phoneErrorRefiner(err));
+                        } else {
+                            callback(200, body);
+                        }
+                    });
+                } else {
+                    callback(204);
+                }
+            }
+        },
+        import: {
+            writeSplitFile: function (data, currentTime, field, splitFilePath, successCallback, failCallback) {
+                json2csv({
+                    data: data,
+                    field: field
+                }, function (err, csvString) {
+                    if (err) {
+                        if (failCallback) {
+                            failCallback('400_69');
+                        }
+                    } else {
+                        fs.writeFile('./' + splitFilePath, csvString, function (err) {
+                            if (err) {
+                                if (failCallback) {
+                                    failCallback('400_70');
+                                }
+                            } else {
+                                if (successCallback) {
+                                    successCallback();
+                                }
+                            }
+                        });
+                    }
+                });
+            },
         }
     }
 };
