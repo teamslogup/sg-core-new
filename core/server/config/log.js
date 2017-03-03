@@ -49,14 +49,18 @@ function sendToS3(file, bucket, folder, callback) {
 module.exports = function () {
     cron.schedule('*/10 * * * * *', function () {
 
-        var logs = fs.readdirSync(appRoot + '/' + LOG.folderName);
+        var logRotateLogPath = appRoot + '../.pm2/logs';
+        var logPath = appRoot + '/' + LOG.folderName;
+
+        var logRotateLogs = fs.readdirSync(logRotateLogPath);
+        var logs = fs.readdirSync(logPath);
 
         logs.forEach(function (log) {
 
             if (path.extname(log) === ".gz") {
 
                 var file = {
-                    path: appRoot + '/' + LOG.folderName + '/' + log
+                    path: logPath + '/' + log
                 };
 
                 sendToS3(file, CONFIG.aws.bucketName, LOG.folderName, function (error, data) {
@@ -70,5 +74,12 @@ module.exports = function () {
                 });
             }
         });
+
+        logRotateLogs.forEach(function (logRotateLog) {
+            if (path.extname(logRotateLog) === ".gz") {
+                fs.unlinkSync(logRotateLogPath + '/' + logRotateLog);
+            }
+        });
+
     });
 };
