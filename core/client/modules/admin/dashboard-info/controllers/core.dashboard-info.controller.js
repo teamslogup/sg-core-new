@@ -17,6 +17,7 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
 
     function findDashboardInfo() {
         loadingHandler.startLoading(LOADING.spinnerKey, 'findDashboardInfo');
+
         dashboardInfoManager.findDashboardInfo({}, function (status, data) {
             if (status == 200) {
                 $scope.dashboardInfo = data;

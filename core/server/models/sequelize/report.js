@@ -168,13 +168,15 @@ module.exports = {
             'findReportById': function (id, callback) {
                 sequelize.models.Report.findDataById(id, callback);
             },
-            'getReportsStatus': function (callback) {
+            'getReportsStatus': function (timeZoneOffset, year, month, day, callback) {
 
                 //오늘 날짜 구하기
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = today.getMonth() + 1;
-                var day = today.getDate();
+                // var today = new Date();
+                // var year = today.getFullYear();
+                // var month = today.getMonth() + 1;
+                // var day = today.getDate();
+                //
+                // var timeZoneOffset = '+09:00';
 
                 var reportsStatus = {};
 
@@ -198,9 +200,9 @@ module.exports = {
                         reportsStatus.solved = reportsSolved;
 
                         var query = 'SELECT count(day) as count FROM (SELECT ' +
-                            'YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, ' +
-                            'MONTH(FROM_UNIXTIME(createdAt/1000000)) as month, ' +
-                            'DAY(FROM_UNIXTIME(createdAt/1000000)) as day FROM Reports) as Reports ' +
+                            'YEAR(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, ' +
+                            'MONTH(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month, ' +
+                            'DAY(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as day FROM Reports) as Reports ' +
                             'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
 
                         return sequelize.query(query, {
@@ -212,9 +214,9 @@ module.exports = {
                         reportsStatus.reportsToday = data[0].count;
 
                         var query = 'SELECT count(day) as count FROM (SELECT ' +
-                            'YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, ' +
-                            'MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month, ' +
-                            'DAY(FROM_UNIXTIME(solvedAt/1000000)) as day FROM Reports) as Reports ' +
+                            'YEAR(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, ' +
+                            'MONTH(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month, ' +
+                            'DAY(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as day FROM Reports) as Reports ' +
                             'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
 
                         return sequelize.query(query, {
@@ -234,13 +236,13 @@ module.exports = {
                 });
 
             },
-            'getReportsStatusByMonth': function (callback) {
+            'getReportsStatusByMonth': function (timeZoneOffset, year, month, day, callback) {
 
                 var monthKey = '_month';
 
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = today.getMonth() + 1;
+                // var today = new Date();
+                // var year = today.getFullYear();
+                // var month = today.getMonth() + 1;
 
                 var thisYearMonths = [];
                 var lastYearMonths = [];
@@ -295,11 +297,11 @@ module.exports = {
 
                     if (lastYearMonths.length == 0) {
                         query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Reports) as ReportsByMonth ' +
+                            '(SELECT YEAR(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month FROM Reports) as ReportsByMonth ' +
                             'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY ReportsByMonth.month ';
                     } else {
                         query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Reports) as ReportsByMonth ' +
+                            '(SELECT YEAR(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month FROM Reports) as ReportsByMonth ' +
                             'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY ReportsByMonth.month ';
                     }
 
@@ -312,11 +314,11 @@ module.exports = {
 
                         if (lastYearMonths.length == 0) {
                             query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                                '(SELECT YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
+                                '(SELECT YEAR(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
                                 'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY ReportsByMonth.month ';
                         } else {
                             query = 'SELECT ReportsByMonth.month, count(ReportsByMonth.month) as count FROM ' +
-                                '(SELECT YEAR(FROM_UNIXTIME(solvedAt/1000000)) as year, MONTH(FROM_UNIXTIME(solvedAt/1000000)) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
+                                '(SELECT YEAR(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(FROM_UNIXTIME(solvedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month FROM Reports WHERE solvedAt IS NOT NULL) as ReportsByMonth ' +
                                 'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY ReportsByMonth.month ';
                         }
 

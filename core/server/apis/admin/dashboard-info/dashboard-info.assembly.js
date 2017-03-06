@@ -21,10 +21,14 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: [],
-                essential: [],
+                acceptable: ['timeZoneOffset', 'year', 'month', 'day'],
+                essential: ['timeZoneOffset', 'year', 'month', 'day'],
                 resettable: [],
                 explains: {
+                    'timeZoneOffset': 'ex) +09:00',
+                    'year': 'ex) 1992',
+                    'month': 'ex) 03',
+                    'day': 'ex) 12'
                 },
                 response: {},
                 title: '단일 얻기',
@@ -42,6 +46,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(get.validate());
+                apiCreator.add(get.parseTimeZoneOffset());
                 apiCreator.add(get.getUsersStatus());
                 apiCreator.add(get.getUsersStatusByMonth());
                 apiCreator.add(get.getUserAgeGroup());
