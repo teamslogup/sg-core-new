@@ -9,7 +9,7 @@ module.exports = function (server, app) {
 
     var io;
 
-    if (STD.flag.isUseChat) {
+    if (CONFIG.flag.isUseChat) {
         // var http = require('http').Server(app);
         io = require('socket.io')(server.http);
 
