@@ -49,7 +49,7 @@ module.exports = {
         "bucketName": ""
     },
     "sender": {
-        "infobankSMS": {
+        "infoBankSMS": {
             "senderName": "slogup",
             "serviceId": "",
             "servicePw": "",
