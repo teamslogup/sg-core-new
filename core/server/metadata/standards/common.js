@@ -400,11 +400,6 @@ var standards = {
         "minEmailLength": 1,
         "maxEmailLength": 100
     },
-    "dashboardInfo": {
-        "minMonthArrayLength": 1,
-        "maxMonthArrayLength": 10,
-        "defaultMonthsLength": 5
-    },
     "dialog": {
         "isUseAnimation": true
     },

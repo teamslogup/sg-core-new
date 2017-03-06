@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
                                 <div class="sg-dashboard-chart-top-status-total-body">
-                                    {{dashboardInfo.usersStatus.usersTotal | numbers}}
+                                    {{dashboardInfo.usersStatus.usersTotal - dashboardInfo.usersStatus.usersDeletedTotal  | numbers}}
                                 </div>
                             </div>
                         </div>
@@ -223,8 +223,7 @@
                                          style="color: #ffb4b4">
                                         <div class="sg-dashboard-chart-top-sign-up-status-body-left-table">
                                             <div class="sg-dashboard-chart-top-sign-up-status-body-left-ratio">
-                                                {{dashboardInfo.usersStatus.usersDeletedTotal/dashboardInfo.usersStatus.usersTotal
-                                                * 100 | roundUp}}<span>%</span>
+                                                {{dashboardInfo.usersStatus.usersDeletedTotal/dashboardInfo.usersStatus.usersTotal * 100 | roundUp}}<span>%</span>
                                             </div>
                                             <div class="sg-dashboard-chart-top-sign-up-status-body-left-text">
                                                 탈퇴율
@@ -368,8 +367,7 @@
                                          style="color: #71ffe9">
                                         <div class="sg-dashboard-chart-top-sign-up-status-body-left-table">
                                             <div class="sg-dashboard-chart-top-sign-up-status-body-left-ratio">
-                                                {{dashboardInfo.reportsStatus.solved/dashboardInfo.reportsStatus.total
-                                                * 100 | roundUp}}<span>%</span>
+                                                {{dashboardInfo.reportsStatus.solved/dashboardInfo.reportsStatus.total * 100 | roundUp}}<span>%</span>
                                             </div>
                                             <div class="sg-dashboard-chart-top-sign-up-status-body-left-text">
                                                 총 답변율

@@ -1339,13 +1339,15 @@ module.exports = {
                     }
                 });
             },
-            'getUsersStatus': function (callback) {
+            'getUsersStatus': function (timeZoneOffset, year, month, day, callback) {
 
                 //오늘 날짜 구하기
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = today.getMonth() + 1;
-                var day = today.getDate();
+                // var today = new Date();
+                // var year = today.getFullYear();
+                // var month = today.getMonth() + 1;
+                // var day = today.getDate();
+
+                // var timeZoneOffset = '+09:00';
 
                 var usersStatus = {};
 
@@ -1371,9 +1373,9 @@ module.exports = {
                         usersStatus.usersDeletedTotal = usersDeleted;
 
                         var query = 'SELECT count(day) as count FROM (SELECT ' +
-                            'YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, ' +
-                            'MONTH(FROM_UNIXTIME(createdAt/1000000)) as month, ' +
-                            'DAY(FROM_UNIXTIME(createdAt/1000000)) as day FROM Users) as Users ' +
+                            'YEAR(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, ' +
+                            'MONTH(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month, ' +
+                            'DAY(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as day FROM Users) as Users ' +
                             'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
 
                         return sequelize.query(query, {
@@ -1392,9 +1394,9 @@ module.exports = {
                         usersStatus.loginTotal = count;
 
                         var query = 'SELECT count(day) as count FROM (SELECT ' +
-                            'YEAR(FROM_UNIXTIME(updatedAt/1000000)) as year, ' +
-                            'MONTH(FROM_UNIXTIME(updatedAt/1000000)) as month, ' +
-                            'DAY(FROM_UNIXTIME(updatedAt/1000000)) as day FROM LoginHistories) as LoginHistories ' +
+                            'YEAR(CONVERT_TZ(FROM_UNIXTIME(updatedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, ' +
+                            'MONTH(CONVERT_TZ(FROM_UNIXTIME(updatedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month, ' +
+                            'DAY(CONVERT_TZ(FROM_UNIXTIME(updatedAt/1000000),"+00:00", "' + timeZoneOffset + '")) as day FROM LoginHistories) as LoginHistories ' +
                             'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
 
                         return sequelize.query(query, {
@@ -1415,13 +1417,13 @@ module.exports = {
                 });
 
             },
-            'getUsersStatusByMonth': function (callback) {
+            'getUsersStatusByMonth': function (timeZoneOffset, year, month, day, callback) {
 
                 var monthKey = '_month';
 
-                var today = new Date();
-                var year = today.getFullYear();
-                var month = today.getMonth() + 1;
+                // var today = new Date();
+                // var year = today.getFullYear();
+                // var month = today.getMonth() + 1;
 
                 var thisYearMonths = [];
                 var lastYearMonths = [];
@@ -1476,11 +1478,11 @@ module.exports = {
 
                     if (lastYearMonths.length == 0) {
                         query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                            '(SELECT YEAR(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month FROM Users) as UsersByMonth ' +
                             'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY UsersByMonth.month ';
                     } else {
                         query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                            '(SELECT YEAR(FROM_UNIXTIME(createdAt/1000000)) as year, MONTH(FROM_UNIXTIME(createdAt/1000000)) as month FROM Users) as UsersByMonth ' +
+                            '(SELECT YEAR(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(FROM_UNIXTIME(createdAt/1000000),"+00:00", "' + timeZoneOffset + '")) as month FROM Users) as UsersByMonth ' +
                             'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY UsersByMonth.month ';
                     }
 
@@ -1494,11 +1496,11 @@ module.exports = {
 
                         if (lastYearMonths.length == 0) {
                             query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                                '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                                '(SELECT YEAR(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as month FROM Users) as UsersByMonth ' +
                                 'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') GROUP BY UsersByMonth.month ';
                         } else {
                             query = 'SELECT UsersByMonth.month, count(UsersByMonth.month) as count FROM ' +
-                                '(SELECT YEAR(deletedAt) as year, MONTH(deletedAt) as month FROM Users) as UsersByMonth ' +
+                                '(SELECT YEAR(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as year, MONTH(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as month FROM Users) as UsersByMonth ' +
                                 'WHERE year = ' + thisYear + ' AND month IN ( + ' + thisYearMonths + ') OR year = ' + lastYear + ' AND month IN ( + ' + lastYearMonths + ') GROUP BY UsersByMonth.month ';
                         }
 
@@ -1527,12 +1529,12 @@ module.exports = {
                 });
 
             },
-            'getUserAgeGroup': function (callback) {
+            'getUserAgeGroup': function (timeZoneOffset, callback) {
 
                 var usersAgeGroup = {};
 
                 sequelize.transaction(function (t) {
-                    var query = "SELECT FLOOR((YEAR(NOW()) - YEAR(Users.birth) + 1)/10)*10 as ageGroup, COUNT(*) as count FROM Users GROUP BY ageGroup";
+                    var query = 'SELECT FLOOR((YEAR(CONVERT_TZ(NOW(),"+00:00", "' + timeZoneOffset + '")) - YEAR(CONVERT_TZ(Users.birth,"+00:00", "' + timeZoneOffset + '")) + 1)/10)*10 as ageGroup, COUNT(*) as count FROM Users GROUP BY ageGroup';
 
                     return sequelize.query(query, {
                         type: sequelize.QueryTypes.SELECT,

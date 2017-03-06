@@ -4,7 +4,7 @@ export default function roundUp() {
     return function (input) {
 
         function isFloat(n) {
-            return Number(n) === n && n % 1 !== 0;
+            return Number(n) === n;
         }
 
         var result = 0;
