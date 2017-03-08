@@ -12,6 +12,7 @@ import roundUp from './round-up/core.common.round-up';
 import ckEditor from './ck-editor/core.common.ck-editor';
 import notificationBody from './notification-body/core.common.notification-body';
 import imageUrl from './image-url/core.common.image-url';
+import multiByteHandler from './multi-byte/core.common.multi-byte.handler';
 
 import fileModel from './file-model/core.common.file-model';
 import fileUploader from './file-uploader/core.common.file-uploader';
@@ -32,4 +33,5 @@ export default angular.module('core.common', [])
     .directive('ckEditor', ckEditor)
     .directive('fileModel', fileModel)
     .service('fileUploader', fileUploader)
+    .service('multiByteHandler', multiByteHandler)
     .name;
