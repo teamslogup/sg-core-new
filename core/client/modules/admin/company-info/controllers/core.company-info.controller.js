@@ -10,6 +10,7 @@ export default function CompanyInfoCtrl($scope, $rootScope, $filter, companyInfo
 
     var LOADING = metaManager.std.loading;
     var ADMIN = metaManager.std.admin;
+    vm.FLAG = metaManager.std.flag;
 
     $scope.isCompanyInfoEditVisible = false;
 

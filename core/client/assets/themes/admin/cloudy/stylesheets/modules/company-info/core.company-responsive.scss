@@ -1,0 +1,34 @@
+@import "../../import";
+
+
+@media screen and (max-width: $web-container-size) {
+    .sg-core-responsive {
+        &#sg-info-manage {
+            .sg-info-manage-container {
+                width: 100%;
+                .sg-info-manage-title {
+
+                }
+
+                .sg-info-manage-body {
+                    margin-top: 28px;
+                    padding: 20px 0;
+
+                    .sg-info-manage-body-top {
+                        padding: 0 80px 60px 80px;
+                    }
+
+                    .sg-info-manage-body-float {
+                        &:first-child {
+                            margin-top: 0;
+                        }
+
+                    }
+                    .sg-info-manage-body-bottom {
+                        padding: 32px 20px 20px 20px;
+                    }
+                }
+            }
+        }
+    }
+}

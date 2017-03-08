@@ -4,6 +4,7 @@
     .sg-dashboard-container {
         margin: auto;
         padding: 50px 8px;
+        width: $web-container-size;
 
         .sg-dashboard-title {
             @include title-border-bottom();
@@ -229,12 +230,15 @@
                             $sg-dashboard-chart-top-status-body-font-size: 36px;
                             $sg-dashboard-chart-top-status-body-font-weight: normal;
                             $sg-dashboard-chart-top-status-body-text-align: right;
+                            @include after-clear();
 
                             .sg-dashboard-chart-top-status-current-login {
                                 border-radius: 10px;
                                 overflow: hidden;
                                 background-color: #6d8fe4;
                                 margin-bottom: 12px;
+                                float: left;
+                                width: calc((100% - 12px) * 0.5);
 
                                 .sg-dashboard-chart-top-status-current-login-title {
                                     color: white;
@@ -283,8 +287,11 @@
                             .sg-dashboard-chart-top-status-total {
                                 border-radius: 10px;
                                 overflow: hidden;
-
                                 background-color: #555a77;
+                                margin-left: 12px;
+                                float: left;
+                                width: calc((100% - 12px) * 0.5);
+
                                 .sg-dashboard-chart-top-status-total-title {
                                     color: white;
 
@@ -332,9 +339,10 @@
                             .sg-dashboard-chart-top-status-solved {
                                 border-radius: 5px;
                                 overflow: hidden;
-
                                 background-color: #51c7b5;
                                 margin-bottom: 12px;
+                                float: left;
+                                width: 190px;
                                 .sg-dashboard-chart-top-status-solved-title {
                                     background-color: #41b1a0;
                                     color: white;
@@ -363,6 +371,8 @@
 
                                 background-color: $dowado-red-color;
                                 margin-bottom: 12px;
+                                float: left;
+                                width: 190px;
                                 .sg-dashboard-chart-top-status-unauthorized-title {
                                     background-color: $dowado-red-hover-color;
                                     color: white;
@@ -428,10 +438,22 @@
 
                             @include after-clear();
                             .sg-dashboard-chart-body-main-left {
+                                float: left;
+                                width: calc(100% - 200px);
+
+                                padding-left: 50px;
+                                padding-right: 50px;
+
+                                .chart-pie {
+                                    margin: auto;
+                                }
 
                             }
                             .sg-dashboard-chart-body-main-right {
                                 margin-top: 12px;
+                                float: left;
+                                width: 200px;
+                                padding-left: 32px;
                                 .sg-dashboard-chart-body-main-right-item {
                                     margin-bottom: 12px;
                                     @include after-clear();
@@ -462,128 +484,5 @@
     }
 }
 
-@media screen and (min-width: 1000px) {
-    #sg-dashboard {
-        .sg-dashboard-container {
-            max-width: $web-container-size;
 
-            .sg-dashboard-main {
-                .sg-dashboard-item {
-
-                    .sg-dashboard-chart {
-                        .sg-dashboard-chart-top {
-                            .sg-dashboard-chart-top-title {
-
-                            }
-                            .sg-dashboard-chart-top-status {
-                                @include after-clear();
-                                .sg-dashboard-chart-top-status-current-login {
-                                    float: left;
-                                    width: calc((100% - 12px) * 0.5);
-                                }
-                                .sg-dashboard-chart-top-status-total {
-                                    margin-left: 12px;
-                                    float: left;
-                                    width: calc((100% - 12px) * 0.5);
-                                }
-                                .sg-dashboard-chart-top-status-solved {
-                                    float: left;
-                                    width: 190px;
-                                }
-                                .sg-dashboard-chart-top-status-unauthorized {
-                                    float: left;
-                                    width: 190px;
-                                }
-                            }
-                            .sg-dashboard-chart-top-sign-up-status {
-                                .sg-dashboard-chart-top-sign-up-status-item {
-
-                                    .sg-dashboard-chart-top-sign-up-status-body-dropout {
-                                        .sg-dashboard-chart-top-sign-up-status-body-left {
-                                            .sg-dashboard-chart-top-sign-up-status-body-left-table {
-                                                .sg-dashboard-chart-top-sign-up-status-body-left-ratio {
-                                                    font-size: 64px;
-                                                    span {
-                                                        font-size: 36px;
-                                                    }
-                                                }
-                                                .sg-dashboard-chart-top-sign-up-status-body-left-text {
-
-                                                }
-                                            }
-                                        }
-                                        .sg-dashboard-chart-top-sign-up-status-body-right {
-                                            .sg-dashboard-chart-top-sign-up-status-body-right-top {
-
-                                                .sg-dashboard-chart-top-sign-up-status-body-right-top-count {
-                                                }
-                                                .sg-dashboard-chart-top-sign-up-status-body-right-top-text {
-                                                }
-                                                .sg-dashboard-chart-top-sign-up-status-body-right-top-float {
-                                                    @include after-clear();
-                                                    .sg-dashboard-chart-top-sign-up-status-body-right-top-title {
-                                                        float: none;
-                                                    }
-                                                    .sg-dashboard-chart-top-sign-up-status-body-right-top-items {
-                                                        @include after-clear();
-                                                        .sg-dashboard-chart-top-sign-up-status-body-right-top-item {
-                                                            float: left;
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                            .sg-dashboard-chart-top-sign-up-status-body-right-bottom {
-                                                .sg-dashboard-chart-top-sign-up-status-body-right-bottom-count {
-                                                }
-                                                .sg-dashboard-chart-top-sign-up-status-body-right-bottom-text {
-                                                }
-                                                .sg-dashboard-chart-top-sign-up-status-body-right-bottom-float {
-                                                    @include after-clear();
-                                                    .sg-dashboard-chart-top-sign-up-status-body-right-bottom-title {
-                                                        float: none;
-                                                    }
-                                                    .sg-dashboard-chart-top-sign-up-status-body-right-bottom-items {
-                                                        @include after-clear();
-                                                        .sg-dashboard-chart-top-sign-up-status-body-right-bottom-item {
-                                                            float: left;
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                }
-                            }
-                        }
-                        .sg-dashboard-chart-body {
-                            .sg-dashboard-chart-body-main {
-                                @include after-clear();
-                                .sg-dashboard-chart-body-main-left {
-                                    float: left;
-                                    width: calc(100% - 200px);
-
-                                    padding-left: 50px;
-                                    padding-right: 50px;
-
-                                    .chart-pie {
-                                        margin: auto;
-                                    }
-                                }
-                                .sg-dashboard-chart-body-main-right {
-
-                                    float: left;
-
-                                    width: 200px;
-                                    padding-left: 32px;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-}
+@import "core.dashboard-responsive";
