@@ -102,6 +102,41 @@ module.exports = {
             });
 
         },
+        sendNotificationBySendType: function (notification, title, body, key, user, payload, callback) {
+            var _this = this;
+
+            _this.createdNotificationBox(user, notification, payload, function (status, data) {
+
+                if (status == 204) {
+                    if (_this.isNotificationSwitchOn(user, notification.key, key)) {
+
+                        payload['key'] = notification.key;
+
+                        _this.getNewNotificationCount(user.id, function (isSuccess, result) {
+
+                            var badge = result.newNotificationCount + result.newChatMessageCount;
+                            payload['newNotificationCount'] = result.newNotificationCount;
+                            payload['newChatMessageCount'] = result.newChatMessageCount;
+
+                            if (isSuccess) {
+                                _this.send(user, key, title, body, badge, payload, function (status, data) {
+                                    if (callback) callback(status, data);
+                                });
+                            } else {
+                                if (callback) callback(204);
+                            }
+
+                        });
+
+                    } else {
+                        if (callback) callback(204);
+                    }
+                } else {
+                    if (callback) callback(204);
+                }
+            });
+
+        },
         createdNotificationBox: function (user, notification, payload, callback) {
 
             var uploadData = payload || notification.payload;
@@ -213,23 +248,31 @@ module.exports = {
 
             function sendPush(callback) {
                 var histories = user.loginHistories;
-                histories.forEach(function (history) {
-                    if (history.token) {
-                        sendNoti.fcm(history.token, title, body, badge, data, history.platform, function (err) {
-                            if (err) {
-                                callback(500, err);
-                            } else {
-                                callback(204);
-                            }
-                        });
-                    } else {
-                        callback(204);
-                    }
 
-                });
+                if (histories.length > 0) {
+                    histories.forEach(function (history) {
+
+                        if (history.token) {
+                            sendNoti.fcm(history.token, title, body, badge, data, history.platform, function (err) {
+                                if (err) {
+                                    callback(500, err);
+                                } else {
+                                    callback(204);
+                                }
+                            });
+                        } else {
+                            callback(404);
+                        }
+
+                    });
+                } else {
+                    callback(404);
+                }
+
             }
 
             function sendEmail(callback) {
+
                 if (user.email) {
                     sendNoti.email(user.email, title, "Notification", {
                         subject: title,
@@ -245,10 +288,13 @@ module.exports = {
                         } else {
                             callback(204);
                         }
+                        console.log('email error', err);
                     });
                 } else {
                     callback(404);
+                    console.log('email 404');
                 }
+
             }
 
             function sendSMS(callback) {
@@ -389,8 +435,8 @@ module.exports = {
         }
     },
     massNotification: {
-        message: {
-            returnPhoneNum: function (phoneNum) {
+        parse: {
+            message: function (phoneNum) {
                 var temp = phoneNum + '';
                 temp = temp.replace(changeExp, '');
 
@@ -416,57 +462,81 @@ module.exports = {
                     return STD.notification.wrongPhoneNum;
                 }
             },
-            sendAll: function (req, array, file, callback) {
-                var _this = this;
-
-                var LOCAL = req.meta.std.local;
-                var FILE = req.meta.std.file;
-                var failArray = [];
-                var funcs = [];
-                var messageFilePath = LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.folderMessage + '/' + req.massNotification.id + '.csv';
-
-                for (var i=0; i<array.length; i++) {
-                    (function (currentTime) {
-                        funcs.push(function (subCallback) {
-                            _this.sendMessage(req, array[currentTime].phoneNum, array[currentTime].message, function (status, data) {
-                                if (status == 200) {
-                                    try {
-                                        var message = array[currentTime].phoneNum + ',' + JSON.parse(data).cmid;
-                                        fs.appendFile('./' + messageFilePath, message, function (err) {
-                                            if (err) {
-                                                console.log(err);
-                                            }
-                                        });
-                                    } catch (err) {
-
-                                    }
-                                } else if (status == 204) {
-                                    /**
-                                     * no send noti, no callback
-                                     */
-                                } else {
-                                    var errorMessage = "unexpected error";
-                                    if (data instanceof Object && data.message) {
-                                        errorMessage = data.message;
-                                    } else if (data instanceof String) {
-                                        errorMessage = data;
-                                    }
-                                    console.log("send message fail:", array[currentTime].phoneNum, errorMessage);
-                                    failArray.push({
-                                        phoneNum: array[currentTime].phoneNum,
-                                        errorCode: errorMessage
-                                    });
-                                }
-                                subCallback(null, true);
-                            }, file);
-                        });
-                    })(i);
-                }
-
-                async.series(funcs, function (errorCode, results) {
-                    callback(failArray);
-                });
+            email: function (email) {
+                return email;
             },
+            token: function (token) {
+                return token;
+            }
+        },
+        sendAll: function (req, array, file, callback) {
+            var _this = this;
+
+            var LOCAL = req.meta.std.local;
+            var FILE = req.meta.std.file;
+            var failArray = [];
+            var funcs = [];
+            var messageFilePath = LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.folderMessage + '/' + req.massNotification.id + '.csv';
+
+            for (var i = 0; i < array.length; i++) {
+                (function (currentTime) {
+                    funcs.push(function (subCallback) {
+
+                        switch (array[currentTime].sendType) {
+                            case NOTIFICATION.sendTypeMessage:
+
+                                _this.message.sendMessage(req, array[currentTime].dest, array[currentTime].message, function (status, data) {
+                                    if (status == 200) {
+                                        try {
+                                            var message = array[currentTime].dest + ',' + JSON.parse(data).cmid;
+                                            fs.appendFile('./' + messageFilePath, message, function (err) {
+                                                if (err) {
+                                                    console.log(err);
+                                                }
+                                            });
+                                        } catch (err) {
+
+                                        }
+                                    } else if (status == 204) {
+                                        /**
+                                         * no send noti, no callback
+                                         */
+                                    } else {
+                                        var errorMessage = "unexpected error";
+                                        if (data instanceof Object && data.message) {
+                                            errorMessage = data.message;
+                                        } else if (data instanceof String) {
+                                            errorMessage = data;
+                                        }
+                                        console.log("send message fail:", array[currentTime].phoneNum, errorMessage);
+                                        failArray.push({
+                                            phoneNum: array[currentTime].phoneNum,
+                                            errorCode: errorMessage
+                                        });
+                                    }
+                                    subCallback(null, true);
+                                }, file);
+
+                                break;
+                            case NOTIFICATION.sendTypeEmail:
+
+
+                                break;
+                            case NOTIFICATION.sendTypePush:
+
+                                break;
+                        }
+
+
+                    });
+                })(i);
+            }
+
+            async.series(funcs, function (errorCode, results) {
+                callback(failArray);
+            });
+        },
+        message: {
             sendMessage: function (req, phoneNum, message, callback, file) {
                 var _this = this;
                 var from = null;
@@ -514,6 +584,36 @@ module.exports = {
                 } else {
                     callback(204);
                 }
+            }
+        },
+        email: {
+            sendEmail: function (email, title, body, callback) {
+                sendNoti.email(email, title, "Notification", {
+                    subject: title,
+                    dir: appDir,
+                    name: 'common',
+                    params: {
+                        body: body
+                    }
+                }, function (err) {
+                    if (process.env.NODE_ENV == 'test') return callback(204);
+                    if (err) {
+                        callback(503, emailErrorRefiner(err));
+                    } else {
+                        callback(204);
+                    }
+                });
+            }
+        },
+        push: {
+            sendPush: function (token, title, body, badge, data, callback) {
+                sendNoti.fcm(token, title, body, badge, data, history.platform, function (err) {
+                    if (err) {
+                        callback(500, err);
+                    } else {
+                        callback(204);
+                    }
+                });
             }
         },
         import: {

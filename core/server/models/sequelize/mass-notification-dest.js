@@ -12,7 +12,7 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 module.exports = {
     fields: {
-        'phoneNum': {
+        'dest': {
             'type': Sequelize.STRING,
             'unique': true,
             'allowNull': false
@@ -20,8 +20,8 @@ module.exports = {
     },
     options: {
         "indexes": [{
-            name: 'phoneNum',
-            fields: ['phoneNum']
+            name: 'dest',
+            fields: ['dest']
         }],
         'timestamps': true,
         'charset': 'utf8',
@@ -32,9 +32,9 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            "createMassNotificationPhoneNums": function (phoneNumArray, callback) {
+            "createMassNotificationDest": function (phoneNumArray, callback) {
                 sequelize.transaction(function (t) {
-                    return sequelize.models.MassNotificationPhoneNum.bulkCreate(phoneNumArray, {
+                    return sequelize.models.MassNotificationDest.bulkCreate(phoneNumArray, {
                         ignoreDuplicates: true,
                         transaction: t
                     }).then(function () {
@@ -46,10 +46,10 @@ module.exports = {
                     }
                 });
             },
-            "countMassNotificationPhoneNum": function (callback) {
+            "countMassNotificationDest": function (callback) {
                 var count = 0;
 
-                sequelize.models.MassNotificationPhoneNum.count().then(function (data) {
+                sequelize.models.MassNotificationDest.count().then(function (data) {
                     if (data > 0) {
                         count = data;
                         return 200;
@@ -66,7 +66,7 @@ module.exports = {
                     }
                 });
             },
-            "findMassNotificationPhoneNums": function (options, callback) {
+            "findMassNotificationDest": function (options, callback) {
                 var where = {};
                 var query = {
                     where: where,
@@ -80,7 +80,7 @@ module.exports = {
                     }
                 }
 
-                sequelize.models.MassNotificationPhoneNum.findAllDataForQuery(query, callback);
+                sequelize.models.MassNotificationDest.findAllDataForQuery(query, callback);
             }
         })
     }

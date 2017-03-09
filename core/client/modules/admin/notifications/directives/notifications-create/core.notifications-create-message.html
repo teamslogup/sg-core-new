@@ -1,0 +1,38 @@
+<div class="sg-notification-manage-create-message">
+    <div class="sg-notification-manage-create-title">
+        {{'sendMessage'| translate}}
+    </div>
+
+    <div class="sg-notification-manage-create-subtitle">
+        {{'notificationName'| translate}}
+    </div>
+    <input ng-model="tempStore.notificationName" type="text" class="sgc-input"
+           placeholder="" required multi-byte>
+
+    <div class="sg-notification-manage-create-message-container">
+        <div class="sg-notification-manage-create-message-top" data-ng-class="messageTop">
+            {{messageTop}}
+        </div>
+        <div class="sg-notification-manage-create-message-image">
+
+            <img class="sg-notification-manage-create-message-image-img" src="/assets/themes/admin/cloudy/images/ic_noti_push_plus_40_2x.png" alt="" width="40">
+            <div class="sg-notification-manage-create-message-image-text">
+                {{'이미지를 삽입하세요'|translate}}
+            </div>
+        </div>
+
+        <div class="sg-notification-manage-create-message-title">
+            <input class="sgc-input" type="text" data-ng-model="tempStore.message.title"
+                   data-ng-class="{'disabled': messageTop == 'sms'}" placeholder="제목 (lms, mms만 가능)" multi-byte/>
+        </div>
+
+        <div class="sg-notification-manage-create-message-body">
+            <textarea name="" id="" cols="30" rows="10" data-ng-model="tempStore.message.body"
+                      placeholder="메세지를 입력해주세요." multi-byte></textarea>
+        </div>
+        <div class="sg-notification-manage-create-message-status">
+            {{currentMessageLength || 0}}/{{currentMessageMaxLength }} Byte
+        </div>
+    </div>
+
+</div>

@@ -1,11 +1,13 @@
-export default function ckEditor() {
+export default function ckEditor(metaManager) {
     "ngInject";
+
+    var STD = metaManager.std;
 
     return {
         require: '?ngModel',
         link: function(scope, elm, attr, ngModel) {
             var ck = CKEDITOR.replace(elm[0], {
-                filebrowserImageUploadUrl: 'http://localhost:8080/api/etc/upload-ck'
+                filebrowserImageUploadUrl: STD.host.url + '/api/etc/upload-ck'
             });
 
             if (!ngModel) return;

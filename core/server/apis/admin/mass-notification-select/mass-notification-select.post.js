@@ -12,37 +12,47 @@ var Iconv = require('iconv').Iconv;
 var euckr2utf8 = new Iconv('EUC-KR', 'UTF-8');
 var utf82utf8 = new Iconv('UTF-8', 'UTF-8');
 var formData = require('form-data');
+var key;
 
 post.validate = function () {
     return function (req, res, next) {
         var NOTIFICATION = req.meta.std.notification;
-        var COMMON = req.meta.std.common;
+
         if (!req.body.folder || req.body.folder != req.meta.std.file.folderNotification) {
             return res.hjson(req, next, 400, {
                 code: "400_3"
             });
         }
-        req.check("sendMethod", "400_3").isEnum(NOTIFICATION.enumSendMethods);
-        req.check("title", "400_8").len(COMMON.minLength, COMMON.maxLength);
-        if (!req.body.message || !req.body.message.length) {
-            return res.hjson(req, next, 400, {
-                code: "400_8"
-            });
+
+        req.check("sendType", "400_3").isEnum(NOTIFICATION.enumSendTypes);
+
+        if (req.body.sendType !== NOTIFICATION.sendTypeMessage) {
+            req.check("sendMethod", "400_3").isEnum(NOTIFICATION.enumSendMethods);
         }
-        if (req.body.mmsTitle !== undefined) req.check("mmsTitle", "400_8").len(NOTIFICATION.minMmsTitleLength, NOTIFICATION.maxMmsTitleLength);
+
+        req.check("massNotificationTitle", "400_8").len(NOTIFICATION.minTitleLength, NOTIFICATION.maxTitleLength);
+        if (req.body.messageTitle !== undefined) req.check("messageTitle", "400_8").len(NOTIFICATION.minMessageTitleLength, NOTIFICATION.maxMessageTitleLength);
+
+        if (req.body.sendType == NOTIFICATION.sendTypePush) {
+            req.check("messageBody", "400_51").len(NOTIFICATION.minBodyLength, NOTIFICATION.maxBodyLength);
+        } else {
+            req.check("messageBody", "400_51").len(NOTIFICATION.minPushBodyLength, NOTIFICATION.maxPushBodyLength);
+        }
+
         req.utils.common.checkError(req, res, next);
     };
 };
 
 post.checkNCreatePart = function () {
     return function (req, res, next) {
-        var NOTIFICATION = req.meta.std.notification;
+
         var massNotification = {
-            authorId: 1,
-            sendType: NOTIFICATION.sendTypeMessage,
+            authorId: req.user.id,
+            sendType: req.body.sendTypes,
             sendMethod: req.body.sendMethod,
-            title: req.body.title,
-            body: req.body.message,
+            massNotificationTitle: req.body.massNotificationTitle,
+            messageTitle: req.body.messageTitle,
+            messageBody: req.body.messageBody,
             massNotificationImportHistory: {
                 fileName: req.fileNames[0]
             }
@@ -62,6 +72,19 @@ post.checkNCreatePart = function () {
 
 post.series = function () {
     return function (req, res, next) {
+
+        switch (req.body.sendType) {
+            case NOTIFICATION.sendTypeMessage:
+                key = 'phoneNUm';
+                break;
+            case NOTIFICATION.sendTypeEmail:
+                key = 'email';
+                break;
+            case NOTIFICATION.sendTypePush:
+                key = 'token';
+                break;
+        }
+
         req.wrongDestinationCount = 0;
 
         var FLAG = req.meta.std.flag;
@@ -141,6 +164,8 @@ post.series = function () {
 };
 
 post.seriesSplitFile = function (req, callback) {
+    var NOTIFICATION = req.meta.std.notification;
+
     req.splitTimes = 0;
 
     var LOCAL = req.meta.std.local;
@@ -165,7 +190,7 @@ post.seriesSplitFile = function (req, callback) {
     var checkFinish = false;
     var checkIndex = {};
 
-    var phoneNumArray = [];
+    var dataArray = [];
 
     fs.createReadStream(importedFile)
         .pipe(euckr2utf8)
@@ -210,22 +235,24 @@ post.seriesSplitFile = function (req, callback) {
         });
 
     converter.on("record_parsed", function (resultRow) {
-        if (resultRow.phoneNum) {
-            phoneNumArray.push({phoneNum: NOTIFICATION_UTIL.massNotification.message.returnPhoneNum(resultRow.phoneNum)});
+
+        if (resultRow[key]) {
+            dataArray.push({key: NOTIFICATION_UTIL.massNotification.parse[key](resultRow[key])});
         } else {
             if (!inputError) {
                 inputError = true;
-                eventEmitter.emit('inputError', "400_68")
+                eventEmitter.emit('inputError', '400_53')
             }
         }
-        if (phoneNumArray.length == maxSize) {
-            var array = phoneNumArray.slice();
-            phoneNumArray = [];
+
+        if (dataArray.length == maxSize) {
+            var array = dataArray.slice();
+            dataArray = [];
             req.splitTimes++;
 
             (function (currentTime) {
                 var splitFilePath = splitFile + currentTime + req.massNotification.massNotificationImportHistory.fileName;
-                NOTIFICATION_UTIL.massNotification.import.writeSplitFile(array, currentTime, ["phoneNum"], splitFilePath, function () {
+                NOTIFICATION_UTIL.massNotification.import.writeSplitFile(array, currentTime, [key], splitFilePath, function () {
                     eventEmitter.emit('checkFinish', currentTime);
                 }, function (errorCode) {
                     if (!inputError) {
@@ -239,11 +266,11 @@ post.seriesSplitFile = function (req, callback) {
 
     converter.on('end_parsed', function () {
         checkFinish = true;
-        if (phoneNumArray.length > 0) {
+        if (dataArray.length > 0) {
             req.splitTimes++;
             (function (currentTime) {
                 var splitFilePath = splitFile + currentTime + req.massNotification.massNotificationImportHistory.fileName;
-                NOTIFICATION_UTIL.massNotification.import.writeSplitFile(phoneNumArray, currentTime, ["phoneNum"], splitFilePath, function () {
+                NOTIFICATION_UTIL.massNotification.import.writeSplitFile(dataArray, currentTime, [key], splitFilePath, function () {
                     eventEmitter.emit('checkFinish', currentTime);
                 }, function (errorCode) {
                     if (!inputError) {
@@ -264,7 +291,7 @@ post.seriesSplitFile = function (req, callback) {
         if (currentIndex !== undefined) checkIndex[currentIndex] = true;
         if (checkFinish) {
             var isFinish = true;
-            for (var i=0; i<req.splitTimes; i++) {
+            for (var i = 0; i < req.splitTimes; i++) {
                 if (!checkIndex[i]) {
                     isFinish = false;
                     break;
@@ -312,14 +339,15 @@ post.seriesMoveImportFile = function (req, callback) {
 };
 
 post.seriesReadSplitFileCreateMassNotificationPhoneNum = function (req, callback) {
+
     var LOCAL = req.meta.std.local;
     var FILE = req.meta.std.file;
     var NOTIFICATION = req.meta.std.notification;
     var funcs = [];
 
-    for (var i=0; i<req.splitTimes; i++) {
+    for (var i = 0; i < req.splitTimes; i++) {
         (function (currentTime) {
-            var phoneNumArray = [];
+            var dataArray = [];
             funcs.push(function (subCallback) {
                 var converter = new Converter({});
                 var splitFilePath = path.join(__dirname, "../../../../../" + LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.folderNotification + '/' + currentTime + req.massNotification.massNotificationImportHistory.fileName);
@@ -328,14 +356,14 @@ post.seriesReadSplitFileCreateMassNotificationPhoneNum = function (req, callback
                     .pipe(iconv.encodeStream('utf8'))
                     .pipe(converter);
                 converter.on("record_parsed", function (resultRow) {
-                    if (resultRow.phoneNum == NOTIFICATION.wrongPhoneNum) {
+                    if (resultRow[key] == NOTIFICATION.wrongPhoneNum) {
                         req.wrongDestinationCount++;
                     } else {
-                        phoneNumArray.push({phoneNum: resultRow.phoneNum});
+                        dataArray.push({key: resultRow[key]});
                     }
                 });
                 converter.on("end_parsed", function () {
-                    req.models.MassNotificationPhoneNum.createMassNotificationPhoneNums(phoneNumArray, function (status, data) {
+                    req.models.MassNotificationDest.createMassNotificationPhoneDest(dataArray, function (status, data) {
                         if (status == 204) {
                             var progress = Math.floor(currentTime * 50 / req.splitTimes);
                             req.models.MassNotification.updateDataById(req.massNotification.id, {
@@ -370,7 +398,7 @@ post.seriesRemoveSplitFiles = function (req, callback) {
     var FILE = req.meta.std.file;
     var files = [];
     var splitPath = path.join(__dirname, "../../../../../" + LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.folderNotification + '/');
-    for (var i=0; i<req.splitTimes; i++) {
+    for (var i = 0; i < req.splitTimes; i++) {
         files.push({
             path: splitPath + i + req.massNotification.massNotificationImportHistory.fileName
         });
@@ -384,9 +412,14 @@ post.seriesRemoveSplitFiles = function (req, callback) {
 };
 
 post.seriesCountMassNotificationPhoneNum = function (req, callback) {
-    req.models.MassNotificationPhoneNum.countMassNotificationPhoneNum(function (status, data) {
+    var maxSize = req.meta.std.massNotificationImportHistory.maxRawSize;
+    req.models.MassNotificationDest.countMassNotificationDest(function (status, data) {
         if (status == 200) {
             req.phoneNumCount = data;
+            req.splitTimes = Math.floor(req.phoneNumCount / maxSize);
+            if (req.phoneNumCount % maxSize) {
+                req.splitTimes++;
+            }
             callback(null, true);
         } else {
             callback(data.code, false);
@@ -409,15 +442,17 @@ post.seriesFindMassNotificationPhoneNumNSendMessage = function (req, callback) {
         size: MASS_NOTIFICATION_IMPORT_HISTORY.maxRawSize
     };
 
-    for (var i=0; i<req.splitTimes; i++) {
+    for (var i = 0; i < req.splitTimes; i++) {
         (function (currentTime) {
             funcs.push(function (subCallback) {
-                req.models.MassNotificationPhoneNum.findMassNotificationPhoneNums(options, function (status, data) {
+
+                req.models.MassNotificationDest.findMassNotificationDest(options, function (status, data) {
                     if (status == 200) {
                         var sendTargetArray = [];
-                        for (var i=0; i<data.length; i++) {
+                        for (var i = 0; i < data.length; i++) {
                             sendTargetArray.push({
-                                phoneNum: data[i].phoneNum,
+                                sendType: key,
+                                dest: data[i][key],
                                 message: req.body.message
                             })
                         }
@@ -442,6 +477,8 @@ post.seriesFindMassNotificationPhoneNumNSendMessage = function (req, callback) {
                         subCallback(null, true);
                     }
                 });
+
+
             });
         })(i);
     }
@@ -476,7 +513,7 @@ post.seriesSendMessageFile = function (req, callback) {
 post.supplement = function () {
     return function (req, res, next) {
         res.set('cache-control', 'no-cache, no-store, must-revalidate');
-        res.set('pragma',  'no-cache');
+        res.set('pragma', 'no-cache');
         res.set('expires', 0);
         return res.hjson(req, next, 200);
     };

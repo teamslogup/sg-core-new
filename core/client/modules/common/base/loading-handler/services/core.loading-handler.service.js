@@ -4,6 +4,8 @@ export default function LoadingHandlerService(metaManager) {
     "ngInject";
 
     this.vm = {};
+    this.listenCallback = undefined;
+    var progressName = 'progress';
 
     this.init = function (vm) {
         this.vm = vm;
@@ -11,6 +13,10 @@ export default function LoadingHandlerService(metaManager) {
 
         this.vm.coreLoading = {};
         this.vm.coreLoading[this.vm.LOADING.spinnerKey] = undefined;
+    };
+
+    this.listen = function (listenCallback) {
+        this.listenCallback = listenCallback;
     };
 
     this.startLoading = function (loadingKey, key) {
@@ -31,5 +37,26 @@ export default function LoadingHandlerService(metaManager) {
         if (isLoadingEmpty) {
             this.vm.coreLoading[loadingKey] = undefined;
         }
+    };
+
+    this.setProgress = function (progress, title) {
+        if (this.vm.coreLoading[progressName] === undefined) {
+            this.vm.coreLoading[progressName] = {};
+        }
+
+        if (title !== undefined) {
+            this.vm.coreLoading[progressName].ttile = title;
+        }
+
+        this.vm.coreLoading[progressName].progress = progress;
+
+        if (this.listenCallback) {
+            this.listenCallback(progress, title);
+        }
+
+    };
+
+    this.endProgress = function () {
+        this.vm.coreLoading[progressName] = undefined;
     };
 }
