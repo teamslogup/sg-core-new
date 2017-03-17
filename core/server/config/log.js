@@ -47,7 +47,7 @@ function sendToS3(file, bucket, folder, callback) {
 }
 
 module.exports = function () {
-    if (META.flag.isUseS3Bucket) {
+    if (META.std.flag.isUseS3Bucket) {
         cron.schedule('* * 1 * *', function () {
 
             var logRotateLogPath = appRoot + '/../.pm2/logs';
