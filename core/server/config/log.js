@@ -47,39 +47,41 @@ function sendToS3(file, bucket, folder, callback) {
 }
 
 module.exports = function () {
-    cron.schedule('* * 1 * *', function () {
+    if (META.flag.isUseS3Bucket) {
+        cron.schedule('* * 1 * *', function () {
 
-        var logRotateLogPath = appRoot + '/../.pm2/logs';
-        var logPath = appRoot + '/' + LOG.folderName;
+            var logRotateLogPath = appRoot + '/../.pm2/logs';
+            var logPath = appRoot + '/' + LOG.folderName;
 
-        var logRotateLogs = fs.readdirSync(logRotateLogPath);
-        var logs = fs.readdirSync(logPath);
+            var logRotateLogs = fs.readdirSync(logRotateLogPath);
+            var logs = fs.readdirSync(logPath);
 
-        logs.forEach(function (log) {
+            logs.forEach(function (log) {
 
-            if (path.extname(log) === ".gz") {
+                if (path.extname(log) === ".gz") {
 
-                var file = {
-                    path: logPath + '/' + log
-                };
+                    var file = {
+                        path: logPath + '/' + log
+                    };
 
-                sendToS3(file, CONFIG.aws.bucketName, LOG.folderName, function (error, data) {
-                    if (error) {
-                        logger.e(error.code);
-                        console.log('error', error.code);
-                    } else {
-                        fs.unlinkSync(file.path);
-                        console.log('deleted', file.path);
-                    }
-                });
-            }
+                    sendToS3(file, CONFIG.aws.bucketName, LOG.folderName, function (error, data) {
+                        if (error) {
+                            logger.e(error.code);
+                            console.log('error', error.code);
+                        } else {
+                            fs.unlinkSync(file.path);
+                            console.log('deleted', file.path);
+                        }
+                    });
+                }
+            });
+
+            logRotateLogs.forEach(function (logRotateLog) {
+                if (path.extname(logRotateLog) === ".gz") {
+                    fs.unlinkSync(logRotateLogPath + '/' + logRotateLog);
+                }
+            });
+
         });
-
-        logRotateLogs.forEach(function (logRotateLog) {
-            if (path.extname(logRotateLog) === ".gz") {
-                fs.unlinkSync(logRotateLogPath + '/' + logRotateLog);
-            }
-        });
-
-    });
+    }
 };
