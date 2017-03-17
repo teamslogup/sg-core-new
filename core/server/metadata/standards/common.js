@@ -458,6 +458,9 @@ var standards = {
         "osTypeIos": "ios",
         "minVersionLength": 5,
         "maxVersionLength": 15
+    },
+    "log": {
+        "folderName": "logs"
     }
 };
 
