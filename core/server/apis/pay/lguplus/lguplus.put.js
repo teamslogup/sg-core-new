@@ -22,8 +22,7 @@ put.validate = function () {
             req.check('LGD_FINANCENAME', '400_51').len(1, 1000);
         }
         if (req.body.LGD_PCANCELFLAG !== undefined) {
-            req.check('LGD_PCANCELFLAG', '400_20').isBoolean();
-            req.sanitize('LGD_PCANCELFLAG').toBoolean();
+            req.check('LGD_PCANCELFLAG', '400_51').len(1, 1000);
         }
         if (req.body.LGD_FINANCEAUTHNUM !== undefined) {
             req.check('LGD_FINANCEAUTHNUM', '400_51').len(1, 1000);
@@ -47,8 +46,7 @@ put.validate = function () {
             req.check('LGD_RECEIVERPHONE', '400_51').len(1, 1000);
         }
         if (req.body.LGD_2TR_FLAG !== undefined) {
-            req.check('LGD_2TR_FLAG', '400_20').isBoolean();
-            req.sanitize('LGD_2TR_FLAG').toBoolean();
+            req.check('LGD_2TR_FLAG', '400_51').len(1, 1000);
         }
         if (req.body.LGD_DEVICE !== undefined) {
             req.check('LGD_DEVICE', '400_51').len(1, 1000);
@@ -60,8 +58,7 @@ put.validate = function () {
             req.check('LGD_FINANCECODE', '400_51').len(1, 1000);
         }
         if (req.body.LGD_CARDNOINTYN !== undefined) {
-            req.check('LGD_CARDNOINTYN', '400_20').isBoolean();
-            req.sanitize('LGD_CARDNOINTYN').toBoolean();
+            req.check('LGD_CARDNOINTYN', '400_51').len(1, 1000);
         }
         if (req.body.LGD_PCANCELSTR !== undefined) {
             req.check('LGD_PCANCELSTR', '400_51').len(1, 1000);
@@ -119,12 +116,10 @@ put.validate = function () {
         }
 
         if (req.body.LGD_CARDNOINTEREST_YN !== undefined) {
-            req.check('LGD_CARDNOINTEREST_YN', '400_20').isBoolean();
-            req.sanitize('LGD_CARDNOINTEREST_YN').toBoolean();
+            req.check('LGD_CARDNOINTEREST_YN', '400_51').len(1, 1000);
         }
         if (req.body.LGD_DISCOUNTUSEYN !== undefined) {
-            req.check('LGD_DISCOUNTUSEYN', '400_20').isBoolean();
-            req.sanitize('LGD_DISCOUNTUSEYN').toBoolean();
+            req.check('LGD_DISCOUNTUSEYN', '400_51').len(1, 1000);
         }
         if (req.body.LGD_ISPKEY !== undefined) {
             req.check('LGD_ISPKEY', '400_51').len(1, 1000);

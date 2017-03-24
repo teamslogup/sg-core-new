@@ -69,7 +69,7 @@ module.exports = {
             'allowNull': true
         },
         'LGD_PCANCELFLAG': {
-            'type': Sequelize.BOOLEAN,
+            'type': Sequelize.STRING,
             'allowNull': true
         },
         'LGD_FINANCEAUTHNUM': {
@@ -101,7 +101,7 @@ module.exports = {
             'allowNull': true
         },
         'LGD_2TR_FLAG': {
-            'type': Sequelize.BOOLEAN,
+            'type': Sequelize.STRING,
             'allowNull': true
         },
         'LGD_DEVICE': {
@@ -133,7 +133,7 @@ module.exports = {
             'allowNull': true
         },
         'LGD_ESCROWYN': {
-            'type': Sequelize.BOOLEAN,
+            'type': Sequelize.STRING,
             'allowNull': true
         },
         'LGD_PAYTYPE': {
