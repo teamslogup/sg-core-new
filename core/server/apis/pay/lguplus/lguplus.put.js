@@ -126,12 +126,24 @@ put.validate = function () {
             req.check('LGD_DISCOUNTUSEYN', '400_20').isBoolean();
             req.sanitize('LGD_DISCOUNTUSEYN').toBoolean();
         }
-
         if (req.body.LGD_ISPKEY !== undefined) {
             req.check('LGD_ISPKEY', '400_51').len(1, 1000);
         }
         if (req.body.LGD_DISCOUNTUSEAMOUNT !== undefined) {
             req.check('LGD_DISCOUNTUSEAMOUNT', '400_5').isInt();
+        }
+
+        if (req.body.LGD_AMOUNT !== undefined) {
+            req.check('LGD_AMOUNT', '400_5').isInt();
+        }
+        if (req.body.LGD_BUYER !== undefined) {
+            req.check('LGD_BUYER', '400_51').len(1, 1000);
+        }
+        if (req.body.LGD_PRODUCTINFO !== undefined) {
+            req.check('LGD_PRODUCTINFO', '400_51').len(1, 1000);
+        }
+        if (req.body.LGD_TIMESTAMP !== undefined) {
+            req.check('LGD_TIMESTAMP', '400_51').len(1, 1000);
         }
 
         req.utils.common.checkError(req, res, next);
