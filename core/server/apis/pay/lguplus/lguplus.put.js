@@ -46,7 +46,7 @@ put.validate = function () {
         if (req.body.LGD_RECEIVERPHONE !== undefined) {
             req.check('LGD_RECEIVERPHONE', '400_51').len(1, 1000);
         }
-        if (req.body['LGD_2TR_FLAG'] !== undefined) {
+        if (req.body.LGD_2TR_FLAG !== undefined) {
             req.check('LGD_2TR_FLAG', '400_20').isBoolean();
             req.sanitize('LGD_2TR_FLAG').toBoolean();
         }
