@@ -100,7 +100,7 @@ module.exports = {
             'type': Sequelize.STRING,
             'allowNull': true
         },
-        '2TR_FLAG': {
+        'LGD_2TR_FLAG': {
             'type': Sequelize.BOOLEAN,
             'allowNull': true
         },
@@ -189,6 +189,22 @@ module.exports = {
             'allowNull': true
         },
         'LGD_RESPMSG': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'LGD_CARDNOINTEREST_YN': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'LGD_DISCOUNTUSEYN': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'LGD_ISPKEY': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'LGD_DISCOUNTUSEAMOUNT': {
             'type': Sequelize.STRING,
             'allowNull': true
         },

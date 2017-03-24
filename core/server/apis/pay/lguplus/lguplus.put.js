@@ -10,7 +10,7 @@ put.validate = function () {
         req.check('LGD_OID', '400_51').len(1, 1000);
 
         if (req.body.LGD_CARDACQUIRER !== undefined) {
-            req.check('LGD_CARDACQUIRER', '400_51').isInt();
+            req.check('LGD_CARDACQUIRER', '400_5').isInt();
         }
         if (req.body.LGD_IFOS !== undefined) {
             req.check('LGD_IFOS', '400_51').len(1, 1000);
@@ -46,9 +46,9 @@ put.validate = function () {
         if (req.body.LGD_RECEIVERPHONE !== undefined) {
             req.check('LGD_RECEIVERPHONE', '400_51').len(1, 1000);
         }
-        if (req.body['2TR_FLAG'] !== undefined) {
-            req.check('2TR_FLAG', '400_20').isBoolean();
-            req.sanitize('2TR_FLAG').toBoolean();
+        if (req.body['LGD_2TR_FLAG'] !== undefined) {
+            req.check('LGD_2TR_FLAG', '400_20').isBoolean();
+            req.sanitize('LGD_2TR_FLAG').toBoolean();
         }
         if (req.body.LGD_DEVICE !== undefined) {
             req.check('LGD_DEVICE', '400_51').len(1, 1000);
@@ -116,6 +116,22 @@ put.validate = function () {
         }
         if (req.body.LGD_RESPMSG !== undefined) {
             req.check('LGD_RESPCODE', '400_51').len(1, 1000);
+        }
+
+        if (req.body.LGD_CARDNOINTEREST_YN !== undefined) {
+            req.check('LGD_CARDNOINTEREST_YN', '400_20').isBoolean();
+            req.sanitize('LGD_CARDNOINTEREST_YN').toBoolean();
+        }
+        if (req.body.LGD_DISCOUNTUSEYN !== undefined) {
+            req.check('LGD_DISCOUNTUSEYN', '400_20').isBoolean();
+            req.sanitize('LGD_DISCOUNTUSEYN').toBoolean();
+        }
+
+        if (req.body.LGD_ISPKEY !== undefined) {
+            req.check('LGD_ISPKEY', '400_51').len(1, 1000);
+        }
+        if (req.body.LGD_DISCOUNTUSEAMOUNT !== undefined) {
+            req.check('LGD_DISCOUNTUSEAMOUNT', '400_5').isInt();
         }
 
         req.utils.common.checkError(req, res, next);
