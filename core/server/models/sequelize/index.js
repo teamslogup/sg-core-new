@@ -31,6 +31,7 @@ var MobileVersion = require('./mobile-version');
 var DomainRender = require('./domain-render');
 var MassNotificationImportHistory = require('./mass-notification-import-history');
 var MassNotificationPhoneNum = require('./mass-notification-phone-num');
+var Lguplus = require('./lguplus');
 
 var models = {
     User: User,
@@ -64,7 +65,8 @@ var models = {
     MobileVersion: MobileVersion,
     DomainRender: DomainRender,
     MassNotificationImportHistory: MassNotificationImportHistory,
-    MassNotificationPhoneNum: MassNotificationPhoneNum
+    MassNotificationPhoneNum: MassNotificationPhoneNum,
+    Lguplus: Lguplus
 };
 
 module.exports = models;

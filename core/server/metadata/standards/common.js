@@ -461,6 +461,15 @@ var standards = {
     },
     "log": {
         "folderName": "logs"
+    },
+    "lguplus": {
+        "enumStatus": ["wait", "finish", "fail"],
+        "statusWait": "wait",
+        "statusFinish": "finish",
+        "statusFail": "fail",
+
+        "payMethodCard": "SC0010",
+        "payMethodAccount": "SC0030"
     }
 };
 
