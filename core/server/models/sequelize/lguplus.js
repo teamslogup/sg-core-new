@@ -245,7 +245,7 @@ module.exports = {
                         transaction: t
                     }).then(function (data) {
                         if (data[0] > 0) {
-                            return coreUtils.pay.finishPay();
+                            return coreUtils.pay.finishPay(t);
                         } else {
                             throw new errorHandler.CustomSequelizeError(404);
                         }

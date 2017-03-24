@@ -17,14 +17,12 @@ module.exports = {
         var orderIdxx = y + "" + m + "" + d + "" + time;
         return orderIdxx;
     },
-    finishPay: function (t, callback) {
+    finishPay: function (t) {
 
         if (appUtils.pay && appUtils.pay.finishPay) {
-            appUtils.pay.finishPay(t, function () {
-                return true;
-            });
+            return appUtils.pay.finishPay(t);
         } else {
-           return true;
+            return true;
         }
 
     }
