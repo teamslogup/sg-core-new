@@ -11,15 +11,21 @@ module.exports = function () {
 
             var USER = req.meta.std.user;
 
-            req.check('LGD_AMOUNT', '400_5').isInt();
-            req.check('LGD_BUYER', '400_51').len(USER.minNickLength, USER.maxNickLength);
-            req.check('LGD_PRODUCTINFO', '400_51').len(1, 1000);
-
+            if (req.body.LGD_AMOUNT !== undefined) {
+                req.check('LGD_AMOUNT', '400_5').isInt();
+            }
+            if (req.body.LGD_BUYER !== undefined) {
+                req.check('LGD_BUYER', '400_51').len(USER.minNickLength, USER.maxNickLength);
+            }
+            if (req.body.LGD_PRODUCTINFO !== undefined) {
+                req.check('LGD_PRODUCTINFO', '400_51').len(1, 1000);
+            }
             if (req.body.LGD_BUYEREMAIL !== undefined) {
                 req.check('LGD_BUYEREMAIL', '400_1').isEmail();
             }
-
-            req.check('LGD_CUSTOM_USABLEPAY', '400_8').len(6, 6);
+            if (req.body.LGD_CUSTOM_USABLEPAY !== undefined) {
+                req.check('LGD_CUSTOM_USABLEPAY', '400_8').len(6, 6);
+            }
 
             req.utils.common.checkError(req, res, next);
 
