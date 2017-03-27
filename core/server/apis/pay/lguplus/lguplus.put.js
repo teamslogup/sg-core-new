@@ -5,8 +5,6 @@ var logger = new Logger(__filename);
 put.validate = function () {
     return function (req, res, next) {
 
-        var LGUPLUS = req.meta.std.lguplus;
-
         req.check('LGD_OID', '400_51').len(1, 1000);
 
         if (req.body.LGD_CARDACQUIRER !== undefined) {
@@ -147,7 +145,7 @@ put.validate = function () {
 
 put.finishPay = function () {
     return function (req, res, next) {
-        var LGUPLUS = req.meta.std.lguplus;
+        var LGUPLUS = req.meta.std.pay.lguplus;
 
         var update = req.body;
         update.status = LGUPLUS.statusFinish;

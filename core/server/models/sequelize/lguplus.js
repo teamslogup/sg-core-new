@@ -14,6 +14,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 var coreUtils = require('../../utils');
 
+var micro = require('microtime-nodejs');
+
 module.exports = {
     fields: {
         'status': {
@@ -234,33 +236,40 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'finishPay': function (LGD_OID, update, callback) {
+            'startPay': function (body, t) {
 
-                sequelize.transaction(function (t) {
+                var LGUPLUS = STD.lguplus;
 
-                    return sequelize.models.Lguplus.update(update, {
-                        where: {
-                            'LGD_OID': LGD_OID
-                        },
-                        transaction: t
-                    }).then(function (data) {
-                        if (data[0] > 0) {
-                            return coreUtils.pay.finishPay(t);
-                        } else {
-                            throw new errorHandler.CustomSequelizeError(404);
-                        }
+                body.status = LGUPLUS.statusWait;
 
-                    }).then(function () {
+                var timestamp = micro.now();
+                body.LGD_OID = 'sg' + timestamp;
+                body.LGD_TIMESTAMP = timestamp;
+
+                return sequelize.models.Lguplus.create(body, {
+                    transaction: t
+                }).then(function (data) {
+                    if (data) {
                         return true;
-                    });
-
-                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
-                    if (isSuccess) {
-                        callback(204);
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
                     }
                 });
+            },
+            'finishPay': function (LGD_OID, update, t) {
 
-
+                return sequelize.models.Lguplus.update(update, {
+                    where: {
+                        'LGD_OID': LGD_OID
+                    },
+                    transaction: t
+                }).then(function (data) {
+                    if (data[0] > 0) {
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                });
             }
         })
     }

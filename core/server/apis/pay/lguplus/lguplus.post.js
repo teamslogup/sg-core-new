@@ -24,7 +24,7 @@ post.validate = function () {
 
 post.setParam = function () {
     return function (req, res, next) {
-        var LGUPLUS = req.meta.std.lguplus;
+        var LGUPLUS = req.meta.std.pay.lguplus;
 
         var body = req.body;
         body.status = LGUPLUS.statusWait;

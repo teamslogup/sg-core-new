@@ -19,10 +19,14 @@ module.exports = {
     },
     finishPay: function (t) {
 
-        if (appUtils.pay && appUtils.pay.finishPay) {
-            return appUtils.pay.finishPay(t);
-        } else {
-            return true;
+        // if (appUtils.pay && appUtils.pay.finishPay) {
+        //     return appUtils.pay.finishPay(t);
+        // } else {
+        //     return true;
+        // }
+
+        if(appUtils.pay && appUtils.pay.finishPay){
+
         }
 
     }
