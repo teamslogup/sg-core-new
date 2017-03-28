@@ -24,7 +24,7 @@ module.exports = {
         },
         'LGD_TID': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'LGD_OID': {
             'type': Sequelize.STRING,
@@ -107,10 +107,6 @@ module.exports = {
             'allowNull': true
         },
         'LGD_DEVICE': {
-            'type': Sequelize.STRING,
-            'allowNull': true
-        },
-        'LGD_TID': {
             'type': Sequelize.STRING,
             'allowNull': true
         },
@@ -250,7 +246,7 @@ module.exports = {
                     transaction: t
                 }).then(function (data) {
                     if (data) {
-                        return true;
+                        return data;
                     } else {
                         throw new errorHandler.CustomSequelizeError(404);
                     }
