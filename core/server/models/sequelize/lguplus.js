@@ -234,7 +234,7 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'startPay': function (body, t) {
 
-                var LGUPLUS = STD.lguplus;
+                var LGUPLUS = STD.pay.lguplus;
 
                 body.status = LGUPLUS.statusWait;
 
@@ -253,6 +253,10 @@ module.exports = {
                 });
             },
             'finishPay': function (LGD_OID, update, t) {
+
+                var LGUPLUS = STD.pay.lguplus;
+
+                update.status = LGUPLUS.statusFinish;
 
                 return sequelize.models.Lguplus.update(update, {
                     where: {
