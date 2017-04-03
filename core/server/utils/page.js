@@ -22,6 +22,8 @@ module.exports = {
             });
         }
 
+        pages.unshift("default");
+
         return pages;
     }
 };

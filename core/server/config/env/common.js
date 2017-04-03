@@ -25,7 +25,7 @@ module.exports = {
         "isUseCluster": false,
         "isDuplicatedLogin": false,
         "isAutoVerifiedEmail": false,
-        "isUseChat": true
+        "isUseChat": false
     },
     "facebook": {
         "clientID": "",
@@ -49,7 +49,7 @@ module.exports = {
         "bucketName": ""
     },
     "sender": {
-        "infobankSMS": {
+        "infoBankSMS": {
             "senderName": "slogup",
             "serviceId": "",
             "servicePw": "",

@@ -1,6 +1,22 @@
 export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal, noticesManager, dialogHandler, loadingHandler, metaManager) {
     "ngInject";
 
+    var vm = null;
+    if ($scope.vm !== undefined) {
+        vm = $scope.vm;
+    } else {
+        vm = $scope.vm = {};
+    }
+
+    if (vm.CDN === undefined) {
+        vm.CDN = metaManager.std.cdn;
+    }
+
+    var LOADING = metaManager.std.loading;
+    var NOTICE = metaManager.std.notice;
+    var ADMIN = metaManager.std.admin;
+    vm.FLAG = metaManager.std.flag;
+
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;
     var ADMIN = metaManager.std.admin;

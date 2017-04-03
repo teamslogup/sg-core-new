@@ -38,6 +38,7 @@ var CONFIG = require('../../../bridge/config/env'),
     META = require('../../../bridge/metadata');
 var LOCAL = META.std.local;
 var FILE = META.std.file;
+var LOG = META.std.log;
 
 require('../../../bridge/config/extend-validator')();
 var globalVariables = require('./ejs/index');
@@ -61,7 +62,7 @@ var sessionSettings = {
 if (CONFIG.flag.isUseRedis) {
     var urlObj = url.parse(CONFIG.db.redis);
     var auth = urlObj.auth;
-    var auth = (auth && auth.split(":")) || null;
+    auth = (auth && auth.split(":")) || null;
     console.log('redis info', urlObj);
     sessionSettings.store = new RedisStore({
         'host': urlObj.hostname,
@@ -89,6 +90,11 @@ module.exports.init = function (sequelize) {
     stat = fs.existsSync(appRootPath + '/' + LOCAL.tempUrl);
     if (!stat) {
         fs.mkdirSync(appRootPath + '/' + LOCAL.tempUrl);
+    }
+
+    stat = fs.existsSync(appRootPath + '/' + LOG.folderName);
+    if (!stat) {
+        fs.mkdirSync(appRootPath + '/' + LOG.folderName);
     }
 
     var i = 0;

@@ -12,6 +12,8 @@ export default function UsersCtrl($scope, $rootScope, $uibModal, $filter, usersM
         vm.CDN = metaManager.std.cdn;
     }
 
+    vm.FLAG = metaManager.std.flag;
+
     $scope.usersManager = usersManager;
     $scope.dialogHandler = dialogHandler;
     $scope.loadingHandler = loadingHandler;

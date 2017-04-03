@@ -4,10 +4,7 @@
     .sg-user-manage-container {
         margin: auto;
         padding: 50px 12px 50px 12px;
-
-        @media screen and (min-width: $web-container-size + $g-menu-size) {
-            max-width: $web-container-size;
-        }
+        width: $web-container-size;
 
         .sg-user-manage-title {
         }
@@ -60,12 +57,7 @@
 
                     font-size: 12px;
                     color: #8d93a6;
-
-                    display: none;
-
-                    @media screen and (min-width: $web-container-size + $g-menu-size) {
-                        display: block;
-                    }
+                    display: block;
 
                     .sg-user-manage-main-list-top-img {
                         float: left;
@@ -127,185 +119,115 @@
                         background-size: contain;
                         background-position: center;
                         border-radius: 50%;
-
-                        @media screen and (min-width: $web-container-size + $g-menu-size) {
-                            float: left;
-                        }
+                        float: left;
                     }
 
                     .sg-user-manage-main-list-item-aid-container {
 
-                        position: absolute;
-                        left: 74px;
-                        top: 14px;
                         line-height: $sg-user-manage-main-list-item-line-height;
-
-                        @media screen and (min-width: $web-container-size + $g-menu-size) {
-                            float: left;
-                            width: 20%;
-
-                            position: static;
-
-                            padding-left: 18px;
-                        }
-
+                        float: left;
+                        width: 20%;
+                        position: static;
+                        padding-left: 18px;
                         @include after-clear();
 
                         .sg-user-manage-main-list-item-aid-title {
-                            float: left;
+                            float: none;
                             display: none;
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-
-                                display: none;
-                            }
                         }
 
                         .sg-user-manage-main-list-item-aid-text {
-                            float: left;
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                            }
+                            float: none;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
                     }
 
                     .sg-user-manage-main-list-item-nick-container {
-
-                        margin-top: 8px;
                         line-height: $sg-user-manage-main-list-item-line-height;
-
-                        @media screen and (min-width: $web-container-size + $g-menu-size) {
-                            float: left;
-                            width: 20%;
-
-                            margin-top: 0;
-                        }
-
+                        float: left;
+                        width: 20%;
+                        margin-top: 0;
                         @include after-clear();
 
                         .sg-user-manage-main-list-item-nick-title {
-                            float: left;
-                            width: 60px;
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-                                display: none;
-                            }
+                            float: none;
+                            display: none;
                         }
 
                         .sg-user-manage-main-list-item-nick-text {
-                            float: left;
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                            }
+                            float: none;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
                     }
 
                     .sg-user-manage-main-list-item-created-at-container {
 
-                        margin-top: 8px;
-
                         font-size: 12px;
                         font-weight: normal;
                         color: #464646;
                         line-height: $sg-user-manage-main-list-item-line-height;
-
-                        @media screen and (min-width: $web-container-size + $g-menu-size) {
-                            float: left;
-                            width: 12%;
-
-                            margin-top: 0;
-                        }
-
+                        float: left;
+                        width: 12%;
+                        margin-top: 0;
                         @include after-clear();
 
                         .sg-user-manage-main-list-item-created-at-title {
-                            float: left;
-                            width: 60px;
+                            float: none;
+                            display: none;
 
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-
-                                display: none;
-                            }
                         }
 
                         .sg-user-manage-main-list-item-created-at-text {
-                            float: left;
 
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                            }
+                            float: none;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+
                         }
                     }
 
                     .sg-user-manage-main-list-item-gender-container {
 
-                        margin-top: 8px;
-
                         font-size: 12px;
                         font-weight: normal;
                         color: #464646;
                         line-height: $sg-user-manage-main-list-item-line-height;
-
-                        @media screen and (min-width: $web-container-size + $g-menu-size) {
-                            float: left;
-                            width: 6%;
-
-                            margin-top: 0;
-                        }
-
+                        float: left;
+                        width: 6%;
+                        margin-top: 0;
                         @include after-clear();
 
                         .sg-user-manage-main-list-item-gender-title {
-                            float: left;
-                            width: 60px;
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-
-                                display: none;
-                            }
+                            float: none;
+                            display: none;
                         }
 
                         .sg-user-manage-main-list-item-gender-text {
-                            float: left;
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                float: none;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                            }
+                            float: none;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
                     }
 
                     .sg-user-manage-main-list-item-option-container {
 
-                        @media screen and (min-width: $web-container-size + $g-menu-size) {
-                            position: static;
-                            float: left;
-
-                            margin-top: 0;
-                        }
+                        position: relative;
+                        margin-top: 0;
+                        height: 40px;
+                        float: left;
+                        width: 14%;
 
                         .sg-user-manage-main-list-item-option-btn {
-                            position: absolute;
-                            right: 18px;
-                            top: 14px;
 
+                            position: absolute;
+                            right: 0px;
+                            top: 8px;
                             width: 50px;
                             height: 25px;
                             border-radius: 3px;
@@ -320,16 +242,6 @@
                                 background-image: url('/assets/themes/admin/cloudy/images/ic_item_more_active_20_6_2x.png');
                                 background-color: #5b7ed6;
                                 border: solid 1px #5b7ed6;
-                            }
-
-                            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                                position: relative;
-                                top: 8px;
-                                left: 110px;
-
-                                float: left;
-
-                                margin-top: 0;
                             }
                         }
 
@@ -396,3 +308,4 @@
 }
 
 @import "core.user-manage-detail";
+@import "core.users-responsive";
