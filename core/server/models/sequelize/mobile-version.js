@@ -88,6 +88,7 @@ module.exports = {
 
                         return sequelize.models.MobileVersion.findAll({
                             where: {
+                                type: type,
                                 $or: [{
                                     majorVersion: {
                                         $gt: majorVersion
