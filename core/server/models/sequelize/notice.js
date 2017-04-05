@@ -88,7 +88,7 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'findAllNotices': function (searchItem, searchField, last, size, country, type, sort, offset, callback) {
+            'findAllNotices': function (searchItem, searchField, last, size, country, type, sort, offset, today, callback) {
 
                 var where = {};
 
@@ -116,6 +116,17 @@ module.exports = {
                         }
                         where.$or.push(body);
                     }
+                }
+
+                if(today){
+
+                    where.startDate = {
+                        '$lt': today
+                    };
+
+                    where.endDate = {
+                        '$gt': today
+                    };
                 }
 
                 where.createdAt = {

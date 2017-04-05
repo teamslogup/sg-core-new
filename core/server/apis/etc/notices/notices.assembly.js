@@ -58,7 +58,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['searchItem', 'searchField', 'last', 'size', 'offset', 'country', 'type', 'sort'],
+                acceptable: ['searchItem', 'searchField', 'last', 'size', 'offset', 'country', 'type', 'sort', 'today'],
                 essential: [],
                 resettable: [],
                 explains: {
@@ -69,7 +69,8 @@ var api = {
                     offset: '몇번째 부터 로드 할지',
                     country: '국가 필터, 없으면 전체',
                     type: '유형 필터 ' + STD.notice.enumNoticeTypes.join(", "),
-                    sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", ")
+                    sort: '오름차순 내림차순 정렬 ' + STD.common.enumSortTypes.join(", "),
+                    today: '날짜 적용시 해당 날짜의 timestamp 값 (startDate < today < endDate 검색)'
                 },
                 response: {rows: [resforms.notice]},
                 title: '공지리스트얻기',
