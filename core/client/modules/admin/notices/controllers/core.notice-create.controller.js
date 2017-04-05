@@ -19,6 +19,16 @@ export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, sco
 
         var body = angular.copy($scope.form);
 
+        if(body.startDate){
+            var date = new Date(body.startDate);
+            body.startDate = Date.parse(date)*1000;
+        }
+
+        if(body.endDate){
+            var date = new Date(body.endDate);
+            body.endDate = Date.parse(date)*1000;
+        }
+
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
         scope.noticesManager.createNotice(body, function (status, data) {
             if (status == 201) {
