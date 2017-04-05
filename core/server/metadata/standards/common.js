@@ -239,7 +239,6 @@ var standards = {
         "noticeTypeEvent": "event",
         "noticeTypePopup": "popup",
         "enumFields": ["title", "body"],
-        "enumCountries": ["KR"],
         "modalSize": "md"
     },
     "board": {
