@@ -10,7 +10,7 @@ export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, sco
     };
 
     $scope.noticeTypes = NOTICE.enumNoticeTypes;
-    $scope.noticeCountries = NOTICE.enumCountries;
+    $scope.noticeCountries = scope.noticeCountries;
 
     $scope.createNotice = createNotice;
     $scope.cancel = cancel;

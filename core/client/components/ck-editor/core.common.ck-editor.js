@@ -1,22 +1,24 @@
-export default function ckEditor() {
+export default function ckEditor(metaManager) {
     "ngInject";
+
+    var HOST = metaManager.std.host;
 
     return {
         require: '?ngModel',
-        link: function(scope, elm, attr, ngModel) {
+        link: function (scope, elm, attr, ngModel) {
             var ck = CKEDITOR.replace(elm[0], {
-                filebrowserImageUploadUrl: 'http://localhost:8080/api/etc/upload-ck'
+                filebrowserImageUploadUrl: HOST.url + '/api/etc/upload-ck'
             });
 
             if (!ngModel) return;
 
-            ck.on('pasteState', function() {
-                scope.$apply(function() {
+            ck.on('pasteState', function () {
+                scope.$apply(function () {
                     ngModel.$setViewValue(ck.getData());
                 });
             });
 
-            ngModel.$render = function(value) {
+            ngModel.$render = function (value) {
                 ck.setData(ngModel.$viewValue);
             };
         }
