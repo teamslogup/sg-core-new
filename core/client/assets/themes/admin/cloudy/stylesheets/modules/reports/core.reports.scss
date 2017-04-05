@@ -71,12 +71,8 @@
                     cursor: pointer;
                     overflow: hidden;
                     @include after-clear();
-                    @include transition(all, .15s, ease-in-out, 0s);
+                    @include transition(border, .15s, ease-in-out, 0s);
                     @include hoverItem();
-
-                    &:nth-child(3n){
-                        margin-right: 0px;
-                    }
 
                     .sg-report-manage-main-item-top {
                         height: 48px;

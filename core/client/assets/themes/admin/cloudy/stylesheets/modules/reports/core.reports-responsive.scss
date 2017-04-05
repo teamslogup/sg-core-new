@@ -6,8 +6,11 @@
         $sg-report-manage-container-padding: 12px;
 
         .sg-report-manage-container {
+            @media screen and (max-width: $web-min-width) {
+                width: 100%;
+            }
             @media screen and (min-width: $web-min-width) {
-                width: $web-min-width;
+                width: 100%;
             }
 
             @media screen and (min-width: $sg-report-manage-main-item-width * 2 + $sg-report-manage-main-item-margin-right * 2 + $sg-report-manage-container-padding * 2 + $g-menu-size) {
@@ -29,7 +32,7 @@
                         }
 
                         @media screen and (min-width: $web-min-width) {
-                            width: $sg-report-manage-main-item-width;
+                            width: 100%;
                         }
 
                         @media screen and (min-width: $web-min-width) and (max-width: $sg-report-manage-main-item-width * 2 + $sg-report-manage-main-item-margin-right * 2 + $sg-report-manage-container-padding * 2 - 1px + $g-menu-size) {
@@ -42,12 +45,14 @@
                             &:nth-child(2n) {
                                 margin-right: 0;
                             }
+                            width: $sg-report-manage-main-item-width;
                         }
 
                         @media screen and (min-width: $sg-report-manage-main-item-width * 3 + $sg-report-manage-main-item-margin-right * 3 + $sg-report-manage-container-padding * 2 + $g-menu-size) {
                             &:nth-child(3n) {
                                 margin-right: 0;
                             }
+                            width: $sg-report-manage-main-item-width;
                         }
 
                     }

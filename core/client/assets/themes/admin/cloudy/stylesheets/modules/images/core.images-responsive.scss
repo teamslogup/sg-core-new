@@ -3,8 +3,9 @@
 .sg-core-responsive {
     &#sg-image-manage {
         .sg-image-manage-container {
+            $sg-image-manage-main-list-item-width: 233.6px;
 
-            @media screen and (max-width: $web-min-width)  {
+            @media screen and (max-width: $web-min-width) {
                 width: 100%;
             }
 
@@ -20,13 +21,12 @@
                 width: 1200px;
             }
 
-
             .sg-image-manage-main {
                 .sg-image-manage-main-list {
                     .sg-image-manage-main-list-item {
                         @media screen and (max-width: $web-min-width) {
                             float: none;
-                            width: inherit;
+                            width: 100%;
                         }
 
                         @media screen and (min-width: $web-min-width) and (max-width: 958.4px + $g-menu-size) {
@@ -43,6 +43,7 @@
                             &:nth-child(4n) {
                                 margin-right: 0;
                             }
+                            width: $sg-image-manage-main-list-item-width;
                         }
 
                         @media screen and (min-width: $web-container-size + $g-menu-size) {
@@ -52,6 +53,7 @@
                             &:nth-child(5n) {
                                 margin-right: 0;
                             }
+                            width: $sg-image-manage-main-list-item-width;
                         }
                     }
                 }

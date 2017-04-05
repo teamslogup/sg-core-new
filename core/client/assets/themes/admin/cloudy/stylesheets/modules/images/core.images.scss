@@ -65,7 +65,7 @@
                     margin-right: 8px;
                     cursor: pointer;
 
-                    @include transition(all, .15s, ease-in-out, 0s);
+                    @include transition(border, .15s, ease-in-out, 0s);
                     @include hoverItem();
 
                     .sg-image-manage-main-list-item-body {
