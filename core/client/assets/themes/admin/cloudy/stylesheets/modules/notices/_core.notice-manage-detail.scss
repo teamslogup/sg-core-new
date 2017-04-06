@@ -125,11 +125,18 @@
                 .sg-notice-manage-detail-body-body-body {
                     @include after-clear();
                     img{
-                        max-width: 820px;
+                        max-width: 520px;
                     }
                 }
 
             }
+
+            .sg-notice-manage-detail-body-date{
+                padding: 30px $sg-notice-manage-detail-padding-left-right;
+                border-bottom: 1px solid $divider;
+            }
+
+
         }
 
         .sg-notice-manage-detail-body-edit {
@@ -157,6 +164,21 @@
 
             .sg-notice-manage-detail-body-body {
                 margin-top: 18px;
+            }
+
+            .sg-notice-manage-create-body-createdAt{
+                margin-top: 12px;
+                @include after-clear();
+                .sg-filter-select{
+                    width: 100%;
+                    border-radius: 5px;
+                    border: 1px solid #d5dbec;
+                    background: #fff url("/assets/images/ic_corporate_date_24_2x.png") no-repeat;
+                    background-size: 24px;
+                    background-position: 0px;
+                    line-height: 34px;
+                    cursor: pointer;
+                }
             }
         }
 
