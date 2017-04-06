@@ -55,7 +55,7 @@ export default function CompanyInfoCtrl($scope, $rootScope, $filter, companyInfo
             } else {
                 dialogHandler.alertError(status, data);
             }
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateCompanyInfo');
+            loadingHandler.endLoading(LOADING.spinnerKey, 'updateCompanyInfo');
         });
     }
 
