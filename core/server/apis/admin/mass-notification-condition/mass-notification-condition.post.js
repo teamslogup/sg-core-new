@@ -68,6 +68,18 @@ post.createMassNotification = function () {
     };
 };
 
+post.setImage = function () {
+    return function (req, res, next) {
+
+        if (req.files.length > 0) {
+            req.image = req.files[0];
+        }
+
+        next();
+
+    }
+};
+
 post.sendMassNotification = function () {
     return function (req, res, next) {
         var STD = req.meta.std;
@@ -156,7 +168,7 @@ post.sendMassNotification = function () {
                             if (status == 200) {
                                 console.log('total', total);
                                 data.forEach(function (user) {
-                                    req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, function (status, data) {
+                                    req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, function (status, data) {
                                         finishArray.push(user.id);
                                         var progress = Math.ceil(finishArray.length / total * 100);
                                         console.log(finishArray.length + '/' + total + '=' + progress);

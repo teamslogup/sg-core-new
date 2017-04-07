@@ -1,9 +1,10 @@
-export default function NotificationsCreateCtrl($scope, $filter, $interval, $uibModalInstance, scope) {
+export default function NotificationsCreateCtrl($scope, $filter, $interval, $uibModalInstance, scope, FileUploader, uploadManager, dialogHandler) {
     "ngInject";
 
     var USER = scope.metaManager.std.user;
     var LOADING = scope.metaManager.std.loading;
     var COMMON = scope.metaManager.std.common;
+    var FILE = scope.metaManager.std.file;
 
     $scope.stopProgress = null;
     $scope.progress = {
@@ -49,6 +50,8 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
     $scope.tempStore.condition.gender = $scope.enumGenders[0];
     $scope.tempStore.condition.platform = $scope.enumPhones[0];
+
+    $scope.images = [];
 
     // $scope.form = {
     //     type: scope.noticeTypes[0],
@@ -120,7 +123,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         body.platform = $scope.tempStore.condition.platform;
 
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'sendNotificationCondition');
-        scope.massNotificationConditionManager.sendNotificationCondition(body, function (status, data) {
+        scope.massNotificationConditionManager.sendNotificationCondition(body, $scope.images, function (status, data) {
             if (status == 201) {
 
                 $scope.massNotification = data;
@@ -203,5 +206,54 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         }
 
     }, true);
+
+
+    $scope.uploader = new FileUploader({
+        onAfterAddingAll: function (items) {
+            if (items.length > 1) {
+                // dialogHandler.show('', '최대 이미지 갯수는 1개 까지 입니다.', '', true);
+                previewFile(items[0]._file);
+            } else {
+                previewFile(items[0]._file);
+            }
+        },
+        onErrorItem: function (err) {
+            console.log(err);
+        }
+    });
+
+    function previewFile(image) {
+        var file = image;
+        var reader = new FileReader();
+
+        reader.addEventListener("load", function () {
+
+            if ($scope.$$phase == '$apply' || $scope.$$phase == '$digest') {
+                $scope.images.push(reader.result);
+            } else {
+                $scope.$apply(function () {
+                    $scope.images.push(reader.result);
+                });
+            }
+
+        }, false);
+
+        if (file) {
+            reader.readAsDataURL(file);
+        }
+
+        uploadManager.uploadImages(file, 'common', function (status, data) {
+            if (status == 201) {
+                console.log(status);
+            } else {
+                console.log(status);
+            }
+        });
+    }
+
+    $scope.clickUploadFile = function () {
+        $('#uploadFile')[0].click();
+    };
+
 
 }

@@ -13,12 +13,18 @@
         <div class="sg-notification-manage-create-message-top" data-ng-class="messageTop">
             {{messageTop}}
         </div>
-        <div class="sg-notification-manage-create-message-image">
-
-            <img class="sg-notification-manage-create-message-image-img" src="/assets/themes/admin/cloudy/images/ic_noti_push_plus_40_2x.png" alt="" width="40">
+        <div class="sg-notification-manage-create-message-image" data-ng-click="clickUploadFile()"
+             data-ng-if="images.length == 0">
+            <input id="uploadFile" type="file" nv-file-select="" uploader="uploader" data-ng-show="false" multiple/>
+            <img class="sg-notification-manage-create-message-image-img"
+                 src="/assets/themes/admin/cloudy/images/ic_noti_push_plus_40_2x.png" alt="" width="40">
             <div class="sg-notification-manage-create-message-image-text">
                 {{'이미지를 삽입하세요'|translate}}
             </div>
+        </div>
+
+        <div class="sg-notification-manage-create-message-image-on" data-ng-if="images.length > 0">
+            <img data-ng-src="{{images[0]}}" alt="">
         </div>
 
         <div class="sg-notification-manage-create-message-title">

@@ -9,8 +9,10 @@ var router = new express.Router();
 var HAPICreator = require('sg-api-creator');
 var resforms = require('../../../resforms');
 
+var config = require('../../../../../bridge/config/env');
 const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
+const FILE = STD.file;
 
 var api = {
     post: function (isOnlyParams) {
@@ -25,7 +27,8 @@ var api = {
                     "platform",
                     "notificationName",
                     "messageTitle",
-                    "messageBody"
+                    "messageBody",
+                    "messageImg"
                 ],
                 essential: [
                     "sendType",
@@ -40,11 +43,14 @@ var api = {
                     "platform": "all, android, ios",
                     "notificationName": "알림 이름",
                     "messageTitle": "제목",
-                    "messageBody": "내용"
+                    "messageBody": "내용",
+                    "messageImg": "이미지"
 
                 },
                 role: STD.user.roleAdmin,
                 title: '조건 선택 메세지 전송',
+                file: 'file',
+                files_cnt: 1,
                 state: 'development'
             };
 
@@ -52,12 +58,17 @@ var api = {
                 var apiCreator = new HAPICreator(req, res, next);
 
                 apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
+                apiCreator.add(req.middles.upload.refineFiles());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,
                     params.essential,
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
+                apiCreator.add(req.middles.upload.generateFolder(FILE.folderImages));
+                apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
+                apiCreator.add(req.middles.upload.checkFileCount(0, 1));
+                apiCreator.add(post.setImage());
                 apiCreator.add(post.createMassNotification());
                 apiCreator.add(post.sendMassNotification());
                 apiCreator.add(post.supplement());
