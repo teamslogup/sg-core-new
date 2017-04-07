@@ -4,7 +4,7 @@ module.exports = {
             var query = "";
             if (typeof tableName == "string" && aliasArray instanceof Array && fieldArray instanceof Array) {
                 var alias = aliasArray.join('.');
-                for (var i=0; i<fieldArray.length; i++) {
+                for (var i = 0; i < fieldArray.length; i++) {
                     if (i) {
                         query += ", ";
                     }
@@ -124,14 +124,18 @@ module.exports = {
             }
 
             if (row[idKey]) {
+
                 if (row[idKey] != indexes[key].currentId) {
 
                     if (refinedKeyPattern[key] instanceof Array) {
                         refinedResult[key].push({});
                         indexes[key].index = refinedResult[key].length - 1;
-                        indexes[key].currentId = row[idKey];
+                        if (previousIdKey) {
+                            indexes[key].currentId = row[previousIdKey + '.id'] + '.' + row[idKey];
+                        } else {
+                            indexes[key].currentId = row[idKey];
+                        }
                     }
-
                 }
 
                 currentResult = refinedResult[key];
