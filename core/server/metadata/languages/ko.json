@@ -253,6 +253,8 @@
   "massNotificationSuccessCount": "성공건수",
   "massNotificationFailCount": "실패건수",
   "massNotificationCountUnit": "건",
-  "detail": "상세"
+  "detail": "상세",
+  "startDate": "시작일",
+  "endDate": "종료일"
 }
 

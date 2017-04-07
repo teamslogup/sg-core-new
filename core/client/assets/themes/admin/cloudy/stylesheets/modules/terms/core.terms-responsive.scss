@@ -10,7 +10,7 @@
         position: relative;
 
         max-width: $web-container-size;
-        padding: 50px 0;
+        padding: 50px 12px 50px 12px;
         margin: auto;
         height: inherit;
         div.sg-core-terms-header {
@@ -44,12 +44,15 @@
           position: relative;
           @include after-clear();
           div.sg-core-list-wrap {
-            position: relative;
             background-color: white;
-            width: 100%;
             min-height: inherit;
             float: none;
             padding: 0px;
+            position: absolute;
+            top: -70px;
+            right: 0px;
+            display: inline-block;
+            width: 111px;
             @include after-clear();
             select.sg-core-filter {
               position: relative;
@@ -150,15 +153,14 @@
 
               position: relative;
               border-bottom: 1px solid #d5dbec;
-              height: $sg-core-version-wrap-height;
+              height: inherit;
+              padding-bottom: 10px;
 
               @include after-clear();
               button.sg-core-button {
                 position: relative;
 
-                margin-top: 11px;
-                margin-left: 18px;
-                margin-right: 2px;
+                margin: 0px;
 
                 border: solid 1px $soft-blue;
                 width: 28px;
@@ -199,7 +201,7 @@
                 position: relative;
                 float: left;
 
-                line-height: $sg-core-version-wrap-height;
+                line-height: 28px;
                 padding: 0 6px;
                 color: #8d93a6;
                 border-radius: 5px;

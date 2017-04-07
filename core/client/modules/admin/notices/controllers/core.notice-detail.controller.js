@@ -13,8 +13,11 @@ export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, sco
         country: notice.country
     };
 
+    $scope.form.startDate = setTimestampToString(notice.startDate);
+    $scope.form.endDate = setTimestampToString(notice.endDate);
+
     $scope.noticeTypes = NOTICE.enumNoticeTypes;
-    $scope.noticeCountries = NOTICE.enumCountries;
+    $scope.noticeCountries = scope.noticeCountries;;
 
     $scope.startEditMode = startEditMode;
     $scope.exitEditMode = exitEditMode;
@@ -33,9 +36,31 @@ export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, sco
         $scope.isNoticeEditMode = false;
     }
 
+    function setTimestampToString(date){
+        if(date == null || date == ''){
+            return null;
+        }
+        var t = new Date( date/1000 );
+        var formatted = t.toISOString().substring(0, 10);
+        return formatted;
+    }
+
+    function setStringToTimestamp(str){
+        var date = new Date(str);
+        return Date.parse(date)*1000;
+    }
+
     function updateNotice() {
 
         var body = angular.copy($scope.form);
+
+        if(body.startDate){
+            body.startDate = setStringToTimestamp(body.startDate);
+        }
+
+        if(body.endDate){
+            body.endDate = setStringToTimestamp(body.endDate);
+        }
 
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
         scope.noticesManager.updateNoticeById(notice.id, body, function (status, data) {

@@ -62,6 +62,14 @@
             .sg-notice-manage-create-body-body {
                 margin-top: 12px;
             }
+
+            .sg-notice-manage-create-body-createdAt{
+                margin-top: 12px;
+                @include after-clear();
+                .sg-filter-select{
+                    width: 100%;
+                }
+            }
         }
 
         .sg-notice-manage-create-bottom {

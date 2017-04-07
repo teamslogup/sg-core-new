@@ -7,7 +7,7 @@
     div.sg-core-container {
         position: relative;
 
-        width: $web-container-size;
+        max-width: $web-container-size;
         padding: 50px 12px;
         margin: auto;
         div.sg-core-terms-header {

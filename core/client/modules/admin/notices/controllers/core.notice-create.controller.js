@@ -15,18 +15,22 @@ export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, sco
     $scope.createNotice = createNotice;
     $scope.cancel = cancel;
 
+
+    function setStringToTimestamp(str){
+        var date = new Date(str);
+        return Date.parse(date)*1000;
+    }
+
     function createNotice() {
 
         var body = angular.copy($scope.form);
 
         if(body.startDate){
-            var date = new Date(body.startDate);
-            body.startDate = Date.parse(date)*1000;
+            body.startDate = setStringToTimestamp(body.startDate);
         }
 
         if(body.endDate){
-            var date = new Date(body.endDate);
-            body.endDate = Date.parse(date)*1000;
+            body.endDate = setStringToTimestamp(body.endDate);
         }
 
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
