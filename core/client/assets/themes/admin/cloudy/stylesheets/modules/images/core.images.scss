@@ -4,18 +4,7 @@
     .sg-image-manage-container {
         margin: auto;
         padding: 50px 0;
-
-        @media screen and (min-width: $web-min-width) and (max-width: 958.4px + $g-menu-size) {
-            width: 736.8px;
-        }
-
-        @media screen and (min-width: 958.4px + $g-menu-size) and (max-width: $web-container-size + $g-menu-size) {
-            width: 958.4px;
-        }
-
-        @media screen and (min-width: $web-container-size + $g-menu-size) {
-            width: 1200px;
-        }
+        width: $web-container-size;
 
         .sg-image-manage-top {
             @include title-border-bottom();
@@ -54,6 +43,7 @@
             padding-bottom: 6px;
 
             .sg-image-manage-main-top {
+                margin-bottom: 12px;
                 @include after-clear();
                 .sg-image-manage-main-top-filter {
                     float: left;
@@ -71,42 +61,11 @@
                     overflow: hidden;
                     width: 233.6px;
                     margin-top: 8px;
-
-                    @media screen and (max-width: $web-min-width) {
-                        float: none;
-                        width: inherit;
-                    }
-
-                    @media screen and (min-width: $web-min-width) and (max-width: 958.4px + $g-menu-size) {
-                        margin-right: 8px;
-
-                        &:nth-child(3n) {
-                            margin-right: 0;
-                        }
-                    }
-
-                    @media screen and (min-width: 958.4px + $g-menu-size) and (max-width: $web-container-size + $g-menu-size) {
-                        margin-right: 8px;
-
-                        &:nth-child(4n) {
-                            margin-right: 0;
-                        }
-                    }
-
-                    @media screen and (min-width: $web-container-size + $g-menu-size) {
-
-                        margin-right: 8px;
-
-                        &:nth-child(5n) {
-                            margin-right: 0;
-                        }
-                    }
-
                     border: solid 1px $pale-grey;
-
+                    margin-right: 8px;
                     cursor: pointer;
 
-                    @include transition(all, .15s, ease-in-out, 0s);
+                    @include transition(border, .15s, ease-in-out, 0s);
                     @include hoverItem();
 
                     .sg-image-manage-main-list-item-body {
@@ -236,3 +195,4 @@
 }
 
 @import "core.image-manage-detail";
+@import "core.images-responsive";

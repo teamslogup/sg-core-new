@@ -1,9 +1,21 @@
 export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal, noticesManager, dialogHandler, loadingHandler, metaManager) {
     "ngInject";
 
+    var vm = null;
+    if ($scope.vm !== undefined) {
+        vm = $scope.vm;
+    } else {
+        vm = $scope.vm = {};
+    }
+
+    if (vm.CDN === undefined) {
+        vm.CDN = metaManager.std.cdn;
+    }
+
     var LOADING = metaManager.std.loading;
     var NOTICE = metaManager.std.notice;
     var ADMIN = metaManager.std.admin;
+    vm.FLAG = metaManager.std.flag;
 
     $scope.noticesManager = noticesManager;
     $scope.dialogHandler = dialogHandler;
@@ -17,7 +29,13 @@ export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal
     $scope.noticeTypes = NOTICE.enumNoticeTypes;
     $scope.params.type = $scope.noticeTypes[0];
 
-    $scope.noticeCountries = NOTICE.enumCountries;
+    var LOCAL = metaManager.local;
+    var enumCountries = [];
+    for (var k in LOCAL.countries) {
+        enumCountries.push(k);
+    }
+
+    $scope.noticeCountries = enumCountries;
 
     $scope.noticeSearchFields = NOTICE.enumFields;
     $scope.params.searchField = $scope.noticeSearchFields[0];

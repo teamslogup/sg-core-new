@@ -25,7 +25,7 @@ module.exports = {
         "isUseCluster": false,
         "isDuplicatedLogin": false,
         "isAutoVerifiedEmail": false,
-        "isUseChat": true
+        "isUseChat": false
     },
     "facebook": {
         "clientID": "",

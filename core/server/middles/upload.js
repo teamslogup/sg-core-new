@@ -253,6 +253,12 @@ module.exports = function () {
             var now = new Date();
             req.dateFolder = now.getUTCFullYear() + '-' + req.coreUtils.common.attachZero(now.getUTCMonth() + 1) + '-' + req.coreUtils.common.attachZero(now.getUTCDate());
             req.folder = parentFolder + '/' + req.body.folder + '/' + req.dateFolder;
+
+            var stat = fs.existsSync(appRootPath + '/' + STD.local.uploadUrl + '/' + parentFolder + '/' + req.body.folder);
+            if (!stat) {
+                fs.mkdirSync(appRootPath + '/' + STD.local.uploadUrl + '/' + parentFolder + '/' + req.body.folder);
+            }
+
             next();
         };
     };
@@ -260,6 +266,7 @@ module.exports = function () {
     Upload.prototype.moveFileDir = function () {
         return function (req, res, next) {
             if (req.files && req.folder) {
+
                 var stat = fs.existsSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
                 if (!stat) {
                     fs.mkdirSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);

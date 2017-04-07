@@ -16,6 +16,7 @@ export default function ReportsCtrl($scope, $rootScope, $filter, $uibModal, repo
     var COMMON = metaManager.std.common;
     var REPORT = metaManager.std.report;
     var ADMIN = metaManager.std.admin;
+    vm.FLAG = metaManager.std.flag;
 
     $scope.reportsManager = reportsManager;
     $scope.dialogHandler = dialogHandler;

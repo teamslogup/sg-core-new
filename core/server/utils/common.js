@@ -104,8 +104,8 @@ module.exports = {
     },
     getCountryEnum: function (req) {
 
-        if (req.body.country) req.body.country = req.body.country.toUpperCase();
-        if (req.query.country) req.query.country = req.query.country.toUpperCase();
+        if (req.body.country) req.body.country = req.body.country.toLowerCase();
+        if (req.query.country) req.query.country = req.query.country.toLowerCase();
 
         var LOCAL = req.meta.local;
         var enumCountries = [];

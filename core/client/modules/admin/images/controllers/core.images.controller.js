@@ -13,6 +13,7 @@ export default function ImagesCtrl($scope, $rootScope, $filter, imagesManager, d
     var COMMON = metaManager.std.common;
     var IMAGE = metaManager.std.image;
     var ADMIN = metaManager.std.admin;
+    vm.FLAG = metaManager.std.flag;
 
     $scope.form = {};
     $scope.imageList = [];

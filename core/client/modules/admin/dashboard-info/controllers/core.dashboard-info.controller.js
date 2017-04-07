@@ -11,6 +11,8 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
     var LOADING = metaManager.std.loading;
     var ADMIN = metaManager.std.admin;
 
+    vm.FLAG = metaManager.std.flag;
+
     $scope.dashboardInfo = undefined;
 
     $scope.findDashboardInfo = findDashboardInfo;

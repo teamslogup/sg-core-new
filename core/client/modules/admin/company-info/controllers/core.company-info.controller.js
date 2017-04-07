@@ -10,6 +10,7 @@ export default function CompanyInfoCtrl($scope, $rootScope, $filter, companyInfo
 
     var LOADING = metaManager.std.loading;
     var ADMIN = metaManager.std.admin;
+    vm.FLAG = metaManager.std.flag;
 
     $scope.isCompanyInfoEditVisible = false;
 
@@ -54,7 +55,7 @@ export default function CompanyInfoCtrl($scope, $rootScope, $filter, companyInfo
             } else {
                 dialogHandler.alertError(status, data);
             }
-            loadingHandler.startLoading(LOADING.spinnerKey, 'updateCompanyInfo');
+            loadingHandler.endLoading(LOADING.spinnerKey, 'updateCompanyInfo');
         });
     }
 

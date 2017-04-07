@@ -18,6 +18,7 @@ gets.validate = function () {
         if (req.query.country !== undefined) req.check('country', '400_28').isEnum(enumCountry);
         if (req.query.type !== undefined) req.check('type', '400_28').isEnum(NOTICE.enumNoticeTypes);
         if (req.query.sort !== undefined) req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
+        if (req.body.today !== undefined) req.check('today', '400_18').isMicroTimestamp();
 
         req.check('last', '400_18').isMicroTimestamp();
         req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
@@ -37,7 +38,7 @@ gets.setParam = function () {
         var size = req.query.size;
         var last = req.query.last;
 
-        req.models.Notice.findAllNotices(req.query.searchItem, req.query.searchField, last, size, req.query.country, req.query.type, req.query.sort, req.query.offset, function (status, data) {
+        req.models.Notice.findAllNotices(req.query.searchItem, req.query.searchField, last, size, req.query.country, req.query.type, req.query.sort, req.query.offset, req.query.today, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();

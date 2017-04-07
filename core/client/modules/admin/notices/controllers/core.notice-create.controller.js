@@ -10,14 +10,28 @@ export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, sco
     };
 
     $scope.noticeTypes = NOTICE.enumNoticeTypes;
-    $scope.noticeCountries = NOTICE.enumCountries;
+    $scope.noticeCountries = scope.noticeCountries;
 
     $scope.createNotice = createNotice;
     $scope.cancel = cancel;
 
+
+    function setStringToTimestamp(str){
+        var date = new Date(str);
+        return Date.parse(date)*1000;
+    }
+
     function createNotice() {
 
         var body = angular.copy($scope.form);
+
+        if(body.startDate){
+            body.startDate = setStringToTimestamp(body.startDate);
+        }
+
+        if(body.endDate){
+            body.endDate = setStringToTimestamp(body.endDate);
+        }
 
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
         scope.noticesManager.createNotice(body, function (status, data) {

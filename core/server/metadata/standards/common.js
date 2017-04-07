@@ -242,7 +242,6 @@ var standards = {
         "noticeTypeEvent": "event",
         "noticeTypePopup": "popup",
         "enumFields": ["title", "body"],
-        "enumCountries": ["KR"],
         "modalSize": "md"
     },
     "board": {
@@ -443,7 +442,7 @@ var standards = {
     "chatHistory": {
         "minMessageLength": 1,
         "maxMessageLength": 10000,
-        "chatHistoryEnum": ['text', 'image', 'media'],
+        "chatHistoryEnum": ["text", "image", "media"],
         "text": "text",
         "image": "image",
         "media": "media"
@@ -461,6 +460,30 @@ var standards = {
         "osTypeIos": "ios",
         "minVersionLength": 5,
         "maxVersionLength": 15
+    },
+    "log": {
+        "folderName": "logs"
+    },
+    "pay": {
+        "lguplus": {
+            "enumStatus": ["wait", "finish", "fail"],
+            "statusWait": "wait",
+            "statusFinish": "finish",
+            "statusFail": "fail",
+
+            "payMethodCard": "SC0010",
+            "payMethodAccount": "SC0030",
+
+            "startAcceptable": ["LGD_AMOUNT", "LGD_BUYER", "LGD_PRODUCTINFO", "LGD_BUYEREMAIL", "LGD_CUSTOM_USABLEPAY"],
+            "startEssential": ["LGD_AMOUNT", "LGD_BUYER", "LGD_PRODUCTINFO", "LGD_CUSTOM_USABLEPAY"],
+            "finishAcceptable": ["LGD_OID", "LGD_CARDACQUIRER", "LGD_IFOS", "LGD_MID", "LGD_FINANCENAME", "LGD_PCANCELFLAG", "LGD_FINANCEAUTHNUM", "LGD_DELIVERYINFO", "LGD_AFFILIATECODE", "LGD_TRANSAMOUNT", "LGD_BUYERID", "LGD_CARDNUM", "LGD_RECEIVERPHONE", "LGD_2TR_FLAG", "LGD_DEVICE", "LGD_TID", "LGD_FINANCECODE", "LGD_CARDNOINTYN", "LGD_CARDNOINTEREST_YN", "LGD_PCANCELSTR", "LGD_IDPKEY", "LGD_BUYERPHONE", "LGD_ESCROWYN", "LGD_PAYTYPE", "LGD_VANCODE", "LGD_EXCHANGERATE", "LGD_BUYERSSN", "LGD_CARDINSTALLMONTH", "LGD_PAYDATE", "LGD_PRODUCTCODE", "LGD_HASHDATA", "LGD_CARDGUBUN1", "LGD_CARDGUBUN2", "LGD_BUYERADDRESS", "LGD_RECEIVER", "LGD_RESPCODE", "LGD_RESPMSG","LGD_DISCOUNTUSEYN","LGD_ISPKEY","LGD_DISCOUNTUSEAMOUNT", "LGD_AMOUNT", "LGD_BUYER", "LGD_PRODUCTINFO", "LGD_TIMESTAMP"],
+            "finishEssential": ["LGD_OID"],
+        }
+    },
+    "inAppPurchase": {
+        "enumStatus": ["start", "finish"],
+        "statusStart": "start",
+        "statusFinish": "finish"
     }
 };
 
