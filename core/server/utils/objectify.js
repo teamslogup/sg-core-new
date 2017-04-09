@@ -83,7 +83,9 @@ module.exports = {
         }
 
     },
-    setStructure: function (row, previousIdKey, keyPattern, result, indexes) {
+    setStructure: function (row, previousIdKey, keyPattern, result, indexes, previousTrackingId) {
+
+        var currentTrackingId;
 
         var refinedKeyPattern;
         var refinedResult;
@@ -125,23 +127,26 @@ module.exports = {
 
             if (row[idKey]) {
 
-                if (row[idKey] != indexes[key].currentId) {
+                if (previousTrackingId === undefined) {
+                    currentTrackingId = row[idKey];
+                } else {
+                    currentTrackingId = previousTrackingId + '.' + row[idKey];
+                }
+
+                if (currentTrackingId != indexes[key].trackingId) {
 
                     if (refinedKeyPattern[key] instanceof Array) {
                         refinedResult[key].push({});
                         indexes[key].index = refinedResult[key].length - 1;
-                        if (previousIdKey) {
-                            indexes[key].currentId = row[previousIdKey + '.id'] + '.' + row[idKey];
-                        } else {
-                            indexes[key].currentId = row[idKey];
-                        }
+                        indexes[key].currentId = row[idKey];
+                        indexes[key].trackingId = currentTrackingId;
                     }
                 }
 
                 currentResult = refinedResult[key];
 
                 if (refinedKeyPattern[key]) {
-                    this.setStructure(row, currentKey, refinedKeyPattern[key], currentResult, indexes[key]);
+                    this.setStructure(row, currentKey, refinedKeyPattern[key], currentResult, indexes[key], currentTrackingId);
                 }
             } else {
                 //키에 해당하는 밸류가 널이면 인덱스에 null을 줘서 객체를 생성하지 않는다
@@ -174,6 +179,9 @@ module.exports = {
 
                             if (currentIndex[temp[i]].index != null) {
                                 currentItem = currentItem[temp[i]][currentIndex[temp[i]].index];
+                                if (!currentItem) {
+                                    console.log(temp[i]);
+                                }
                             } else {
                                 //index가 null이면 데이터가 없는 것이므로 마지막 단계까지 안가고 바로 종료
                                 return false;
