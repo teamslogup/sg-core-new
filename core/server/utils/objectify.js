@@ -179,9 +179,6 @@ module.exports = {
 
                             if (currentIndex[temp[i]].index != null) {
                                 currentItem = currentItem[temp[i]][currentIndex[temp[i]].index];
-                                if (!currentItem) {
-                                    console.log(temp[i]);
-                                }
                             } else {
                                 //index가 null이면 데이터가 없는 것이므로 마지막 단계까지 안가고 바로 종료
                                 return false;
