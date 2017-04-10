@@ -370,3 +370,10 @@
         }
     }
 }
+
+@media screen and (max-width: 960px) {
+    .modal-lg {
+        width: auto;
+        margin: 30px 10px;
+    }
+}

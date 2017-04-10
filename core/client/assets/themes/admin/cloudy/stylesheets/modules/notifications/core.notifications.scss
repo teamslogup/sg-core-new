@@ -174,38 +174,37 @@
                             }
                         }
                         .sg-notification-manage-main-item-title {
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
+
                             @media screen and (min-width: $web-container-size) {
                                 float: left;
                                 width: 19%;
-
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
-                                padding-right: 18px;
                             }
                         }
 
                         .sg-notification-manage-main-item-message-title {
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
                             @media screen and (min-width: $web-container-size) {
                                 float: left;
                                 width: 20%;
 
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
                                 padding-right: 18px;
                             }
                         }
 
                         .sg-notification-manage-main-item-message-body {
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                            overflow: hidden;
                             @media screen and (min-width: $web-container-size) {
                                 float: left;
                                 width: 20%;
                                 height: $sg-notification-manage-main-item-height;
 
-                                white-space: nowrap;
-                                text-overflow: ellipsis;
-                                overflow: hidden;
                                 padding-right: 18px;
                             }
                         }

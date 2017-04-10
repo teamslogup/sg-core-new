@@ -69,14 +69,14 @@
                 margin-top: 26px;
 
                 .sg-user-manage-detail-top-sub-aid {
-                    font-size: 18px;
+                    font-size: 16px;
                     font-weight: 500;
                     color: $semi-black;
                 }
                 .sg-user-manage-detail-top-sub-created {
                     color: #8d93a6;
                     font-size: 12px;
-
+                    margin-top: 6px;
                 }
             }
 
@@ -90,7 +90,7 @@
                 border-radius: 50px;
                 height: 30px;
                 line-height: 26px;
-                width: 100px;
+                width: 70px;
                 text-align: center;
                 color: #f0505f;
 
@@ -996,8 +996,7 @@
                     float: left;
                 }
                 .sgc-input {
-                    width: calc(100% - 129px);
-                    margin-left: 20px;
+                    width: calc(100% - 19px);
                     float: left;
                 }
             }
