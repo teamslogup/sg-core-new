@@ -88,8 +88,14 @@
                             <div class="sg-user-manage-detail-item-body" ng-if="!isUserEditMode">
                                 {{form.phoneNum}}
                             </div>
-                            <input class="sg-user-manage-detail-item-input sgc-input" type="text" ng-model="form.phoneNum"
-                                   ng-if="isUserEditMode">
+                            <div class="sg-user-manage-detail-item-float">
+                                <select ng-model="countryPhoneNum" class="sg-user-manage-detail-item-options sgc-option"
+                                        ng-if="isUserEditMode">
+                                    <option ng-repeat="x in enumCountries" value="{{x}}">{{x | translate}}</option>
+                                </select>
+                                <input class="sg-user-manage-detail-item-input sgc-input" type="text" ng-model="form.phoneNum"
+                                       ng-if="isUserEditMode">
+                            </div>
                         </div>
 
                         <div class="sg-user-manage-detail-item">

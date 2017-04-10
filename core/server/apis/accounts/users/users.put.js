@@ -19,6 +19,10 @@ put.validate = function () {
             isEmpty = true;
             req.check('nick', '400_26').len(USER.minNickLength, USER.maxNickLength);
         }
+        if (req.body.phoneNum !== undefined && req.body.phoneNum !== MAGIC.reset) {
+            isEmpty = true;
+            req.check('phoneNum', '400_7').len(5, 18);
+        }
         if (req.body.gender !== undefined && req.body.gender !== MAGIC.reset) {
             isEmpty = true;
             req.check('gender', '400_3').isEnum(USER.enumGenders);

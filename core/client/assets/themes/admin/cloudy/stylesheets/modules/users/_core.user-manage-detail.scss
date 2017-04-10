@@ -891,7 +891,6 @@
         }
     }
 
-
     .tgl-light {
         + .tgl-btn {
             background: #b2b1bd;
@@ -906,7 +905,6 @@
     }
 
 }
-
 
 .sg-user-manage-detail-main {
     background-color: #f1f3f8;
@@ -989,6 +987,18 @@
                         pointer-events: auto;
                         opacity: 1;
                     }
+                }
+            }
+
+            .sg-user-manage-detail-item-float {
+                @include after-clear();
+                .sgc-option {
+                    float: left;
+                }
+                .sgc-input {
+                    width: calc(100% - 129px);
+                    margin-left: 20px;
+                    float: left;
                 }
             }
 

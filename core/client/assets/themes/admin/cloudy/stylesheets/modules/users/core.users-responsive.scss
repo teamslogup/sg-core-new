@@ -1,5 +1,5 @@
 @import "../../import";
-@media screen and (max-width: $web-container-size) {
+@media screen and (max-width: $web-container-size + $g-menu-size) {
     .sg-core-responsive {
         &#sg-user-manage {
             .sg-user-manage-container {

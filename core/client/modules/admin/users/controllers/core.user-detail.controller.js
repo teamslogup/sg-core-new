@@ -1,10 +1,12 @@
-export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope, user, isEditMode) {
+export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope, user, isEditMode, dialogHandler) {
     "ngInject";
 
     var LOADING = scope.metaManager.std.loading;
     var COMMON = scope.metaManager.std.common;
     var USER = scope.metaManager.std.user;
     var NOTIFICATION = scope.metaManager.std.notification;
+
+    var COUNTRIES = scope.metaManager.local.countries;
 
     $scope.NOTIFICATIONS = scope.metaManager.notifications;
     $scope.NOTIFICATIONS_PUBLIC = scope.metaManager.notifications.public;
@@ -76,6 +78,36 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
         }
     }
 
+    function splitPhoneNum(str) {
+        if (str) {
+
+            for (var key in COUNTRIES) {
+                var country = COUNTRIES[key];
+
+                var regex = new RegExp("\\" + country.code);
+                var matches = regex.test(str);
+
+                if (matches) {
+                    $scope.countryPhoneNum = key;
+                    $scope.form.phoneNum = str.replace(country.code, '0');
+                    $scope.currentCountryCodePhoneNum = country.code;
+                    break;
+                }
+            }
+
+        }
+    }
+
+    function mergePhoneNum(str) {
+        if (str) {
+            str = str.substr(1, str.length - 1);
+            str = $scope.currentCountryCodePhoneNum.concat(str);
+            return str;
+        } else {
+            return '';
+        }
+    }
+
     function isFormValidate() {
 
         var isValidate = true;
@@ -94,6 +126,8 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
         var user = scope.userList[index];
 
         if (isFormValidate()) {
+            $scope.form.phoneNum = mergePhoneNum($scope.form.phoneNum);
+
             var body = angular.copy($scope.form);
 
             scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateUserById');
@@ -330,7 +364,7 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
             agreedPhoneNum: $scope.currentUser.agreedPhoneNum
         };
         splitBirth($scope.currentUser.birth);
-
+        splitPhoneNum($scope.currentUser.phoneNum);
         delete $scope.currentUser.profile.createdAt;
         delete $scope.currentUser.profile.updatedAt;
         delete $scope.currentUser.profile.deletedAt;

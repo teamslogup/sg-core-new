@@ -210,14 +210,15 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['aid', 'nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum'],
+                acceptable: ['aid', 'nick', 'name', 'phoneNum', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum'],
                 essential: [],
-                resettable: ['aid', 'nick', 'name', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
+                resettable: ['aid', 'nick', 'name', 'phoneNum', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
                 explains: {
                     'id': '데이터 리소스의 id',
                     'aid': '회원계정',
                     'nick': '닉네임',
                     'name': '이름',
+                    'phoneNum': '휴대폰 번호',
                     'gender': '성별 (수퍼어드민이상만 가능)' + USER.enumGenders.join(", "),
                     'birthYear': '생년',
                     'birthMonth': '생월',
@@ -232,6 +233,7 @@ var api = {
                     'id': 1,
                     'nick': '닉네임',
                     'name': '이름',
+                    'phoneNum': '',
                     'gender': '성별 (수퍼어드민이상만 가능)' + USER.enumGenders.join(", "),
                     'birthYear': '생년',
                     'birthMonth': '생월',
@@ -259,6 +261,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(put.validate());
+                apiCreator.add(top.checkPhoneEditAuthorization());
                 apiCreator.add(put.dataSet());
                 apiCreator.add(put.updateUser());
                 apiCreator.add(put.supplement());
