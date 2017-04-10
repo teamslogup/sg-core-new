@@ -13,40 +13,29 @@ const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
 
 var api = {
-    post : function(isOnlyParams) {
-        return function(req, res, next) {
+    post: function (isOnlyParams) {
+        return function (req, res, next) {
 
             var params = {
                 acceptable: [
-                    "folder",
-                    "sendMethod",
-                    "title",
-                    "message",
-                    "mmsTitle"
+                    "userIds"
                 ],
                 essential: [
-                    "folder",
-                    "sendMethod",
-                    "title",
-                    "message"
+                    "userIds",
                 ],
                 resettable: [],
                 explains: {
-                    "folder": "mms 이미지 저장될 폴더" + STD.file.folderNotification,
-                    "sendMethod": "전송방식 " + STD.notification.enumSendMethods.join(", "),
-                    "title": "전송 제목",
-                    "message": "메세지 내용",
-                    "mmsTitle": "MMS 메세지 제목"
+                    "userIds": "유저 아이디 ,로 구분"
                 },
-                title: '문자 메세지 전송',
-                file: 'file',
-                files_cnt: 2,
+                role: STD.user.roleAdmin,
+                title: '유저 선택 메세지 전송',
                 state: 'development'
             };
 
             if (!isOnlyParams) {
                 var apiCreator = new HAPICreator(req, res, next);
 
+                apiCreator.add(req.middles.session.loggedInRole(STD.user.roleAdmin));
                 apiCreator.add(req.middles.upload.refineFiles());
                 apiCreator.add(req.middles.validator(
                     params.acceptable,

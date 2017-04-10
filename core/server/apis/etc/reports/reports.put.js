@@ -82,6 +82,8 @@ put.sendNotifications = function () {
                             if (status == 204) {
                                 if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
 
+                                    var sendType = notificationReport.sendTypes[key];
+
                                     req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
 
                                         payload['key'] = notificationReport.key;
@@ -112,8 +114,6 @@ put.sendNotifications = function () {
                     }
 
                     for (var key in notificationReport.sendTypes) {
-
-                        var sendType = notificationReport.sendTypes[key];
 
                         if (key == NOTIFICATION.sendTypeEmail) {
                             if (!req.body.isEmailOn) {

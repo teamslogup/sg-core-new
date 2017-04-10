@@ -63,30 +63,41 @@ export default function DashboardInfoCtrl($scope, $rootScope, $filter, dashboard
         var data = [0, 0, 0, 0, 0, 0, 0];
 
         for (var i = 0; i < userAgeGroup.length; i++) {
-            switch (userAgeGroup[i].ageGroup) {
+
+            var ageGroup;
+
+            if (userAgeGroup[i].ageGroup == null) {
+                ageGroup = null;
+            } else {
+                ageGroup = parseInt(userAgeGroup[i].ageGroup);
+            }
+
+            var ageCount = parseInt(userAgeGroup[i].count);
+
+            switch (ageGroup) {
                 case null:
-                    data[6] += userAgeGroup[i].count;
+                    data[6] += ageCount;
                     break;
                 case 0:
-                    data[0] += userAgeGroup[i].count;
+                    data[0] += ageCount;
                     break;
                 case 10:
-                    data[0] += userAgeGroup[i].count;
+                    data[0] += ageCount;
                     break;
                 case 20:
-                    data[1] += userAgeGroup[i].count;
+                    data[1] += ageCount;
                     break;
                 case 30:
-                    data[2] += userAgeGroup[i].count;
+                    data[2] += ageCount;
                     break;
                 case 40:
-                    data[3] += userAgeGroup[i].count;
+                    data[3] += ageCount;
                     break;
                 case 50:
-                    data[4] += userAgeGroup[i].count;
+                    data[4] += ageCount;
                     break;
                 default:
-                    data[5] += userAgeGroup[i].count;
+                    data[5] += ageCount;
                     break;
             }
         }

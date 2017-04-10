@@ -42,12 +42,21 @@ module.exports = {
             'defaultValue': false,
             'comment': "formApplication form일때 notification-box에 저장할 지 여부"
         },
-        'title': {
+        'notificationName': {
             'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'messageTitle': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'messageBody': {
+            'type': Sequelize.TEXT(STD.notification.bodyDataType),
             'allowNull': false
         },
-        'body': {
-            'type': Sequelize.TEXT(STD.notification.bodyDataType),
+        'totalCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
             'allowNull': false
         },
         'sendCount': {
@@ -149,11 +158,11 @@ module.exports = {
                 }
 
                 function deleteAllMassNotificationPhoneNum (t) {
-                    var query = 'DELETE FROM MassNotificationPhoneNums';
+                    var query = 'DELETE FROM MassNotificationDests';
                     return sequelize.query(query, {
                         transaction: t
                     }).then(function () {
-                        var query = 'ALTER TABLE MassNotificationPhoneNums AUTO_INCREMENT = 1';
+                        var query = 'ALTER TABLE MassNotificationDests AUTO_INCREMENT = 1';
                         return sequelize.query(query, {
                             transaction: t
                         }).then(function () {
@@ -202,7 +211,7 @@ module.exports = {
                 var where = {};
                 var query = {
                     limit: parseInt(options.size),
-                    order: [options.orderBy, options.sort],
+                    order: [[options.orderBy, options.sort]],
                     where: where
                 };
 

@@ -1488,7 +1488,7 @@ module.exports = {
 
                     return sequelize.query(query, {
                         type: sequelize.QueryTypes.SELECT,
-                        raw: true
+                        raw: true,
                     }).then(function (createdUser) {
                         result.createdUsers = createdUser;
 

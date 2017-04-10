@@ -30,6 +30,7 @@ var AuthCi = require('./auth-ci');
 var MobileVersion = require('./mobile-version');
 var DomainRender = require('./domain-render');
 var MassNotificationImportHistory = require('./mass-notification-import-history');
+var MassNotificationDest = require('./mass-notification-dest');
 var MassNotificationPhoneNum = require('./mass-notification-phone-num');
 var Lguplus = require('./lguplus');
 var InAppPurchase = require('./in-app-purchase');
@@ -66,6 +67,7 @@ var models = {
     MobileVersion: MobileVersion,
     DomainRender: DomainRender,
     MassNotificationImportHistory: MassNotificationImportHistory,
+    MassNotificationDest: MassNotificationDest,
     MassNotificationPhoneNum: MassNotificationPhoneNum,
     Lguplus: Lguplus,
     InAppPurchase: InAppPurchase

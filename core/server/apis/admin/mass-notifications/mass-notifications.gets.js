@@ -20,7 +20,7 @@ gets.validate = function(){
         }
 
         if (req.query.searchField !== undefined) req.check("searchField", "400_3").isEnum(NOTIFICATION.enumSearchFields);
-        if (req.query.searchItem !== undefined) req.check("searchItem", "400_8").len(COMMON.minSearchLength, COMMON.maxSearchLength);
+        if (req.query.searchItem !== undefined) req.check("searchItem", "400_8").len(COMMON.wordMinLength, COMMON.wordMaxLength);
         if (req.query.orderBy !== undefined) req.check("orderBy", "400_3").isEnum(NOTIFICATION.enumOrderBys);
         if (req.query.sort !== undefined) req.check("sort", "400_3").isEnum(COMMON.enumSortTypes);
         if (req.query.last !== undefined) req.check("last", "400_18").isMicroTimestamp();

@@ -1,9 +1,9 @@
-export default function fileUploader ($http) {
+export default function fileUploader($http) {
     "ngInject";
 
     this.upload = function (prefix, data, files, uploadUrl, callback) {
         var fd = new FormData();
-        for (var i=0; i<files.length; i++) {
+        for (var i = 0; i < files.length; i++) {
             fd.append(prefix + i, files[i]);
         }
         for (var k in data) fd.append(k, data[k]);
