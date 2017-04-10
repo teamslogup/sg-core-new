@@ -26,6 +26,7 @@ var api = {
                     "maxBirthYear",
                     "platform",
                     "notificationName",
+                    "sendMethod",
                     "messageTitle",
                     "messageBody",
                     "messageImg"
@@ -42,6 +43,7 @@ var api = {
                     "maxBirthYear": "최대 생년",
                     "platform": "all, android, ios",
                     "notificationName": "알림 이름",
+                    "sendMethod": STD.notification.enumSendMethods.join(", "),
                     "messageTitle": "제목",
                     "messageBody": "내용",
                     "messageImg": "이미지"

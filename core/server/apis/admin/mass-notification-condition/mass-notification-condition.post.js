@@ -28,6 +28,10 @@ post.validate = function () {
             req.check("platform", "400_3").isEnum(USER.enumPhones);
         }
 
+        if (req.body.sendMethod !== undefined) {
+            req.check("sendMethod", "400_51").isEnum(NOTIFICATION.enumSendMethods);
+        }
+
         req.check("notificationName", "400_51").len(NOTIFICATION.minTitleLength, NOTIFICATION.maxTitleLength);
 
         if (req.body.messageTitle !== undefined) {
@@ -54,7 +58,9 @@ post.createMassNotification = function () {
             notificationName: req.body.notificationName,
             messageBody: req.body.messageBody
         };
-
+        if (req.body.sendMethod !== undefined) {
+            massNotification.sendMethod = req.body.sendMethod;
+        }
         if (req.body.messageTitle !== undefined) {
             massNotification.messageTitle = req.body.messageTitle;
         }
@@ -93,7 +99,7 @@ post.sendMassNotification = function () {
             include: [{
                 model: req.models.LoginHistory,
                 as: 'loginHistories',
-                separate: true
+                required: true
             }, {
                 model: req.models.NotificationSwitch,
                 as: 'notificationSwitches',
@@ -205,59 +211,61 @@ post.sendMassNotification = function () {
 
                             console.log('total', total);
 
-                            results[0].forEach(function (user) {
-                                (function (user) {
-                                    sendNotiFunction.push(function (func2subCallback) {
-                                        req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, function (status, data) {
-                                            finishArray.push(user.id);
+                            if (results.length > 0) {
+                                results[0].forEach(function (user) {
+                                    (function (user) {
+                                        sendNotiFunction.push(function (func2subCallback) {
+                                            req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
+                                                finishArray.push(user.id);
 
-                                            var progress = Math.ceil(finishArray.length / total * 100);
-                                            // console.log(finishArray.length + '/' + total + '=' + progress);
+                                                var progress = Math.ceil(finishArray.length / total * 100);
+                                                // console.log(finishArray.length + '/' + total + '=' + progress);
 
-                                            if (status == 204) {
+                                                if (status == 204) {
 
-                                                func2subCallback(null, {
-                                                    progress: progress,
-                                                    sendCount: ++sendCount
-                                                });
-                                            } else if (status == 404) {
+                                                    func2subCallback(null, {
+                                                        progress: progress,
+                                                        sendCount: ++sendCount
+                                                    });
+                                                } else if (status == 404) {
 
-                                                func2subCallback(null, {
-                                                    progress: progress,
-                                                    wrongDestinationCount: ++wrongDestinationCount
-                                                });
-                                            } else {
+                                                    func2subCallback(null, {
+                                                        progress: progress,
+                                                        wrongDestinationCount: ++wrongDestinationCount
+                                                    });
+                                                } else {
 
-                                                func2subCallback(null, {
-                                                    progress: progress,
-                                                    failCount: ++failCount
-                                                });
-                                            }
+                                                    func2subCallback(null, {
+                                                        progress: progress,
+                                                        failCount: ++failCount
+                                                    });
+                                                }
+                                            });
                                         });
-                                    });
-                                })(user);
-                            });
+                                    })(user);
+                                });
 
-                            async.series(sendNotiFunction, function (errorCode, results) {
-                                if (errorCode) {
-                                    console.log('mass-notification-condition fail progress error');
-                                } else {
+                                async.series(sendNotiFunction, function (errorCode, results) {
+                                    if (errorCode) {
+                                        console.log('mass-notification-condition fail progress error');
+                                    } else {
 
-                                    var body = results[results.length - 1];
+                                        var body = results[results.length - 1];
 
-                                    body.sendCount = sendCount;
-                                    body.wrongDestinationCount = wrongDestinationCount;
-                                    body.failCount = failCount;
+                                        body.sendCount = sendCount;
+                                        body.wrongDestinationCount = wrongDestinationCount;
+                                        body.failCount = failCount;
 
-                                    req.models.MassNotification.updateDataById(req.massNotification.id, body, function (status) {
+                                        req.models.MassNotification.updateDataById(req.massNotification.id, body, function (status) {
 
-                                        if (status != 204) {
-                                            console.log('mass-notification-condition progress error');
-                                        }
+                                            if (status != 204) {
+                                                console.log('mass-notification-condition progress error');
+                                            }
 
-                                    });
-                                }
-                            });
+                                        });
+                                    }
+                                });
+                            }
 
                         }
                     });

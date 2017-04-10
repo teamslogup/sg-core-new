@@ -9,6 +9,7 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
     $scope.NOTIFICATIONS = scope.metaManager.notifications;
     $scope.NOTIFICATIONS_PUBLIC = scope.metaManager.notifications.public;
 
+    $scope.currentUserIndex = scope.currentUserIndex;
     $scope.currentUser = user;
     $scope.currentPage = 1;
 
@@ -90,7 +91,7 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
 
     function updateUser(index) {
 
-        var user = $scope.userList[index];
+        var user = scope.userList[index];
 
         if (isFormValidate()) {
             var body = angular.copy($scope.form);
@@ -98,22 +99,23 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
             scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateUserById');
             scope.usersManager.updateUserById(user.id, body, function (status, data) {
                 if (status == 200) {
-                    $scope.userList[index].nick = body.nick;
-                    $scope.userList[index].name = body.name;
-                    $scope.userList[index].gender = body.gender;
-                    $scope.userList[index].birth = data.birth;
-                    $scope.userList[index].country = body.country;
-                    $scope.userList[index].language = body.language;
-                    $scope.userList[index].role = body.role;
-                    $scope.userList[index].agreedEmail = body.agreedEmail;
-                    $scope.userList[index].agreedPhoneNum = body.agreedPhoneNum;
+                    scope.userList[index].nick = body.nick;
+                    scope.userList[index].name = body.name;
+                    scope.userList[index].phoneNum = body.phoneNum;
+                    scope.userList[index].gender = body.gender;
+                    scope.userList[index].birth = data.birth;
+                    scope.userList[index].country = body.country;
+                    scope.userList[index].language = body.language;
+                    scope.userList[index].role = body.role;
+                    scope.userList[index].agreedEmail = body.agreedEmail;
+                    scope.userList[index].agreedPhoneNum = body.agreedPhoneNum;
 
-                    if (scope.params.role != COMMON.all && scope.params.role != body.role) {
-                        $scope.userList.splice(index, 1);
+                    if (scope.params.role != USER.roleAll && scope.params.role != body.role) {
+                        scope.userList.splice(index, 1);
                     }
 
-                    if (scope.params.gender != COMMON.all && scope.params.gender != body.gender) {
-                        $scope.userList.splice(index, 1);
+                    if (scope.params.gender != USER.genderAll && scope.params.gender != body.gender) {
+                        scope.userList.splice(index, 1);
                     }
 
                     $scope.exitEditMode();
@@ -316,6 +318,7 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
         $scope.form = {
             nick: $scope.currentUser.nick,
             name: $scope.currentUser.name,
+            phoneNum: $scope.currentUser.phoneNum,
             gender: $scope.currentUser.gender,
             birthYear: $scope.currentUser.birthYear,
             birthMonth: $scope.currentUser.birthMonth,

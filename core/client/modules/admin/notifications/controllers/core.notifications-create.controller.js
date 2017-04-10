@@ -123,6 +123,10 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         body.gender = $scope.tempStore.condition.gender;
         body.platform = $scope.tempStore.condition.platform;
 
+        if(body.sendType == 'message'){
+            body.sendMethod = $scope.messageTop;
+        }
+
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'sendNotificationCondition');
         scope.massNotificationConditionManager.sendNotificationCondition(body, files, function (status, data) {
             if (status == 201) {

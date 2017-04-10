@@ -69,7 +69,7 @@ module.exports = {
                                             payload['newChatMessageCount'] = result.newChatMessageCount;
 
                                             if (isSuccess) {
-                                                _this.send(user, sendType, title, body, badge, payload, undefined, function (status, data) {
+                                                _this.send(user, sendType, title, body, badge, payload, undefined, undefined, function (status, data) {
                                                     if (status == 204) {
                                                         if (callback) callback(status, data);
                                                     } else {
@@ -102,7 +102,7 @@ module.exports = {
             });
 
         },
-        sendNotificationBySendType: function (notification, title, body, key, user, payload, file, callback) {
+        sendNotificationBySendType: function (notification, title, body, key, user, payload, file, sendMethod, callback) {
             var _this = this;
 
             _this.createdNotificationBox(user, notification, payload, function (status, data) {
@@ -119,7 +119,7 @@ module.exports = {
                             payload['newChatMessageCount'] = result.newChatMessageCount;
 
                             if (isSuccess) {
-                                _this.send(user, key, title, body, badge, payload, file, function (status, data) {
+                                _this.send(user, key, title, body, badge, payload, file, sendMethod, function (status, data) {
                                     if (callback) callback(status, data);
                                 });
                             } else {
@@ -234,7 +234,9 @@ module.exports = {
             });
 
         },
-        send: function (user, sendType, title, body, badge, data, file, callback) {
+        send: function (user, sendType, title, body, badge, data, file, sendMethod, callback) {
+
+            var NOTIFICATION = STD.notification;
 
             if (sendType == NOTIFICATION.sendTypeEmail) {
                 sendEmail(callback);
@@ -243,7 +245,13 @@ module.exports = {
                 if (file) {
                     sendMMS(callback);
                 } else {
-                    sendSMS(callback);
+
+                    if (sendMethod == NOTIFICATION.sendMethodSms && sendMethod == NOTIFICATION.sendMethodLms) {
+                        sendSMS(callback);
+                    } else if (sendMethod == NOTIFICATION.sendMethodMms) {
+                        sendMMS(callback);
+                    }
+
                 }
 
             } else if (sendType == NOTIFICATION.sendTypePush) {
@@ -313,8 +321,6 @@ module.exports = {
                         }
                     });
 
-                    console.log('sms: ' + user.phoneNum);
-                    callback(204);
                 } else {
                     callback(404);
                 }
@@ -330,9 +336,6 @@ module.exports = {
                         }
                     });
 
-                    console.log('mms: ' + user.phoneNum);
-                    console.log('mms: ' + file);
-                    callback(204);
                 } else {
                     callback(404);
                 }

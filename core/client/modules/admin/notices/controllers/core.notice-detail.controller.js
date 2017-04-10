@@ -17,7 +17,7 @@ export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, sco
     $scope.form.endDate = setTimestampToString(notice.endDate);
 
     $scope.noticeTypes = NOTICE.enumNoticeTypes;
-    $scope.noticeCountries = scope.noticeCountries;;
+    $scope.noticeCountries = scope.noticeCountries;
 
     $scope.startEditMode = startEditMode;
     $scope.exitEditMode = exitEditMode;
