@@ -1,4 +1,4 @@
-export default function MassNotificationsCtrl($scope, $rootScope, $uibModal, massNotificationsManager, massNotificationConditionManager, dialogHandler, loadingHandler, metaManager) {
+export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibModal, massNotificationsManager, massNotificationConditionManager, dialogHandler, loadingHandler, metaManager) {
     "ngInject";
 
     var ADMIN = metaManager.std.admin;
@@ -12,6 +12,9 @@ export default function MassNotificationsCtrl($scope, $rootScope, $uibModal, mas
     $scope.massNotificationsManager = massNotificationsManager;
     $scope.massNotificationConditionManager = massNotificationConditionManager;
 
+    $scope.showItemOption = showItemOption;
+    $scope.hideItemOption = hideItemOption;
+    $scope.deleteNotification = deleteNotification;
     $scope.findMassNotifications = findMassNotifications;
     $scope.openCreateModal = openCreateModal;
 
@@ -27,6 +30,38 @@ export default function MassNotificationsCtrl($scope, $rootScope, $uibModal, mas
 
     $scope.searchFields = NOTIFICATION.enumSearchFields;
     $scope.params.searchField = $scope.searchFields[0];
+
+    function showItemOption($event, massNotification) {
+        $event.stopPropagation();
+        $scope.currentOption = massNotification.id;
+    }
+
+    function hideItemOption() {
+        $scope.currentOption = undefined;
+    }
+
+    function deleteNotification(index) {
+
+        dialogHandler.show('', $filter('translate')('sureDelete'), $filter('translate')('delete'), true, function () {
+
+            var notification = $scope.massNotifications[index];
+
+            loadingHandler.startLoading(LOADING.spinnerKey, 'deleteNotice');
+            massNotificationsManager.deleteMassNotification(notification, function (status, data) {
+
+                if (status == 204) {
+                    $scope.massNotifications.splice(index, 1);
+                } else {
+                    dialogHandler.alertError(status, data);
+                }
+
+                loadingHandler.endLoading(LOADING.spinnerKey, 'deleteNotice');
+
+            });
+
+        });
+
+    }
 
     function findMassNotifications() {
 

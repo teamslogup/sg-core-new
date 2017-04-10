@@ -305,13 +305,13 @@ module.exports = {
 
             function sendSMS(callback) {
                 if (user.phoneNum) {
-                    // sendNoti.sms(null, user.phoneNum, title, body, function (err) {
-                    //     if (err) {
-                    //         callback(err.status, phoneErrorRefiner(err));
-                    //     } else {
-                    //         callback(204);
-                    //     }
-                    // });
+                    sendNoti.sms(null, user.phoneNum, title, body, function (err) {
+                        if (err) {
+                            callback(err.status, phoneErrorRefiner(err));
+                        } else {
+                            callback(204);
+                        }
+                    });
 
                     console.log('sms: ' + user.phoneNum);
                     callback(204);
@@ -322,13 +322,13 @@ module.exports = {
 
             function sendMMS(callback) {
                 if (user.phoneNum) {
-                    // sendNoti.mms(null, user.phoneNum, title, body, file, function (err) {
-                    //     if (err) {
-                    //         callback(err.status, phoneErrorRefiner(err));
-                    //     } else {
-                    //         callback(204);
-                    //     }
-                    // });
+                    sendNoti.mms(null, user.phoneNum, title, body, file, function (err) {
+                        if (err) {
+                            callback(err.status, phoneErrorRefiner(err));
+                        } else {
+                            callback(204);
+                        }
+                    });
 
                     console.log('mms: ' + user.phoneNum);
                     console.log('mms: ' + file);

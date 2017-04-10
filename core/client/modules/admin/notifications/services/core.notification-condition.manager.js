@@ -51,11 +51,11 @@ export default function massNotificationConditionManager(metaManager, MassNotifi
         var isValidate = true;
 
         if(form.gender == COMMON.all){
-            form.gender = undefined;
+            delete form.gender;
         }
 
         if(form.platform == COMMON.all){
-            form.platform = undefined;
+            delete form.platform;
         }
 
         return isValidate;

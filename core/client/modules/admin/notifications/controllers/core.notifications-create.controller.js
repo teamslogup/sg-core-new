@@ -52,6 +52,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.tempStore.condition.platform = $scope.enumPhones[0];
 
     $scope.images = [];
+    var files = [];
 
     // $scope.form = {
     //     type: scope.noticeTypes[0],
@@ -123,7 +124,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         body.platform = $scope.tempStore.condition.platform;
 
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'sendNotificationCondition');
-        scope.massNotificationConditionManager.sendNotificationCondition(body, $scope.images, function (status, data) {
+        scope.massNotificationConditionManager.sendNotificationCondition(body, files, function (status, data) {
             if (status == 201) {
 
                 $scope.massNotification = data;
@@ -183,28 +184,40 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
         if (newVal != oldVal) {
 
-            $scope.currentMessageLength = (function (s, b, i, c) {
-                for (b = i = 0; c = s.charCodeAt(i++); b += c >> 11 ? 2 : c >> 7 ? 2 : 1);
-                return b
-            })(newVal);
-
-            if ($scope.currentMessageLength <= $scope.messageLength.sms) {
-                setMessageTop('sms');
-                return true;
-            }
-
-            if ($scope.currentMessageLength <= $scope.messageLength.lms) {
-                setMessageTop('lms');
-                return true;
-            }
-
-            if ($scope.currentMessageLength <= $scope.messageLength.mms) {
+            if (files.length > 0) {
                 setMessageTop('mms');
-                return true;
+            } else {
+                $scope.currentMessageLength = (function (s, b, i, c) {
+                    for (b = i = 0; c = s.charCodeAt(i++); b += c >> 11 ? 2 : c >> 7 ? 2 : 1);
+                    return b
+                })(newVal);
+
+                if ($scope.currentMessageLength <= $scope.messageLength.sms) {
+                    setMessageTop('sms');
+                    return true;
+                }
+
+                if ($scope.currentMessageLength <= $scope.messageLength.lms) {
+                    setMessageTop('lms');
+                    return true;
+                }
+
+                if ($scope.currentMessageLength <= $scope.messageLength.mms) {
+                    setMessageTop('mms');
+                    return true;
+                }
             }
 
         }
 
+    }, true);
+
+    $scope.$watch('images', function (newVal, oldVal) {
+        if (newVal != oldVal) {
+            if (files.length > 0) {
+                setMessageTop('mms');
+            }
+        }
     }, true);
 
 
@@ -223,6 +236,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     });
 
     function previewFile(image) {
+        files.push(image);
         var file = image;
         var reader = new FileReader();
 
@@ -242,13 +256,13 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
             reader.readAsDataURL(file);
         }
 
-        uploadManager.uploadImages(file, 'common', function (status, data) {
-            if (status == 201) {
-                console.log(status);
-            } else {
-                console.log(status);
-            }
-        });
+        // uploadManager.uploadImages($scope.images, 'common', function (status, data) {
+        //     if (status == 201) {
+        //         console.log(status);
+        //     } else {
+        //         console.log(status);
+        //     }
+        // });
     }
 
     $scope.clickUploadFile = function () {

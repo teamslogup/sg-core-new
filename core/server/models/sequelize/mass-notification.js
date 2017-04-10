@@ -54,6 +54,11 @@ module.exports = {
             'type': Sequelize.TEXT(STD.notification.bodyDataType),
             'allowNull': false
         },
+        'totalCount': {
+            'type': Sequelize.INTEGER,
+            'defaultValue': STD.notification.defaultCount,
+            'allowNull': false
+        },
         'sendCount': {
             'type': Sequelize.INTEGER,
             'defaultValue': STD.notification.defaultCount,

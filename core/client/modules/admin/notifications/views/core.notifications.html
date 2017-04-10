@@ -72,10 +72,7 @@
                     <div class="sg-notification-manage-main-item-right" ng-click="showItemOption($event, massNotification)">
 
                         <div class="sg-notification-manage-main-item-right-container" ng-if="currentOption == massNotification.id">
-                            <button class="sg-notification-manage-main-item-edit" ng-click="showNoticeDetailAndStartEditMode($index)">
-                                {{'edit' | translate}}
-                            </button>
-                            <button class="sg-notification-manage-main-item-delete" ng-click="deleteNotice($index)">
+                            <button class="sg-notification-manage-main-item-delete" ng-click="deleteNotification($index)">
                                 {{'delete' | translate}}
                             </button>
                         </div>
