@@ -25,11 +25,11 @@
 
         <div class="sg-notification-manage-create-message-image-on" data-ng-if="images.length > 0">
             <img data-ng-src="{{images[0]}}" alt="">
+            <button class="sg-notification-manage-create-message-image-on-delete" data-ng-click="resetImage()">{{'reset'|translate}}</button>
         </div>
 
         <div class="sg-notification-manage-create-message-title">
-            <input class="sgc-input" type="text" data-ng-model="tempStore.message.title"
-                   data-ng-class="{'disabled': messageTop == 'sms'}" placeholder="제목 (lms, mms만 가능)" multi-byte/>
+            <input class="sgc-input" type="text" data-ng-model="tempStore.message.title" placeholder="제목 (lms, mms만 가능)" multi-byte/>
         </div>
 
         <div class="sg-notification-manage-create-message-body">

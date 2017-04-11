@@ -26,7 +26,7 @@
         <div class="sg-notice-manage-main">
 
             <div class="sg-notice-manage-main-top">
-                <select ng-model="params.type" class="sg-notice-manage-main-top-filter sgc-filter">
+                <select ng-model="params.type" class="sg-notice-manage-main-top-filter sgc-filter" data-ng-if="noticeTypes.length > 2">
                     <option ng-repeat="x in noticeTypes" value="{{x}}">{{x | translate}}</option>
                 </select>
                 <div class="sg-notice-manage-main-top-total sgc-total">Total <span>{{noticeListTotal}}</span></div>

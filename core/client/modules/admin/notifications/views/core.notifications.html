@@ -26,7 +26,7 @@
         <div class="sg-notification-manage-main">
 
             <div class="sg-notification-manage-main-top">
-                <select ng-model="params.sendType" class="sg-notification-manage-main-top-filter sgc-filter">
+                <select ng-model="params.sendType" class="sg-notification-manage-main-top-filter sgc-filter" data-ng-if="sendTypes.length > 2">
                     <option ng-repeat="x in sendTypes" value="{{x}}">{{x | translate}}</option>
                 </select>
                 <div class="sg-notification-manage-main-top-total sgc-total">Total <span>{{massNotificationTotal}}</span></div>

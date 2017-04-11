@@ -12,6 +12,29 @@ module.exports = function () {
     function Upload() {
     }
 
+    Upload.prototype.checkFileBytes = function (minSize, maxSize) {
+        return function (req, res, next) {
+
+            var isExceed = true;
+
+            req.files.forEach(function (file) {
+                console.log(file);
+                if (file.size < minSize || file.size > maxSize) {
+                    isExceed = false;
+                }
+            });
+
+            if (isExceed) {
+                next();
+            } else {
+                return res.hjson(req, next, 400, {
+                    code: '400_54'
+                });
+            }
+
+        };
+    };
+
     Upload.prototype.refineFiles = function () {
         return function (req, res, next) {
             req.refineFiles(function (err) {
@@ -49,7 +72,8 @@ module.exports = function () {
                 if (len < min || len > max) {
 
                     if (req.removeLocalFiles) {
-                        req.removeLocalFiles(function (err) {});
+                        req.removeLocalFiles(function (err) {
+                        });
                     }
 
                     return res.hjson(req, next, 400, {code: '400_21'});
@@ -71,7 +95,8 @@ module.exports = function () {
 
                     if (!name.match(regexp)) {
                         if (req.removeLocalFiles) {
-                            req.removeLocalFiles(function (err) {});
+                            req.removeLocalFiles(function (err) {
+                            });
                         }
                         return res.hjson(req, next, 400, {code: '400_22'});
                     }
@@ -93,7 +118,8 @@ module.exports = function () {
 
                     if (name.match(regexp)) {
                         if (req.removeLocalFiles) {
-                            req.removeLocalFiles(function (err) {});
+                            req.removeLocalFiles(function (err) {
+                            });
                         }
                         return res.hjson(req, next, 400, {code: '400_22'});
                     }
@@ -236,7 +262,7 @@ module.exports = function () {
         return function (req, res, next) {
             if (!STD.flag.isUseS3Bucket) {
                 var localPath = path.join(__dirname, "../../../" + STD.local.uploadUrl + '/');
-                for (var i=0; i<req.files.length; i++) {
+                for (var i = 0; i < req.files.length; i++) {
                     if (req.files[i].path) {
                         req.files[i].path = localPath + req.files[i].path;
                     }

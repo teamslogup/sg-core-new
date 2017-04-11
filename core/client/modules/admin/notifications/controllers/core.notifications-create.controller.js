@@ -5,6 +5,21 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     var LOADING = scope.metaManager.std.loading;
     var COMMON = scope.metaManager.std.common;
     var FILE = scope.metaManager.std.file;
+    var NOTIFICATION = scope.metaManager.std.notification;
+
+    $scope.sendTypes = angular.copy(NOTIFICATION.enumSendTypes);
+
+    $scope.sendTypes.forEach(function (sendType) {
+        if (sendType == NOTIFICATION.sendTypeMessage) {
+            $scope.isMessageOn = true;
+        }
+        else if (sendType == NOTIFICATION.sendTypePush) {
+            $scope.isPushOn = true;
+        }
+        else if (sendType == NOTIFICATION.sendTypeEmail) {
+            $scope.isEmailOn = true;
+        }
+    });
 
     $scope.stopProgress = null;
     $scope.progress = {
@@ -34,10 +49,10 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.messageLength = {
         sms: 90,
         lms: 2000,
-        mms: 20000
+        mms: 2000
     };
 
-    $scope.messageTop = 'sms';
+    $scope.messageTop = NOTIFICATION.sendMethodSms;
 
     $scope.currentMessageLength = 0;
     $scope.currentMessageMaxLength = $scope.messageLength.sms;
@@ -68,6 +83,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.back = back;
     $scope.sendNotificationCondition = sendNotificationCondition;
     $scope.cancel = cancel;
+    $scope.resetImage = resetImage;
 
     var frontPath = 'modules/admin/notifications/directives/notifications-create/core.notifications-create-';
     var tailPath = '.html';
@@ -123,7 +139,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         body.gender = $scope.tempStore.condition.gender;
         body.platform = $scope.tempStore.condition.platform;
 
-        if(body.sendType == 'message'){
+        if (body.sendType == 'message') {
             body.sendMethod = $scope.messageTop;
         }
 
@@ -184,34 +200,52 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         $scope.currentMessageMaxLength = $scope.messageLength[name];
     }
 
+    function checkMessageLength(messageBody) {
+
+        $scope.currentMessageLength = (function (s, b, i, c) {
+            for (b = i = 0; c = s.charCodeAt(i++); b += c >> 11 ? 2 : c >> 7 ? 2 : 1);
+            return b
+        })(messageBody);
+
+        if (files.length > 0) {
+            setMessageTop(NOTIFICATION.sendMethodMms);
+        } else {
+            if ($scope.currentMessageLength <= $scope.messageLength.sms) {
+
+                if ($scope.tempStore.message.title == '') {
+                    setMessageTop(NOTIFICATION.sendMethodSms);
+                } else {
+                    setMessageTop(NOTIFICATION.sendMethodLms);
+                }
+
+                return true;
+            }
+
+            if ($scope.currentMessageLength <= $scope.messageLength.lms) {
+                setMessageTop(NOTIFICATION.sendMethodLms);
+                return true;
+            }
+
+            if ($scope.currentMessageLength <= $scope.messageLength.mms) {
+                setMessageTop(NOTIFICATION.sendMethodMms);
+                return true;
+            }
+
+        }
+    }
+
+    $scope.$watch('tempStore.message.title', function (newVal, oldVal) {
+
+        if (newVal != oldVal) {
+            checkMessageLength($scope.tempStore.message.body);
+        }
+
+    }, true);
+
     $scope.$watch('tempStore.message.body', function (newVal, oldVal) {
 
         if (newVal != oldVal) {
-
-            if (files.length > 0) {
-                setMessageTop('mms');
-            } else {
-                $scope.currentMessageLength = (function (s, b, i, c) {
-                    for (b = i = 0; c = s.charCodeAt(i++); b += c >> 11 ? 2 : c >> 7 ? 2 : 1);
-                    return b
-                })(newVal);
-
-                if ($scope.currentMessageLength <= $scope.messageLength.sms) {
-                    setMessageTop('sms');
-                    return true;
-                }
-
-                if ($scope.currentMessageLength <= $scope.messageLength.lms) {
-                    setMessageTop('lms');
-                    return true;
-                }
-
-                if ($scope.currentMessageLength <= $scope.messageLength.mms) {
-                    setMessageTop('mms');
-                    return true;
-                }
-            }
-
+            checkMessageLength(newVal);
         }
 
     }, true);
@@ -219,7 +253,9 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.$watch('images', function (newVal, oldVal) {
         if (newVal != oldVal) {
             if (files.length > 0) {
-                setMessageTop('mms');
+                setMessageTop(NOTIFICATION.sendMethodMms);
+            } else {
+                checkMessageLength($scope.tempStore.message.body);
             }
         }
     }, true);
@@ -227,11 +263,22 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
     $scope.uploader = new FileUploader({
         onAfterAddingAll: function (items) {
-            if (items.length > 1) {
-                // dialogHandler.show('', '최대 이미지 갯수는 1개 까지 입니다.', '', true);
-                previewFile(items[0]._file);
-            } else {
-                previewFile(items[0]._file);
+            if (items.length > 0) {
+                var split = items[0]._file.name.split('.');
+                var extension = split[split.length - 1];
+                var size = items[0]._file.size;
+
+                if (extension == 'jpg') {
+
+                    if (size <= 20480) {
+                        previewFile(items[0]._file);
+                    } else {
+                        dialogHandler.show('', '20kb 이하의 이미지만 올려주세요.', '', true);
+                    }
+
+                } else {
+                    dialogHandler.show('', 'jpg 이미지만 올려주세요.', '', true);
+                }
             }
         },
         onErrorItem: function (err) {
@@ -273,5 +320,9 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         $('#uploadFile')[0].click();
     };
 
+    function resetImage() {
+        $scope.images = [];
+        files = [];
+    }
 
 }

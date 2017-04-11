@@ -10,6 +10,7 @@ export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, sco
     };
 
     $scope.noticeTypes = NOTICE.enumNoticeTypes;
+    $scope.form.type = $scope.noticeTypes[0];
     $scope.noticeCountries = scope.noticeCountries;
 
     $scope.createNotice = createNotice;
@@ -36,6 +37,7 @@ export default function ReportCreateCtrl($scope, $filter, $uibModalInstance, sco
         scope.loadingHandler.startLoading(LOADING.spinnerKey, 'updateNotice');
         scope.noticesManager.createNotice(body, function (status, data) {
             if (status == 201) {
+                scope.noticeListTotal++;
                 scope.noticeList.unshift(data);
                 $uibModalInstance.close(data);
             } else {

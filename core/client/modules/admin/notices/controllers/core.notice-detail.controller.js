@@ -2,6 +2,7 @@ export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, sco
     "ngInject";
 
     var NOTICE = scope.metaManager.std.notice;
+    var COMMON = scope.metaManager.std.common;
     var LOADING = scope.metaManager.std.loading;
 
     $scope.currentNotice = notice;
@@ -67,7 +68,7 @@ export default function ReportDetailCtrl($scope, $filter, $uibModalInstance, sco
             if (status == 200) {
                 scope.noticeList[scope.currentIndex] = data;
 
-                if (scope.params.type != body.type) {
+                if (scope.params.type != COMMON.all && scope.params.type != body.type) {
                     scope.noticeList.splice(scope.currentIndex, 1);
                 }
 

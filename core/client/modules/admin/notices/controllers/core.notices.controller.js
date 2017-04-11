@@ -13,6 +13,7 @@ export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal
     }
 
     var LOADING = metaManager.std.loading;
+    var COMMON = metaManager.std.common;
     var NOTICE = metaManager.std.notice;
     var ADMIN = metaManager.std.admin;
     vm.FLAG = metaManager.std.flag;
@@ -26,8 +27,11 @@ export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal
 
     $scope.noticeList = [];
     $scope.noticeListTotal = 0;
-    $scope.noticeTypes = NOTICE.enumNoticeTypes;
+
+    $scope.noticeTypes = angular.copy(NOTICE.enumNoticeTypes);
+    $scope.noticeTypes.unshift(COMMON.all);
     $scope.params.type = $scope.noticeTypes[0];
+
 
     var LOCAL = metaManager.local;
     var enumCountries = [];
@@ -123,6 +127,7 @@ export default function NoticesCtrl($scope, $rootScope, $sce, $filter, $uibModal
             noticesManager.deleteNotice(notice, function (status, data) {
 
                 if (status == 204) {
+                    $scope.noticeListTotal--;
                     $scope.noticeList.splice(index, 1);
                 } else {
                     dialogHandler.alertError(status, data);

@@ -12,7 +12,7 @@ var resforms = require('../../../resforms');
 var config = require('../../../../../bridge/config/env');
 const META = require('../../../../../bridge/metadata/index');
 const STD = META.std;
-const FILE = STD.file;
+const MASS_NOTIFICATION = STD.massNotification;
 
 var api = {
     post: function (isOnlyParams) {
@@ -47,7 +47,6 @@ var api = {
                     "messageTitle": "제목",
                     "messageBody": "내용",
                     "messageImg": "이미지"
-
                 },
                 role: STD.user.roleAdmin,
                 title: '조건 선택 메세지 전송',
@@ -67,9 +66,10 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(post.validate());
-                apiCreator.add(req.middles.upload.generateFolder(FILE.folderImages));
-                apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
-                apiCreator.add(req.middles.upload.checkFileCount(0, 1));
+                apiCreator.add(post.validateMessageBody());
+                apiCreator.add(req.middles.upload.checkFileCount(MASS_NOTIFICATION.minImageCount, MASS_NOTIFICATION.maxImageCount));
+                apiCreator.add(req.middles.upload.checkFileFormat(MASS_NOTIFICATION.enumValidImageExtensions));
+                apiCreator.add(req.middles.upload.checkFileBytes(MASS_NOTIFICATION.minImageBytes, MASS_NOTIFICATION.maxImageBytes));
                 apiCreator.add(post.setImage());
                 apiCreator.add(post.createMassNotification());
                 apiCreator.add(post.sendMassNotification());

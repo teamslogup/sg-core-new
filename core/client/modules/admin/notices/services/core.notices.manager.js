@@ -1,5 +1,7 @@
-export default function noticesManager($filter, Notice, dialogHandler) {
+export default function noticesManager($filter, Notice, metaManager, dialogHandler) {
     "ngInject";
+
+    var COMMON = metaManager.std.common;
 
     this.findNoticeById = findNoticeById;
     this.updateNoticeById = updateNoticeById;
@@ -43,7 +45,7 @@ export default function noticesManager($filter, Notice, dialogHandler) {
         if (data.size !== undefined) query.size = data.size;
         if (data.offset !== undefined) query.offset = data.offset;
         if (data.country !== undefined) query.country = data.country;
-        if (data.type !== undefined) query.type = data.type;
+        if (data.type !== undefined && data.type != COMMON.all) query.type = data.type;
         if (data.sort !== undefined) query.sort = data.sort;
         Notice.query(query, function (data) {
             callback(200, data);

@@ -176,6 +176,8 @@
                     }
 
                     .sg-notification-manage-create-message-image-on {
+                        position: relative;
+
                         margin: 12px;
                         height: 200px;
                         border-radius: 8px;
@@ -187,6 +189,22 @@
                         img {
                             max-width: 100%;
                             max-height: 100%;
+                        }
+
+                        .sg-notification-manage-create-message-image-on-delete {
+
+                            position: absolute;
+                            top: 0;
+                            right: 0;
+                            width: 70px;
+                            height: 24px;
+                            background-color: grey;
+                            color: white;
+                            line-height: 24px;
+                            border-radius: 6px;
+
+                            font-size: 12px;
+                            font-weight: 400;
                         }
                     }
 

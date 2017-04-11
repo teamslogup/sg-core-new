@@ -246,12 +246,11 @@ module.exports = {
                     sendMMS(callback);
                 } else {
 
-                    if (sendMethod == NOTIFICATION.sendMethodSms && sendMethod == NOTIFICATION.sendMethodLms) {
-                        sendSMS(callback);
-                    } else if (sendMethod == NOTIFICATION.sendMethodMms) {
+                    if (sendMethod == NOTIFICATION.sendMethodMms) {
                         sendMMS(callback);
+                    } else {
+                        sendSMS(callback);
                     }
-
                 }
 
             } else if (sendType == NOTIFICATION.sendTypePush) {
@@ -324,6 +323,7 @@ module.exports = {
                 } else {
                     callback(404);
                 }
+
             }
 
             function sendMMS(callback) {

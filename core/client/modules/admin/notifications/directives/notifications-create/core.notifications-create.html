@@ -7,20 +7,20 @@
             </div>
 
             <div class="sg-notification-manage-create-main" data-ng-if="!progress.loading">
-                <div class="sg-notification-manage-create-top">
+                <div class="sg-notification-manage-create-top" data-ng-if="sendTypes.length > 1">
 
                     <div class="sg-notification-manage-create-send-type-list" data-ng-if="!lastPage">
                         <button class="sg-notification-manage-create-send-type-item"
                                 data-ng-class="{'active': sendTypeItem.message }"
-                                data-ng-click="changeBodyPath('message')">
+                                data-ng-click="changeBodyPath('message')" data-ng-if="isMessageOn">
                             {{'message'| translate}}
                         </button>
                         <button class="sg-notification-manage-create-send-type-item"
-                                data-ng-class="{'active': sendTypeItem.email }" data-ng-click="changeBodyPath('email')">
+                                data-ng-class="{'active': sendTypeItem.email }" data-ng-click="changeBodyPath('email')" data-ng-if="isEmailOn">
                             {{'email'| translate}}
                         </button>
                         <button class="sg-notification-manage-create-send-type-item"
-                                data-ng-class="{'active': sendTypeItem.push }" data-ng-click="changeBodyPath('push')">
+                                data-ng-class="{'active': sendTypeItem.push }" data-ng-click="changeBodyPath('push')" data-ng-if="isPushOn">
                             {{'push'| translate}}
                         </button>
                     </div>

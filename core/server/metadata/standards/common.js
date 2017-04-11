@@ -70,6 +70,16 @@ var standards = {
         "maxMessageTitleLength": 30,
         "modalSize": "md"
     },
+    "massNotification": {
+        "enumValidImageExtensions": ['jpg'],
+        "minImageCount": 0,
+        "maxImageCount": 1,
+        "minImageBytes": 0,
+        "maxImageBytes": 20480,
+        "maxSmsBody": 90,
+        "maxLmsBody": 2000,
+        "maxMmsBody": 2000
+    },
     "massNotificationImportHistory": {
         "maxRawSize": 2000
     },

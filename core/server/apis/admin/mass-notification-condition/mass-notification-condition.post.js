@@ -48,6 +48,51 @@ post.validate = function () {
     };
 };
 
+function getStringBytes(string) {
+    return (function (s, b, i, c) {
+        for (b = i = 0; c = s.charCodeAt(i++); b += c >> 11 ? 2 : c >> 7 ? 2 : 1);
+        return b
+    })(string);
+}
+
+post.validateMessageBody = function () {
+    return function (req, res, next) {
+        var NOTIFICATION = req.meta.std.notification;
+        var MASS_NOTIFICATION = req.meta.std.massNotification;
+
+        if (req.body.sendType == NOTIFICATION.sendTypeMessage) {
+
+            var messageBodyBytes = getStringBytes(req.body.messageBody);
+
+            if (req.body.sendMethod == NOTIFICATION.sendMethodSms) {
+
+                if (messageBodyBytes <= MASS_NOTIFICATION.maxSmsBody) {
+                    next();
+                } else {
+                    return res.hjson(req, next, 400, {
+                        code: '400_51'
+                    });
+                }
+
+            } else {
+
+                if (messageBodyBytes <= MASS_NOTIFICATION.maxLmsBody) {
+                    next();
+                } else {
+                    return res.hjson(req, next, 400, {
+                        code: '400_51'
+                    });
+                }
+
+            }
+
+        } else {
+            next();
+        }
+
+    };
+};
+
 post.createMassNotification = function () {
     return function (req, res, next) {
 
@@ -94,6 +139,7 @@ post.sendMassNotification = function () {
         var notificationNotice = req.meta.notifications.public.notice;
 
         var query = {
+            distinct: 'id',
             where: {},
             order: [[STD.common.id, STD.common.DESC]],
             include: [{
@@ -162,119 +208,135 @@ post.sendMassNotification = function () {
         req.models.User.count(query).then(function (data) {
             total = data;
 
-            req.models.MassNotification.updateDataById(req.massNotification.id, {
-                totalCount: total
-            }, function (status) {
+            if (total == 0) {
 
-                if (status == 204) {
-                    repeatCount = Math.ceil(total / size);
+                req.models.MassNotification.updateDataById(req.massNotification.id, {
+                    progress: 100
+                }, function (status) {
 
-                    query.limit = size;
-
-                    var funcs = [];
-
-                    for (var i = 0; i < repeatCount; i++) {
-                        (function (quer) {
-                            funcs.push(function (funcCallback) {
-
-                                query.limit = size;
-
-                                for (var i = 0; i < repeatCount; i++) {
-
-                                    req.models.User.findAllDataForQuery(quer, function (status, data) {
-
-                                        if (status == 200) {
-
-                                            funcCallback(null, data);
-
-                                            query.where = {
-                                                id: {
-                                                    $lt: data[data.length - 1].id
-                                                }
-                                            };
-
-                                        } else {
-                                            funcCallback(status, data);
-                                        }
-                                    });
-                                }
-                            });
-                        })(query);
+                    if (status != 204) {
+                        console.log('mass-notification-condition progress error');
                     }
 
-                    async.series(funcs, function (errorCode, results) {
-                        if (errorCode) {
-                            console.log('mass-notification-condition findAllDataForQuery error', errorCode);
-                        } else {
+                });
 
-                            var sendNotiFunction = [];
+            } else {
 
-                            console.log('total', total);
+                req.models.MassNotification.updateDataById(req.massNotification.id, {
+                    totalCount: total
+                }, function (status) {
 
-                            if (results.length > 0) {
-                                results[0].forEach(function (user) {
-                                    (function (user) {
-                                        sendNotiFunction.push(function (func2subCallback) {
-                                            req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
-                                                finishArray.push(user.id);
+                    if (status == 204) {
+                        repeatCount = Math.ceil(total / size);
 
-                                                var progress = Math.ceil(finishArray.length / total * 100);
-                                                // console.log(finishArray.length + '/' + total + '=' + progress);
+                        query.limit = size;
 
-                                                if (status == 204) {
+                        var funcs = [];
 
-                                                    func2subCallback(null, {
-                                                        progress: progress,
-                                                        sendCount: ++sendCount
-                                                    });
-                                                } else if (status == 404) {
+                        for (var i = 0; i < repeatCount; i++) {
+                            (function (quer) {
+                                funcs.push(function (funcCallback) {
 
-                                                    func2subCallback(null, {
-                                                        progress: progress,
-                                                        wrongDestinationCount: ++wrongDestinationCount
-                                                    });
-                                                } else {
+                                    query.limit = size;
 
-                                                    func2subCallback(null, {
-                                                        progress: progress,
-                                                        failCount: ++failCount
-                                                    });
-                                                }
-                                            });
-                                        });
-                                    })(user);
-                                });
+                                    for (var i = 0; i < repeatCount; i++) {
 
-                                async.series(sendNotiFunction, function (errorCode, results) {
-                                    if (errorCode) {
-                                        console.log('mass-notification-condition fail progress error');
-                                    } else {
+                                        req.models.User.findAllDataForQuery(quer, function (status, data) {
 
-                                        var body = results[results.length - 1];
+                                            if (status == 200) {
 
-                                        body.sendCount = sendCount;
-                                        body.wrongDestinationCount = wrongDestinationCount;
-                                        body.failCount = failCount;
+                                                funcCallback(null, data);
 
-                                        req.models.MassNotification.updateDataById(req.massNotification.id, body, function (status) {
+                                                query.where = {
+                                                    id: {
+                                                        $lt: data[data.length - 1].id
+                                                    }
+                                                };
 
-                                            if (status != 204) {
-                                                console.log('mass-notification-condition progress error');
+                                            } else {
+                                                funcCallback(status, data);
                                             }
-
                                         });
                                     }
                                 });
-                            }
-
+                            })(query);
                         }
-                    });
 
-                } else {
-                    return res.hjson(req, next, status, data);
-                }
+                        async.series(funcs, function (errorCode, results) {
+                            if (errorCode) {
+                                console.log('mass-notification-condition findAllDataForQuery error', errorCode);
+                            } else {
 
-            });
+                                var sendNotiFunction = [];
+
+                                console.log('total', total);
+
+                                if (results.length > 0) {
+                                    results[0].forEach(function (user) {
+                                        (function (user) {
+                                            sendNotiFunction.push(function (func2subCallback) {
+                                                req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
+                                                    finishArray.push(user.id);
+
+                                                    var progress = Math.ceil(finishArray.length / total * 100);
+                                                    // console.log(finishArray.length + '/' + total + '=' + progress);
+
+                                                    if (status == 204) {
+
+                                                        func2subCallback(null, {
+                                                            progress: progress,
+                                                            sendCount: ++sendCount
+                                                        });
+                                                    } else if (status == 404) {
+
+                                                        func2subCallback(null, {
+                                                            progress: progress,
+                                                            wrongDestinationCount: ++wrongDestinationCount
+                                                        });
+                                                    } else {
+
+                                                        func2subCallback(null, {
+                                                            progress: progress,
+                                                            failCount: ++failCount
+                                                        });
+                                                    }
+                                                });
+                                            });
+                                        })(user);
+                                    });
+
+                                    async.series(sendNotiFunction, function (errorCode, results) {
+                                        if (errorCode) {
+                                            console.log('mass-notification-condition fail progress error');
+                                        } else {
+
+                                            var body = results[results.length - 1];
+
+                                            body.sendCount = sendCount;
+                                            body.wrongDestinationCount = wrongDestinationCount;
+                                            body.failCount = failCount;
+
+                                            req.models.MassNotification.updateDataById(req.massNotification.id, body, function (status) {
+
+                                                if (status != 204) {
+                                                    console.log('mass-notification-condition progress error');
+                                                }
+
+                                            });
+                                        }
+                                    });
+                                }
+
+                            }
+                        });
+
+                    } else {
+                        return res.hjson(req, next, status, data);
+                    }
+
+                });
+
+            }
 
         });
 
