@@ -119,7 +119,7 @@
                 }
 
                 .sg-notification-manage-create-message-container {
-                    width: 340px;
+                    max-width: 340px;
                     margin: 18px auto;
                     border: solid 1px #d6e1fe;
 
@@ -255,21 +255,28 @@
                 .sg-notification-manage-create-condition {
                     .sg-notification-manage-create-condition-age {
                         @include after-clear();
-                        .sg-notification-manage-create-condition-input {
-                            float: left;
-                            width: 100px;
+
+                        .sg-notification-manage-create-condition-age-item {
+                            margin-top: 12px;
+                            @media screen and (min-width: $web-min-width) {
+                                margin-top: 0;
+                                float: left;
+                            }
+                            .sg-notification-manage-create-condition-input {
+                                width: 100px;
+                            }
+                            .sg-notification-manage-create-condition-span {
+
+                                font-size: 14px;
+                                font-weight: 400;
+
+                                color: #6d8fe4;
+
+                                line-height: 40px;
+                                margin: 0 12px;
+                            }
                         }
-                        .sg-notification-manage-create-condition-span {
-                            float: left;
 
-                            font-size: 14px;
-                            font-weight: 400;
-
-                            color: #6d8fe4;
-
-                            line-height: 40px;
-                            margin: 0 12px;
-                        }
                     }
                 }
 
@@ -285,12 +292,20 @@
                 .sg-notification-manage-create-bottom-cancel-btn {
                     float: right;
                     margin-top: 16px;
+
+                    @media screen and (max-width: $web-min-width + 100) {
+                        width: 70px;
+                    }
                 }
                 .sg-notification-manage-create-bottom-create-btn {
                     float: right;
                     margin-left: 10px;
                     margin-top: 16px;
                     margin-right: 16px;
+
+                    @media screen and (max-width: $web-min-width + 100) {
+                        width: 70px;
+                    }
                 }
 
                 .sg-notification-manage-create-bottom-status {

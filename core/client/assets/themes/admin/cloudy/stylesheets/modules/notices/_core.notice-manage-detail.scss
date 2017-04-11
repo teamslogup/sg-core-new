@@ -122,6 +122,7 @@
 
                 padding: 30px $sg-notice-manage-detail-padding-left-right;
                 border-bottom: 1px solid $divider;
+                overflow: auto;
                 .sg-notice-manage-detail-body-body-body {
                     @include after-clear();
                     img{

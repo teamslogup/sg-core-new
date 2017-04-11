@@ -186,7 +186,7 @@ post.sendMassNotification = function () {
 
             query.where.$and.push({
                 birth: {
-                    $gte: req.body.maxBirthYear
+                    $lte: req.body.maxBirthYear
                 }
             });
         }

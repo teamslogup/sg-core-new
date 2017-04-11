@@ -31,7 +31,7 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
     $scope.userDetailEnumGender = angular.copy(USER.enumGenders);
 
     $scope.enumSendTypes = NOTIFICATION.enumSendTypes;
-    $scope.params.sendType = NOTIFICATION.sendTypePush;
+    $scope.params.sendType = $scope.enumSendTypes[0];
 
     $scope.userEnumRoles = angular.copy(USER.enumRoles);
     $scope.userEnumGender = angular.copy(USER.enumGenders);

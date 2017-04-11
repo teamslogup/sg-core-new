@@ -139,6 +139,14 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         body.gender = $scope.tempStore.condition.gender;
         body.platform = $scope.tempStore.condition.platform;
 
+        if ($scope.tempStore.condition.minBirthYear) {
+            body.minBirthYear = $scope.tempStore.condition.minBirthYear;
+        }
+
+        if ($scope.tempStore.condition.maxBirthYear) {
+            body.maxBirthYear = $scope.tempStore.condition.maxBirthYear;
+        }
+
         if (body.sendType == 'message') {
             body.sendMethod = $scope.messageTop;
         }

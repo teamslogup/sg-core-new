@@ -73,7 +73,6 @@ module.exports = {
                                                     if (status == 204) {
                                                         if (callback) callback(status, data);
                                                     } else {
-                                                        console.log(status, data);
                                                         if (callback) callback(status, data);
                                                     }
                                                 });
