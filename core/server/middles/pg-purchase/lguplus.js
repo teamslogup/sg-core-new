@@ -7,6 +7,7 @@ module.exports = {
         var PG_PURCHASE = req.meta.std.pgPurchase;
 
         var pgPurchase = {
+            userId: req.user.id,
             pgType: PG_PURCHASE.pgTypeLguplus
         };
 

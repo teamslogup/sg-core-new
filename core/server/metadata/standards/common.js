@@ -491,7 +491,12 @@ var standards = {
         }
     },
     "pgPurchase": {
+        "startAcceptable": ["pgType"],
+        "finishAcceptable": ["pgType"],
         "enumStatus": ["wait", "finish", "fail"],
+        "statusWait": "wait",
+        "statusFinish": "finish",
+        "statusFail": "fail",
         "enumPgType": ['lguplus'],
         "pgTypeLguplus": "lguplus"
     },

@@ -91,7 +91,7 @@ module.exports = {
                     body.pgPurchase.status = PG_PURCHASE.statusWait;
                     body.pgPurchase.orderNo = 'sg' + micro.now();
 
-                    return sequelize.models.PgPurchase.create(body, {
+                    return sequelize.models.PgPurchase.create(body.pgPurchase, {
                         transaction: t
                     }).then(function (data) {
                         if (data) {
@@ -112,8 +112,9 @@ module.exports = {
 
                 if (update.pgPurchase !== undefined) {
                     update.pgPurchase.status = PG_PURCHASE.statusFinish;
+                    update.pgPurchase.payload = JSON.stringify(update.pgPurchase.payload);
 
-                    return sequelize.models.PgPurchase.update(update, {
+                    return sequelize.models.PgPurchase.update(update.pgPurchase, {
                         where: {
                             'orderNo': update.pgPurchase.orderNo
                         },
