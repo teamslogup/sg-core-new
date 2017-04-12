@@ -111,11 +111,11 @@ module.exports = {
                 var PG_PURCHASE = STD.pgPurchase;
 
                 if (update.pgPurchase !== undefined) {
-                    update.status = PG_PURCHASE.statusFinish;
+                    update.pgPurchase.status = PG_PURCHASE.statusFinish;
 
                     return sequelize.models.PgPurchase.update(update, {
                         where: {
-                            'orderNo': update.orderNo
+                            'orderNo': update.pgPurchase.orderNo
                         },
                         transaction: t
                     }).then(function (data) {

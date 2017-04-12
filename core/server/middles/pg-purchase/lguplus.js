@@ -1,7 +1,7 @@
 var STD = require('../../../../bridge/metadata/standards');
 
 module.exports = {
-    startValidate: function (req) {
+    startValidate: function (req, res, next) {
 
         var USER = req.meta.std.user;
         var PG_PURCHASE = req.meta.std.pgPurchase;
@@ -39,7 +39,7 @@ module.exports = {
         req.utils.common.checkError(req, res, next);
 
     },
-    finishValidate: function (req) {
+    finishValidate: function (req, res, next) {
 
         var pgPurchase = {
             payload: {}

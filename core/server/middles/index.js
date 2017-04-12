@@ -8,7 +8,8 @@ module.exports.connect = function (config) {
             validator: require('./validator')(),
             role: require('./role')(),
             terms: require('./terms')(),
-            pay: require('./pay')
+            pay: require('./pay'),
+            pgPurchase: require('./pg-purchase')()
         };
         req.middles = middles;
         next();
