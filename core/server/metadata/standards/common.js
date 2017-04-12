@@ -490,6 +490,11 @@ var standards = {
             "finishEssential": ["LGD_OID"],
         }
     },
+    "pgPurchase": {
+        "enumStatus": ["wait", "finish", "fail"],
+        "enumPgType": ['lguplus'],
+        "pgTypeLguplus": "lguplus"
+    },
     "inAppPurchase": {
         "enumStatus": ["start", "finish"],
         "statusStart": "start",

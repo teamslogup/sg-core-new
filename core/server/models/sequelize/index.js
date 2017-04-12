@@ -34,6 +34,7 @@ var MassNotificationDest = require('./mass-notification-dest');
 var MassNotificationPhoneNum = require('./mass-notification-phone-num');
 var Lguplus = require('./lguplus');
 var InAppPurchase = require('./in-app-purchase');
+var PgPurchase = require('./pg-purchase');
 
 var models = {
     User: User,
@@ -70,7 +71,8 @@ var models = {
     MassNotificationDest: MassNotificationDest,
     MassNotificationPhoneNum: MassNotificationPhoneNum,
     Lguplus: Lguplus,
-    InAppPurchase: InAppPurchase
+    InAppPurchase: InAppPurchase,
+    PgPurchase: PgPurchase
 };
 
 module.exports = models;
