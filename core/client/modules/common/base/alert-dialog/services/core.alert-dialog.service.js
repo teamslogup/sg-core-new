@@ -71,6 +71,8 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
     this.validator = function (data, acceptableKeys, essentialKeys, callback) {
         var self = this;
         try {
+            var setData = {};
+
             var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
                 throw(err);
             });
@@ -83,6 +85,8 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
                 for (var k in data) {
                     if (!acceptableKeyHash[k]) {
                         throw('400_15');
+                    } else {
+                        setData[k] = data[k];
                     }
                 }
                 if (essentialKeys) {
@@ -95,7 +99,7 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
             } else {
                 throw('400');
             }
-            callback(data);
+            callback(setData);
         } catch (err) {
             self.alertError(400, {
                 code: err
