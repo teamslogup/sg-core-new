@@ -232,45 +232,45 @@ module.exports = {
         },
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
-            'startPay': function (body, t) {
-
-                var LGUPLUS = STD.pay.lguplus;
-
-                body.status = LGUPLUS.statusWait;
-
-                var timestamp = micro.now();
-                body.LGD_OID = 'sg' + timestamp;
-                body.LGD_TIMESTAMP = timestamp;
-
-                return sequelize.models.Lguplus.create(body, {
-                    transaction: t
-                }).then(function (data) {
-                    if (data) {
-                        return data;
-                    } else {
-                        throw new errorHandler.CustomSequelizeError(404);
-                    }
-                });
-            },
-            'finishPay': function (LGD_OID, update, t) {
-
-                var LGUPLUS = STD.pay.lguplus;
-
-                update.status = LGUPLUS.statusFinish;
-
-                return sequelize.models.Lguplus.update(update, {
-                    where: {
-                        'LGD_OID': LGD_OID
-                    },
-                    transaction: t
-                }).then(function (data) {
-                    if (data[0] > 0) {
-                        return true;
-                    } else {
-                        throw new errorHandler.CustomSequelizeError(404);
-                    }
-                });
-            }
+            // 'startPay': function (body, t) {
+            //
+            //     var LGUPLUS = STD.pay.lguplus;
+            //
+            //     body.status = LGUPLUS.statusWait;
+            //
+            //     var timestamp = micro.now();
+            //     body.LGD_OID = 'sg' + timestamp;
+            //     body.LGD_TIMESTAMP = timestamp;
+            //
+            //     return sequelize.models.Lguplus.create(body, {
+            //         transaction: t
+            //     }).then(function (data) {
+            //         if (data) {
+            //             return data;
+            //         } else {
+            //             throw new errorHandler.CustomSequelizeError(404);
+            //         }
+            //     });
+            // },
+            // 'finishPay': function (LGD_OID, update, t) {
+            //
+            //     var LGUPLUS = STD.pay.lguplus;
+            //
+            //     update.status = LGUPLUS.statusFinish;
+            //
+            //     return sequelize.models.Lguplus.update(update, {
+            //         where: {
+            //             'LGD_OID': LGD_OID
+            //         },
+            //         transaction: t
+            //     }).then(function (data) {
+            //         if (data[0] > 0) {
+            //             return true;
+            //         } else {
+            //             throw new errorHandler.CustomSequelizeError(404);
+            //         }
+            //     });
+            // }
         })
     }
 };

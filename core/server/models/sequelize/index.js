@@ -33,6 +33,7 @@ var MassNotificationImportHistory = require('./mass-notification-import-history'
 var MassNotificationDest = require('./mass-notification-dest');
 var Lguplus = require('./lguplus');
 var InAppPurchase = require('./in-app-purchase');
+var PgPurchase = require('./pg-purchase');
 
 var models = {
     User: User,
@@ -68,7 +69,8 @@ var models = {
     MassNotificationImportHistory: MassNotificationImportHistory,
     MassNotificationDest: MassNotificationDest,
     Lguplus: Lguplus,
-    InAppPurchase: InAppPurchase
+    InAppPurchase: InAppPurchase,
+    PgPurchase: PgPurchase
 };
 
 module.exports = models;
