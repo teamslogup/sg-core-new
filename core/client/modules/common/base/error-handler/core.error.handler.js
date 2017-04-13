@@ -13,8 +13,6 @@ export default function errorHandler($filter, metaManager, $location) {
     function validator (data, acceptableKeys, essentialKeys, callback) {
         var self = this;
         try {
-            var setData = {};
-
             var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
                 throw(err);
             });
@@ -27,8 +25,6 @@ export default function errorHandler($filter, metaManager, $location) {
                 for (var k in data) {
                     if (!acceptableKeyHash[k]) {
                         throw('400_15');
-                    } else {
-                        setData[k] = data[k];
                     }
                 }
                 if (essentialKeys) {
@@ -41,7 +37,7 @@ export default function errorHandler($filter, metaManager, $location) {
             } else {
                 throw('400');
             }
-            callback(setData);
+            callback(data);
         } catch (err) {
             self.alertError(400, {
                 code: err
