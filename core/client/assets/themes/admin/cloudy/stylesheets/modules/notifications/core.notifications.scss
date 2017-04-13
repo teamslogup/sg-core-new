@@ -161,64 +161,129 @@
                         line-height: $sg-notification-manage-main-item-height;
 
                         @include after-clear();
-                        .sg-notification-manage-main-item-type {
+
+                        .sg-notification-manage-main-item-container {
                             float: left;
-                            width: 10%;
+                            width: auto;
+
+                            &.type {
+                                width: 10%;
+                            }
+
+                            &.title {
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+
+                                width: 19%;
+                            }
+
+                            &.message-title {
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+
+                                width: 20%;
+
+                                padding-right: 18px;
+                            }
+
+                            &.message-body {
+                                white-space: nowrap;
+                                text-overflow: ellipsis;
+                                overflow: hidden;
+
+                                width: 20%;
+                                height: $sg-notification-manage-main-item-height;
+
+                                padding-right: 18px;
+                            }
+
+                            &.total-count {
+                                width: 10%;
+                                text-align: center;
+                            }
+
+                            &.send-count {
+                                width: 10%;
+                                text-align: center;
+                            }
+
+                            &.created-at {
+                                color: #121428;
+
+                                width: 11%;
+
+                                font-size: 14px;
+                                text-align: center;
+                            }
+
+                            @include after-clear();
+                            .sg-notification-manage-main-item-title {
+                                display: none;
+                            }
+                            .sg-notification-manage-main-item-body {
+                            }
                         }
-                        .sg-notification-manage-main-item-title {
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
 
-                            float: left;
-                            width: 19%;
-                        }
-
-                        .sg-notification-manage-main-item-message-title {
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-
-                            float: left;
-                            width: 20%;
-
-                            padding-right: 18px;
-                        }
-
-                        .sg-notification-manage-main-item-message-body {
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                            overflow: hidden;
-
-                            float: left;
-                            width: 20%;
-                            height: $sg-notification-manage-main-item-height;
-
-                            padding-right: 18px;
-                        }
-
-                        .sg-notification-manage-main-item-send-count {
-                            float: left;
-                            width: 10%;
-                            text-align: center;
-                        }
-
-                        .sg-notification-manage-main-item-fail-count {
-                            float: left;
-                            width: 10%;
-                            text-align: center;
-                        }
-
-                        .sg-notification-manage-main-item-created-at {
-
-                            color: #121428;
-
-                            float: left;
-                            width: 11%;
-
-                            font-size: 14px;
-                            text-align: center;
-                        }
+                        //.sg-notification-manage-main-item-type {
+                        //    float: left;
+                        //    width: 10%;
+                        //}
+                        //.sg-notification-manage-main-item-title {
+                        //    white-space: nowrap;
+                        //    text-overflow: ellipsis;
+                        //    overflow: hidden;
+                        //
+                        //    float: left;
+                        //    width: 19%;
+                        //}
+                        //
+                        //.sg-notification-manage-main-item-message-title {
+                        //    white-space: nowrap;
+                        //    text-overflow: ellipsis;
+                        //    overflow: hidden;
+                        //
+                        //    float: left;
+                        //    width: 20%;
+                        //
+                        //    padding-right: 18px;
+                        //}
+                        //
+                        //.sg-notification-manage-main-item-message-body {
+                        //    white-space: nowrap;
+                        //    text-overflow: ellipsis;
+                        //    overflow: hidden;
+                        //
+                        //    float: left;
+                        //    width: 20%;
+                        //    height: $sg-notification-manage-main-item-height;
+                        //
+                        //    padding-right: 18px;
+                        //}
+                        //
+                        //.sg-notification-manage-main-item-send-count {
+                        //    float: left;
+                        //    width: 10%;
+                        //    text-align: center;
+                        //}
+                        //
+                        //.sg-notification-manage-main-item-fail-count {
+                        //    float: left;
+                        //    width: 10%;
+                        //    text-align: center;
+                        //}
+                        //
+                        //.sg-notification-manage-main-item-created-at {
+                        //
+                        //    color: #121428;
+                        //
+                        //    float: left;
+                        //    width: 11%;
+                        //
+                        //    font-size: 14px;
+                        //    text-align: center;
+                        //}
                     }
 
                     .sg-notification-manage-main-item-right {
