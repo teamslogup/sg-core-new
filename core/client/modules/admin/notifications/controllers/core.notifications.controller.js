@@ -1,5 +1,14 @@
-export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibModal, massNotificationsManager, massNotificationConditionManager, dialogHandler, loadingHandler, metaManager) {
+export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibModal, massNotificationsManager, massNotificationConditionManager, massNotificationCsvManager, dialogHandler, loadingHandler, metaManager) {
     "ngInject";
+
+    var vm = null;
+    if ($scope.vm !== undefined) {
+        vm = $scope.vm;
+    } else {
+        vm = $scope.vm = {};
+    }
+
+    vm.FLAG = metaManager.std.flag;
 
     var ADMIN = metaManager.std.admin;
     var LOADING = metaManager.std.loading;
@@ -11,6 +20,7 @@ export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibM
     $scope.loadingHandler = loadingHandler;
     $scope.massNotificationsManager = massNotificationsManager;
     $scope.massNotificationConditionManager = massNotificationConditionManager;
+    $scope.massNotificationCsvManager = massNotificationCsvManager;
 
     $scope.showItemOption = showItemOption;
     $scope.hideItemOption = hideItemOption;

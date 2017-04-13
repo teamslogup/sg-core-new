@@ -157,7 +157,7 @@ module.exports = {
                     });
                 }
 
-                function deleteAllMassNotificationPhoneNum (t) {
+                function deleteAllMassNotificationDest (t) {
                     var query = 'DELETE FROM MassNotificationDests';
                     return sequelize.query(query, {
                         transaction: t
@@ -187,7 +187,7 @@ module.exports = {
                                 code: "400_65"
                             };
                         } else {
-                            return deleteAllMassNotificationPhoneNum(t);
+                            return deleteAllMassNotificationDest(t);
                         }
                     });
                 }

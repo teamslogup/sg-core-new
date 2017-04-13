@@ -21,14 +21,13 @@ var api = {
                     "folder",
                     "sendType",
                     "sendMethod",
-                    "massNotificationTitle",
+                    "notificationName",
                     "messageTitle",
                     "messageBody"
                 ],
                 essential: [
-                    "folder",
                     "sendType",
-                    "massNotificationTitle",
+                    "notificationName",
                     "messageBody"
                 ],
                 resettable: [],
@@ -36,7 +35,7 @@ var api = {
                     "folder": "mms 이미지 저장될 폴더" + STD.file.folderNotification,
                     "sendType": STD.notification.enumSendTypes.join(", "),
                     "sendMethod": STD.notification.enumSendMethods.join(", "),
-                    "massNotificationTitle": "전송 제목",
+                    "notificationName": "전송 제목",
                     "messageTitle": "메세지 제목",
                     "messageBody": "메세지 내용"
                 },
@@ -60,6 +59,7 @@ var api = {
                 apiCreator.add(req.middles.upload.checkFileFormat(STD.file.enumValidCsvExtensions.concat(STD.file.enumValidImageExtensions)));
                 apiCreator.add(req.middles.upload.checkInvalidFileType(STD.file.enumInvalidFileExtensions));
                 apiCreator.add(req.middles.upload.checkFileCount(1, 2));
+                apiCreator.add(req.middles.upload.reorderByExtension('csv'));
                 apiCreator.add(post.validate());
                 apiCreator.add(post.checkNCreatePart());
                 apiCreator.add(post.series());

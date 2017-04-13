@@ -1,11 +1,11 @@
-var meta = require('../../../bridge/metadata');
+var meta = require('../../../../bridge/metadata');
 var path = require('path');
 var fs = require('fs');
 var json2csv = require('json2csv');
 var async = require('async');
 
-var STD = require('../../../bridge/metadata/standards');
-var CONFIG = require('../../../bridge/config/env');
+var STD = require('../../../../bridge/metadata/standards');
+var CONFIG = require('../../../../bridge/config/env');
 var APP_CONFIG = CONFIG.app;
 var url = APP_CONFIG.rootUrl + "/" + APP_CONFIG.apiName + '/accounts/auth-email?token=';
 var appDir = require('app-root-path').path;
@@ -16,11 +16,11 @@ var sendNoti = sgSender.getSender(CONFIG.sender);
 var emailErrorRefiner = sgSender.emailErrorRefiner;
 var phoneErrorRefiner = sgSender.phoneErrorRefiner;
 
-var sequelize = require('../../server/config/sequelize');
+var sequelize = require('../../../server/config/sequelize');
 var errorHandler = require('sg-sequelize-error-handler');
 var NOTIFICATION = STD.notification;
-var NOTIFICATIONS = require('../../../bridge/metadata/notifications');
-var LANGUAGES = require('../../../bridge/metadata/languages');
+var NOTIFICATIONS = require('../../../../bridge/metadata/notifications');
+var LANGUAGES = require('../../../../bridge/metadata/languages');
 
 var changeExp = /[\r\n\s!@#$&%^*()\-=+\\\|\[\]{};:\'`"~,.<>\/?]/g;
 
@@ -29,6 +29,8 @@ var phoneNum1 = new RegExp("^1[016789]{1}[0-9]{7,8}$");
 var phoneNum2 = new RegExp("^821[016789]{1}[0-9]{7,8}$");
 var phoneNum3 = new RegExp("^8201[016789]{1}[0-9]{7,8}$");
 var phoneNum4 = new RegExp("^01[016789]{1}[0-9]{7,8}$");
+
+var notiHelper = require('./noti-helper');
 
 function makeAuthEmailUrl(redirects, auth) {
     return url + auth.token + "&type=" + auth.type + "&successRedirect=" + (redirects.successRedirect || "") + "&errorRedirect=" + (redirects.errorRedirect || "");
@@ -238,17 +240,17 @@ module.exports = {
             var NOTIFICATION = STD.notification;
 
             if (sendType == NOTIFICATION.sendTypeEmail) {
-                sendEmail(callback);
+                notiHelper.sendEmail(user.email, title, body, callback);
             } else if (sendType == NOTIFICATION.sendTypeMessage) {
 
                 if (file) {
-                    sendMMS(callback);
+                    notiHelper.sendMMS(user.phoneNum, title, body, file, callback);
                 } else {
 
                     if (sendMethod == NOTIFICATION.sendMethodMms) {
-                        sendMMS(callback);
+                        notiHelper.sendMMS(user.phoneNum, title, body, file, callback);
                     } else {
-                        sendSMS(callback);
+                        notiHelper.sendSMS(user.phoneNum, title, callback);
                     }
                 }
 
@@ -263,81 +265,12 @@ module.exports = {
 
                 if (histories.length > 0) {
                     histories.forEach(function (history) {
-
-                        if (history.token) {
-                            sendNoti.fcm(history.token, title, body, badge, data, history.platform, function (err) {
-                                if (err) {
-                                    callback(500, err);
-                                } else {
-                                    callback(204);
-                                }
-                            });
-                        } else {
-                            callback(404);
-                        }
-
+                        notiHelper.sendPush(history.token, title, body, badge, data, history.platform, callback);
                     });
                 } else {
                     callback(404);
                 }
 
-            }
-
-            function sendEmail(callback) {
-
-                if (user.email) {
-                    sendNoti.email(user.email, title, "Notification", {
-                        subject: title,
-                        dir: appDir,
-                        name: 'common',
-                        params: {
-                            body: body
-                        }
-                    }, function (err) {
-                        if (process.env.NODE_ENV == 'test') return callback(204);
-                        if (err) {
-                            callback(503, emailErrorRefiner(err));
-                        } else {
-                            callback(204);
-                        }
-                        console.log('email error', err);
-                    });
-                } else {
-                    callback(404);
-                    console.log('email 404');
-                }
-
-            }
-
-            function sendSMS(callback) {
-                if (user.phoneNum) {
-                    sendNoti.sms(null, user.phoneNum, title, body, function (err) {
-                        if (err) {
-                            callback(err.status, phoneErrorRefiner(err));
-                        } else {
-                            callback(204);
-                        }
-                    });
-
-                } else {
-                    callback(404);
-                }
-
-            }
-
-            function sendMMS(callback) {
-                if (user.phoneNum) {
-                    sendNoti.mms(null, user.phoneNum, title, body, file, function (err) {
-                        if (err) {
-                            callback(err.status, phoneErrorRefiner(err));
-                        } else {
-                            callback(204);
-                        }
-                    });
-
-                } else {
-                    callback(404);
-                }
             }
         }
     },
@@ -464,40 +397,6 @@ module.exports = {
         }
     },
     massNotification: {
-        parse: {
-            message: function (phoneNum) {
-                var temp = phoneNum + '';
-                temp = temp.replace(changeExp, '');
-
-                if (phoneNum1.test(temp)) {
-                    temp = '+82' + temp;
-                }
-
-                if (phoneNum2.test(temp)) {
-                    temp = temp.replace('82', '+82');
-                }
-
-                if (phoneNum3.test(temp)) {
-                    temp = temp.replace('820', '+82');
-                }
-
-                if (phoneNum4.test(temp)) {
-                    temp = temp.replace('01', '+821');
-                }
-
-                if (correctPhoneNum.test(temp)) {
-                    return temp;
-                } else {
-                    return STD.notification.wrongPhoneNum;
-                }
-            },
-            email: function (email) {
-                return email;
-            },
-            token: function (token) {
-                return token;
-            }
-        },
         sendAll: function (req, array, file, callback) {
             var _this = this;
 
@@ -537,9 +436,9 @@ module.exports = {
                                         } else if (data instanceof String) {
                                             errorMessage = data;
                                         }
-                                        console.log("send message fail:", array[currentTime].phoneNum, errorMessage);
+                                        console.log("send message fail:", array[currentTime].dest, errorMessage);
                                         failArray.push({
-                                            phoneNum: array[currentTime].phoneNum,
+                                            dest: array[currentTime].dest,
                                             errorCode: errorMessage
                                         });
                                     }
@@ -549,9 +448,48 @@ module.exports = {
                                 break;
                             case NOTIFICATION.sendTypeEmail:
 
+                                notiHelper.sendEmail(array[currentTime].dest, array[currentTime].title, array[currentTime].message, function (status, data) {
+                                    if (status == 204) {
+
+                                    } else {
+                                        var errorMessage = "unexpected error";
+                                        if (data instanceof Object && data.message) {
+                                            errorMessage = data.message;
+                                        } else if (data instanceof String) {
+                                            errorMessage = data;
+                                        }
+                                        console.log('send email fail:', array[currentTime].dest, errorMessage);
+                                        failArray.push({
+                                            dest: array[currentTime].dest,
+                                            errorCode: errorMessage
+                                        });
+                                    }
+                                    subCallback(null, true);
+                                });
 
                                 break;
                             case NOTIFICATION.sendTypePush:
+
+                                notiHelper.sendPush(array[currentTime].dest, array[currentTime].title, array[currentTime].message, badge, {}, array[currentTime].platform, function (status, data) {
+                                    if (status == 204) {
+
+                                    } else {
+                                        // var errorMessage = "unexpected error";
+                                        // if (data instanceof Object && data.message) {
+                                        //     errorMessage = data.message;
+                                        // } else if (data instanceof String) {
+                                        //     errorMessage = data;
+                                        // }
+                                        // console.log('send push fail:', array[currentTime].dest, errorMessage);
+                                        // failArray.push({
+                                        //     dest: array[currentTime].dest,
+                                        //     errorCode: errorMessage
+                                        // });
+
+                                        console.log('send push fail:', array[currentTime].dest);
+                                    }
+                                    subCallback(null, true);
+                                });
 
                                 break;
                         }
@@ -564,6 +502,40 @@ module.exports = {
             async.series(funcs, function (errorCode, results) {
                 callback(failArray);
             });
+        },
+        parse: {
+            message: function (phoneNum) {
+                var temp = phoneNum + '';
+                temp = temp.replace(changeExp, '');
+
+                if (phoneNum1.test(temp)) {
+                    temp = '+82' + temp;
+                }
+
+                if (phoneNum2.test(temp)) {
+                    temp = temp.replace('82', '+82');
+                }
+
+                if (phoneNum3.test(temp)) {
+                    temp = temp.replace('820', '+82');
+                }
+
+                if (phoneNum4.test(temp)) {
+                    temp = temp.replace('01', '+821');
+                }
+
+                if (correctPhoneNum.test(temp)) {
+                    return temp;
+                } else {
+                    return STD.notification.wrongPhoneNum;
+                }
+            },
+            email: function (email) {
+                return email;
+            },
+            token: function (token) {
+                return token;
+            }
         },
         message: {
             sendMessage: function (req, phoneNum, message, callback, file) {
@@ -613,36 +585,6 @@ module.exports = {
                 } else {
                     callback(204);
                 }
-            }
-        },
-        email: {
-            sendEmail: function (email, title, body, callback) {
-                sendNoti.email(email, title, "Notification", {
-                    subject: title,
-                    dir: appDir,
-                    name: 'common',
-                    params: {
-                        body: body
-                    }
-                }, function (err) {
-                    if (process.env.NODE_ENV == 'test') return callback(204);
-                    if (err) {
-                        callback(503, emailErrorRefiner(err));
-                    } else {
-                        callback(204);
-                    }
-                });
-            }
-        },
-        push: {
-            sendPush: function (token, title, body, badge, data, callback) {
-                sendNoti.fcm(token, title, body, badge, data, history.platform, function (err) {
-                    if (err) {
-                        callback(500, err);
-                    } else {
-                        callback(204);
-                    }
-                });
             }
         },
         import: {

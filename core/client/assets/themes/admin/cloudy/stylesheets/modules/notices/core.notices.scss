@@ -7,6 +7,8 @@
         padding: 50px 12px;
         width: 1200px;
 
+        max-width: $web-container-size + $g-menu-size;
+
         .sg-notice-manage-title {
             //@include title-border-bottom();
         }
@@ -26,7 +28,7 @@
 
             .sg-notice-manage-menu-search {
                 float: left;
-                width: calc(100% - 171px);
+                width: calc(100% - 241px);
 
                 form {
                     height: 41px;
@@ -39,8 +41,7 @@
                 float: right;
                 margin-left: 6px;
 
-                width: 50px;
-
+                width: 120px;
             }
         }
 
@@ -50,6 +51,8 @@
             padding-bottom: 6px;
 
             .sg-notice-manage-main-top {
+
+                display: block;
                 @include after-clear();
                 .sg-notice-manage-main-top-filter {
                     float: left;
@@ -72,8 +75,7 @@
                     font-size: 12px;
                     color: #8d93a6;
 
-                    display: none;
-
+                    display: block;
 
                     .sg-notice-manage-main-list-top-type {
                         float: left;
@@ -82,7 +84,12 @@
 
                     .sg-notice-manage-main-list-top-type-title {
                         float: left;
-                        width: 59%;
+                        width: 35%;
+                    }
+
+                    .sg-notice-manage-main-list-top-type-period {
+                        float: left;
+                        width: 24%;
                     }
 
                     .sg-notice-manage-main-list-top-created-at {
@@ -107,12 +114,12 @@
 
                     @include after-clear();
 
-                    padding-top: 12px;
-                    padding-bottom: 12px;
-
-
-                    @include transition(all, .15s, ease-in-out, 0s);
+                    @include transition(border, .15s, ease-in-out, 0s);
                     @include hoverItem();
+
+                    height: $sg-notice-manage-main-item-height;
+                    padding-top: 0;
+                    padding-bottom: 0;
 
                     .sg-notice-manage-main-item-left {
                         padding-left: 18px;
@@ -121,12 +128,40 @@
                         font-size: 14px;
                         color: #121428;
 
+                        line-height: $sg-notice-manage-main-item-height;
+
                         @include after-clear();
 
-                        .sg-notice-manage-main-item-created-at {
-                            font-size: 12px;
-                            color: #121428;
+                        .sg-notice-manage-main-item-type-container {
+                            float: left;
+                            width: 20%;
                         }
+
+                        .sg-notice-manage-main-item-title-container {
+                            float: left;
+                            width: 35%;
+                        }
+
+                        .sg-notice-manage-main-item-period-container {
+                            float: left;
+                            width: 24%;
+                        }
+
+                        .sg-notice-manage-main-item-created-at-container {
+                            color: #121428;
+
+                            float: left;
+                            width: 21%;
+                            font-size: 14px;
+                        }
+
+                        .sg-notice-manage-main-item-title {
+                            display: none;
+                        }
+                        .sg-notice-manage-main-item-body {
+
+                        }
+
                     }
 
                     .sg-notice-manage-main-item-right {

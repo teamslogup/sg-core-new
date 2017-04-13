@@ -16,6 +16,10 @@ module.exports = {
             'type': Sequelize.STRING,
             'unique': true,
             'allowNull': false
+        },
+        'platform': {
+            'type': Sequelize.STRING,
+            'allowNull': true
         }
     },
     options: {

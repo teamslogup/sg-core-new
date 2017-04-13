@@ -93,6 +93,90 @@ post.validateMessageBody = function () {
     };
 };
 
+post.findUsers = function () {
+    return function (req, res, next) {
+
+        var STD = req.meta.std;
+        var notificationNotice = req.meta.notifications.public.notice;
+
+        var query = {
+            distinct: 'id',
+            where: {},
+            order: [[STD.common.id, STD.common.DESC]],
+            include: [{
+                model: req.models.LoginHistory,
+                as: 'loginHistories',
+                required: true
+            }, {
+                model: req.models.NotificationSwitch,
+                as: 'notificationSwitches',
+                attributes: req.models.NotificationSwitch.getUserNotificationFields(),
+                separate: true
+            }, {
+                model: req.models.NotificationPublicSwitch,
+                as: 'notificationPublicSwitches',
+                attributes: req.models.NotificationPublicSwitch.getUserPublicNotificationFields(),
+                separate: true
+            }],
+            paranoid: true
+        };
+
+        if (req.body.gender !== undefined) {
+            query.where.gender = req.body.gender;
+
+        }
+
+        if (req.body.minBirthYear !== undefined) {
+
+            if (query.where.$and === undefined) {
+                query.where.$and = [];
+            }
+
+            query.where.$and.push({
+                birth: {
+                    $gte: req.body.minBirthYear
+                }
+            });
+        }
+
+        if (req.body.maxBirthYear !== undefined) {
+
+            if (query.where.$and === undefined) {
+                query.where.$and = [];
+            }
+
+            query.where.$and.push({
+                birth: {
+                    $lte: req.body.maxBirthYear
+                }
+            });
+        }
+
+        if (req.body.platform) {
+            query.include[0].where = {
+                platform: req.body.platform
+            };
+        }
+
+        var total;
+
+        req.models.User.count(query).then(function (data) {
+            total = data;
+
+            if (total == 0) {
+
+                return res.hjson(req, next, 404, {
+                    code: '404_14'
+                });
+
+            } else {
+                next();
+            }
+
+        });
+    }
+};
+
 post.createMassNotification = function () {
     return function (req, res, next) {
 
@@ -186,7 +270,7 @@ post.sendMassNotification = function () {
 
             query.where.$and.push({
                 birth: {
-                    $lte: req.body.maxBirthYear
+                    $lte: req.body.maxBirthYear + 1
                 }
             });
         }
@@ -210,14 +294,8 @@ post.sendMassNotification = function () {
 
             if (total == 0) {
 
-                req.models.MassNotification.updateDataById(req.massNotification.id, {
-                    progress: 100
-                }, function (status) {
-
-                    if (status != 204) {
-                        console.log('mass-notification-condition progress error');
-                    }
-
+                return res.hjson(req, next, 404, {
+                    code: '404_14'
                 });
 
             } else {
@@ -269,7 +347,7 @@ post.sendMassNotification = function () {
 
                                 var sendNotiFunction = [];
 
-                                console.log('total', total);
+                                console.log('mass-notification-condition total', total);
 
                                 if (results.length > 0) {
                                     results[0].forEach(function (user) {
@@ -338,9 +416,8 @@ post.sendMassNotification = function () {
 
             }
 
+            next();
         });
-
-        next();
 
     }
 };

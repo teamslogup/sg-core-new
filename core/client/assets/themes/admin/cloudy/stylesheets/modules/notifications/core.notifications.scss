@@ -6,9 +6,11 @@
         margin: auto;
         padding: 50px 12px;
 
-        @media screen and (min-width: $web-container-size) {
-            max-width: $web-container-size;
-        }
+        //@media screen and (min-width: $web-container-size) {
+        //    max-width: $web-container-size;
+        //}
+
+        max-width: $web-container-size;
 
         .sg-notification-manage-title {
             //@include title-border-bottom();
@@ -29,15 +31,16 @@
 
             .sg-notification-manage-menu-search {
                 float: left;
-                width: calc(100% - 171px);
 
                 form {
                     height: 41px;
                 }
 
-                @media screen and (min-width: $web-container-size) {
-                    width: calc(100% - 241px);
-                }
+                //@media screen and (min-width: $web-container-size) {
+                //    width: calc(100% - 241px);
+                //}
+
+                width: calc(100% - 241px);
 
             }
 
@@ -45,11 +48,13 @@
                 float: right;
                 margin-left: 6px;
 
-                width: 50px;
+                //width: 50px;
+                //
+                //@media screen and (min-width: $web-container-size) {
+                //    width: 120px;
+                //}
 
-                @media screen and (min-width: $web-container-size) {
-                    width: 120px;
-                }
+                width: 120px;
             }
         }
 
@@ -81,11 +86,7 @@
                     font-size: 12px;
                     color: #8d93a6;
 
-                    display: none;
-
-                    @media screen and (min-width: $web-container-size) {
-                        display: block;
-                    }
+                    display: block;
 
                     .sg-notification-manage-main-list-top-type {
                         float: left;
@@ -142,16 +143,11 @@
 
                     @include after-clear();
 
-                    padding-top: 12px;
-                    padding-bottom: 12px;
+                    height: $sg-notification-manage-main-item-height;
+                    padding-top: 0;
+                    padding-bottom: 0;
 
-                    @media screen and (min-width: $web-container-size) {
-                        height: $sg-notification-manage-main-item-height;
-                        padding-top: 0;
-                        padding-bottom: 0;
-                    }
-
-                    @include transition(all, .15s, ease-in-out, 0s);
+                    @include transition(border, .15s, ease-in-out, 0s);
                     @include hoverItem();
 
                     .sg-notification-manage-main-item-left {
@@ -161,81 +157,67 @@
                         font-size: 14px;
                         color: #121428;
 
-                        @media screen and (min-width: $web-container-size) {
-                            height: $sg-notification-manage-main-item-height;
-                            line-height: $sg-notification-manage-main-item-height;
-                        }
+                        height: $sg-notification-manage-main-item-height;
+                        line-height: $sg-notification-manage-main-item-height;
 
                         @include after-clear();
                         .sg-notification-manage-main-item-type {
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 10%;
-                            }
+                            float: left;
+                            width: 10%;
                         }
                         .sg-notification-manage-main-item-title {
                             white-space: nowrap;
                             text-overflow: ellipsis;
                             overflow: hidden;
 
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 19%;
-                            }
+                            float: left;
+                            width: 19%;
                         }
 
                         .sg-notification-manage-main-item-message-title {
                             white-space: nowrap;
                             text-overflow: ellipsis;
                             overflow: hidden;
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 20%;
 
-                                padding-right: 18px;
-                            }
+                            float: left;
+                            width: 20%;
+
+                            padding-right: 18px;
                         }
 
                         .sg-notification-manage-main-item-message-body {
                             white-space: nowrap;
                             text-overflow: ellipsis;
                             overflow: hidden;
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 20%;
-                                height: $sg-notification-manage-main-item-height;
 
-                                padding-right: 18px;
-                            }
+                            float: left;
+                            width: 20%;
+                            height: $sg-notification-manage-main-item-height;
+
+                            padding-right: 18px;
                         }
 
                         .sg-notification-manage-main-item-send-count {
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 10%;
-                                text-align: center;
-                            }
+                            float: left;
+                            width: 10%;
+                            text-align: center;
                         }
 
                         .sg-notification-manage-main-item-fail-count {
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 10%;
-                                text-align: center;
-                            }
+                            float: left;
+                            width: 10%;
+                            text-align: center;
                         }
 
                         .sg-notification-manage-main-item-created-at {
-                            font-size: 12px;
+
                             color: #121428;
 
-                            @media screen and (min-width: $web-container-size) {
-                                float: left;
-                                width: 11%;
+                            float: left;
+                            width: 11%;
 
-                                font-size: 14px;
-                                text-align: center;
-                            }
+                            font-size: 14px;
+                            text-align: center;
                         }
                     }
 
@@ -329,3 +311,4 @@
 }
 
 @import "core.notification-manage-create";
+@import "core.notification-responsive";

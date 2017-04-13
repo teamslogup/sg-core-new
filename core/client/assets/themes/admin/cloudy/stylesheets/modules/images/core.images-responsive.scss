@@ -22,6 +22,30 @@
                 width: 100%;
             }
 
+
+            @media screen and (max-width: $web-min-width) {
+                .sg-image-manage-top {
+                    @include title-border-bottom();
+                    @include after-clear();
+
+                    .sg-image-manage-folder {
+
+                        margin-bottom: 12px;
+
+                    }
+                }
+
+                .sg-image-manage-menu {
+                    .sg-image-manage-menu-option {
+                    }
+                    .sg-image-manage-menu-search {
+                        margin-top: 12px;
+                        width: 100%;
+                    }
+                }
+            }
+
+
             .sg-image-manage-main {
                 .sg-image-manage-main-list {
                     .sg-image-manage-main-list-item {

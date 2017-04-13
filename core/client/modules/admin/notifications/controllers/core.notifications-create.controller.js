@@ -69,6 +69,14 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.images = [];
     var files = [];
 
+    $scope.csvFiles = [];
+
+    $scope.birthStartList = [];
+    $scope.birthEndList = [];
+
+    var date = new Date();
+    var yearToday = date.getFullYear();
+
     // $scope.form = {
     //     type: scope.noticeTypes[0],
     //     country: scope.noticeCountries[0]
@@ -84,6 +92,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.sendNotificationCondition = sendNotificationCondition;
     $scope.cancel = cancel;
     $scope.resetImage = resetImage;
+    $scope.deleteCsvItem = deleteCsvItem;
 
     var frontPath = 'modules/admin/notifications/directives/notifications-create/core.notifications-create-';
     var tailPath = '.html';
@@ -107,6 +116,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         $scope.createSelectPath = frontPath + name + tailPath;
         $scope.sendTypeSelectItem = {};
         $scope.sendTypeSelectItem[name] = true;
+        $scope.currentSelectType = name;
     }
 
     function next() {
@@ -116,6 +126,12 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         }
         if (!$scope.tempStore[$scope.currentSendType].body) {
             return scope.dialogHandler.show('', $filter('translate')('body') + '을 입력해주세요.', '', true);
+        }
+
+        if ($scope.currentSendType == NOTIFICATION.sendTypeMessage) {
+            if ($scope.currentMessageLength > $scope.messageLength.lms) {
+                return scope.dialogHandler.show('', '내용을 2000bytes 이내로 입력해주세요.', '', true);
+            }
         }
         $scope.lastPage = true;
     }
@@ -136,39 +152,63 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
             messageBody: $scope.tempStore[$scope.currentSendType].body
         };
 
-        body.gender = $scope.tempStore.condition.gender;
-        body.platform = $scope.tempStore.condition.platform;
-
-        if ($scope.tempStore.condition.minBirthYear) {
-            body.minBirthYear = $scope.tempStore.condition.minBirthYear;
-        }
-
-        if ($scope.tempStore.condition.maxBirthYear) {
-            body.maxBirthYear = $scope.tempStore.condition.maxBirthYear;
-        }
-
-        if (body.sendType == 'message') {
+        if (body.sendType == NOTIFICATION.sendTypeMessage) {
             body.sendMethod = $scope.messageTop;
         }
 
-        scope.loadingHandler.startLoading(LOADING.spinnerKey, 'sendNotificationCondition');
-        scope.massNotificationConditionManager.sendNotificationCondition(body, files, function (status, data) {
-            if (status == 201) {
+        if ($scope.currentSelectType == 'condition') {
 
-                $scope.massNotification = data;
+            body.gender = $scope.tempStore.condition.gender;
+            body.platform = $scope.tempStore.condition.platform;
 
-                setProgress($scope.massNotification.progress, '알림을 전송중입니다.');
-                $scope.stopProgress = $interval(function () {
-                    getProgress();
-                }, 1000);
-
-
-            } else {
-                scope.dialogHandler.alertError(status, data);
+            if ($scope.tempStore.condition.minBirthYear) {
+                body.minBirthYear = $scope.tempStore.condition.minBirthYear;
             }
 
-            scope.loadingHandler.endLoading(LOADING.spinnerKey, 'sendNotificationCondition');
-        });
+            if ($scope.tempStore.condition.maxBirthYear) {
+                body.maxBirthYear = $scope.tempStore.condition.maxBirthYear;
+            }
+
+            scope.loadingHandler.startLoading(LOADING.spinnerKey, 'sendNotificationCondition');
+            scope.massNotificationConditionManager.sendNotificationCondition(body, files, function (status, data) {
+                if (status == 201) {
+
+                    $scope.massNotification = data;
+
+                    setProgress($scope.massNotification.progress, '알림을 전송중입니다.');
+                    $scope.stopProgress = $interval(function () {
+                        getProgress();
+                    }, 1000);
+
+
+                } else {
+                    scope.dialogHandler.alertError(status, data);
+                }
+
+                scope.loadingHandler.endLoading(LOADING.spinnerKey, 'sendNotificationCondition');
+            });
+        } else if ($scope.currentSelectType == 'csv') {
+            scope.loadingHandler.startLoading(LOADING.spinnerKey, 'sendNotificationCsv');
+            scope.massNotificationCsvManager.sendNotificationCsv(body, files.concat($scope.csvFiles), function (status, data) {
+                if (status == 201) {
+
+                    $scope.massNotification = data;
+
+                    setProgress($scope.massNotification.progress, '알림을 전송중입니다.');
+                    $scope.stopProgress = $interval(function () {
+                        getProgress();
+                    }, 1000);
+
+
+                } else {
+                    scope.dialogHandler.alertError(status, data);
+                }
+
+                scope.loadingHandler.endLoading(LOADING.spinnerKey, 'sendNotificationCsv');
+            });
+
+        }
+
 
     }
 
@@ -234,18 +274,48 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
                 return true;
             }
 
-            if ($scope.currentMessageLength <= $scope.messageLength.mms) {
-                setMessageTop(NOTIFICATION.sendMethodMms);
-                return true;
-            }
+            // if ($scope.currentMessageLength <= $scope.messageLength.mms) {
+            //     setMessageTop(NOTIFICATION.sendMethodMms);
+            //     return true;
+            // }
 
         }
     }
 
-    $scope.$watch('tempStore.message.title', function (newVal, oldVal) {
+    function initializeBirthSelectBox() {
+
+        for (var i = 1920; i <= yearToday; i++) {
+            $scope.birthStartList.push(i);
+            $scope.birthEndList.push(i);
+        }
+    }
+
+    $scope.$watch('tempStore.condition.birthStart', function (newVal, oldVal) {
 
         if (newVal != oldVal) {
-            checkMessageLength($scope.tempStore.message.body);
+
+            if (newVal > $scope.tempStore.condition.birthEnd) {
+                $scope.tempStore.condition.birthEnd = '';
+            }
+
+            $scope.birthEndList = [];
+
+            for (var i = $scope.tempStore.condition.birthStart; i <= yearToday; i++) {
+                $scope.birthEndList.push(i);
+            }
+        }
+
+    }, true);
+
+    $scope.$watch('tempStore.condition.birthEnd', function (newVal, oldVal) {
+
+
+        if (newVal != oldVal) {
+            $scope.birthStart = [];
+
+            for (var i = 1920; i <= $scope.tempStore.condition.birthEnd; i++) {
+                $scope.birthStart.push(i);
+            }
         }
 
     }, true);
@@ -253,6 +323,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     $scope.$watch('tempStore.message.body', function (newVal, oldVal) {
 
         if (newVal != oldVal) {
+
             checkMessageLength(newVal);
         }
 
@@ -332,5 +403,50 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
         $scope.images = [];
         files = [];
     }
+
+    function addCsv(item) {
+        $scope.csvFiles.push(item);
+    }
+
+    $scope.csvUploader = new FileUploader({
+        onAfterAddingAll: function (items) {
+
+            if (items.length == 1 && $scope.csvFiles.length == 0) {
+                var split = items[0]._file.name.split('.');
+                var extension = split[split.length - 1];
+                var size = items[0]._file.size;
+
+                if (extension == 'csv') {
+
+                    // if (size <= 20480) {
+                    //
+                    // } else {
+                    //     dialogHandler.show('', '20kb 이하의 이미지만 올려주세요.', '', true);
+                    // }
+
+                    addCsv(items[0]._file);
+
+                } else {
+                    dialogHandler.show('', 'csv 파일만 올려주세요.', '', true);
+                }
+            } else {
+                dialogHandler.show('', '한개만 업로드 가능합니다.', '', true);
+            }
+
+        },
+        onErrorItem: function (err) {
+            console.log(err);
+        }
+    });
+
+    $scope.clickUploadFile = function () {
+        $('#uploadFile')[0].click();
+    };
+
+    function deleteCsvItem(index) {
+        $scope.csvFiles.splice(index, 1);
+    }
+
+    initializeBirthSelectBox();
 
 }

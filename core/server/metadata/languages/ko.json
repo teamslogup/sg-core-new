@@ -271,13 +271,16 @@
   "insertBody": "내용입력",
   "selectUser": "유저선택",
   "selectCondition": "조건설정",
+  "selectCsv": "CSV",
   "back": "뒤로",
   "send": "전송",
+  "targetCount": "발송대상",
   "successCount": "성공횟수",
   "failCount": "실패횟수",
   "age": "나이",
   "startDate": "시작일",
   "endDate": "종료일",
-  "aid": "아이디"
+  "aid": "아이디",
+  "period": "기간"
 }
 

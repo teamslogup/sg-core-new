@@ -8,6 +8,8 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
 
     var COUNTRIES = scope.metaManager.local.countries;
 
+    var date = new Date();
+
     $scope.NOTIFICATIONS = scope.metaManager.notifications;
     $scope.NOTIFICATIONS_PUBLIC = scope.metaManager.notifications.public;
 
@@ -38,6 +40,10 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
 
     $scope.enumCountries = Object.keys(scope.metaManager.local.countries);
     $scope.enumLanguages = Object.keys(scope.metaManager.local.languages);
+
+    $scope.birthYearList = [];
+    $scope.birthMonthList = [];
+    $scope.birthDayList = [];
 
     $scope.startEditMode = startEditMode;
     $scope.exitEditMode = exitEditMode;
@@ -72,9 +78,9 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
         if (str) {
             var date = str.split("-");
 
-            $scope.form.birthYear = Number(date[0]);
-            $scope.form.birthMonth = Number(date[1]);
-            $scope.form.birthDay = Number(date[2]);
+            $scope.form.birthYear = parseInt(date[0]);
+            $scope.form.birthMonth = parseInt(date[1]);
+            $scope.form.birthDay = parseInt(date[2]);
         }
     }
 
@@ -340,7 +346,25 @@ export default function UserDetailCtrl($scope, $filter, $uibModalInstance, scope
         $uibModalInstance.dismiss('cancel');
     }
 
+    function initBirthSelectBox() {
+
+        for (var i = 1920; i <= date.getFullYear(); i++) {
+            $scope.birthYearList.push(i);
+        }
+
+        for (var i = 1; i <= 12; i++) {
+            $scope.birthMonthList.push(i);
+        }
+
+        for (var i = 1; i <= 31; i++) {
+            $scope.birthDayList.push(i);
+        }
+
+    }
+
     function init() {
+        initBirthSelectBox();
+
         for (var i = 0; i < $scope.currentUser.providers.length; i++) {
             if ($scope.currentUser.providers[i].type == 'facebook') {
                 $scope.currentUser.providerFacebookIndex = i;

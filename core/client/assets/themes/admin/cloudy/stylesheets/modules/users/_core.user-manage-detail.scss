@@ -40,7 +40,7 @@
         .sg-user-manage-detail-top-sub {
             position: relative;
 
-            height: 91px;
+            height: 120px;
             background-color: white;
 
             border-bottom: 1px solid #ebeef7;
@@ -83,14 +83,12 @@
             .sg-user-manage-detail-top-sub-delete {
                 float: left;
 
-                position: absolute;
-                right: 20px;
-                top: 28px;
+                margin-top: 6px;
                 border: 1px solid #f0505f;
-                border-radius: 50px;
+                border-radius: 3px;
                 height: 30px;
                 line-height: 26px;
-                width: 70px;
+                width: 62px;
                 text-align: center;
                 color: #f0505f;
 
@@ -882,7 +880,7 @@
 
             .sg-user-manage-detail-start-edit-mode {
                 float: right;
-                margin-left: 8px;
+                margin-left: 5px;
             }
 
             .sg-user-manage-detail-exit-edit-mode {
@@ -950,14 +948,23 @@
         background-color: white;
         padding: 20px 0;
         border-radius: $sg-container-radius;
+
+        .sg-user-manage-detail-item-container {
+            @include after-clear();
+        }
+
         .sg-user-manage-detail-item {
             margin-top: 20px;
 
             padding-left: 18px;
             padding-right: 18px;
 
-            &:first-child {
+            &.first {
                 margin-top: 0;
+            }
+
+            &.float-to-left {
+                float: left;
             }
 
             .sg-user-manage-detail-item-title {
@@ -996,10 +1003,15 @@
                     float: left;
                 }
                 .sgc-input {
-                    margin-left: 20px;
+                    @media screen and (min-width: $web-container-size) {
+                        margin-left: 20px;
+                        width: calc(100% - 129px);
+                        float: left;
+                    }
 
-                    width: calc(100% - 129px);
-                    float: left;
+                    @media screen and (max-width: $web-container-size) {
+                        margin-top: 12px;
+                    }
                 }
             }
 

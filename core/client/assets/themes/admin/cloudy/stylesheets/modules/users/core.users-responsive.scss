@@ -4,6 +4,7 @@
         &#sg-user-manage {
             .sg-user-manage-container {
                 width: 100%;
+
                 .sg-user-manage-main {
                     .sg-user-manage-main-list {
                         .sg-user-manage-main-list-top{
@@ -375,5 +376,19 @@
     .modal-lg {
         width: auto;
         margin: 30px 10px;
+    }
+}
+@media screen and (max-width: $web-min-width) {
+    .sg-core-responsive {
+        &#sg-user-manage {
+            .sg-user-manage-container {
+                .sg-user-manage-menu {
+                    .sg-user-manage-menu-search {
+                        margin-top: 12px;
+                        width: 100%;
+                    }
+                }
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ import ckEditor from './ck-editor/core.common.ck-editor';
 import notificationBody from './notification-body/core.common.notification-body';
 import imageUrl from './image-url/core.common.image-url';
 import multiByteHandler from './multi-byte/core.common.multi-byte.handler';
+import convertToNumber from './convert-to-number/core.common.convert-to-number';
 
 import fileModel from './file-model/core.common.file-model';
 import fileUploader from './file-uploader/core.common.file-uploader';
@@ -32,6 +33,7 @@ export default angular.module('core.common', [])
     .provider('staticLoader', StaticLoader)
     .directive('ckEditor', ckEditor)
     .directive('fileModel', fileModel)
+    .directive('convertToNumber', convertToNumber)
     .service('fileUploader', fileUploader)
     .service('multiByteHandler', multiByteHandler)
     .name;

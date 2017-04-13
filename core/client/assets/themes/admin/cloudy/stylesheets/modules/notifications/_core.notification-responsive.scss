@@ -1,0 +1,123 @@
+@import "../../import";
+
+@media screen and (max-width: $web-container-size) {
+    .sg-core-responsive {
+        &#sg-notification-manage {
+            .sg-notification-manage-container {
+                max-width: none;
+
+                .sg-notification-manage-menu {
+
+                    .sg-notification-manage-menu-search {
+                    }
+
+                    .sg-notification-manage-main-create {
+
+                    }
+                }
+
+                .sg-notification-manage-main {
+
+                    .sg-notification-manage-main-top {
+
+                        .sg-notification-manage-main-top-filter {
+
+                        }
+                        .sg-notification-manage-main-top-total {
+
+                        }
+                    }
+
+                    .sg-notification-manage-main-list {
+
+                        .sg-notification-manage-main-list-top {
+                            display: none;
+                        }
+
+                        .sg-notification-manage-main-item {
+                            padding-top: 12px;
+                            padding-bottom: 12px;
+
+                            height: auto;
+
+                            .sg-notification-manage-main-item-left {
+                                height: auto;
+                                line-height: inherit;
+
+                                .sg-notification-manage-main-item-type {
+                                    float: none;
+                                    width: auto;
+                                }
+
+                                .sg-notification-manage-main-item-title {
+                                    float: none;
+                                    width: auto;
+                                }
+
+                                .sg-notification-manage-main-item-message-title {
+                                    float: none;
+                                    width: auto;
+
+                                    padding-right: 0;
+                                }
+                                .sg-notification-manage-main-item-message-body {
+                                    float: none;
+                                    width: auto;
+                                    height: auto;
+
+                                    padding-right: 0;
+                                }
+
+                                .sg-notification-manage-main-item-send-count {
+                                    float: none;
+                                    width: auto;
+                                    text-align: left;
+                                }
+
+                                .sg-notification-manage-main-item-fail-count {
+                                    float: none;
+                                    width: auto;
+                                    text-align: left;
+                                }
+
+                                .sg-notification-manage-main-item-created-at {
+                                    font-size: 12px;
+
+                                    float: none;
+                                    width: auto;
+
+                                    text-align: left;
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: $web-min-width) {
+    .sg-core-responsive {
+        &#sg-notification-manage {
+            .sg-notification-manage-container {
+                max-width: none;
+
+                .sg-notification-manage-menu {
+
+                    .sg-notification-manage-menu-search {
+                        margin-top: 12px;
+                        width: 100%;
+                    }
+
+                    .sg-notification-manage-main-create {
+                        margin-top: 12px;
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}

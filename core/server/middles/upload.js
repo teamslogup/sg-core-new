@@ -35,6 +35,27 @@ module.exports = function () {
         };
     };
 
+    Upload.prototype.reorderByExtension = function (extension) {
+        return function (req, res, next) {
+
+            req.files.forEach(function (file, index) {
+
+                var split = file.name.split('.');
+                var fileExtension = split[split.length - 1];
+                fileExtension.toLowerCase();
+                extension.toLowerCase();
+
+                if (fileExtension == extension) {
+                    req.files.unshift(req.files.splice(index, 1)[0]);
+                }
+
+            });
+
+            next();
+
+        };
+    };
+
     Upload.prototype.refineFiles = function () {
         return function (req, res, next) {
             req.refineFiles(function (err) {

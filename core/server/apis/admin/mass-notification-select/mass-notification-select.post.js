@@ -363,7 +363,7 @@ post.seriesReadSplitFileCreateMassNotificationPhoneNum = function (req, callback
                     }
                 });
                 converter.on("end_parsed", function () {
-                    req.models.MassNotificationDest.createMassNotificationPhoneDest(dataArray, function (status, data) {
+                    req.models.MassNotificationDest.createMassNotificationDest(dataArray, function (status, data) {
                         if (status == 204) {
                             var progress = Math.floor(currentTime * 50 / req.splitTimes);
                             req.models.MassNotification.updateDataById(req.massNotification.id, {

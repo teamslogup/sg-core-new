@@ -40,18 +40,15 @@
                     <div class="sg-notice-manage-main-list-top-type-title">
                         {{'title'|translate}}
                     </div>
+                    <div class="sg-notice-manage-main-list-top-type-period">
+                        {{'period'|translate}}
+                    </div>
                     <div class="sg-notice-manage-main-list-top-created-at">
                         {{'createdAt'|translate}}
                     </div>
                     <div class="sg-notice-manage-main-list-top-more"></div>
                 </div>
                 <div class="sg-notice-manage-main-item" ng-repeat="notice in noticeList track by $index" ng-click="openDetailModal($index)">
-
-                    <div class="sg-notice-manage-main-item-left">
-                        <div class="sg-notice-manage-main-item-type"> {{notice.type | translate}}</div>
-                        <div class="sg-notice-manage-main-item-title"> {{notice.title}}</div>
-                        <div class="sg-notice-manage-main-item-created-at"> {{notice.createdAt | microTimeToDate}}</div>
-                    </div>
 
                     <div class="sg-notice-manage-main-item-right" ng-click="showItemOption($event, notice)">
 
@@ -63,6 +60,29 @@
                                 {{'delete' | translate}}
                             </button>
                         </div>
+                    </div>
+
+                    <div class="sg-notice-manage-main-item-left">
+
+                        <div class="sg-notice-manage-main-item-type-container">
+                            <div class="sg-notice-manage-main-item-body"> {{notice.type | translate}}</div>
+                        </div>
+
+                        <div class="sg-notice-manage-main-item-title-container">
+                            <div class="sg-notice-manage-main-item-title"> {{'title' | translate}}</div>
+                            <div class="sg-notice-manage-main-item-body"> {{notice.title | translate}}</div>
+                        </div>
+
+                        <div class="sg-notice-manage-main-item-period-container">
+                            <div class="sg-notice-manage-main-item-title"> {{'period' | translate}}</div>
+                            <div class="sg-notice-manage-main-item-body"> <span data-ng-if="!notice.startDate && !notice.endDate">없음</span> <span data-ng-if="notice.startDate || notice.endDate">{{notice.startDate | microTimeToDate}} ~ {{notice.endDate | microTimeToDate}} </span></div>
+                        </div>
+
+                        <div class="sg-notice-manage-main-item-created-at-container">
+                            <div class="sg-notice-manage-main-item-title"> {{'createdAt' | translate}}</div>
+                            <div class="sg-notice-manage-main-item-body"> {{notice.createdAt | microTimeToDate}}</div>
+                        </div>
+
                     </div>
 
                 </div>

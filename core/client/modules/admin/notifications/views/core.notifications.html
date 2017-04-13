@@ -1,4 +1,4 @@
-<div id="sg-notification-manage" ng-controller="MassNotificationsCtrl">
+<div id="sg-notification-manage" data-ng-controller="MassNotificationsCtrl" data-ng-class="{'sg-core-responsive': vm.FLAG.isResponsive == true}">
 
     <div class="sg-notification-manage-container">
         <div class="sg-notification-manage-title sgc-titles">
@@ -47,10 +47,10 @@
                         {{'messageBody'|translate}}
                     </div>
                     <div class="sg-notification-manage-main-list-top-send-count">
-                        {{'successCount'|translate}}
+                        {{'targetCount'|translate}}
                     </div>
                     <div class="sg-notification-manage-main-list-top-fail-count">
-                        {{'failCount'|translate}}
+                        {{'successCount'|translate}}
                     </div>
                     <div class="sg-notification-manage-main-list-top-created-at">
                         {{'createdAt'|translate}}
@@ -64,8 +64,8 @@
                         <div class="sg-notification-manage-main-item-title"> {{massNotification.notificationName}}</div>
                         <div class="sg-notification-manage-main-item-message-title"> {{massNotification.messageTitle || 'empty' | translate}}</div>
                         <div class="sg-notification-manage-main-item-message-body"> {{massNotification.messageBody || 'empty' | translate}}</div>
-                        <div class="sg-notification-manage-main-item-send-count"> {{massNotification.sendCount - massNotification.failCount}}</div>
-                        <div class="sg-notification-manage-main-item-fail-count"> {{massNotification.failCount}}</div>
+                        <div class="sg-notification-manage-main-item-send-count"> {{massNotification.totalCount}}</div>
+                        <div class="sg-notification-manage-main-item-fail-count"> {{massNotification.sendCount}}</div>
                         <div class="sg-notification-manage-main-item-created-at"> {{massNotification.createdAt | microTimeToDate}}</div>
                     </div>
 

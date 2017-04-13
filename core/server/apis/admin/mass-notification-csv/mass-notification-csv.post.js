@@ -13,16 +13,18 @@ var euckr2utf8 = new Iconv('EUC-KR', 'UTF-8');
 var utf82utf8 = new Iconv('UTF-8', 'UTF-8');
 var formData = require('form-data');
 var key;
+var parseKey;
+var parseKeySecond;
 
 post.validate = function () {
     return function (req, res, next) {
         var NOTIFICATION = req.meta.std.notification;
 
-        if (!req.body.folder || req.body.folder != req.meta.std.file.folderNotification) {
-            return res.hjson(req, next, 400, {
-                code: "400_3"
-            });
-        }
+        // if (!req.body.folder || req.body.folder != req.meta.std.file.folderMessage) {
+        //     return res.hjson(req, next, 400, {
+        //         code: "400_3"
+        //     });
+        // }
 
         req.check("sendType", "400_3").isEnum(NOTIFICATION.enumSendTypes);
 
@@ -30,7 +32,7 @@ post.validate = function () {
             req.check("sendMethod", "400_3").isEnum(NOTIFICATION.enumSendMethods);
         }
 
-        req.check("massNotificationTitle", "400_8").len(NOTIFICATION.minTitleLength, NOTIFICATION.maxTitleLength);
+        req.check("notificationName", "400_8").len(NOTIFICATION.minTitleLength, NOTIFICATION.maxTitleLength);
         if (req.body.messageTitle !== undefined) req.check("messageTitle", "400_8").len(NOTIFICATION.minMessageTitleLength, NOTIFICATION.maxMessageTitleLength);
 
         if (req.body.sendType == NOTIFICATION.sendTypePush) {
@@ -50,7 +52,7 @@ post.checkNCreatePart = function () {
             authorId: req.user.id,
             sendType: req.body.sendTypes,
             sendMethod: req.body.sendMethod,
-            massNotificationTitle: req.body.massNotificationTitle,
+            notificationName: req.body.notificationName,
             messageTitle: req.body.messageTitle,
             messageBody: req.body.messageBody,
             massNotificationImportHistory: {
@@ -74,15 +76,17 @@ post.series = function () {
     return function (req, res, next) {
         var NOTIFICATION = req.meta.std.notification;
 
-        switch (req.body.sendType) {
+        key = req.body.sendType;
+        switch (key) {
             case NOTIFICATION.sendTypeMessage:
-                key = 'phoneNUm';
+                parseKey = 'phoneNum';
                 break;
             case NOTIFICATION.sendTypeEmail:
-                key = 'email';
+                parseKey = 'email';
                 break;
             case NOTIFICATION.sendTypePush:
-                key = 'token';
+                parseKey = 'token';
+                parseKeySecond = 'platform';
                 break;
         }
 
@@ -106,7 +110,7 @@ post.series = function () {
         }
 
         funcs.push(function (callback) {
-            post.seriesReadSplitFileCreateMassNotificationPhoneNum(req, callback);
+            post.seriesReadSplitFileCreateMassNotification(req, callback);
         });
 
         funcs.push(function (callback) {
@@ -114,7 +118,7 @@ post.series = function () {
         });
 
         funcs.push(function (callback) {
-            post.seriesCountMassNotificationPhoneNum(req, callback);
+            post.seriesCountMassNotification(req, callback);
         });
 
         funcs.push(function (callback) {
@@ -144,7 +148,6 @@ post.series = function () {
                 }
             } else {
                 update = {
-                    sendCount: req.phoneNumCount,
                     wrongDestinationCount: req.wrongDestinationCount,
                     progress: 100
                 };
@@ -237,12 +240,32 @@ post.seriesSplitFile = function (req, callback) {
 
     converter.on("record_parsed", function (resultRow) {
 
-        if (resultRow[key]) {
-            dataArray.push({key: NOTIFICATION_UTIL.massNotification.parse[key](resultRow[key])});
+        if (key == NOTIFICATION.sendTypePush) {
+
+            if (resultRow[parseKey] && resultRow[parseKey]) {
+
+                var row = {
+                    key: NOTIFICATION_UTIL.massNotification.parse[key](resultRow[parseKey]),
+                    platform: NOTIFICATION_UTIL.massNotification.parse[key](resultRow[parseKeySecond])
+                };
+
+                dataArray.push(row);
+            } else {
+                if (!inputError) {
+                    inputError = true;
+                    eventEmitter.emit('inputError', '400_53')
+                }
+            }
         } else {
-            if (!inputError) {
-                inputError = true;
-                eventEmitter.emit('inputError', '400_53')
+            if (resultRow[parseKey]) {
+                dataArray.push({
+                    key: NOTIFICATION_UTIL.massNotification.parse[key](resultRow[parseKey])
+                });
+            } else {
+                if (!inputError) {
+                    inputError = true;
+                    eventEmitter.emit('inputError', '400_53')
+                }
             }
         }
 
@@ -339,7 +362,7 @@ post.seriesMoveImportFile = function (req, callback) {
     });
 };
 
-post.seriesReadSplitFileCreateMassNotificationPhoneNum = function (req, callback) {
+post.seriesReadSplitFileCreateMassNotification = function (req, callback) {
 
     var LOCAL = req.meta.std.local;
     var FILE = req.meta.std.file;
@@ -357,14 +380,14 @@ post.seriesReadSplitFileCreateMassNotificationPhoneNum = function (req, callback
                     .pipe(iconv.encodeStream('utf8'))
                     .pipe(converter);
                 converter.on("record_parsed", function (resultRow) {
-                    if (resultRow[key] == NOTIFICATION.wrongPhoneNum) {
+                    if (resultRow.key == NOTIFICATION.wrongPhoneNum) {
                         req.wrongDestinationCount++;
                     } else {
-                        dataArray.push({key: resultRow[key]});
+                        dataArray.push({dest: resultRow.key, platform: resultRow.platform});
                     }
                 });
                 converter.on("end_parsed", function () {
-                    req.models.MassNotificationDest.createMassNotificationPhoneDest(dataArray, function (status, data) {
+                    req.models.MassNotificationDest.createMassNotificationDest(dataArray, function (status, data) {
                         if (status == 204) {
                             var progress = Math.floor(currentTime * 50 / req.splitTimes);
                             req.models.MassNotification.updateDataById(req.massNotification.id, {
@@ -412,16 +435,28 @@ post.seriesRemoveSplitFiles = function (req, callback) {
     });
 };
 
-post.seriesCountMassNotificationPhoneNum = function (req, callback) {
+post.seriesCountMassNotification = function (req, callback) {
     var maxSize = req.meta.std.massNotificationImportHistory.maxRawSize;
     req.models.MassNotificationDest.countMassNotificationDest(function (status, data) {
         if (status == 200) {
-            req.phoneNumCount = data;
-            req.splitTimes = Math.floor(req.phoneNumCount / maxSize);
-            if (req.phoneNumCount % maxSize) {
+            var totalCount = data;
+            req.splitTimes = Math.floor(totalCount / maxSize);
+            if (totalCount % maxSize) {
                 req.splitTimes++;
             }
-            callback(null, true);
+
+            var update = {
+                totalCount: totalCount
+            };
+
+            req.models.MassNotification.updateDataById(req.massNotification.id, update, function (status, data) {
+                if (status == 204) {
+                    callback(null, true);
+                } else {
+                    console.log("update massNotification totalCount -> fail", new Date());
+                }
+            });
+
         } else {
             callback(data.code, false);
         }
@@ -453,12 +488,14 @@ post.seriesFindMassNotificationPhoneNumNSendMessage = function (req, callback) {
                         for (var i = 0; i < data.length; i++) {
                             sendTargetArray.push({
                                 sendType: key,
-                                dest: data[i][key],
-                                message: req.body.message
-                            })
+                                dest: data[i].dest,
+                                title: req.body.messageTitle,
+                                message: req.body.messageBody,
+                                platform: data[i].platform
+                            });
                         }
                         options.last = data[data.length - 1].id;
-                        NOTIFICATION_UTIL.massNotification.message.sendAll(req, sendTargetArray, file, function (failArray) {
+                        NOTIFICATION_UTIL.massNotification.sendAll(req, sendTargetArray, file, function (failArray) {
                             if (failArray) {
                                 /**
                                  * fail array method
@@ -466,6 +503,7 @@ post.seriesFindMassNotificationPhoneNumNSendMessage = function (req, callback) {
                             }
                             var progress = 50 + Math.floor(currentTime * 50 / req.splitTimes);
                             req.models.MassNotification.updateDataById(req.massNotification.id, {
+                                sendCount: sendTargetArray.length - failArray.length,
                                 progress: progress
                             }, function (status, data) {
                                 if (status == 204) {
@@ -474,6 +512,7 @@ post.seriesFindMassNotificationPhoneNumNSendMessage = function (req, callback) {
                                 subCallback(null, true);
                             });
                         });
+
                     } else {
                         subCallback(null, true);
                     }
@@ -516,7 +555,7 @@ post.supplement = function () {
         res.set('cache-control', 'no-cache, no-store, must-revalidate');
         res.set('pragma', 'no-cache');
         res.set('expires', 0);
-        return res.hjson(req, next, 200);
+        return res.hjson(req, next, 200, req.massNotification);
     };
 };
 
