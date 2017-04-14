@@ -109,17 +109,19 @@ module.exports = {
                 var parser = new UAParser();
                 var ua = req.headers['user-agent'];
                 var result = parser.setUA(ua).getResult();
+                var device = parser.setUA(ua).getDevice();
+                var browser = parser.setUA(ua).getBrowser();
 
                 if (body.platform === undefined) {
                     req.body.platform = result.os.name;
                 }
 
                 if (body.device === undefined) {
-                    req.body.device = result.device.model;
+                    req.body.device = device.model;
                 }
 
                 if (body.browser === undefined) {
-                    req.body.browser = result.browser.name;
+                    req.body.browser = browser.name;
                 }
 
                 var data = {

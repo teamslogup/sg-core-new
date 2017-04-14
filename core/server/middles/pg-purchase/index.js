@@ -16,7 +16,7 @@ module.exports = function () {
                     lguplus.startValidate(req, res, next);
                     break;
                 default:
-                     return false;
+                    next();
                     break;
             }
 
@@ -31,7 +31,7 @@ module.exports = function () {
                     lguplus.finishValidate(req, res, next);
                     break;
                 default:
-                    return false;
+                    next();
                     break;
             }
         }

@@ -40,6 +40,8 @@ var LOCAL = META.std.local;
 var FILE = META.std.file;
 var LOG = META.std.log;
 
+var browser = require('./browser');
+
 require('../../../bridge/config/extend-validator')();
 var globalVariables = require('./ejs/index');
 
@@ -282,6 +284,8 @@ module.exports.init = function (sequelize) {
             tokens['response-time'](req, res), 'ms'
         ].join(' ')
     }));
+
+    app.use(browser());
     // security
 
     app.use(blacklist.blockRequests('blacklist.txt'));

@@ -34,6 +34,7 @@ var MassNotificationDest = require('./mass-notification-dest');
 var Lguplus = require('./lguplus');
 var InAppPurchase = require('./in-app-purchase');
 var PgPurchase = require('./pg-purchase');
+var BrowserCount = require('./browser-count');
 
 var models = {
     User: User,
@@ -70,7 +71,8 @@ var models = {
     MassNotificationDest: MassNotificationDest,
     Lguplus: Lguplus,
     InAppPurchase: InAppPurchase,
-    PgPurchase: PgPurchase
+    PgPurchase: PgPurchase,
+    BrowserCount: BrowserCount
 };
 
 module.exports = models;
