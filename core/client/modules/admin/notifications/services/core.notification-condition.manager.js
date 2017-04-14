@@ -58,6 +58,14 @@ export default function massNotificationConditionManager(metaManager, MassNotifi
             delete form.platform;
         }
 
+        if(form.birthStart == COMMON.all){
+            delete form.birthStart;
+        }
+
+        if(form.birthEnd == COMMON.all){
+            delete form.birthEnd;
+        }
+
         return isValidate;
     }
 }

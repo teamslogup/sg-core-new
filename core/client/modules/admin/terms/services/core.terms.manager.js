@@ -1,4 +1,4 @@
-export default function termsManager(Terms, metaManager, loadingHandler, $filter) {
+export default function termsManager(Terms, metaManager, loadingHandler, dialogHandler, $filter) {
     "ngInject";
 
 
@@ -109,28 +109,30 @@ export default function termsManager(Terms, metaManager, loadingHandler, $filter
                 callback(data.status, data.data);
                 loadingHandler.endLoading(LOADING.spinnerKey, 'createTerms');
             });
-        } else {
-            callback(400, {
-                code: "400_53"
-            });
         }
     }
 
     function isFormValidate(terms) {
 
         if (terms.title === undefined || terms.title === '') {
+            dialogHandler.show('', '제목을 입력해 주세요.', '', true);
             return false;
         }
+
         if (terms.content === undefined || terms.content === '') {
+            dialogHandler.show('', '내용을 입력해 주세요.', '', true);
             return false;
         }
         if (terms.type === undefined || terms.type === '') {
+            dialogHandler.show('', '타입을 입력해 주세요.', '', true);
             return false;
         }
         if (terms.language === undefined || terms.language === '') {
+            dialogHandler.show('', '언어을 입력해 주세요.', '', true);
             return false;
         }
         if (terms.startDate === undefined || terms.startDate === '') {
+            dialogHandler.show('', '적용일을 입력해 주세요.', '', true);
             return false;
         }
 

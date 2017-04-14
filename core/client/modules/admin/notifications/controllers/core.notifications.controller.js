@@ -27,6 +27,7 @@ export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibM
     $scope.deleteNotification = deleteNotification;
     $scope.findMassNotifications = findMassNotifications;
     $scope.openCreateModal = openCreateModal;
+    $scope.openDetailModal = openDetailModal;
 
     $scope.params = {
         size: COMMON.defaultLoadingLength
@@ -115,6 +116,33 @@ export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibM
                 }
 
             }
+        }, function () {
+            console.log("cancel modal page");
+        });
+    }
+
+    function openDetailModal(index) {
+
+        var massNotification = $scope.massNotifications[index];
+
+        var createInstance = $uibModal.open({
+            animation: ADMIN.isUseModalAnimation,
+            backdrop: ADMIN.modalBackDrop,
+            templateUrl: 'coreNotificationsDetail.html',
+            controller: 'MassNotificationsDetailCtrl',
+            size: NOTIFICATION.modalSize,
+            resolve: {
+                scope: function () {
+                    return $scope;
+                },
+                massNotification: function () {
+                    return massNotification;
+                }
+            }
+        });
+
+        createInstance.result.then(function (newItem) {
+
         }, function () {
             console.log("cancel modal page");
         });

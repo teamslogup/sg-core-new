@@ -43,7 +43,10 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
             title: '',
             body: ''
         },
-        condition: {}
+        condition: {
+            birthStart: COMMON.all,
+            birthEnd: COMMON.all
+        }
     };
 
     $scope.messageLength = {
@@ -71,9 +74,10 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
     $scope.csvFiles = [];
 
-    $scope.birthStartList = [];
-    $scope.birthEndList = [];
+    $scope.birthStartList = [COMMON.all];
+    $scope.birthEndList = [COMMON.all];
 
+    var startYear = 1920;
     var date = new Date();
     var yearToday = date.getFullYear();
 
@@ -284,7 +288,7 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
     function initializeBirthSelectBox() {
 
-        for (var i = 1920; i <= yearToday; i++) {
+        for (var i = startYear; i <= yearToday; i++) {
             $scope.birthStartList.push(i);
             $scope.birthEndList.push(i);
         }
@@ -294,13 +298,11 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
         if (newVal != oldVal) {
 
-            if (newVal > $scope.tempStore.condition.birthEnd) {
-                $scope.tempStore.condition.birthEnd = '';
-            }
+            var initial = $scope.tempStore.condition.birthStart == COMMON.all ? startYear : parseInt($scope.tempStore.condition.birthStart);
 
-            $scope.birthEndList = [];
+            $scope.birthEndList = [COMMON.all];
 
-            for (var i = $scope.tempStore.condition.birthStart; i <= yearToday; i++) {
+            for (var i = initial; i <= yearToday; i++) {
                 $scope.birthEndList.push(i);
             }
         }
@@ -309,12 +311,14 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
 
     $scope.$watch('tempStore.condition.birthEnd', function (newVal, oldVal) {
 
-
         if (newVal != oldVal) {
-            $scope.birthStart = [];
 
-            for (var i = 1920; i <= $scope.tempStore.condition.birthEnd; i++) {
-                $scope.birthStart.push(i);
+            var length = $scope.tempStore.condition.birthEnd == COMMON.all ? yearToday : parseInt($scope.tempStore.condition.birthEnd);
+
+            $scope.birthStartList = [COMMON.all];
+
+            for (var i = startYear; i <= length; i++) {
+                $scope.birthStartList.push(i);
             }
         }
 
