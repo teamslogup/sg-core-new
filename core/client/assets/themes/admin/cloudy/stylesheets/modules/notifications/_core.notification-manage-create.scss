@@ -19,9 +19,7 @@
 
         border-radius: 5px;
 
-        overflow: hidden;
-
-        .sg-notification-manage-create-close {
+        .sg-notification-manage-create-close-btn {
             position: absolute;
             top: -34px;
             right: 0;
@@ -311,15 +309,23 @@
         }
 
         .sg-notification-progress {
+            text-align: center;
             .sg-notification-progress-title {
-                padding-top: 20px;
+                padding-top: 38px;
+                padding-bottom: 20px;
                 text-align: center;
-                padding-bottom: 12px;
+
+                font-size: 24px;
+                font-weight: 400;
             }
 
             .sg-notification-progress-body {
                 text-align: center;
-                padding-bottom: 20px;
+                padding-bottom: 34px;
+
+                font-size: 32px;
+                font-weight: 500;
+                color: #6c7896;
             }
         }
     }
