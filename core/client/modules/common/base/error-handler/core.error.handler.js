@@ -1,7 +1,7 @@
-errorHandler.$inject = ['$filter', '$location'];
-
 export default function errorHandler($filter, metaManager, $location) {
     "ngInject";
+
+    var MAGIC = metaManager.magic;
 
     this.alertError = alertError;
     this.refineError = refineError;
@@ -10,7 +10,7 @@ export default function errorHandler($filter, metaManager, $location) {
     this.isInvalid = isInvalid;
     this.validator = validator;
 
-    function validator (data, acceptableKeys, essentialKeys, callback) {
+    function validator (data, acceptableKeys, essentialKeys, resettableKeys, callback) {
         var self = this;
         try {
             var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
@@ -21,10 +21,20 @@ export default function errorHandler($filter, metaManager, $location) {
                     throw(err);
                 });
             }
+            if (resettableKeys) {
+                var resettableKeyHash = makeHash(resettableKeys, function (err) {
+                    throw(err);
+                });
+            }
             if (data instanceof Object) {
                 for (var k in data) {
                     if (!acceptableKeyHash[k]) {
                         throw('400_15');
+                    }
+                    if (data[k] == MAGIC.reset) {
+                        if (!resettableKeyHash[k]) {
+                            throw('400_16');
+                        }
                     }
                 }
                 if (essentialKeys) {
