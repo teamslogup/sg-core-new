@@ -1,16 +1,18 @@
 export default function LoadingHandlerService(metaManager) {
     "ngInject";
 
-    this.vm = {};
+    this.vm = null;
     this.listenCallback = undefined;
     var progressName = 'progress';
 
     this.init = function (vm) {
-        this.vm = vm;
-        this.vm.LOADING = metaManager.std.loading;
+        if (!this.vm) {
+            this.vm = vm;
+            this.vm.LOADING = metaManager.std.loading;
 
-        this.vm.coreLoading = {};
-        this.vm.coreLoading[this.vm.LOADING.spinnerKey] = undefined;
+            this.vm.coreLoading = {};
+            this.vm.coreLoading[this.vm.LOADING.spinnerKey] = undefined;
+        }
     };
 
     this.listen = function (listenCallback) {
