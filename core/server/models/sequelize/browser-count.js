@@ -58,7 +58,6 @@ module.exports = {
                     type: sequelize.QueryTypes.UPSERT,
                     raw: true
                 }).then(function (data) {
-                    console.log(data);
                     if (data.length > 1) {
                         return true;
                     }
