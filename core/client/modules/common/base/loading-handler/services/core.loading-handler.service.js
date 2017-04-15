@@ -1,5 +1,3 @@
-LoadingHandlerService.$inject = ['metaManager'];
-
 export default function LoadingHandlerService(metaManager) {
     "ngInject";
 

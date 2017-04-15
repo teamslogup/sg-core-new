@@ -1,7 +1,7 @@
-AlertDialogService.$inject = ['$filter', 'sessionManager', '$rootScope'];
-
-export default function AlertDialogService($filter, sessionManager, $rootScope) {
+export default function AlertDialogService($filter, metaManager, sessionManager, $rootScope) {
     "ngInject";
+
+    var MAGIC = metaManager.std.magic;
 
     this.vm = {};
     this.listenCallback = undefined;
@@ -68,7 +68,7 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
         }
     };
 
-    this.validator = function (data, acceptableKeys, essentialKeys, callback) {
+    this.validator = function (data, acceptableKeys, essentialKeys, resettableKeys, callback) {
         var self = this;
         try {
             var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
@@ -79,10 +79,20 @@ export default function AlertDialogService($filter, sessionManager, $rootScope) 
                     throw(err);
                 });
             }
+            if (resettableKeys) {
+                var resettableKeyHash = makeHash(resettableKeys, function (err) {
+                    throw(err);
+                });
+            }
             if (data instanceof Object) {
                 for (var k in data) {
                     if (!acceptableKeyHash[k]) {
                         throw('400_15');
+                    }
+                    if (data[k] == MAGIC.reset) {
+                        if (!resettableKeyHash[k]) {
+                            throw('400_16');
+                        }
                     }
                 }
                 if (essentialKeys) {
