@@ -33,6 +33,38 @@ module.exports = {
             'type': Sequelize.STRING,
             'allowNull': false
         },
+        'deviceModel': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'deviceType': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'deviceVendor': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'engineName': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'engineVersion': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'osName': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'osVersion': {
+            'type': Sequelize.STRING,
+            'allowNull': false
+        },
+        'userAgent': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
         'count': {
             'type': Sequelize.INTEGER,
             'allowNull': false,
@@ -52,7 +84,8 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'upsertBrowserCount': function (body, callback) {
 
-                var query = "INSERT INTO BrowserCounts (domain, ip, browser, version, count) VALUES ('" + body.domain + "', '" + body.ip + "', '" + body.browser + "', '" + body.version + "', 0) ON DUPLICATE KEY UPDATE domain = '" + body.domain + "', ip = '" + body.ip + "', browser = '" + body.browser + "', version = '" + body.version + "', count = count + 1";
+                var query = "INSERT INTO BrowserCounts (domain, ip, browser, version, count) VALUES ('" + body.domain + "', '" + body.ip + "', '" + body.browser + "', '" + body.version + "', '" + body.deviceModel + "', '" + body.deviceType + "', '" + body.deviceVendor + "', '" + body.engineName + "', '" + body.engineVersion + "', '" + body.osName + "', '" + body.osVersion + "', '" + body.userAgent + "', 1) " +
+                    "ON DUPLICATE KEY UPDATE domain = '" + body.domain + "', ip = '" + body.ip + "', browser = '" + body.browser + "', version = '" + body.version + "', deviceModel = '" + body.deviceModel + "', deviceType = '" + body.deviceType + "', deviceVendor = '" + body.deviceVendor + "', engineName = '" + body.engineName + "', engineVersion = '" + body.engineVersion + "', osName = '" + body.osName + "', osVersion = '" + body.osVersion + "', userAgent = '" + body.userAgent + "', count = count + 1";
 
                 sequelize.query(query, {
                     type: sequelize.QueryTypes.UPSERT,
