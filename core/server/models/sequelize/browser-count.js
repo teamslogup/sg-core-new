@@ -35,31 +35,31 @@ module.exports = {
         },
         'deviceModel': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'deviceType': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'deviceVendor': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'engineName': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'engineVersion': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'osName': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'osVersion': {
             'type': Sequelize.STRING,
-            'allowNull': false
+            'allowNull': true
         },
         'userAgent': {
             'type': Sequelize.STRING,

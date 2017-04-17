@@ -10,7 +10,7 @@ module.exports = function () {
             var browser = parser.setUA(ua).getBrowser();
             var device = parser.setUA(ua).getDevice();
             var engine = parser.setUA(ua).getEngine();
-            var os = parser.setUA(ua).getOs();
+            var os = parser.setUA(ua).getOS();
 
             req.models.BrowserCount.upsertBrowserCount({
                 domain: req.get('host'),
