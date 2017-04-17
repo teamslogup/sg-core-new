@@ -19,12 +19,12 @@ module.exports = {
         if (req.body.LGD_BUYER !== undefined) {
             req.check('LGD_BUYER', '400_51').len(USER.minNickLength, USER.maxNickLength);
 
-            pgPurchase.price = req.body.LGD_BUYER;
+            pgPurchase.userName = req.body.LGD_BUYER;
         }
         if (req.body.LGD_PRODUCTINFO !== undefined) {
             req.check('LGD_PRODUCTINFO', '400_51').len(1, 1000);
 
-            pgPurchase.name = req.body.LGD_PRODUCTINFO;
+            pgPurchase.productName = req.body.LGD_PRODUCTINFO;
         }
         if (req.body.LGD_BUYEREMAIL !== undefined) {
             req.check('LGD_BUYEREMAIL', '400_1').isEmail();
@@ -49,8 +49,8 @@ module.exports = {
         req.check('LGD_OID', '400_51').len(1, 1000);
         pgPurchase.orderNo = req.body.LGD_OID;
 
-        req.check('LGD_BUYERID', '400_51').len(1, 1000);
-        pgPurchase.userId = req.body.LGD_BUYERID;
+        // req.check('LGD_BUYERID', '400_51').len(1, 1000);
+        // pgPurchase.userId = req.body.LGD_BUYERID;
 
         if (req.body.LGD_CARDACQUIRER !== undefined) {
             req.check('LGD_CARDACQUIRER', '400_5').isInt();
@@ -252,12 +252,12 @@ module.exports = {
         if (req.body.LGD_BUYER !== undefined) {
             req.check('LGD_BUYER', '400_51').len(1, 1000);
 
-            pgPurchase.name = req.body.LGD_BUYER;
+            pgPurchase.userName = req.body.LGD_BUYER;
         }
         if (req.body.LGD_PRODUCTINFO !== undefined) {
             req.check('LGD_PRODUCTINFO', '400_51').len(1, 1000);
 
-            pgPurchase.payload.LGD_PRODUCTINFO = req.body.LGD_PRODUCTINFO;
+            pgPurchase.productName = req.body.LGD_PRODUCTINFO;
         }
         if (req.body.LGD_TIMESTAMP !== undefined) {
             req.check('LGD_TIMESTAMP', '400_51').len(1, 1000);

@@ -44,7 +44,11 @@ module.exports = {
             'type': Sequelize.INTEGER,
             'allowNull': true
         },
-        'name': {
+        'userName': {
+            'type': Sequelize.STRING,
+            'allowNull': true
+        },
+        'productName': {
             'type': Sequelize.STRING,
             'allowNull': true
         },
