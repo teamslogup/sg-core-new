@@ -301,5 +301,7 @@ module.exports.init = function (sequelize) {
     app.use(helmet());
     app.disable('x-powered-by');
 
+    app.use(require('../utils').responseHeader.connect());
+
     return app;
 };
