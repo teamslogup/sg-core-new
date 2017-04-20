@@ -122,6 +122,7 @@ module.exports = {
                 }
                 if (refinedKeyPattern[key] instanceof Array) {
                     refinedResult[key] = [];
+                    indexes[key].arrayIds = {};
                 }
             }
 
@@ -136,10 +137,14 @@ module.exports = {
                 if (currentTrackingId != indexes[key].trackingId) {
 
                     if (refinedKeyPattern[key] instanceof Array) {
-                        refinedResult[key].push({});
-                        indexes[key].index = refinedResult[key].length - 1;
-                        indexes[key].currentId = row[idKey];
-                        indexes[key].trackingId = currentTrackingId;
+                        if (indexes[key].arrayIds['k' + row[idKey]] === undefined) {
+                            refinedResult[key].push({});
+                            indexes[key].index = refinedResult[key].length - 1;
+                            indexes[key].currentId = row[idKey];
+                            indexes[key].trackingId = currentTrackingId;
+
+                            indexes[key].arrayIds['k' + row[idKey]] = true;
+                        }
                     }
                 }
 
