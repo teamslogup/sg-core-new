@@ -9,3 +9,4 @@ module.exports.file = require('./file');
 module.exports.objectify = require('./objectify');
 module.exports.initialization = require('./initialization');
 module.exports.page = require('./page');
+module.exports.responseHeader = require('./response-header');
