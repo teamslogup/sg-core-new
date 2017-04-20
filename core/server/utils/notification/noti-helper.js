@@ -7,12 +7,13 @@ var sgSender = require('sg-sender');
 var sendNoti = sgSender.getSender(CONFIG.sender);
 var emailErrorRefiner = sgSender.emailErrorRefiner;
 var phoneErrorRefiner = sgSender.phoneErrorRefiner;
+var STD = require('../../../../bridge/metadata/standards');
 
 module.exports = {
     sendPush: function (token, title, body, badge, data, platform, callback) {
 
         if (token) {
-            sendNoti.fcm(token, title, body, badge, data, platform, function (err) {
+            sendNoti.fcm(token, title, body, badge, data, platform, STD.notification.pushSound, function (err) {
                 if (err) {
                     callback(500, err);
                 } else {

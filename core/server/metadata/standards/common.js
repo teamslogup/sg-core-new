@@ -68,6 +68,7 @@ var standards = {
         "wrongPhoneNum": "wrongPhoneNum",
         "minMessageTitleLength": 1,
         "maxMessageTitleLength": 30,
+        "pushSound": "default",
         "modalSize": "md"
     },
     "massNotification": {
