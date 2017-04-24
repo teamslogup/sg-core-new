@@ -28,7 +28,7 @@ post.validate = function () {
                 if (type == USER.signUpTypePhoneEmail) {
                     req.check('aid', '400_1').isEmail();
                 } else {
-                    req.check('aid', '400_55').isId(USER.minIdLength, USER.maxIdLength);
+                    req.check('aid', '400_55').len(USER.minIdLength, USER.maxIdLength);
                 }
                 req.check('apass', '400_2').isAlphanumericPassword(USER.minSecretLength, USER.maxSecretLength);
             }
