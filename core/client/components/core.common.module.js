@@ -14,6 +14,7 @@ import notificationBody from './notification-body/core.common.notification-body'
 import imageUrl from './image-url/core.common.image-url';
 import multiByteHandler from './multi-byte/core.common.multi-byte.handler';
 import convertToNumber from './convert-to-number/core.common.convert-to-number';
+import parseDate from './parse-date/core.common.parse-date';
 
 import fileModel from './file-model/core.common.file-model';
 import fileUploader from './file-uploader/core.common.file-uploader';
@@ -30,6 +31,7 @@ export default angular.module('core.common', [])
     .filter('roundUp', roundUp)
     .filter('notificationBody', notificationBody)
     .filter('imageUrl', imageUrl)
+    .filter('parseDate', parseDate)
     .provider('staticLoader', StaticLoader)
     .directive('ckEditor', ckEditor)
     .directive('fileModel', fileModel)
