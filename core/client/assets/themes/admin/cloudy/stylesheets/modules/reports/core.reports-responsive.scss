@@ -6,6 +6,7 @@
         $sg-report-manage-container-padding: 12px;
 
         .sg-report-manage-container {
+            padding: 25px 12px;
             @media screen and (max-width: $web-min-width) {
                 width: 100%;
             }
@@ -19,6 +20,14 @@
 
             @media screen and (min-width: $sg-report-manage-main-item-width * 3 +  $sg-report-manage-main-item-margin-right * 3 + $sg-report-manage-container-padding * 2 + $g-menu-size) {
                 width: $sg-report-manage-main-item-width * 3 + $sg-report-manage-main-item-margin-right * 2 + $sg-report-manage-container-padding * 2;
+            }
+
+            .sg-report-manage-menu {
+                .sg-report-manage-menu-search {
+                    width: 100%;
+                    margin-top: 8px;
+                }
+
             }
 
             .sg-report-manage-main {

@@ -1,4 +1,4 @@
-export default function NotificationsCreateCtrl($scope, $filter, $interval, $uibModalInstance, scope, FileUploader, uploadManager, dialogHandler) {
+export default function NotificationsCreateCtrl($scope, $timeout, $filter, $interval, $uibModalInstance, scope, FileUploader, uploadManager, dialogHandler) {
     "ngInject";
 
     var USER = scope.metaManager.std.user;
@@ -400,7 +400,9 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
     }
 
     $scope.clickUploadFile = function () {
-        $('#uploadFile')[0].click();
+        $timeout(function () {
+            $('#uploadFile').click();
+        }, 100);
     };
 
     function resetImage() {
@@ -442,10 +444,6 @@ export default function NotificationsCreateCtrl($scope, $filter, $interval, $uib
             console.log(err);
         }
     });
-
-    $scope.clickUploadFile = function () {
-        $('#uploadFile')[0].click();
-    };
 
     function deleteCsvItem(index) {
         $scope.csvFiles.splice(index, 1);
