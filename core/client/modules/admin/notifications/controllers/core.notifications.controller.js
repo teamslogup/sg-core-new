@@ -1,4 +1,4 @@
-export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibModal, massNotificationsManager, massNotificationConditionManager, massNotificationCsvManager, dialogHandler, loadingHandler, metaManager) {
+export default function MassNotificationsCtrl($scope, $stateParams, $rootScope, $filter, $uibModal, massNotificationsManager, massNotificationConditionManager, massNotificationCsvManager, dialogHandler, loadingHandler, metaManager) {
     "ngInject";
 
     var vm = null;
@@ -93,7 +93,7 @@ export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibM
         });
     }
 
-    function openCreateModal() {
+    function openCreateModal(stateParams) {
 
         var createInstance = $uibModal.open({
             animation: ADMIN.isUseModalAnimation,
@@ -104,6 +104,9 @@ export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibM
             resolve: {
                 scope: function () {
                     return $scope;
+                },
+                params: function () {
+                    return stateParams;
                 }
             }
         });
@@ -148,7 +151,23 @@ export default function MassNotificationsCtrl($scope, $rootScope, $filter, $uibM
         });
     }
 
+    function autoOpenModal() {
+        console.log($stateParams);
+        if ($stateParams.type) {
+
+            var stateParams = {
+                type: $stateParams.type,
+                notificationName: $stateParams.notificationName,
+                title: $stateParams.title,
+                body: $stateParams.body
+            };
+
+            openCreateModal(stateParams);
+        }
+    }
+
     findMassNotifications();
+    autoOpenModal();
 
     $scope.$watch('params.sendType', function (newVal, oldVal) {
         if (newVal != oldVal) {

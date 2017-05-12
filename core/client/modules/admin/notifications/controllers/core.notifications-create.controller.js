@@ -1,4 +1,4 @@
-export default function NotificationsCreateCtrl($scope, $timeout, $filter, $interval, $uibModalInstance, scope, FileUploader, uploadManager, dialogHandler) {
+export default function NotificationsCreateCtrl($scope, $timeout, $filter, $interval, $uibModalInstance, scope, params, FileUploader, uploadManager, dialogHandler) {
     "ngInject";
 
     var USER = scope.metaManager.std.user;
@@ -81,6 +81,7 @@ export default function NotificationsCreateCtrl($scope, $timeout, $filter, $inte
     var date = new Date();
     var yearToday = date.getFullYear();
 
+
     // $scope.form = {
     //     type: scope.noticeTypes[0],
     //     country: scope.noticeCountries[0]
@@ -144,7 +145,16 @@ export default function NotificationsCreateCtrl($scope, $timeout, $filter, $inte
         $scope.lastPage = false;
     }
 
-    changeBodyPath('message');
+    if (params) {
+        $scope.tempStore.notificationName = params.notificationName;
+        $scope.tempStore[params.type].title = params.title;
+        $scope.tempStore[params.type].body = params.body;
+
+        changeBodyPath(params.type);
+    } else {
+        changeBodyPath('message');
+    }
+
     changeSelectPath('condition');
 
     function sendNotificationCondition() {
@@ -450,5 +460,7 @@ export default function NotificationsCreateCtrl($scope, $timeout, $filter, $inte
     }
 
     initializeBirthSelectBox();
+
+    $scope.init = true;
 
 }

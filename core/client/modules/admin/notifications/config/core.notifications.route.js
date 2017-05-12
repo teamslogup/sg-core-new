@@ -8,7 +8,13 @@ export default function routes($stateProvider) {
     $stateProvider
         .state(PREFIX.admin + '.' + ADMIN.moduleNotification, {
             url: '/' + ADMIN.moduleNotification,
-            templateUrl: '/modules/admin/notifications/views/core.' + ADMIN.moduleNotification + '.html'
+            templateUrl: '/modules/admin/notifications/views/core.' + ADMIN.moduleNotification + '.html',
+            params: {
+                type: null,
+                notificationName: null,
+                title: null,
+                body: null
+            }
         });
 
 }
