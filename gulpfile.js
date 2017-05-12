@@ -19,6 +19,8 @@ var appPackage = require('./app/package.json');
 var corePackage = require('./package.json');
 
 var fs = require('fs');
+var micro = require('microtime-nodejs');
+var now = micro.now();
 
 /**
  *
@@ -181,11 +183,11 @@ function callPagesBuild(page, afterInjection, url) {
         ], {read: false});
 
         return src.pipe(inject(source))
-            .pipe(injectString.replace('sg-' + page + '-core.js', '/sg-' + page + '-core.js?v=' + corePackage.version))
-            .pipe(injectString.replace('sg-' + page + '-core.css', '/sg-' + page + '-core.css?v=' + corePackage.version))
+            .pipe(injectString.replace('sg-' + page + '-core.js', '/sg-' + page + '-core.js?v=' + now))
+            .pipe(injectString.replace('sg-' + page + '-core.css', '/sg-' + page + '-core.css?v=' + now))
             .pipe(injectString.replace('\"/dist/', "\""))
-            .pipe(injectString.replace('sg-' + page + '.js', "/sg-" + page + ".js?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
-            .pipe(injectString.replace('sg-' + page + '.css', "/sg-" + page + ".css?v=" + ((getRootType() == 'core') ? corePackage.version : appPackage.version)))
+            .pipe(injectString.replace('sg-' + page + '.js', "/sg-" + page + ".js?v=" + now))
+            .pipe(injectString.replace('sg-' + page + '.css', "/sg-" + page + ".css?v=" + now))
             .pipe(gulp.dest('./' + getRootType() + '/server/views/dist'));
     });
 
