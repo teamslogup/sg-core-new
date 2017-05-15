@@ -233,12 +233,12 @@ post.sendMassNotification = function () {
             }, {
                 model: req.models.NotificationSwitch,
                 as: 'notificationSwitches',
-                attributes: req.models.NotificationSwitch.getUserNotificationFields(),
+                // attributes: req.models.NotificationSwitch.getUserNotificationFields(),
                 separate: true
             }, {
                 model: req.models.NotificationPublicSwitch,
                 as: 'notificationPublicSwitches',
-                attributes: req.models.NotificationPublicSwitch.getUserPublicNotificationFields(),
+                // attributes: req.models.NotificationPublicSwitch.getUserPublicNotificationFields(),
                 separate: true
             }],
             paranoid: true
