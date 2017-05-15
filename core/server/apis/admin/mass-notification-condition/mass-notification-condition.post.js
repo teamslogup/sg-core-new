@@ -315,8 +315,6 @@ post.sendMassNotification = function () {
                             (function (quer) {
                                 funcs.push(function (funcCallback) {
 
-                                    query.limit = size;
-
                                     for (var i = 0; i < repeatCount; i++) {
 
                                         req.models.User.findAllDataForQuery(quer, function (status, data) {
@@ -325,7 +323,7 @@ post.sendMassNotification = function () {
 
                                                 funcCallback(null, data);
 
-                                                query.where = {
+                                                quer.where = {
                                                     id: {
                                                         $lt: data[data.length - 1].id
                                                     }

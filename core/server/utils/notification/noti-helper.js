@@ -15,13 +15,15 @@ module.exports = {
         if (token) {
             sendNoti.fcm(token, title, body, badge, data, platform, STD.notification.pushSound, function (err) {
                 if (err) {
-                    callback(500, err);
+                    if (callback) callback(500, err);
+
                 } else {
-                    callback(204);
+                    if (callback) callback(204);
+
                 }
             });
         } else {
-            callback(404);
+            if (callback) callback(404);
         }
 
     },

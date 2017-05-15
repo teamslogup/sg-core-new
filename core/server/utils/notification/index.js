@@ -265,8 +265,9 @@ module.exports = {
 
                 if (histories.length > 0) {
                     histories.forEach(function (history) {
-                        notiHelper.sendPush(history.token, title, body, badge, data, history.platform, callback);
+                        notiHelper.sendPush(history.token, title, body, badge, data, history.platform);
                     });
+                    callback(204);
                 } else {
                     callback(404);
                 }
