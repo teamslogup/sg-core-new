@@ -294,8 +294,10 @@ post.sendMassNotification = function () {
 
             if (total == 0) {
 
-                return res.hjson(req, next, 404, {
-                    code: '404_14'
+                req.models.MassNotification.destroyDataById(req.massNotification.id, true, function () {
+                    return res.hjson(req, next, 404, {
+                        code: '404_14'
+                    });
                 });
 
             } else {
@@ -411,10 +413,8 @@ post.sendMassNotification = function () {
                     }
 
                 });
-
+                next();
             }
-
-            next();
         });
 
     }
