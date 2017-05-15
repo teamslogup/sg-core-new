@@ -18,7 +18,7 @@
         <div class="sg-notification-manage-create-condition-age-item">
             <!--<input type="text" class="sg-notification-manage-create-condition-input sgc-input"-->
                    <!--data-ng-model="tempStore.condition.minBirthYear">-->
-            <select data-ng-model="tempStore.condition.birthStart" class="sg-notification-manage-create-option sgc-option">
+            <select data-ng-model="tempStore.condition.minBirthYear" class="sg-notification-manage-create-option sgc-option">
                 <option data-ng-repeat="x in birthStartList track by $index" value="{{x}}">{{x | translate}}</option>
             </select>
             <span class="sg-notification-manage-create-condition-span">{{'~'| translate}}</span>
@@ -27,7 +27,7 @@
         <div class="sg-notification-manage-create-condition-age-item">
             <!--<input type="text" class="sg-notification-manage-create-condition-input sgc-input"-->
                    <!--data-ng-model="tempStore.condition.maxBirthYear">-->
-            <select data-ng-model="tempStore.condition.birthEnd" class="sg-notification-manage-create-option sgc-option">
+            <select data-ng-model="tempStore.condition.maxBirthYear" class="sg-notification-manage-create-option sgc-option">
                 <option data-ng-repeat="x in birthEndList track by $index" value="{{x}}">{{x | translate}}</option>
             </select>
             <!--<span class="sg-notification-manage-create-condition-span">{{'년생 까지'| translate}}</span>-->

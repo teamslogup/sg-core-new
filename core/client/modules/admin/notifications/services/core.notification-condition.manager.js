@@ -58,12 +58,12 @@ export default function massNotificationConditionManager(metaManager, MassNotifi
             delete form.platform;
         }
 
-        if(form.birthStart == COMMON.all){
-            delete form.birthStart;
+        if(form.minBirthYear == COMMON.all){
+            delete form.minBirthYear;
         }
 
-        if(form.birthEnd == COMMON.all){
-            delete form.birthEnd;
+        if(form.maxBirthYear == COMMON.all){
+            delete form.maxBirthYear;
         }
 
         return isValidate;

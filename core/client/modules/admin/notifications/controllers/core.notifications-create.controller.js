@@ -44,8 +44,8 @@ export default function NotificationsCreateCtrl($scope, $timeout, $filter, $inte
             body: ''
         },
         condition: {
-            birthStart: COMMON.all,
-            birthEnd: COMMON.all
+            minBirthYear: COMMON.all,
+            maxBirthYear: COMMON.all
         }
     };
 
