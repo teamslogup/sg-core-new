@@ -620,15 +620,27 @@ module.exports = {
                     where.gender = options.gender;
                 }
 
-                if (options.order == STD.user.orderUpdate) {
-                    where.updatedAt = {
-                        '$lt': options.last
-                    };
+                if (options.orderBy == STD.user.orderUpdate) {
+                    if (options.sort == STD.common.DESC) {
+                        where.updatedAt = {
+                            '$gt': options.last
+                        };
+                    } else {
+                        where.updatedAt = {
+                            '$lt': options.last
+                        };
+                    }
                     options.order = [['updatedAt', options.sort]];
                 } else {
-                    where.createdAt = {
-                        '$lt': options.last
-                    };
+                    if (options.sort == STD.common.DESC) {
+                        where.createdAt = {
+                            '$gt': options.last
+                        };
+                    } else {
+                        where.createdAt = {
+                            '$lt': options.last
+                        };
+                    }
                     options.order = [['createdAt', options.sort]];
                 }
 
