@@ -263,11 +263,29 @@ module.exports = {
             function sendPush(callback) {
                 var histories = user.loginHistories;
 
+                var funcs = [];
+
                 if (histories.length > 0) {
                     histories.forEach(function (history) {
-                        notiHelper.sendPush(history.token, title, body, badge, data, history.platform);
+                        (function (history) {
+                            funcs.push(function (subCallback) {
+                                notiHelper.sendPush(history.token, title, body, badge, data, history.platform, function (status, data) {
+                                    if (status == 204 || status == 404) {
+
+                                    } else if (status == 404) {
+
+                                    } else {
+
+                                    }
+                                    subCallback(null, true);
+                                });
+                            });
+                        })(history);
                     });
-                    callback(204);
+
+                    async.series(funcs, function (err, results) {
+                        callback(204);
+                    });
                 } else {
                     callback(404);
                 }
