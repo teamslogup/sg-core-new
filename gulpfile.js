@@ -56,18 +56,11 @@ if (!args.env) {
     process.env.NODE_ENV = args.env;
 }
 
-function returnInjectionArray (page) {
+function returnNgTemplatePath () {
     if (args.env == "development") {
-        return [
-            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
-            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
-        ];
+        return '';
     } else {
-        return [
-            './dist/sg-' + page + '-template.js',
-            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
-            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
-        ];
+        return "./" + getRootType() + "/client/pages/" + page + "/**/*.html";
     }
 }
 
@@ -195,7 +188,7 @@ gulp.task('webpack', ["replace-theme-" + combinedModuleArray[combinedModuleArray
 
 function callPagesBuild(page, afterInjection, url) {
     gulp.task('template-' + page, [afterInjection], () => {
-        return gulp.src("./" + getRootType() + "/client/pages/" + page + "/**/*.html")
+        return gulp.src(returnNgTemplatePath())
             .pipe(htmlmin({collapseWhitespace: true}))
             .pipe(ngTemplate({
                 moduleName: 'app.' + page + '.template',
@@ -208,7 +201,11 @@ function callPagesBuild(page, afterInjection, url) {
 
     gulp.task('injection-' + page, ['template-' + page], () => {
         var src = gulp.src(url);
-        var source = gulp.src(returnInjectionArray(page), {read: false});
+        var source = gulp.src([
+            './dist/sg-' + page + '-template.js',
+            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
+            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
+        ], {read: false});
 
         return src.pipe(inject(source))
             .pipe(injectString.replace('sg-' + page + '-core.js', '/sg-' + page + '-core.js?v=' + now))
