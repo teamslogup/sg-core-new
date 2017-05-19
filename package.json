@@ -92,6 +92,7 @@
     "form-data": "^2.1.2",
     "formidable": "*",
     "gm": "*",
+    "gulp-html-minifier": "^0.1.8",
     "gulp-replace": "^0.5.4",
     "helmet": "^2.1.2",
     "iconv": "^2.2.1",

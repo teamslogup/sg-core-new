@@ -10,6 +10,7 @@ var standards = {
         "rootUrl": "",
         "staticsUrl": ""
     },
+    "templatePath": "/pages/",
     "replaceApi": {
         "userDel": ""
     },

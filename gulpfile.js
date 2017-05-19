@@ -22,6 +22,9 @@ var fs = require('fs');
 var micro = require('microtime-nodejs');
 var now = micro.now();
 
+var ngTemplate = require('gulp-ng-template');
+var templatePath = require('./core/server/metadata/standards/common').templatePath;
+
 /**
  *
  */
@@ -166,6 +169,9 @@ for (var i = 0; i < combinedModuleArray.length; i++) {
 
 var pagesPath = path.resolve(__dirname, "./app/client/pages");
 var pages = fs.readdirSync(pagesPath);
+if (pages.indexOf(".DS_Store") != -1) {
+    pages.splice(pages.indexOf(".DS_Store"), 1);
+}
 
 gulp.task('webpack', ["replace-theme-" + combinedModuleArray[combinedModuleArray.length - 1].name], () => {
     return gulp.src('')
@@ -174,10 +180,22 @@ gulp.task('webpack', ["replace-theme-" + combinedModuleArray[combinedModuleArray
 });
 
 function callPagesBuild(page, afterInjection, url) {
+    gulp.task('template-' + page, [afterInjection], () => {
+        return gulp.src("./" + getRootType() + "/client/pages/" + page + "/**/*.html")
+            .pipe(htmlmin({collapseWhitespace: true}))
+            .pipe(ngTemplate({
+                moduleName: 'app.' + page + '.template',
+                standalone: true,
+                filePath: 'sg-' + page + '-template.js',
+                prefix: templatePath + page + '/'
+            }))
+            .pipe(gulp.dest('dist'));
+    });
 
-    gulp.task('injection-' + page, [afterInjection], () => {
+    gulp.task('injection-' + page, ['template-' + page], () => {
         var src = gulp.src(url);
         var source = gulp.src([
+            './dist/sg-' + page + '-template.js',
             './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
             './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
         ], {read: false});
@@ -188,6 +206,7 @@ function callPagesBuild(page, afterInjection, url) {
             .pipe(injectString.replace('\"/dist/', "\""))
             .pipe(injectString.replace('sg-' + page + '.js', "/sg-" + page + ".js?v=" + now))
             .pipe(injectString.replace('sg-' + page + '.css', "/sg-" + page + ".css?v=" + now))
+            .pipe(injectString.replace('sg-' + page + '-template.js', "/sg-" + page + "-template.js?v=" + now))
             .pipe(gulp.dest('./' + getRootType() + '/server/views/dist'));
     });
 
@@ -208,7 +227,6 @@ function callPagesBuild(page, afterInjection, url) {
             .pipe(gulpIf(args.env == 'production', htmlmin({collapseWhitespace: true})))
             .pipe(gulp.dest('./' + getRootType() + '/server/views'));
     });
-
 }
 
 for (var i = 0; i < pages.length; ++i) {
