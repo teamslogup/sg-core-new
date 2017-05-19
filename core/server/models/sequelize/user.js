@@ -623,22 +623,22 @@ module.exports = {
                 if (options.orderBy == STD.user.orderUpdate) {
                     if (options.sort == STD.common.DESC) {
                         where.updatedAt = {
-                            '$gt': options.last
+                            '$lt': options.last
                         };
                     } else {
                         where.updatedAt = {
-                            '$lt': options.last
+                            '$gt': options.last
                         };
                     }
                     options.order = [['updatedAt', options.sort]];
                 } else {
                     if (options.sort == STD.common.DESC) {
                         where.createdAt = {
-                            '$gt': options.last
+                            '$lt': options.last
                         };
                     } else {
                         where.createdAt = {
-                            '$lt': options.last
+                            '$gt': options.last
                         };
                     }
                     options.order = [['createdAt', options.sort]];

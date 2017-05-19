@@ -9,7 +9,9 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
     this.closeCallback = undefined;
 
     this.init = function (vm) {
-        this.vm = vm;
+        if (!this.vm) {
+            this.vm = vm;
+        }
     };
 
     this.listen = function (listenCallback) {
