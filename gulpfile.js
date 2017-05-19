@@ -56,6 +56,20 @@ if (!args.env) {
     process.env.NODE_ENV = args.env;
 }
 
+function returnInjectionArray (page) {
+    if (args.env == "development") {
+        return [
+            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
+            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
+        ];
+    } else {
+        return [
+            './dist/sg-' + page + '-template.js',
+            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
+            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
+        ];
+    }
+}
 
 function getJsName() {
     var url = args.ejs;
@@ -194,11 +208,7 @@ function callPagesBuild(page, afterInjection, url) {
 
     gulp.task('injection-' + page, ['template-' + page], () => {
         var src = gulp.src(url);
-        var source = gulp.src([
-            './dist/sg-' + page + '-template.js',
-            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
-            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
-        ], {read: false});
+        var source = gulp.src(returnInjectionArray(page), {read: false});
 
         return src.pipe(inject(source))
             .pipe(injectString.replace('sg-' + page + '-core.js', '/sg-' + page + '-core.js?v=' + now))
