@@ -179,6 +179,10 @@
                     //    transform: translate3d(0, 0, 0);
                     //}
 
+                    &:nth-child(5n){
+                        margin-right: 0px;
+                    }
+
                 }
 
             }
