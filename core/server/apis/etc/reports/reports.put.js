@@ -2,6 +2,8 @@ var put = {};
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 var micro = require('microtime-nodejs');
+var notiHelper = require('../../../../server/utils/notification/noti-helper');
+var LANGUAGES = require('../../../../../bridge/metadata/languages');
 
 put.validate = function () {
     return function (req, res, next) {
@@ -61,84 +63,103 @@ put.sendNotifications = function () {
         var NOTIFICATION = req.meta.std.notification;
         var notificationReport = req.meta.notifications.report;
 
-        if (req.body.isSolved !== undefined && req.body.isSolved == true && req.body.reply !== undefined && req.report.authorId != null) {
+        if (req.body.isSolved !== undefined && req.body.isSolved == true && req.body.reply !== undefined) {
 
             var user;
             var payload = {
-                userId: req.report.userId,
+                authorId: req.report.authorId,
                 nick: req.report.nick,
                 body: req.report.body,
                 reply: req.report.reply
             };
 
-            req.models.User.findUserNotificationInfo(req.report.authorId, function (status, data) {
-                if (status == 200) {
-                    user = data;
+            if (req.report.authorId != null) {
 
-                    function sendNoti(key, user, payload) {
+                req.models.User.findUserNotificationInfo(req.report.authorId, function (status, data) {
+                    if (status == 200) {
+                        user = data;
 
-                        req.coreUtils.notification.all.createdNotificationBox(user, notificationReport, payload, function (status, data) {
+                        function sendNoti(key, user, payload) {
 
-                            if (status == 204) {
-                                if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
+                            req.coreUtils.notification.all.createdNotificationBox(user, notificationReport, payload, function (status, data) {
 
-                                    var sendType = notificationReport.sendTypes[key];
+                                if (status == 204) {
+                                    if (req.coreUtils.notification.all.isNotificationSwitchOn(user, notificationReport.key, key)) {
 
-                                    req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
+                                        var sendType = notificationReport.sendTypes[key];
 
-                                        payload['key'] = notificationReport.key;
+                                        req.coreUtils.notification.all.replaceMagicKey(sendType, payload, user.language, function (isSuccess, title, body) {
 
-                                        if (isSuccess) {
+                                            payload['key'] = notificationReport.key;
 
-                                            req.coreUtils.notification.all.getNewNotificationCount(user.id, function (isSuccess, result) {
+                                            if (isSuccess) {
 
-                                                var badge = result.newNotificationCount + result.newChatMessageCount;
-                                                payload['newNotificationCount'] = result.newNotificationCount;
-                                                payload['newChatMessageCount'] = result.newChatMessageCount;
+                                                req.coreUtils.notification.all.getNewNotificationCount(user.id, function (isSuccess, result) {
 
-                                                if (isSuccess) {
-                                                    req.coreUtils.notification.all.send(user, key, title, body, badge, payload, function (status, data) {
-                                                        console.log('reportNoti', status);
-                                                    });
-                                                }
+                                                    var badge = result.newNotificationCount + result.newChatMessageCount;
+                                                    payload['newNotificationCount'] = result.newNotificationCount;
+                                                    payload['newChatMessageCount'] = result.newChatMessageCount;
 
-                                            });
+                                                    if (isSuccess) {
 
-                                        }
+                                                        var reeportBody;
+                                                        if (key == NOTIFICATION.sendTypeEmail) {
+                                                            reeportBody = req.report.body;
+                                                        } else {
+                                                            reeportBody = body;
+                                                        }
 
-                                    });
+                                                        req.coreUtils.notification.all.send(user, key, title, reeportBody, badge, payload, function (status, data) {
+                                                            console.log('reportNoti', status);
+                                                        });
+                                                    }
+
+                                                });
+
+                                            }
+
+                                        });
+                                    }
+                                }
+                            });
+
+                        }
+
+                        for (var key in notificationReport.sendTypes) {
+
+                            if (key == NOTIFICATION.sendTypeEmail) {
+                                if (!req.body.isEmailOn) {
+                                    continue;
                                 }
                             }
-                        });
 
+                            if (key == NOTIFICATION.sendTypePush) {
+                                if (!req.body.isPushOn) {
+                                    continue;
+                                }
+                            }
+
+                            if (key == NOTIFICATION.sendTypeMessage) {
+                                if (!req.body.isMessageOn) {
+                                    continue;
+                                }
+                            }
+
+                            sendNoti(key, user, payload);
+
+                        }
                     }
 
-                    for (var key in notificationReport.sendTypes) {
+                });
+            } else {
+                if (req.report.email != null) {
+                    var localLanguage = LANGUAGES['en'];
 
-                        if (key == NOTIFICATION.sendTypeEmail) {
-                            if (!req.body.isEmailOn) {
-                                continue;
-                            }
-                        }
-
-                        if (key == NOTIFICATION.sendTypePush) {
-                            if (!req.body.isPushOn) {
-                                continue;
-                            }
-                        }
-
-                        if (key == NOTIFICATION.sendTypeMessage) {
-                            if (!req.body.isMessageOn) {
-                                continue;
-                            }
-                        }
-
-                        sendNoti(key, user, payload);
-
-                    }
+                    notiHelper.sendEmail(req.report.email, localLanguage.reportTitle, req.report.reply, function (status, data) {
+                        console.log('reportNoti unauthorized', status);
+                    });
                 }
-
-            });
+            }
         }
 
         next();
