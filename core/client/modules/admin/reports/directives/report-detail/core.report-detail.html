@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     <div class="sg-report-manage-detail-bottom-notification-item" ng-class="{'active' : form.isEmailOn}"
-                         ng-if="currentReport.author.email"
+                         ng-if="currentReport.author.email || currentReport.email"
                          ng-click="form.isEmailOn = !form.isEmailOn">
                         <div class="sg-report-manage-detail-bottom-notification-item-img email">
 
