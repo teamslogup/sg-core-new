@@ -15,7 +15,8 @@
                     </button>
                     <button class="sg-alert-dialog-bottom-container-cancel-btn" ng-click="vm.closeDialog()"
                             ng-if="vm.isCloseBtnVisible && vm.alertAction ">
-                        취소
+                        <div data-ng-if="!vm.closeBtnText">취소</div>
+                        <div data-ng-if="vm.closeBtnText">{{vm.closeBtnText}}</div>
                     </button>
                     <button class="sg-alert-dialog-bottom-container-action-btn" ng-click="vm.action()"
                             ng-if="vm.alertAction">

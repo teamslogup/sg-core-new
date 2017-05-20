@@ -14,7 +14,14 @@ export default function AlertDialogCtrl($scope, dialogHandler, metaManager, Focu
         vm.isDialogVisible = true;
         vm.alertTitle = title;
         vm.alertMsg = body;
-        vm.isCloseBtnVisible = isCloseBtnVisible;
+
+        if (isCloseBtnVisible) {
+            if (isCloseBtnVisible == true) {
+                vm.isCloseBtnVisible = isCloseBtnVisible;
+            } else {
+                vm.closeBtnText = isCloseBtnVisible;
+            }
+        }
 
         Focus('alertConfirmButton');
 

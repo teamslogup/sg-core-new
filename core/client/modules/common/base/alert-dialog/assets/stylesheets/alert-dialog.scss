@@ -17,13 +17,15 @@ $sg-alert-dialog-container-top: 200px;
 
     background-color: rgba(0, 0, 0, 0.5);
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    //display: flex;
+    //justify-content: center;
+    //align-items: center;
 
     .sg-alert-dialog-container {
         position: relative;
         overflow: hidden;
+
+        margin-top: 200px;
 
         margin-left: 8px;
         margin-right: 8px;
