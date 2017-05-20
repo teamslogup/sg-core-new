@@ -171,6 +171,10 @@
                             color: #b4bacd;
                         }
                     }
+
+                    &:nth-child(3n){
+                        margin-right: 0px;
+                    }
                 }
 
             }
@@ -188,3 +192,4 @@
 
 @import "core.report-manage-detail";
 @import "core.reports-responsive";
+

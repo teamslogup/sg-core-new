@@ -22,13 +22,15 @@
                 width: $sg-report-manage-main-item-width * 3 + $sg-report-manage-main-item-margin-right * 2 + $sg-report-manage-container-padding * 2;
             }
 
-            .sg-report-manage-menu {
-                .sg-report-manage-menu-search {
-                    width: 100%;
-                    margin-top: 8px;
+            @media screen and (max-width: 426px) {
+                .sg-report-manage-menu {
+                    .sg-report-manage-menu-search {
+                        width: 100%;
+                        margin-top: 8px;
+                    }
                 }
-
             }
+
 
             .sg-report-manage-main {
                 .sg-report-manage-main-list {
