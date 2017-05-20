@@ -587,13 +587,18 @@ module.exports = {
              */
             'findAndCountUsersByOption': function (options, callback) {
                 var where = {};
+                var countWhere = {};
                 var include;
 
                 if (options.searchField && options.searchItem) {
                     if (options.searchField == STD.common.id) {
                         where[options.searchField] = options.searchItem;
+                        countWhere[options.searchField] = options.searchItem;
                     } else {
                         where[options.searchField] = {
+                            '$like': '%' + options.searchItem + '%'
+                        };
+                        countWhere[options.searchField] = {
                             '$like': '%' + options.searchItem + '%'
                         };
                     }
@@ -609,15 +614,18 @@ module.exports = {
                             };
                         }
                         where.$or.push(body);
+                        countWhere.$or.push(body);
                     }
                 }
 
                 if (options.role) {
                     where.role = options.role;
+                    countWhere.role = options.role;
                 }
 
                 if (options.gender) {
                     where.gender = options.gender;
+                    countWhere.gender = options.gender;
                 }
 
                 if (options.orderBy == STD.user.orderUpdate) {
@@ -661,7 +669,7 @@ module.exports = {
                         loadedUser = user;
 
                         return sequelize.models.User.count({
-                            'where': where
+                            'where': countWhere
                         });
                     }).then(function (count) {
                         loadedCount = count;
