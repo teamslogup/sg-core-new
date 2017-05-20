@@ -256,6 +256,9 @@ module.exports.init = function (sequelize) {
 
     }
 
+    app.use(require('../utils').responseHeader.htmlConnect());
+
+
     if (hasAppDir) {
         app.use(express.static('app/client', staticOptions));
     }
@@ -301,7 +304,7 @@ module.exports.init = function (sequelize) {
     app.use(helmet());
     app.disable('x-powered-by');
 
-    app.use(require('../utils').responseHeader.connect());
+    app.use(require('../utils').responseHeader.apiConnect());
 
     return app;
 };
