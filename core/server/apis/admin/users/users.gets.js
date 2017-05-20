@@ -22,7 +22,7 @@ gets.validate = function () {
 
         if (req.query.role !== undefined) {
             req.check('role', '400_3').isEnumArray(USER.enumRoles);
-            req.query.role = req.query.role.split(',');
+            req.utils.common.toArray(req.query, "role");
         }
 
         if (req.query.gender !== undefined) {
