@@ -250,7 +250,7 @@ module.exports.init = function (sequelize) {
     var staticOptions = {};
     if (process.env.NODE_ENV == 'production') {
         staticOptions = {
-            // maxage: '2400h'
+            maxage: '2400h'
         }
     } else if (process.env.NODE_ENV === 'development') {
 
@@ -265,6 +265,7 @@ module.exports.init = function (sequelize) {
 
     app.use(express.static('core/client', staticOptions));
     app.use(express.static('dist', staticOptions));
+    app.use(express.static('cdn', staticOptions));
 
     if (!META.std.flag.isUseS3Bucket) {
         app.use('/', express.static("uploads", staticOptions));
