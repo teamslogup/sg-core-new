@@ -65,21 +65,44 @@ module.exports = {
             refinedKeyPattern = keyPattern;
         }
 
+
         for (var key in refinedKeyPattern) {
-            indexes[key] = {
-                currentId: null,
-                index: null
-            };
 
-            var first = {};
+            if (key == 'attributes') {
+                var attributes = refinedKeyPattern[key];
 
-            if (keyPattern[key] instanceof Array) {
-                first = keyPattern[key][0];
+                for (var k in attributes) {
+                    var attribute = attributes[k];
+
+                    if (attribute.type.__proto__.key == "BOOLEAN") {
+                        indexes[k] = true;
+                    }
+                }
+
+                delete refinedKeyPattern.attributes;
+
             } else {
-                first = keyPattern[key];
+                if (indexes[key]) {
+                    indexes[key].currentId = null;
+                    indexes[key].index = null;
+                } else {
+                    indexes[key] = {
+                        currentId: null,
+                        index: null
+                    };
+                }
+
+                var first = {};
+
+                if (keyPattern[key] instanceof Array) {
+                    first = keyPattern[key][0];
+                } else {
+                    first = keyPattern[key];
+                }
+
+                this.setIndexes(refinedKeyPattern[key], indexes[key]);
             }
 
-            this.setIndexes(refinedKeyPattern[key], indexes[key]);
         }
 
     },
@@ -207,25 +230,29 @@ module.exports = {
                     console.log('objectifyError', temp[i]);
                 }
             } else {
-                currentItem[temp[i]] = this.sanitizeBoolean(value);
+                if (currentIndex[temp[i]]) {
+                    currentItem[temp[i]] = this.sanitizeBoolean(value);
+                } else {
+                    currentItem[temp[i]] = value;
+                }
             }
 
         }
 
     },
-    sanitizeBoolean: function (string) {
+    sanitizeBoolean: function (value) {
 
-        if (string && typeof string == 'string') {
-            if (string == 'true') {
-                return true;
-            }
+        // if (string && typeof string == 'string') {
+        //     if (string == 'true') {
+        //         return true;
+        //     }
+        //
+        //     if (string == 'false') {
+        //         return false;
+        //     }
+        // }
 
-            if (string == 'false') {
-                return false;
-            }
-        }
-
-        return string;
+        return value ? true : false;
     }
 
     /**
