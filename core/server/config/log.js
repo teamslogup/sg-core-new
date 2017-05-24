@@ -1,6 +1,7 @@
 var CONFIG = require('../../../bridge/config/env');
 var META = require('../../../bridge/metadata');
 var LOG = META.std.log;
+var APP = CONFIG.app;
 
 var path = require('path');
 var fs = require('fs');
@@ -47,7 +48,7 @@ function sendToS3(file, bucket, folder, callback) {
 }
 
 module.exports = function () {
-    if (META.std.flag.isUseS3Bucket) {
+    if (APP.uploadStore == APP.uploadStoreS3) {
         cron.schedule('* * 1 * *', function () {
 
             var logRotateLogPath = appRoot + '/../.pm2/logs';

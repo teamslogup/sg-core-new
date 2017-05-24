@@ -115,11 +115,7 @@ var api = {
                 apiCreator.add(put.validate());
                 apiCreator.add(put.update());
                 // apiCreator.add(put.findImagesToBeDeleted());
-                if (!STD.flag.isUseS3Bucket) {
-                    apiCreator.add(req.middles.upload.removeLocalFiles());
-                } else {
-                    apiCreator.add(req.middles.s3.removeFiles(config.aws.bucketName));
-                }
+                apiCreator.add(req.middles.upload.deleteFiles());
                 apiCreator.add(put.supplement());
                 apiCreator.run();
 

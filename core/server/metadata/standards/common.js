@@ -191,7 +191,6 @@ var standards = {
     },
     "flag": {
         "isMoreSocialInfo": true, // 소셜가입할때 추가정보가 필요할경우.
-        "isUseS3Bucket": true,
         "isResponsive": true
     },
     "category": {
