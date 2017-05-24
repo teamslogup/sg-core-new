@@ -120,7 +120,11 @@ module.exports = {
         }
 
         if (result instanceof Array) {
-            refinedResult = result[indexes.index];
+            if (result[indexes.index]) {
+                refinedResult = result[indexes.index];
+            } else {
+                refinedResult = {};
+            }
         } else {
             refinedResult = result
         }
