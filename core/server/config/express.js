@@ -305,7 +305,6 @@ module.exports.init = function (sequelize) {
 
     app.use(express.static('core/client', staticOptions));
     app.use(express.static('dist', staticOptions));
-    app.use(express.static('cdn', staticOptions));
 
     if (APP.uploadStore == APP.uploadStoreLocal) {
         app.use('/', express.static("uploads", staticOptions));
