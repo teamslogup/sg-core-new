@@ -55,13 +55,12 @@ post.supplement = function () {
         var msg = langs.uploadSuccess;
         var funcId = req.query.CKEditorFuncNum;
 
-        var url;
-
-        if (STD.flag.isUseS3Bucket) {
-            url = CDN.rootUrl + "/" + FILE.folderImages + "/" + FILE.folderCk + "/" + req.dateFolder + "/" + req.fileNames[0];
-        } else {
-            url = "/" + FILE.folderImages + "/" + FILE.folderCk + "/" + req.dateFolder + "/" + req.fileNames[0];
+        var url = CDN.rootUrl;
+        if (url && url[url.length - 1] == '/') {
+            url = url.substr(0, url.length - 1);
         }
+
+        url += "/" + FILE.folderImages + "/" + FILE.folderCk + "/" + req.dateFolder + "/" + req.fileNames[0];
 
         res.send("<script type='text/javascript'>window.parent.CKEDITOR.tools.callFunction('" + funcId + "', '" + url + "', '" + msg + "')</script>");
     };

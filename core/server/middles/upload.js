@@ -4,13 +4,280 @@ var async = require('async');
 var gm = require('gm').subClass({imageMagick: true});
 var STD = require('../../../bridge/metadata/standards');
 var appRootPath = require("app-root-path").path;
+var rootDirName = appRootPath.split('/');
+rootDirName = rootDirName[rootDirName.length - 1];
 
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
 
-module.exports = function () {
+module.exports = function (config) {
+    var AWS = require('aws-sdk');
+    AWS.config.update({
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+        region: config.region
+    });
+
+    var s3 = new AWS.S3();
+    var APP = config.app;
+
     function Upload() {
     }
+
+    function removeS3Files (req, res, next) {
+        if (req.files) {
+            var files = req.files;
+
+            var funcs = [];
+
+            var splitLength = Math.floor(files.length / maxLength);
+            var restLength = 0;
+            if (files.length % maxLength) {
+                restLength = files.length % maxLength;
+                splitLength++;
+            }
+
+            for (var i = 0; i < splitLength; ++i) {
+                (function (currentTime) {
+
+                    funcs.push(function (callback) {
+                        var deleteObject = {
+                            Objects: []
+                        };
+
+                        var length = 0;
+                        if (currentTime == splitLength - 1) {
+                            length = restLength;
+                        } else {
+                            length = maxLength;
+                        }
+
+                        for (var j=0; j < length; ++j) {
+                            var path = files[currentTime * maxLength + j].path;
+                            deleteObject.Objects.push({
+                                Key: path
+                            });
+                        }
+
+                        s3.deleteObjects({
+                            Bucket: bucket,
+                            Delete: deleteObject
+                        }, function (err, data) {
+                            if (err) {
+                                logger.e(err);
+                            }
+                            callback(null, true);
+                        });
+
+                    });
+
+                })(i);
+            }
+
+            async.series(funcs, function (err, results) {
+
+            });
+        }
+
+        next();
+    }
+
+    function sendToS3(file, bucket, folder, callback) {
+        fs.readFile(file.path, function (err, fileData) {
+
+            if (err) {
+                return callback({code: '500_4'});
+            }
+
+            var bn = path.basename(file.path);
+            var params = {
+                Bucket: bucket,
+                Key: folder + '/' + bn,
+                Body: fileData,
+                ContentType: file.type
+            };
+
+            s3.putObject(params, function (err, data) {
+
+                if (err) {
+                    logger.e(err);
+                    return callback({code: '500_5'});
+                }
+
+                callback(null, data);
+            });
+        });
+    }
+
+    function sendFilesToS3 (req, res, next) {
+        if (req.files) {
+            var folder = req.folder;
+            var funcs = [];
+
+            req.files.forEach(function (file) {
+                (function (f) {
+                    funcs.push(function (n) {
+                        sendToS3(f, config.aws.bucketName, folder, function (err, data) {
+                            if (err) n(err);
+                            else n(null, data);
+                        });
+                    });
+                })(file);
+            });
+
+            async.parallel(funcs, function (err, results) {
+                if (err) {
+                    logger.e(err);
+                    return res.hjson(req, next, 500, {
+                        code: err.code
+                    });
+                }
+                removeFiles(req, res, next);
+            });
+        } else {
+            next();
+        }
+    }
+
+    function removeFiles (req, res, next) {
+        var localPath = appRootPath + '/' + STD.local.uploadUrl + '/';
+        for (var i = 0; i < req.files.length; i++) {
+            if (req.files[i].path) {
+                req.files[i].path = localPath + req.files[i].path;
+            }
+        }
+        req.removeLocalFiles(function (err) {
+            next();
+        });
+    }
+
+    function removeLocalBucketFiles (req, res, next) {
+        var localPath = path.join(appRootPath, '../static/');
+        for (var i=0; i<req.files.length; i++) {
+            if (req.files[i].path) {
+                req.files[i].path = localPath + req.files[i].path;
+            }
+        }
+        req.removeLocalFiles(function (err) {
+            next();
+        });
+    }
+
+    function moveFiles (req, res, next) {
+        if (req.files && req.folder) {
+            var stat;
+            var filePath;
+
+            filePath = appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder;
+            stat = fs.existsSync(filePath);
+            if (!stat) {
+                fs.mkdirSync(filePath);
+            }
+
+            var files = req.files;
+            var funcs = [];
+
+            for (var i = 0; i < files.length; ++i) {
+                var file = files[i];
+                (function (file) {
+                    funcs.push(function (n) {
+                        var originPath = file.path;
+                        file.path = file.path.replace(STD.local.uploadUrl + '/', STD.local.uploadUrl + '/' + req.folder + '/');
+                        fs.rename(originPath, file.path, function (err) {
+                            if (err) {
+                                n(err, null);
+                            } else {
+                                n(null, true);
+                            }
+                        });
+                    });
+                })(file);
+            }
+
+            async.parallel(funcs, function (err, results) {
+                if (err) {
+                    console.error(err);
+                    return res.hjson(req, next, 500);
+                }
+                return next();
+            });
+        } else {
+            next();
+        }
+    }
+
+    function moveLocalBucketFiles (req, res, next) {
+        if (req.files && req.folder) {
+            var stat;
+            var filePath;
+
+            filePath = path.join(appRootPath, '../static/' + req.folder);
+            stat = fs.existsSync(filePath);
+            if (!stat) {
+                fs.mkdirSync(filePath);
+            }
+
+            var files = req.files;
+            var funcs = [];
+
+            for (var i = 0; i < files.length; ++i) {
+                var file = files[i];
+                (function (file) {
+                    funcs.push(function (n) {
+                        var originPath = file.path;
+                        file.path = file.path.replace('static/', 'static/' + req.folder + '/');
+                        fs.rename(originPath, file.path, function (err) {
+                            if (err) {
+                                n(err, null);
+                            } else {
+                                n(null, true);
+                            }
+                        });
+                    });
+                })(file);
+            }
+
+            async.parallel(funcs, function (err, results) {
+                if (err) {
+                    console.error(err);
+                    return res.hjson(req, next, 500);
+                }
+                return next();
+            });
+        } else {
+            next();
+        }
+    }
+
+    Upload.prototype.storeFiles = function () {
+        return function (req, res, next) {
+            var uploadStore = APP.uploadStore;
+            if (uploadStore == APP.uploadStoreLocal) {
+                moveFiles(req, res, next);
+            } else if (uploadStore == APP.uploadStoreS3) {
+                sendFilesToS3(req, res, next);
+            } else if (uploadStore == APP.uploadStoreLocalBucket) {
+                moveLocalBucketFiles(req, res, next);
+            } else {
+                next();
+            }
+        }
+    };
+
+    Upload.prototype.deleteFiles = function () {
+        return function (req, res, next) {
+            var uploadStore = APP.uploadStore;
+            if (uploadStore == APP.uploadStoreLocal) {
+                removeFiles(req, res, next);
+            } else if (uploadStore == APP.uploadStoreS3) {
+                removeS3Files(req, res, next);
+            } else if (uploadStore == APP.uploadStoreLocalBucket) {
+                removeLocalBucketFiles(req, res, next);
+            } else {
+                next();
+            }
+        };
+    };
 
     Upload.prototype.checkFileBytes = function (minSize, maxSize) {
         return function (req, res, next) {
@@ -281,17 +548,7 @@ module.exports = function () {
 
     Upload.prototype.removeLocalFiles = function () {
         return function (req, res, next) {
-            if (!STD.flag.isUseS3Bucket) {
-                var localPath = path.join(__dirname, "../../../" + STD.local.uploadUrl + '/');
-                for (var i = 0; i < req.files.length; i++) {
-                    if (req.files[i].path) {
-                        req.files[i].path = localPath + req.files[i].path;
-                    }
-                }
-            }
-            req.removeLocalFiles(function (err) {
-                next();
-            });
+            removeFiles(req, res, next);
         };
     };
 
@@ -300,55 +557,13 @@ module.exports = function () {
             var now = new Date();
             req.dateFolder = now.getUTCFullYear() + '-' + req.coreUtils.common.attachZero(now.getUTCMonth() + 1) + '-' + req.coreUtils.common.attachZero(now.getUTCDate());
             req.folder = parentFolder + '/' + req.body.folder + '/' + req.dateFolder;
-
-            var stat = fs.existsSync(appRootPath + '/' + STD.local.uploadUrl + '/' + parentFolder + '/' + req.body.folder);
-            if (!stat) {
-                fs.mkdirSync(appRootPath + '/' + STD.local.uploadUrl + '/' + parentFolder + '/' + req.body.folder);
-            }
-
             next();
         };
     };
 
     Upload.prototype.moveFileDir = function () {
         return function (req, res, next) {
-            if (req.files && req.folder) {
-
-                var stat = fs.existsSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
-                if (!stat) {
-                    fs.mkdirSync(appRootPath + '/' + STD.local.uploadUrl + '/' + req.folder);
-                }
-
-                var files = req.files;
-                var funcs = [];
-
-                for (var i = 0; i < files.length; ++i) {
-                    var file = files[i];
-                    (function (file) {
-                        funcs.push(function (n) {
-                            var originPath = file.path;
-                            file.path = file.path.replace(STD.local.uploadUrl + '/', STD.local.uploadUrl + '/' + req.folder + '/');
-                            fs.rename(originPath, file.path, function (err) {
-                                if (err) {
-                                    n(err, null);
-                                } else {
-                                    n(null, true);
-                                }
-                            });
-                        });
-                    })(file);
-                }
-
-                async.parallel(funcs, function (err, results) {
-                    if (err) {
-                        console.error(err);
-                        return res.hjson(req, next, 500);
-                    }
-                    return next();
-                });
-            } else {
-                next();
-            }
+            moveFiles(req, res, next);
         };
     };
 

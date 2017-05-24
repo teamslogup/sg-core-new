@@ -36,6 +36,7 @@ var bridgeUtils = require('../../../bridge/utils');
 var models = require('../../../bridge/models/sequelize');
 var CONFIG = require('../../../bridge/config/env'),
     META = require('../../../bridge/metadata');
+var APP = CONFIG.app;
 var LOCAL = META.std.local;
 var FILE = META.std.file;
 var LOG = META.std.log;
@@ -84,61 +85,96 @@ var sessionMiddleware = session(sessionSettings);
 module.exports.sessionMiddleware = sessionMiddleware;
 module.exports.init = function (sequelize) {
 
-    var stat = fs.existsSync(appRootPath + '/' + LOCAL.uploadUrl);
-    if (!stat) {
-        fs.mkdirSync(appRootPath + '/' + LOCAL.uploadUrl);
-    }
+    if (APP.uploadStore == APP.uploadStoreLocal || APP.uploadStore == APP.uploadStoreLocalBucket) {
+        var rootPath;
+        var stat;
+        if (APP.uploadStore == APP.uploadStoreLocal) {
+            rootPath = appRootPath;
 
-    stat = fs.existsSync(appRootPath + '/' + LOCAL.tempUrl);
-    if (!stat) {
-        fs.mkdirSync(appRootPath + '/' + LOCAL.tempUrl);
-    }
+            stat = fs.existsSync(rootPath + '/' + LOCAL.uploadUrl);
+            if (!stat) {
+                fs.mkdirSync(rootPath + '/' + LOCAL.uploadUrl);
+            }
 
-    stat = fs.existsSync(appRootPath + '/' + LOG.folderName);
-    if (!stat) {
-        fs.mkdirSync(appRootPath + '/' + LOG.folderName);
-    }
+            stat = fs.existsSync(rootPath + '/' + LOCAL.tempUrl);
+            if (!stat) {
+                fs.mkdirSync(rootPath + '/' + LOCAL.tempUrl);
+            }
 
-    var i = 0;
-    var fileFolderDir;
+            stat = fs.existsSync(rootPath + '/' + LOG.folderName);
+            if (!stat) {
+                fs.mkdirSync(rootPath + '/' + LOG.folderName);
+            }
+        } else {
+            rootPath = path.join(appRootPath, "../static");
 
-    for (i = 0; i < FILE.enumFolders.length; ++i) {
-        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.enumFolders[i];
-        stat = fs.existsSync(fileFolderDir);
-        if (!stat) {
-            fs.mkdirSync(fileFolderDir);
+            stat = fs.existsSync(rootPath);
+            if (!stat) {
+                fs.mkdirSync(rootPath);
+            }
         }
-    }
 
-    for (i = 0; i < FILE.enumImageFolders.length; ++i) {
-        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderImages + '/' + FILE.enumImageFolders[i];
-        stat = fs.existsSync(fileFolderDir);
-        if (!stat) {
-            fs.mkdirSync(fileFolderDir);
+        var i;
+        var fileFolderDir;
+
+        for (i = 0; i < FILE.enumFolders.length; ++i) {
+            fileFolderDir = rootPath;
+            if (APP.uploadStore == APP.uploadStoreLocal) {
+                fileFolderDir += '/' + LOCAL.uploadUrl;
+            }
+            fileFolderDir += '/' + FILE.enumFolders[i];
+            stat = fs.existsSync(fileFolderDir);
+            if (!stat) {
+                fs.mkdirSync(fileFolderDir);
+            }
         }
-    }
 
-    for (i = 0; i < FILE.enumAudioFolders.length; ++i) {
-        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderAudios + '/' + FILE.enumAudioFolders[i];
-        stat = fs.existsSync(fileFolderDir);
-        if (!stat) {
-            fs.mkdirSync(fileFolderDir);
+        for (i = 0; i < FILE.enumImageFolders.length; ++i) {
+            fileFolderDir = rootPath;
+            if (APP.uploadStore == APP.uploadStoreLocal) {
+                fileFolderDir += '/' + LOCAL.uploadUrl;
+            }
+            fileFolderDir += '/' + FILE.folderImages + '/' + FILE.enumImageFolders[i];
+            stat = fs.existsSync(fileFolderDir);
+            if (!stat) {
+                fs.mkdirSync(fileFolderDir);
+            }
         }
-    }
 
-    for (i = 0; i < FILE.enumVideoFolders.length; ++i) {
-        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderVideos + '/' + FILE.enumVideoFolders[i];
-        stat = fs.existsSync(fileFolderDir);
-        if (!stat) {
-            fs.mkdirSync(fileFolderDir);
+        for (i = 0; i < FILE.enumAudioFolders.length; ++i) {
+            fileFolderDir = rootPath;
+            if (APP.uploadStore == APP.uploadStoreLocal) {
+                fileFolderDir += '/' + LOCAL.uploadUrl;
+            }
+            fileFolderDir += '/' + FILE.folderAudios + '/' + FILE.enumAudioFolders[i];
+            stat = fs.existsSync(fileFolderDir);
+            if (!stat) {
+                fs.mkdirSync(fileFolderDir);
+            }
         }
-    }
 
-    for (i = 0; i < FILE.enumEtcFolders.length; ++i) {
-        fileFolderDir = appRootPath + '/' + LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.enumEtcFolders[i];
-        stat = fs.existsSync(fileFolderDir);
-        if (!stat) {
-            fs.mkdirSync(fileFolderDir);
+        for (i = 0; i < FILE.enumVideoFolders.length; ++i) {
+            fileFolderDir = rootPath;
+            if (APP.uploadStore == APP.uploadStoreLocal) {
+                fileFolderDir += '/' + LOCAL.uploadUrl;
+            }
+            fileFolderDir += '/' + FILE.folderVideos + '/' + FILE.enumVideoFolders[i];
+            stat = fs.existsSync(fileFolderDir);
+            if (!stat) {
+                fs.mkdirSync(fileFolderDir);
+            }
+        }
+
+        for (i = 0; i < FILE.enumEtcFolders.length; ++i) {
+            fileFolderDir = rootPath;
+            if (APP.uploadStore == APP.uploadStoreLocal) {
+                fileFolderDir += '/' + LOCAL.uploadUrl;
+            }
+            fileFolderDir += '/' + FILE.folderEtc + '/' + FILE.enumEtcFolders[i];
+            stat = fs.existsSync(fileFolderDir);
+            if (!stat) {
+                fs.mkdirSync(fileFolderDir);
+            }
         }
     }
 
@@ -217,16 +253,20 @@ module.exports.init = function (sequelize) {
     app.use(flash());
     app.use(sgcResponder.connect());
     app.use(sgCommonUtils.connect());
-    app.use(middles.connect(CONFIG.aws));
+    app.use(middles.connect(CONFIG));
     app.use(validator());
-    if (META.std.flag.isUseS3Bucket) {
+    if (APP.uploadStore == APP.uploadStoreS3) {
         // s3이용시 템프에 넣고 지움.
         console.log('prepare s3 bucket');
         app.use(sgcUploadManager(appRootPath + '/' + LOCAL.tempUrl, CONFIG.app.maxUploadFileSize));
-    } else {
+    } else if (APP.uploadStore == APP.uploadStoreLocal) {
         // 로컬 이용시 바로 업로드 폴더 이용
-        console.log('local image folders');
+        console.log('local folders');
         app.use(sgcUploadManager(appRootPath + '/' + LOCAL.uploadUrl, CONFIG.app.maxUploadFileSize));
+    } else if (APP.uploadStore == APP.uploadStoreLocalBucket) {
+        // 로컬버켓 이용시 바로 로컬버켓 폴더 이용
+        console.log("local bucket folders");
+        app.use(sgcUploadManager(path.join(appRootPath, '../static'), CONFIG.app.maxUploadFileSize));
     }
     app.use(function (req, res, next) {
         var country = req.country;
@@ -267,7 +307,7 @@ module.exports.init = function (sequelize) {
     app.use(express.static('dist', staticOptions));
     app.use(express.static('cdn', staticOptions));
 
-    if (!META.std.flag.isUseS3Bucket) {
+    if (APP.uploadStore == APP.uploadStoreLocal) {
         app.use('/', express.static("uploads", staticOptions));
     }
 

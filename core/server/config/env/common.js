@@ -7,7 +7,12 @@ module.exports = {
         "apiName": "api",
         "isServerChecking": false,
         "deletedUserPrefix": "deletedUser0323",
-        "sessionExpiredSeconds": 60 * 60 * 24 * 100
+        "sessionExpiredSeconds": 60 * 60 * 24 * 100,
+        "uploadStore": "local",
+        "enumUploadStores": ["local", "s3", "localBucket"],
+        "uploadStoreLocal": "local",
+        "uploadStoreS3": "s3",
+        "uploadStoreLocalBucket": "localBucket"
         // "sessionExpiredSeconds": 10
     },
     "db": {

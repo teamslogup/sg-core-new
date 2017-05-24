@@ -1,9 +1,9 @@
 module.exports.connect = function (config) {
     return function (req, res, next) {
         var middles = {
-            s3: require('./s3')(config),
+            s3: require('./s3')(config.aws),
             session: require('./session')(),
-            upload: require('./upload')(),
+            upload: require('./upload')(config),
             notification: require('./notification')(),
             validator: require('./validator')(),
             role: require('./role')(),

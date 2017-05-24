@@ -72,6 +72,8 @@ post.checkNCreatePart = function () {
 
 post.series = function () {
     return function (req, res, next) {
+        var APP = req.config.app;
+        var NOTIFICATION = req.meta.std.notification;
 
         switch (req.body.sendType) {
             case NOTIFICATION.sendTypeMessage:
@@ -94,14 +96,18 @@ post.series = function () {
             post.seriesSplitFile(req, callback);
         });
 
-        if (FLAG.isUseS3Bucket) {
+        if (APP.uploadStore == APP.uploadStoreS3) {
             funcs.push(function (callback) {
                 post.seriesSendImportFile(req, callback);
             });
-        } else {
+        } else if (APP.uploadStore == APP.uploadStoreLocal) {
             funcs.push(function (callback) {
                 post.seriesMoveImportFile(req, callback);
             });
+        } else if (APP.uploadStore == APP.uploadStoreLocalBucket) {
+            /**
+             *
+             */
         }
 
         funcs.push(function (callback) {
@@ -120,10 +126,14 @@ post.series = function () {
             post.seriesFindMassNotificationPhoneNumNSendMessage(req, callback);
         });
 
-        if (FLAG.isUseS3Bucket) {
+        if (APP.uploadStore == APP.uploadStoreS3) {
             funcs.push(function (callback) {
                 post.seriesSendMessageFile(req, callback);
             });
+        } else if (APP.uploadStore == APP.uploadStoreLocalBucket) {
+            /**
+             *
+             */
         }
 
         next();
@@ -164,6 +174,7 @@ post.series = function () {
 };
 
 post.seriesSplitFile = function (req, callback) {
+    var APP = req.config.app;
     var NOTIFICATION = req.meta.std.notification;
 
     req.splitTimes = 0;
@@ -179,10 +190,14 @@ post.seriesSplitFile = function (req, callback) {
     var eventEmitter = new events.EventEmitter();
     eventEmitter.setMaxListeners(eventEmitter.getMaxListeners() + 1);
 
-    if (req.meta.std.flag.isUseS3Bucket) {
+    if (APP.uploadStore == APP.uploadStoreS3) {
         importedFile = path.join(__dirname, "../../../../../" + LOCAL.tempUrl + '/' + req.massNotification.massNotificationImportHistory.fileName);
-    } else {
+    } else if (APP.uploadStore == APP.uploadStoreLocal) {
         importedFile = path.join(__dirname, "../../../../../" + LOCAL.uploadUrl + '/' + req.massNotification.massNotificationImportHistory.fileName);
+    } else if (APP.uploadStore == APP.uploadStoreLocalBucket) {
+        /**
+         *
+         */
     }
     var splitFile = LOCAL.uploadUrl + '/' + FILE.folderEtc + '/' + FILE.folderNotification + '/';
 

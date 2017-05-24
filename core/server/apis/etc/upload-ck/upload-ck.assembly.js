@@ -54,9 +54,7 @@ var api = {
                 apiCreator.add(req.middles.upload.createPrefixName());
                 apiCreator.add(req.middles.upload.createResizeOptions());
                 apiCreator.add(req.middles.upload.normalizeImages());
-                if (!STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.moveFileDir());
-                if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.s3.sendFiles(config.aws.bucketName));
-                if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.removeLocalFiles());
+                apiCreator.add(req.middles.upload.storeFiles());
                 apiCreator.add(post.create());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
@@ -92,7 +90,7 @@ var api = {
                     params.resettable
                 ));
                 apiCreator.add(del.validate());
-                apiCreator.add(req.middles.s3.removeFiles(config.aws.bucketName));
+                apiCreator.add(req.middles.upload.deleteFiles());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
 

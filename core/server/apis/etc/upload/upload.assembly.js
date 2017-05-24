@@ -47,9 +47,7 @@ var api = {
                 apiCreator.add(req.middles.upload.checkInvalidFileType(STD.file.enumInvalidFileExtensions));
                 apiCreator.add(req.middles.upload.createPrefixName());
                 apiCreator.add(req.middles.upload.checkFileCount(STD.file.minCount, STD.file.maxCount));
-                if (!STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.moveFileDir());
-                if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.s3.sendFiles(config.aws.bucketName));
-                if (STD.flag.isUseS3Bucket) apiCreator.add(req.middles.upload.removeLocalFiles());
+                apiCreator.add(req.middles.upload.storeFiles());
                 apiCreator.add(post.supplement());
                 apiCreator.run();
 
@@ -85,11 +83,7 @@ var api = {
                 ));
                 apiCreator.add(del.checkSession());
                 apiCreator.add(del.validate());
-                if (!STD.flag.isUseS3Bucket) {
-                    apiCreator.add(req.middles.upload.removeLocalFiles());
-                } else {
-                    apiCreator.add(req.middles.s3.removeFiles(config.aws.bucketName));
-                }
+                apiCreator.add(req.middles.upload.deleteFiles());
                 apiCreator.add(del.supplement());
                 apiCreator.run();
 
