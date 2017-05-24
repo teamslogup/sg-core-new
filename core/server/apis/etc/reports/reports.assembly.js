@@ -71,7 +71,6 @@ var api = {
                     isSolved: '해결 여부',
                     sort: '정렬 순서 ' + STD.common.enumSortTypes.join(", ")
                 },
-                role: STD.user.roleAdmin,
                 title: '신고리스트얻기',
                 state: 'staging'
             };
