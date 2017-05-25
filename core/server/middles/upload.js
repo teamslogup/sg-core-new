@@ -13,9 +13,9 @@ var logger = new Logger(__filename);
 module.exports = function (config) {
     var AWS = require('aws-sdk');
     AWS.config.update({
-        accessKeyId: config.accessKeyId,
-        secretAccessKey: config.secretAccessKey,
-        region: config.region
+        accessKeyId: config.aws.accessKeyId,
+        secretAccessKey: config.aws.secretAccessKey,
+        region: config.aws.region
     });
 
     var s3 = new AWS.S3();
@@ -140,10 +140,12 @@ module.exports = function (config) {
     }
 
     function removeFiles (req, res, next) {
-        var localPath = appRootPath + '/' + STD.local.uploadUrl + '/';
-        for (var i = 0; i < req.files.length; i++) {
-            if (req.files[i].path) {
-                req.files[i].path = localPath + req.files[i].path;
+        if (APP.uploadStore == APP.uploadStoreLocal) {
+            var localPath = appRootPath + '/' + STD.local.uploadUrl + '/';
+            for (var i = 0; i < req.files.length; i++) {
+                if (req.files[i].path) {
+                    req.files[i].path = localPath + req.files[i].path;
+                }
             }
         }
         req.removeLocalFiles(function (err) {
