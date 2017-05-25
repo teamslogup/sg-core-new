@@ -39,14 +39,15 @@ module.exports = {
             }, function (err) {
                 if (process.env.NODE_ENV == 'test') return callback(204);
                 if (err) {
-                    callback(503, emailErrorRefiner(err));
+                    if (callback) callback(503, emailErrorRefiner(err));
+
                 } else {
-                    callback(204);
+                    if (callback) callback(204);
                 }
                 console.log('email error', err);
             });
         } else {
-            callback(404);
+            if (callback) callback(404);
             console.log('email 404');
         }
     },
@@ -54,14 +55,14 @@ module.exports = {
         if (phoneNum) {
             sendNoti.sms(null, phoneNum, title, body, function (err) {
                 if (err) {
-                    callback(err.status, phoneErrorRefiner(err));
+                    if(callback) callback(err.status, phoneErrorRefiner(err));
                 } else {
-                    callback(204);
+                    if(callback) callback(204);
                 }
             });
 
         } else {
-            callback(404);
+            if(callback) callback(404);
         }
 
     },
@@ -69,14 +70,14 @@ module.exports = {
         if (phoneNum) {
             sendNoti.mms(null, phoneNum, title, body, file, function (err) {
                 if (err) {
-                    callback(err.status, phoneErrorRefiner(err));
+                    if(callback) callback(err.status, phoneErrorRefiner(err));
                 } else {
-                    callback(204);
+                    if(callback) callback(204);
                 }
             });
 
         } else {
-            callback(404);
+            if(callback) callback(404);
         }
 
     }
