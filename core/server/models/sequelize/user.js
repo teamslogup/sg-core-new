@@ -969,6 +969,7 @@ module.exports = {
 
                 sequelize.transaction(function (t) {
 
+                    
                     var profile = sequelize.models.Profile.build({});
                     return profile.save({transaction: t}).then(function () {
                         data.profileId = profile.id;
