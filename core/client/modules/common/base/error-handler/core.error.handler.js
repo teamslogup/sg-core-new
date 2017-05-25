@@ -39,7 +39,7 @@ export default function errorHandler($filter, metaManager, $location) {
                 }
                 if (essentialKeys) {
                     for (var k in essentialKeyHash) {
-                        if (!data[k]) {
+                        if (data[k] === undefined) {
                             throw('400_14');
                         }
                     }
