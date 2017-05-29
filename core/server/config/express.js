@@ -64,12 +64,15 @@ var sessionSettings = {
 
 if (CONFIG.flag.isUseRedis) {
     var urlObj = url.parse(CONFIG.db.redis);
+    var db = urlObj.path;
+    if (db) db.replace('/', '');
     var auth = urlObj.auth;
     auth = (auth && auth.split(":")) || null;
     console.log('redis info', urlObj);
     sessionSettings.store = new RedisStore({
         'host': urlObj.hostname,
         'port': urlObj.port,
+        'db': parseInt(db) || 0,
         'pass': auth && auth[1] || null,
         'ttl': CONFIG.app.sessionExpiredSeconds
     });
