@@ -56,11 +56,37 @@ if (!args.env) {
     process.env.NODE_ENV = args.env;
 }
 
-function returnNgTemplatePath () {
+var ngTemplateIgnoreStat, ngTemplateIgnore;
+ngTemplateIgnoreStat = fs.existsSync('./' + getRootType() + '/.ngtemplateignore');
+if (ngTemplateIgnoreStat) {
+    ngTemplateIgnore = JSON.parse(fs.readFileSync('./' +  getRootType() + '/.ngtemplateignore'));
+}
+
+function returnNgTemplatePath (page) {
     if (args.env == "development") {
         return '';
     } else {
-        return "./" + getRootType() + "/client/pages/" + page + "/**/*.html";
+        var returnPath = "./" + getRootType() + "/client/pages/" + page + "/**/*.html";
+        if (ngTemplateIgnoreStat) {
+            var returnPathArray = [returnPath];
+            if (ngTemplateIgnore.pages && ngTemplateIgnore.pages.indexOf(page) != -1) {
+                return '';
+            }
+            if (ngTemplateIgnore.paths) {
+                ngTemplateIgnore.paths.forEach(function (path) {
+                    if (path) {
+                        returnPathArray.push('!' + path);
+                    }
+                });
+            }
+            if (returnPathArray.length > 1) {
+                return returnPathArray;
+            } else {
+                return returnPathArray[0];
+            }
+        } else {
+            return returnPath;
+        }
     }
 }
 
@@ -188,7 +214,7 @@ gulp.task('webpack', ["replace-theme-" + combinedModuleArray[combinedModuleArray
 
 function callPagesBuild(page, afterInjection, url) {
     gulp.task('template-' + page, [afterInjection], () => {
-        return gulp.src(returnNgTemplatePath())
+        return gulp.src(returnNgTemplatePath(page))
             .pipe(htmlmin({collapseWhitespace: true}))
             .pipe(ngTemplate({
                 moduleName: 'app.' + page + '.template',
