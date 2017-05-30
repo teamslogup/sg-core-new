@@ -9,6 +9,7 @@ rootDirName = rootDirName[rootDirName.length - 1];
 
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
+var maxLength = 1000;
 
 module.exports = function (config) {
     var AWS = require('aws-sdk');
