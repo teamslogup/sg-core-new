@@ -27,6 +27,7 @@ module.exports = function (config) {
 
     function removeS3Files (req, res, next) {
         if (req.files) {
+            var bucket = config.aws.bucketName;
             var files = req.files;
 
             var funcs = [];
