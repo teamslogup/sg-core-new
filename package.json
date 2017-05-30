@@ -79,6 +79,7 @@
     "connect-redis": "*",
     "cookie-parser": "*",
     "csvtojson": "^1.1.4",
+    "debug-fd-deprecated": "^1.0.1",
     "ejs": "*",
     "ejs-locals": "*",
     "express": "*",
