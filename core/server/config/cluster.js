@@ -105,6 +105,9 @@ module.exports = {
                 } else if (code == 100) {
                     console.log("rest workers length:", workers.length);
                     if (workers.length > 0) closeWorker(workers[0]);
+                } else {
+                    console.log("unexpected exit");
+                    workers.push(initWorker(cluster.fork()));
                 }
                 
             });
