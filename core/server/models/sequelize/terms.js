@@ -72,12 +72,19 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             "findTermsByOptions": function (options, callback) {
 
-                var query = "SELECT result.type, result.title, result.appliedId FROM (" +
-                    "SELECT terms.type, terms.title, terms2.id as appliedId, terms.createdAt FROM (SELECT * FROM Terms WHERE deletedAt IS NULL) as terms " +
-                    "LEFT JOIN (SELECT id, startDate FROM Terms WHERE startDate <= " + micro.now() + " AND deletedAt IS NULL) as terms2 ON terms2.id = terms.id " +
-                    "WHERE terms.language = '" + options.language + "' " +
-                    "ORDER BY terms2.startDate DESC, terms.createdAt DESC) " +
-                    "result GROUP BY result.title ORDER BY result.createdAt DESC";
+                // var query = "SELECT result.type, result.title, result.appliedId FROM (" +
+                //     "SELECT terms.type, terms.title, terms2.id as appliedId, terms.createdAt FROM (SELECT * FROM Terms WHERE deletedAt IS NULL) as terms " +
+                //     "LEFT JOIN (SELECT id, startDate FROM Terms WHERE startDate <= " + micro.now() + " AND deletedAt IS NULL) as terms2 ON terms2.id = terms.id " +
+                //     "WHERE terms.language = '" + options.language + "' " +
+                //     "ORDER BY terms2.startDate DESC, terms.createdAt DESC) " +
+                //     "result GROUP BY result.title ORDER BY result.createdAt DESC";
+
+                var query = "SELECT b.id AS appliedId, b.title, b.type FROM (SELECT MAX(terms.startDate) AS startDate, terms.title, terms.language FROM Terms AS terms " +
+                    "WHERE terms.startDate <= " + micro.now() + " AND terms.language = '" + options.language + "' " + " AND terms.deletedAt IS NULL " +
+                    "GROUP BY terms.title) a, Terms b " +
+                    "WHERE b.startDate = a.startDate " + " AND b.deletedAt IS NULL " +
+                    "AND b.title = a.title " + " AND b.language = a.language " +
+                    "ORDER BY b.createdAt DESC";
 
                 sequelize.query(query).then(function (data) {
                     if (data && data[0] && data[0].length > 0) {
