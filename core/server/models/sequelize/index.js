@@ -35,6 +35,8 @@ var Lguplus = require('./lguplus');
 var InAppPurchase = require('./in-app-purchase');
 var PgPurchase = require('./pg-purchase');
 var BrowserCount = require('./browser-count');
+var NoSessionChatRoomUser = require('./no-session-chat-room-user');
+var NoSessionChatHistory = require('./no-session-chat-history');
 
 var models = {
     User: User,
@@ -72,7 +74,9 @@ var models = {
     Lguplus: Lguplus,
     InAppPurchase: InAppPurchase,
     PgPurchase: PgPurchase,
-    BrowserCount: BrowserCount
+    BrowserCount: BrowserCount,
+    NoSessionChatRoomUser: NoSessionChatRoomUser,
+    NoSessionChatHistory: NoSessionChatHistory
 };
 
 module.exports = models;

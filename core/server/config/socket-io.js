@@ -2,6 +2,7 @@ var STD = require('../../../bridge/metadata/standards');
 
 var CONFIG = require('../../../bridge/config/env');
 var chat = require('../chat');
+var chatNoSession = require('../chat/no-session');
 
 var sessionMiddleware = require('../config/express').sessionMiddleware;
 
@@ -19,10 +20,7 @@ module.exports = function (server, app) {
         app.use(sessionMiddleware);
 
         chat.init(io);
-
-        // http.listen(3002, function () {
-        //     console.log('socket.io listening on 3002');
-        // });
+        chatNoSession.init(io);
     }
 
     return server;
