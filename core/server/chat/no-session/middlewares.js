@@ -104,6 +104,10 @@ var middles = {
                 message: payload.message
             };
 
+            if (payload.admin) {
+                body.type = 'admin';
+            }
+
             sequelize.models.NoSessionChatHistory.createNoSessionChatHistory(body, function (status, data) {
                 if (status == 200) {
 
