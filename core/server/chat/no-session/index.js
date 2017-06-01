@@ -16,7 +16,7 @@ module.exports.init = function (io) {
         server = http.createServer(function (req, res) {
         });
 
-    server.listen(3001, null); // HTTP 서버 생성
+    server.listen(STD.chat.noSessionChatPort, null); // HTTP 서버 생성
 
     io = socketIo.listen(server); // Socket.IO를 HTTP서버에 연결
 
