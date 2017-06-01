@@ -348,6 +348,7 @@ module.exports.init = function (sequelize) {
     app.disable('x-powered-by');
 
     app.use(require('../utils').responseHeader.apiConnect());
+    app.use(require('../utils').emoji());
 
     return app;
 };
