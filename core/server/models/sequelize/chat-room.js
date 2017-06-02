@@ -71,6 +71,7 @@ module.exports = {
 
                 var countQuery = "SELECT count(result.id) as count FROM (SELECT v1.id FROM (SELECT * FROM ChatRoomUsers AS chatRoomUser WHERE chatRoomUser.deletedAt IS NULL AND chatRoomUser.userId = " + options.userId + ") as v1 " +
                     "LEFT JOIN (SELECT roomUser.roomId as roomId FROM ChatRoomUsers as roomUser " +
+                    "LEFT JOIN Users as user ON user.id = roomUser.userId " +
                     "WHERE roomUser.userId <> " + options.userId + searchItemQuery + ") as v2 ON v1.roomId = v2.roomId GROUP BY v1.id) as result;";
 
                 var query = "SELECT v1.roomId as id, v1.updatedAt as updatedAt, v2.roomUserId as 'user.id', v2.nick as 'user.nick', v2.deletedAt as 'user.deletedAt', v1.count as noReadCount, v2.userImageId as 'user.userImages.id', v2.imageId as 'user.userImages.image.id', v2.folder as 'user.userImages.image.folder', v2.dateFolder as 'user.userImages.image.dateFolder', v2.name as 'user.userImages.image.name', v2.authorized as 'user.userImages.image.authorized', v1.chatId as 'chatHistories.id', v1.chatType as 'chatHistories.type', v1.chatMessage as 'chatHistories.message', v1.chatCreatedAt as 'chatHistories.createdAt' " +
