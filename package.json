@@ -82,6 +82,7 @@
     "debug-fd-deprecated": "^1.0.1",
     "ejs": "*",
     "ejs-locals": "*",
+    "emoji-strip": "^1.0.1",
     "express": "*",
     "express-blacklist": "^1.0.3",
     "express-defend": "^1.0.9",
