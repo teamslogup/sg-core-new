@@ -165,16 +165,12 @@ module.exports = {
                         if (data && data[0]) {
                             chatRoom = data[0].room;
 
-                            if (data[0].deletedAt != null) {
-                                data[0].setDataValue('createdAt', micro.now());
-                                data[0].setDataValue('deletedAt', null);
-                                return data[0].save({paranoid: false}).then(function () {
-                                    chatRoom.setDataValue('updatedAt', micro.now());
-                                    return chatRoom.save({paranoid: false});
-                                });
-                            } else {
-                                return true;
-                            }
+                            data[0].setDataValue('createdAt', micro.now());
+                            data[0].setDataValue('deletedAt', null);
+                            return data[0].save({paranoid: false}).then(function () {
+                                chatRoom.setDataValue('updatedAt', micro.now());
+                                return chatRoom.save({paranoid: false});
+                            });
 
                         } else {
 
