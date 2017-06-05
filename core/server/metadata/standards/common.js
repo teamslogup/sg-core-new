@@ -429,6 +429,8 @@ var standards = {
         "isUseAnimation": true
     },
     "chat": {
+        "noSessionChatPort": 5001,
+        "noSessionChatUrl": "http://localhost:5001",
         "userRoomPrefix": "u",
         "clientRequestJoinRoom": "clientRequestJoinRoom",
         "clientCreateRoom": "clientCreateRoom",

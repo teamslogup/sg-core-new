@@ -77,11 +77,20 @@ module.exports = {
         if (cluster.isMaster) {
             workers = [];
 
-            console.log("isMaster process running, cpu length:", os.cpus().length);
-            
-            os.cpus().forEach(function (cpu) {
+            var realCpuLength;
+            var customCpuLength = config.app.maxClusterLength;
+            var cpuLength = os.cpus().length;
+            if (customCpuLength == 0 || cpuLength < customCpuLength) {
+                realCpuLength = cpuLength;
+            } else {
+                realCpuLength = customCpuLength;
+            }
+
+            console.log("isMaster process running, cpu length:", realCpuLength);
+
+            for (var i = 0; i < realCpuLength; ++i){
                 workers.push(initWorker(cluster.fork()));
-            });
+            }
     
             cluster.on("exit", function (worker, code, signal) {
                 // console.log("exit worker pid : " + worker.process.pid);
@@ -96,6 +105,9 @@ module.exports = {
                 } else if (code == 100) {
                     console.log("rest workers length:", workers.length);
                     if (workers.length > 0) closeWorker(workers[0]);
+                } else {
+                    console.log("unexpected exit");
+                    workers.push(initWorker(cluster.fork()));
                 }
                 
             });

@@ -35,7 +35,7 @@
             <div class="sg-image-manage-main-list">
                 <div class="sg-image-manage-main-list-item" ng-repeat="image in imageList track by $index">
                     <div class="sg-image-manage-main-list-item-body"
-                         ng-style="{'background-image': 'url('+ (image | imageUrl) +')'}" ng-click="showImageDetail(image)">
+                         ng-style="{'background-image': 'url('+ (image | imageUrl : 'l') +')'}" ng-click="showImageDetail(image)">
                         <div class="sg-image-manage-main-list-item-unauthorized-overlay" ng-if="!image.authorized">
 
                         </div>

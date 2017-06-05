@@ -9,6 +9,7 @@ rootDirName = rootDirName[rootDirName.length - 1];
 
 var Logger = require('sg-logger');
 var logger = new Logger(__filename);
+var maxLength = 1000;
 
 module.exports = function (config) {
     var AWS = require('aws-sdk');
@@ -26,6 +27,7 @@ module.exports = function (config) {
 
     function removeS3Files (req, res, next) {
         if (req.files) {
+            var bucket = config.aws.bucketName;
             var files = req.files;
 
             var funcs = [];

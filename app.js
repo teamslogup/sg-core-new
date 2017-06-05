@@ -6,6 +6,7 @@ process.on('uncaughtException', function (err) {
 
 var fs = require('fs');
 var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+require('debug-fd-deprecated');
 
 var config = require('./bridge/config/env');
 var express = require('./bridge/config/express');

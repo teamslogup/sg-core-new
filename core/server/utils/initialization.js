@@ -106,5 +106,16 @@ module.exports = {
                 callback(204);
             }
         });
-    }
+    },
+    initNoSessionChatRoomUser: function (callback) {
+        sequelize.models.NoSessionChatRoomUser.destroy({
+            where: {}
+        }).then(function () {
+            return true;
+        }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+            if (isSuccess) {
+                callback(204);
+            }
+        });
+    },
 };

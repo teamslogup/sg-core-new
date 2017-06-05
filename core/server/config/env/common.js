@@ -12,7 +12,8 @@ module.exports = {
         "enumUploadStores": ["local", "s3", "localBucket"],
         "uploadStoreLocal": "local",
         "uploadStoreS3": "s3",
-        "uploadStoreLocalBucket": "localBucket"
+        "uploadStoreLocalBucket": "localBucket",
+        "maxClusterLength": 0
         // "sessionExpiredSeconds": 10
     },
     "db": {
