@@ -51,7 +51,7 @@ module.exports = {
             console.log('email 404');
         }
     },
-    sendSMS: function (phoneNum, title, callback) {
+    sendSMS: function (phoneNum, title, body, callback) {
         if (phoneNum) {
             sendNoti.sms(null, phoneNum, title, body, function (err) {
                 if (err) {

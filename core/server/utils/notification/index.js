@@ -250,7 +250,7 @@ module.exports = {
                     if (sendMethod == NOTIFICATION.sendMethodMms) {
                         notiHelper.sendMMS(user.phoneNum, title, body, file, callback);
                     } else {
-                        notiHelper.sendSMS(user.phoneNum, title, callback);
+                        notiHelper.sendSMS(user.phoneNum, title, body, callback);
                     }
                 }
 
