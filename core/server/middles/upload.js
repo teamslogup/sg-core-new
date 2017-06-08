@@ -459,6 +459,40 @@ module.exports = function (config) {
         };
     };
 
+    Upload.prototype.autoOrient = function () {
+        return function (req, res, next) {
+            if (req.files && req.files.length > 0) {
+                var funcs = [];
+
+                req.files.forEach(function (file) {
+                    (function () {
+                        funcs.push(function (n) {
+                            var filePath = file.path;
+                            gm(filePath).autoOrient().write(filePath, function (err, stdout, stderr, command) {
+                                if (err) return n(err, false);
+                                n(null, true);
+                            });
+                        });
+                    })(file);
+                });
+
+                async.parallel(funcs, function (err, results) {
+                    if (err) {
+                        logger.e(err);
+                        return res.hjson(req, next, 400, {
+                            code: '400_4'
+                        });
+                    } else {
+                        next();
+                    }
+
+                });
+            } else {
+                next();
+            }
+        };
+    };
+
     Upload.prototype.normalizeImages = function () {
         return function (req, res, next) {
             if (req.files && req.files.length > 0) {
