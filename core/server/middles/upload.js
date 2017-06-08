@@ -469,7 +469,10 @@ module.exports = function (config) {
                         funcs.push(function (n) {
                             var filePath = file.path;
                             gm(filePath).autoOrient().write(filePath, function (err, stdout, stderr, command) {
-                                if (err) return n(err, false);
+                                if (err) {
+                                    console.error("autoOrient", err);
+                                    return n(err, false);
+                                }
                                 n(null, true);
                             });
                         });
