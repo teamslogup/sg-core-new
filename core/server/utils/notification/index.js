@@ -53,43 +53,43 @@ module.exports = {
                             var sendTypes = notification.sendTypes;
 
                             for (var sendType in sendTypes) {
-
-                                if (!_this.isNotificationSwitchOn(user, notification.key, sendType)) {
-                                    continue;
-                                }
-
-                                _this.replaceMagicKey(sendTypes[sendType], payload, user.language, function (isSuccess, title, body) {
-
-                                    payload['key'] = notification.key;
-
-                                    if (isSuccess) {
-
-                                        _this.getNewNotificationCount(user.id, function (isSuccess, result) {
-
-                                            var badge = result.newNotificationCount + result.newChatMessageCount;
-                                            payload['newNotificationCount'] = result.newNotificationCount;
-                                            payload['newChatMessageCount'] = result.newChatMessageCount;
-
-                                            if (isSuccess) {
-                                                _this.send(user, sendType, title, body, badge, payload, undefined, undefined, function (status, data) {
-                                                    if (status == 204) {
-                                                        if (callback) callback(status, data);
-                                                    } else {
-                                                        if (callback) callback(status, data);
-                                                    }
-                                                });
-                                            } else {
-                                                if (callback)callback(204);
-                                            }
-
-                                        });
-
-                                    } else {
-                                        if (callback)callback(204);
+                                (function (sendType) {
+                                    if (!_this.isNotificationSwitchOn(user, notification.key, sendType)) {
+                                        return false;
                                     }
 
-                                });
+                                    _this.replaceMagicKey(sendTypes[sendType], payload, user.language, function (isSuccess, title, body) {
 
+                                        payload['key'] = notification.key;
+
+                                        if (isSuccess) {
+
+                                            _this.getNewNotificationCount(user.id, function (isSuccess, result) {
+
+                                                var badge = result.newNotificationCount + result.newChatMessageCount;
+                                                payload['newNotificationCount'] = result.newNotificationCount;
+                                                payload['newChatMessageCount'] = result.newChatMessageCount;
+
+                                                if (isSuccess) {
+                                                    _this.send(user, sendType, title, body, badge, payload, undefined, undefined, function (status, data) {
+                                                        if (status == 204) {
+                                                            if (callback) callback(status, data);
+                                                        } else {
+                                                            if (callback) callback(status, data);
+                                                        }
+                                                    });
+                                                } else {
+                                                    if (callback)callback(204);
+                                                }
+
+                                            });
+
+                                        } else {
+                                            if (callback)callback(204);
+                                        }
+
+                                    });
+                                })(sendType);
                             }
 
                         } else {
