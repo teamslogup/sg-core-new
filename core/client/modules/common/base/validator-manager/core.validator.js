@@ -133,5 +133,17 @@ export default function validator() {
 
     };
 
+    Validator.prototype.isMobilePhoneNum = function () {
+        this.validateMethod = function () {
+            return function (value) {
+
+                var reg = new RegExp("^[+]{1}821[016789]{1}[0-9]{7,8}$");
+                return reg.test(value);
+
+            }(this.value);
+        }
+
+    };
+
     return Validator;
 }
