@@ -12,6 +12,8 @@ import coreBaseUploadResources from './upload-manager/core.base.upload.constant'
 import Upload from './upload-manager/core.base.upload.model';
 import Image from './upload-manager/core.base.image.model';
 import uploadManager from './upload-manager/core.base.upload-manager';
+import validateManager from './validator-manager/core.validator-manager';
+import Validator from './validator-manager/core.validator';
 
 import Focus from './alert-dialog/services/core.focus.service';
 
@@ -20,6 +22,7 @@ import LoadingHandlerCtrl from './loading-handler/controllers/core.loading-handl
 
 import alertDialogService from './alert-dialog/services/core.alert-dialog.service';
 import AlertDialogCtrl from './alert-dialog/controllers/core.alert-dialog.controller';
+
 
 import 'angularjs-datepicker';
 
@@ -42,6 +45,8 @@ export default angular.module("core.base", [
     .service('uploadManager', uploadManager)
     .service('dialogHandler', alertDialogService)
     .service('loadingHandler', loadingHandlerService)
+    .service('validateManager', validateManager)
+    .factory('Validator', Validator)
     .controller('AlertDialogCtrl', AlertDialogCtrl)
     .controller('LoadingHandlerCtrl', LoadingHandlerCtrl)
     .name;

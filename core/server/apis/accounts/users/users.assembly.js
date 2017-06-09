@@ -128,8 +128,8 @@ var api = {
                 ],
                 essential: [
                     'type',
-                    'uid',
-                    'secret'
+                    {'uid': '400_80'},
+                    {'secret': '400_81'}
                 ],
                 resettable: [],
                 explains: {

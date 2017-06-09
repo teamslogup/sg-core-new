@@ -4,7 +4,7 @@ $alert-dialog-cancel-btn-color: #6f8690;
 $alert-dialog-cancel-btn-hover-color: #3C535D;
 
 $mobile-max-width: 425px;
-$sg-alert-dialog-container-top: 200px;
+$sg-alert-dialog-container-top: 20px;
 
 .sg-alert-dialog {
     z-index: 2000;
@@ -44,10 +44,10 @@ $sg-alert-dialog-container-top: 200px;
             -moz-animation-name: alertDialogAnimation;
             -o-animation-name: alertDialogAnimation;
 
-            animation-duration: .4s;
-            -webkit-animation-duration: .4s;
-            -moz-animation-duration: .4s;
-            -o-animation-duration: .4s;
+            animation-duration: .3s;
+            -webkit-animation-duration: .3s;
+            -moz-animation-duration: .3s;
+            -o-animation-duration: .3s;
 
             animation-timing-function: ease-in-out;
             -webkit-animation-timing-function: ease-in-out;
