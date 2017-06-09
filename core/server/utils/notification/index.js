@@ -200,7 +200,7 @@ module.exports = {
 
                     for (var key in payload) {
                         if (payload.hasOwnProperty(key)) {
-                            body = body.replace(':' + key + ':', "'" + payload[key] + "'");
+                            body = body.replace(':' + key + ':', payload[key]);
                         }
                     }
 
