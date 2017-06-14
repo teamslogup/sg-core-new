@@ -281,6 +281,7 @@
   "startDate": "시작일",
   "endDate": "종료일",
   "aid": "아이디",
-  "period": "기간"
+  "period": "기간",
+  "shouldBeAdmin": "관리자 계정만 사용이 가능합니다."
 }
 
