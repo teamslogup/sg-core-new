@@ -1428,6 +1428,20 @@ module.exports = {
                     }).then(function (data) {
                         usersStatus.loginToday = data[0].count;
 
+                        var query = 'SELECT count(day) as count FROM (SELECT ' +
+                            'YEAR(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as year, ' +
+                            'MONTH(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as month, ' +
+                            'DAY(CONVERT_TZ(deletedAt,"+00:00", "' + timeZoneOffset + '")) as day FROM Users) as Users ' +
+                            'WHERE year = ' + year + ' AND month = ' + month + ' AND day = ' + day;
+
+                        return sequelize.query(query, {
+                            type: sequelize.QueryTypes.SELECT,
+                            raw: true
+                        });
+
+                    }).then(function (data) {
+                        usersStatus.deletedUserToday = data[0].count;
+
                         return true;
                     });
 
