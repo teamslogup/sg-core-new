@@ -1,4 +1,3 @@
-
 module.exports = function () {
     return function (aParameterKeys, aEssentialKeys, aResetAvailableKeys) {
 
@@ -26,7 +25,7 @@ module.exports = function () {
                 return res.hjson(req, next, 500);
             }
 
-            var essencialDataCnt = 0;
+            var essentialDataCnt = 0;
             var dataCnt = 0;
 
             // 키마다 양옆 여백 제거.
@@ -63,7 +62,7 @@ module.exports = function () {
                             return res.hjson(req, next, 400, {
                                 code: '400_16',
                                 data: data,
-                                essencialData: aEssentialKeys
+                                essentialData: aEssentialKeys
                             });
 
                         }
@@ -74,15 +73,16 @@ module.exports = function () {
             var len = 0;
             for (var i = 0, len = aParameterKeys.length; i < len; ++i) {
                 if (data[aParameterKeys[i]]) {
-                    essencialDataCnt++;
+                    essentialDataCnt++;
                 }
             }
 
             // 요청 쿼리의 숫자가 정해진 데이터의 숫자보다 많을 때 (필요없는 쿼리문이 껴잇을경우) 예외처리.
-            if (essencialDataCnt < dataCnt) {
+            if (essentialDataCnt < dataCnt) {
                 bSuccess = false;
                 if (req.files && req.files.length && req.removeFiles) {
-                    req.removeFiles(function () {});
+                    req.removeFiles(function () {
+                    });
                 }
                 return res.hjson(req, next, 400, {
                     code: '400_15'
@@ -91,15 +91,39 @@ module.exports = function () {
 
             // 필수 파라미터가 없을때 처리.
             for (var i = 0; i < aEssentialKeys.length; ++i) {
-                if (!data[aEssentialKeys[i]]) {
+
+                var exist = true;
+                var customErrorCode;
+
+                if (aEssentialKeys[i] instanceof Object) {
+                    var keys = Object.keys(aEssentialKeys[i]);
+
+                    if (!data[keys[0]]) {
+                        exist = false;
+
+                        if (keys.length > 0) {
+                            customErrorCode = aEssentialKeys[i][keys[0]];
+                        }
+                    }
+
+                } else {
+
+                    if (!data[aEssentialKeys[i]]) {
+                        exist = false;
+                    }
+                }
+
+
+                if (!exist) {
                     bSuccess = false;
                     if (req.files && req.files.length && req.removeFiles) {
-                        req.removeFiles(function () {});
+                        req.removeFiles(function () {
+                        });
                     }
+
                     return res.hjson(req, next, 400, {
-                        code: '400_14'
+                        code: customErrorCode || '400_14'
                     });
-                    break;
                 }
             }
             if (bSuccess) {

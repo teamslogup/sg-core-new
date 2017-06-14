@@ -10,6 +10,7 @@ import Pass from './services/core.session.pass.model';
 import SenderEmail from './services/core.session.sender-email.model';
 import sessionManager from './services/core.session.manager';
 import oauthManager from './services/core.session.oauth.manager';
+import sessionValidationManager from './services/core.session.validate.manager';
 
 export default angular.module("core.session", [
     coreBaseModule,
@@ -24,4 +25,5 @@ export default angular.module("core.session", [
     .factory("SenderEmail", SenderEmail)
     .service("sessionManager", sessionManager)
     .service("oauthManager", oauthManager)
+    .service("sessionValidationManager", sessionValidationManager)
     .name;

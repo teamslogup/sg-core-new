@@ -143,6 +143,7 @@ var api = {
                 apiCreator.add(req.middles.upload.generateFolder(FILE.folderImages));
                 apiCreator.add(req.middles.upload.checkFileFormat(FILE.enumValidImageExtensions));
                 apiCreator.add(req.middles.upload.checkFileCount(FILE.minCount, FILE.maxCount));
+                apiCreator.add(req.middles.upload.autoOrient());
                 apiCreator.add(req.middles.upload.createPrefixName());
                 apiCreator.add(req.middles.upload.createResizeOptions());
                 apiCreator.add(req.middles.upload.normalizeImages());

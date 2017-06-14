@@ -43,7 +43,7 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
             $rootScope.$broadcast("core.alert-dialog.callback", {
                 type: '401'
             });
-        } else if(status == 403 && data && data.code == "403_20") {
+        } else if (status == 403 && data && data.code == "403_20") {
             $rootScope.$broadcast("core.alert-dialog.callback", {
                 type: '403_20'
             });
@@ -99,8 +99,13 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
                 }
                 if (essentialKeys) {
                     for (var k in essentialKeyHash) {
-                        if (data[k] === undefined) {
-                            throw('400_14');
+                        if (data[k] === undefined || data[k] == '' || data[k] === null) {
+                            var errorCode = essentialKeyHash[k];
+                            if (essentialKeyHash[k] == true) {
+                                throw('400_14');
+                            } else {
+                                throw(errorCode);
+                            }
                         }
                     }
                 }
@@ -115,11 +120,19 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
         }
     };
 
-    function makeHash (arrayOrObject, failCallback) {
+    function makeHash(arrayOrObject, failCallback) {
         var returnHash = {};
         if (arrayOrObject instanceof Array) {
-            for (var i=0; i<arrayOrObject.length; i++) {
-                returnHash[arrayOrObject[i]] = true;
+            for (var i = 0; i < arrayOrObject.length; i++) {
+
+                if (arrayOrObject[i] instanceof Object) {
+                    for (var key in arrayOrObject[i]) {
+                        returnHash[key] = arrayOrObject[i][key];
+                    }
+                } else {
+                    returnHash[arrayOrObject[i]] = true;
+                }
+
             }
         } else if (arrayOrObject instanceof Object) {
             for (var k in arrayOrObject) {

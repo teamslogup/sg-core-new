@@ -28,7 +28,7 @@ module.exports = {
 
     },
     sendEmail: function (email, title, body, callback) {
-        if (email) {
+        if (sendNoti.email && email) {
             sendNoti.email(email, title, "Notification", {
                 subject: title,
                 dir: appDir,
@@ -51,33 +51,33 @@ module.exports = {
             console.log('email 404');
         }
     },
-    sendSMS: function (phoneNum, title, callback) {
-        if (phoneNum) {
+    sendSMS: function (phoneNum, title, body, callback) {
+        if (sendNoti.sms && phoneNum) {
             sendNoti.sms(null, phoneNum, title, body, function (err) {
                 if (err) {
-                    if(callback) callback(err.status, phoneErrorRefiner(err));
+                    if (callback) callback(err.status, phoneErrorRefiner(err));
                 } else {
-                    if(callback) callback(204);
+                    if (callback) callback(204);
                 }
             });
 
         } else {
-            if(callback) callback(404);
+            if (callback) callback(404);
         }
 
     },
     sendMMS: function (phoneNum, title, body, file, callback) {
-        if (phoneNum) {
+        if (sendNoti.mms && phoneNum) {
             sendNoti.mms(null, phoneNum, title, body, file, function (err) {
                 if (err) {
-                    if(callback) callback(err.status, phoneErrorRefiner(err));
+                    if (callback) callback(err.status, phoneErrorRefiner(err));
                 } else {
-                    if(callback) callback(204);
+                    if (callback) callback(204);
                 }
             });
 
         } else {
-            if(callback) callback(404);
+            if (callback) callback(404);
         }
 
     }

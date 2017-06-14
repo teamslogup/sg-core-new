@@ -87,7 +87,7 @@ var api = {
 
             var params = {
                 acceptable: ['type', 'uid', 'secret', 'platform', 'device', 'browser', 'version', 'token'],
-                essential: ['type', 'uid', 'secret'],
+                essential: ['type', {'uid': '400_80'}, {'secret': '400_81'}],
                 resettable: [],
                 explains: {
                     'type': '로그인 방식 ' + STD.user.signUpTypeEmail + ", " + STD.user.signUpTypePhone + ", " + STD.user.signUpTypePhoneId + ", " + STD.user.signUpTypeNormalId + ", " + STD.user.signUpTypePhoneEmail,
