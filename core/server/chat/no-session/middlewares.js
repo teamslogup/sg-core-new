@@ -101,7 +101,8 @@ var middles = {
                 socketId: socket.id,
                 name: payload.name,
                 roomId: roomId,
-                message: payload.message
+                message: payload.message,
+                type: 'normal'
             };
 
             if (payload.admin) {
