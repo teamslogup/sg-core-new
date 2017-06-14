@@ -89,6 +89,9 @@ module.exports = {
                         if (data) {
                             chatHistory = data;
                             return sequelize.models.NoSessionChatHistory.findAll({
+                                where: {
+                                    type: 'normal'
+                                },
                                 limit: 20,
                                 order: [['createdAt', 'DESC']],
                                 transaction: t
