@@ -90,7 +90,11 @@ module.exports = {
                             chatHistory = data;
                             return sequelize.models.NoSessionChatHistory.findAll({
                                 where: {
-                                    type: 'normal'
+                                    $and: [{
+                                        type: 'normal'
+                                    }, {
+                                        type: 'admin'
+                                    }]
                                 },
                                 limit: 20,
                                 order: [['createdAt', 'DESC']],
