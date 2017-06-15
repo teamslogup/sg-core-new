@@ -90,7 +90,7 @@ module.exports = {
                             chatHistory = data;
                             return sequelize.models.NoSessionChatHistory.findAll({
                                 where: {
-                                    $and: [{
+                                    $or: [{
                                         type: 'normal'
                                     }, {
                                         type: 'admin'
