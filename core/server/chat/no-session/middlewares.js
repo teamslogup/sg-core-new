@@ -112,8 +112,8 @@ var middles = {
             sequelize.models.NoSessionChatHistory.createNoSessionChatHistory(body, function (status, data) {
                 if (status == 200) {
 
-                    socket.emit(STD.chat.serverCheckMessage, body);
-                    socket.broadcast.to(roomId).emit(STD.chat.serverReceiveMessage, body);
+                    socket.emit(STD.chat.serverCheckMessage, data);
+                    socket.broadcast.to(roomId).emit(STD.chat.serverReceiveMessage, data);
 
                 } else {
                     return socket.emit(STD.chat.serverRequestFail, status, data);
