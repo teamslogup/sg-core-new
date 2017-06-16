@@ -11,6 +11,7 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 //noinspection JSAnnotator
 module.exports = {
@@ -31,7 +32,7 @@ module.exports = {
             allowNull: false
         },
         'title': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'body': {
@@ -74,15 +75,15 @@ module.exports = {
             'defaultValue': true
         },
         'country': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'ip': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'img': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         }
     },

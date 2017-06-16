@@ -15,55 +15,56 @@ var UAParser = require('ua-parser-js');
 
 var STD = require('../../../../bridge/metadata/standards');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     'fields': {
         'domain': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'ip': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'browser': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'version': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'deviceModel': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'deviceType': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'deviceVendor': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'engineName': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'engineVersion': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'osName': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'osVersion': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'userAgent': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'count': {

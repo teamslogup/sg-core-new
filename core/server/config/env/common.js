@@ -25,7 +25,7 @@ module.exports = {
         "logging": false,
         "force": false,
         "charset": "utf8mb4",
-        "collate": "utf8mb4_general_ci",
+        "collate": "utf8mb4_general_ci"
     },
     "flag": {
         "isUseHttps": false,

@@ -21,6 +21,7 @@ var micro = require('microtime-nodejs');
 
 var coreUtils = require('../../utils');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {

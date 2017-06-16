@@ -14,28 +14,29 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 var micro = require('microtime-nodejs');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
         'type': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true,
             'defaultValue': 'normal'
         },
         'socketId': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'name': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'roomId': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'message': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'createdAt': {

@@ -18,6 +18,7 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     'fields': { // if app have some profile items, we have to insert sequelize model in app just including field without options.

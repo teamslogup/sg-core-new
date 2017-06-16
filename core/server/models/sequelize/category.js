@@ -13,6 +13,7 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
@@ -25,7 +26,7 @@ module.exports = {
             allowNull: false
         },
         'name': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'isVisible': {

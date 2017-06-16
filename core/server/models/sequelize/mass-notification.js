@@ -10,6 +10,7 @@ var NOTIFICATIONS = require('../../../../bridge/metadata/notifications');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
@@ -44,11 +45,11 @@ module.exports = {
             'comment': "formApplication form일때 notification-box에 저장할 지 여부"
         },
         'notificationName': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'messageTitle': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'messageBody': {
@@ -86,7 +87,7 @@ module.exports = {
             'allowNull': false
         },
         'errorCode': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'createdAt': {

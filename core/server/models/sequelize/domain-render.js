@@ -12,11 +12,12 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var PAGE_UTIL = require('../../utils/page');
 var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
         'domain': {
-            'type': Sequelize.STRING(191),
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false,
             'unique': true
         },
