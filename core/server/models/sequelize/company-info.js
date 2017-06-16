@@ -34,7 +34,7 @@ module.exports = {
             'allowNull': false
         },
         'address': {
-            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
+            'type': Sequelize.STRING(1024),
             'allowNull': false
         },
         'communicationsRetailReport': {

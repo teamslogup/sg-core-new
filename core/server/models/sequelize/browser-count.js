@@ -64,7 +64,7 @@ module.exports = {
             'allowNull': true
         },
         'userAgent': {
-            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
+            'type': Sequelize.TEXT('long'),
             'allowNull': true
         },
         'count': {
