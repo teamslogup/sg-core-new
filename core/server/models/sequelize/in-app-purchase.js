@@ -13,19 +13,20 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var coreUtils = require('../../utils');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
         'status': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'name': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'price': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'receipt': {
@@ -56,7 +57,7 @@ module.exports = {
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,

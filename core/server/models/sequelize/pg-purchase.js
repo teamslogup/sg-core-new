@@ -15,6 +15,7 @@ var STD = require('../../../../bridge/metadata/standards');
 var coreUtils = require('../../utils');
 
 var micro = require('microtime-nodejs');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
@@ -25,19 +26,19 @@ module.exports = {
             'allowNull': false
         },
         'pgType': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'status': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'orderNo': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'transactionNo': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'price': {
@@ -45,15 +46,15 @@ module.exports = {
             'allowNull': true
         },
         'userName': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'productName': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'email': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'payload': {
@@ -78,7 +79,7 @@ module.exports = {
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,

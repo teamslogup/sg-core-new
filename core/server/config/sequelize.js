@@ -25,8 +25,8 @@ var connectObject = {
         underscored: false,
         freezeTableName: false,
         syncOnAssociation: true,
-        charset: 'utf8mb4',
-        collate: 'utf8_general_ci',
+        charset: config.db.charset,
+        collate: config.db.collate,
         timestamps: true
     }
 };

@@ -9,14 +9,16 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+
 module.exports = {
     fields: {
         'slug': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'skin': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'roleRead': {
@@ -47,7 +49,7 @@ module.exports = {
         }
     },
     options: {
-        'charset': 'utf8',
+        'charset': config.db.charset,
         indexes: [{
             unique: true,
             name: 'slug',

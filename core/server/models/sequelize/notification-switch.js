@@ -8,6 +8,7 @@ var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
@@ -19,7 +20,7 @@ module.exports = {
             allowNull: false
         },
         'key': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'sendType': {
@@ -43,7 +44,7 @@ module.exports = {
             fields: ['userId', 'key', 'sendType']
         }],
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'createdAt': false,
         'updatedAt': false,
         'paranoid': false,

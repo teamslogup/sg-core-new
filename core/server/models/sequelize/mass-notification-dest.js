@@ -9,16 +9,17 @@ var STD = require('../../../../bridge/metadata/standards');
 var NOTIFICATIONS = require('../../../../bridge/metadata/notifications');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
         'dest': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'unique': true,
             'allowNull': false
         },
         'platform': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         }
     },
@@ -28,7 +29,7 @@ module.exports = {
             fields: ['dest']
         }],
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,

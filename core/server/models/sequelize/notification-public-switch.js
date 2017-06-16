@@ -14,6 +14,7 @@ var STD = META.std;
 
 var NOTIFICATIONS_PUBLIC = META.notifications.public;
 var ENUM_NOTIFICATIONS_PUBLIC = Object.keys(NOTIFICATIONS_PUBLIC);
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
@@ -50,7 +51,7 @@ module.exports = {
             fields: ['userId', 'key', 'sendType']
         }],
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'createdAt': false,
         'updatedAt': false,
         'paranoid': false,

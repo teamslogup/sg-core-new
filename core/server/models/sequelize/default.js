@@ -18,6 +18,7 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     'fields': {
@@ -27,45 +28,45 @@ module.exports = {
             'defaultValue': false
         },
         'company': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'address': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'tel1': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'tel2': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'fax': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'email': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'chef': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'companyNumber': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'communicationSellNumber': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         }
     },
     'options': {
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,

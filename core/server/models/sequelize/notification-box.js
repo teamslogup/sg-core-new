@@ -8,6 +8,7 @@ var sequelize = require('../../config/sequelize');
 var STD = require('../../../../bridge/metadata/standards');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
@@ -19,11 +20,11 @@ module.exports = {
             allowNull: false
         },
         'key': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'payload': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'view': {
@@ -46,7 +47,7 @@ module.exports = {
     },
     options: {
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true, // deletedAt 추가. delete안함.

@@ -10,6 +10,8 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+
 //noinspection JSAnnotator
 module.exports = {
     fields: {
@@ -29,7 +31,7 @@ module.exports = {
             allowNull: false
         },
         'title': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'body': {
@@ -72,20 +74,20 @@ module.exports = {
             'defaultValue': true
         },
         'country': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'ip': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'img': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         }
     },
     options: {
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),

@@ -17,6 +17,7 @@ var crypto = require('crypto');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
@@ -32,13 +33,13 @@ module.exports = {
             'allowNull': false
         },
         'key': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false,
             'unique': true,
             'comment': '이메일주소 혹은 휴대폰번호가 올 수 있다.'
         },
         'token': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'expiredAt': {
@@ -47,7 +48,7 @@ module.exports = {
         }
     },
     options: {
-        'charset': 'utf8',
+        'charset': config.db.charset,
         indexes: [{
             unique: true,
             fields: ['userId', 'type']

@@ -23,7 +23,9 @@ module.exports = {
         "socketRedis": "",
         "mysql": "mysql://slogup:123123@localhost:3306/core",
         "logging": false,
-        "force": false
+        "force": false,
+        "charset": "utf8mb4",
+        "collate": "utf8mb4_general_ci",
     },
     "flag": {
         "isUseHttps": false,

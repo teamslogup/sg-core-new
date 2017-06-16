@@ -9,6 +9,7 @@ var STD = require('../../../../bridge/metadata/standards');
 var NOTIFICATIONS = require('../../../../bridge/metadata/notifications');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
@@ -43,11 +44,11 @@ module.exports = {
             'comment': "formApplication form일때 notification-box에 저장할 지 여부"
         },
         'notificationName': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'messageTitle': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'messageBody': {
@@ -85,7 +86,7 @@ module.exports = {
             'allowNull': false
         },
         'errorCode': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'createdAt': {
@@ -125,7 +126,7 @@ module.exports = {
             fields: ['errorCode']
         }],
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true, // deletedAt 추가. delete안함.

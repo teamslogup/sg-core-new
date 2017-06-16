@@ -17,44 +17,45 @@ var crypto = require('crypto');
 var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
         'ci': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false,
             'unique': true
         },
         'di': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'transactionNo': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'name': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'birthYear': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'birthMonth': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'birthDay': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'gender': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': true
         },
         'phoneNum': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         }
     },
@@ -63,7 +64,7 @@ module.exports = {
             unique: true,
             fields: ['ci', 'di', 'transactionNo']
         }],
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),

@@ -12,6 +12,8 @@ var Article = require('./article');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+
 module.exports = {
     fields: {
         'boardId': {
@@ -23,7 +25,7 @@ module.exports = {
             allowNull: false
         },
         'name': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false
         },
         'isVisible': {
@@ -33,7 +35,7 @@ module.exports = {
         }
     },
     options: {
-        'charset': 'utf8',
+        'charset': config.db.charset,
         indexes: [{
             unique: true,
             fields: ['boardId', 'name'],

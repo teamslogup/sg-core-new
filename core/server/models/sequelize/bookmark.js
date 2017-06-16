@@ -11,10 +11,12 @@ var Comment = require('./comment');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+
 module.exports = {
     fields: {},
     options: {
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': true,
         'hooks': {},
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),

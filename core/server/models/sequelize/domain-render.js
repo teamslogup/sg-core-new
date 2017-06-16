@@ -11,11 +11,12 @@ var mixin = require('./mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var PAGE_UTIL = require('../../utils/page');
+var config = require('../../../../bridge/config/env');
 
 module.exports = {
     fields: {
         'domain': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(191),
             'allowNull': false,
             'unique': true
         },
@@ -37,7 +38,7 @@ module.exports = {
     },
     options: {
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {
 
         }),
