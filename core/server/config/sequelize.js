@@ -25,18 +25,18 @@ var connectObject = {
         underscored: false,
         freezeTableName: false,
         syncOnAssociation: true,
-        charset: config.db.charset,
-        collate: config.db.collate,
         timestamps: true
+    },
+    dialectOptions: {
+        charset: config.db.charset,
+        collate: config.db.collate
     }
 };
 
 if (dbUrl.hostname == 'localhost') {
-    connectObject.dialectOptions = {
-        socketPath: '/tmp/mysql.sock',
-        supportBigNumbers: true,
-        bigNumberStrings: true
-    }
+    connectObject.dialectOptions.socketPath = '/tmp/mysql.sock';
+    connectObject.dialectOptions.supportBigNumbers = true;
+    connectObject.dialectOptions.bigNumberStrings = true;
 }
 
 if (config.db.logging) {
