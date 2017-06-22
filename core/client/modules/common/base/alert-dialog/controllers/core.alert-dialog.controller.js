@@ -10,6 +10,14 @@ export default function AlertDialogCtrl($scope, dialogHandler, metaManager, Focu
     vm.alertMsg = '';
     vm.isCloseBtnVisible = true;
 
+    $scope.$on('$locationChangeStart', function (event, n, c) {
+
+        if (vm.isDialogVisible == true) {
+            vm.isDialogVisible = false;
+        }
+
+    });
+
     dialogHandler.listen(function (title, body, actionText, isCloseBtnVisible) {
         vm.isDialogVisible = true;
         vm.alertTitle = title;
