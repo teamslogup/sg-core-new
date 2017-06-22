@@ -55,7 +55,6 @@ export default function usersManager(User) {
     function deleteUser(user, callback) {
         user = new User(user);
         user.$remove(function (data, status) {
-            console.log(status, data);
             callback(204, data);
         }, function (data) {
             callback(data.status, data.data);
