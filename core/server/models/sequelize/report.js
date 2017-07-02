@@ -147,6 +147,7 @@ module.exports = {
                     }).then(function (data) {
                         if (data.length > 0) {
                             reports.rows = data;
+                            delete where.createdAt;
                             return sequelize.models.Report.count({
                                 'where': where,
                                 'transaction': t
