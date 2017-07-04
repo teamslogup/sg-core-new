@@ -23,7 +23,7 @@ import LoadingHandlerCtrl from './loading-handler/controllers/core.loading-handl
 import alertDialogService from './alert-dialog/services/core.alert-dialog.service';
 import AlertDialogCtrl from './alert-dialog/controllers/core.alert-dialog.controller';
 
-
+import 'angularjs-datepicker/dist/angular-datepicker.min.css';
 import 'angularjs-datepicker';
 
 export default angular.module("core.base", [
