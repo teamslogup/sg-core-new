@@ -11,8 +11,8 @@ var entry = {};
 
 pages.forEach(function (page) {
     if (page != '.DS_Store') {
-        entry['sg-' + page] = "./app/client/pages/" + page + "/app." + page + ".module.js";
-        entry['sg-' + page + '-core'] = "./app/client/pages/" + page + "/app." + page + "-core.module.js";
+        entry['sg-' + page] = "./app/client/pages/" + page + "/app." + page + ".js";
+        entry['sg-' + page + '-core'] = "./app/client/pages/" + page + "/app." + page + "-core.js";
     }
 });
 
@@ -51,10 +51,7 @@ config.module = {
     }, {
         test: /\.js$/,
         loader: 'babel',
-        exclude: /(node_modules|bower_components)/,
-        query: {
-            presets: ['es2015']
-        }
+        exclude: /(node_modules|bower_components)/
     }, {
         test: /\.(jpg|png|svg)$/,
         loader: 'file?name=public/images/[name].[ext]'

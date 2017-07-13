@@ -2,8 +2,12 @@ var CONFIG = require('../../../bridge/config/env');
 var STD = require('../../../bridge/metadata/standards');
 var sequelize = require('../../../core/server/config/sequelize');
 var errorHandler = require('sg-sequelize-error-handler');
+var config = require("../../../bridge/config/env");
 
 module.exports = {
+    getDBStringLength: function() {
+        return (config.db.charset === "utf8mb4") ? 191 : 255;
+    },
     initialize: function (callback) {
         if (CONFIG.flag.isUseRedis) {
             callback(204);

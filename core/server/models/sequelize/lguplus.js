@@ -15,19 +15,21 @@ var STD = require('../../../../bridge/metadata/standards');
 var coreUtils = require('../../utils');
 
 var micro = require('microtime-nodejs');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
         'status': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'LGD_TID': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_OID': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'LGD_AMOUNT': {
@@ -35,23 +37,23 @@ module.exports = {
             'allowNull': false
         },
         'LGD_BUYER': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'LGD_PRODUCTINFO': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'LGD_BUYEREMAIL': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_TIMESTAMP': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'LGD_CUSTOM_USABLEPAY': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'LGD_CARDACQUIRER': {
@@ -59,19 +61,19 @@ module.exports = {
             'allowNull': true
         },
         'LGD_IFOS': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_MID': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_FINANCENAME': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_PCANCELFLAG': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_FINANCEAUTHNUM': {
@@ -79,11 +81,11 @@ module.exports = {
             'allowNull': true
         },
         'LGD_DELIVERYINFO': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_AFFILIATECODE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_TRANSAMOUNT': {
@@ -95,47 +97,47 @@ module.exports = {
             'allowNull': true
         },
         'LGD_CARDNUM': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_RECEIVERPHONE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_2TR_FLAG': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_DEVICE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_FINANCECODE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_CARDNOINTYN': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_PCANCELSTR': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_IDPKEY': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_BUYERPHONE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_ESCROWYN': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_PAYTYPE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_VANCODE': {
@@ -143,67 +145,67 @@ module.exports = {
             'allowNull': true
         },
         'LGD_EXCHANGERATE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_BUYERSSN': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_CARDINSTALLMONTH': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_PAYDATE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_PRODUCTCODE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_HASHDATA': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_CARDGUBUN1': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_CARDGUBUN2': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_BUYERADDRESS': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_RECEIVER': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_RESPCODE': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_RESPMSG': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_CARDNOINTEREST_YN': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_DISCOUNTUSEYN': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_ISPKEY': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'LGD_DISCOUNTUSEAMOUNT': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'createdAt': {
@@ -224,7 +226,7 @@ module.exports = {
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
             'beforeBulkUpdate': mixin.options.hooks.useIndividualHooks,

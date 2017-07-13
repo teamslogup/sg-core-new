@@ -13,19 +13,21 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var micro = require('microtime-nodejs');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
         'socketId': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'name': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'roomId': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'createdAt': {
@@ -40,7 +42,7 @@ module.exports = {
     options: {
         'timestamps': true,
         'updatedAt': false,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,
@@ -89,6 +91,13 @@ module.exports = {
                         if (data) {
                             chatHistory = data;
                             return sequelize.models.NoSessionChatHistory.findAll({
+                                where: {
+                                    $or: [{
+                                        type: 'normal'
+                                    }, {
+                                        type: 'admin'
+                                    }]
+                                },
                                 limit: 20,
                                 order: [['createdAt', 'DESC']],
                                 transaction: t

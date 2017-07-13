@@ -19,6 +19,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 var UAParser = require('ua-parser-js');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 var loginHistoryTypes = STD.user.enumSignUpTypes.concat(STD.user.enumProviders);
 
@@ -46,32 +48,32 @@ module.exports = {
             'allowNull': false
         },
         'platform': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'device': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'browser': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'version': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'token': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true,
             'unique': true
         },
         'ip': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'session': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false,
             'unique': true
         },
@@ -91,7 +93,7 @@ module.exports = {
         //
         // }],
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,

@@ -12,6 +12,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 var STD = require('../../../../bridge/metadata/standards');
 var ENV = require('../../../../bridge/config/env');
 var socialValidator = require('../../utils/social-validator');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
@@ -29,19 +31,19 @@ module.exports = {
             'allowNull': false
         },
         'uid': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'token': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'salt': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         }
     }, options: {
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         indexes: [{
             unique: true,

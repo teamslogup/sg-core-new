@@ -11,15 +11,17 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var micro = require('microtime-nodejs');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
         'body': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'email': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'authorId': {
@@ -30,11 +32,11 @@ module.exports = {
             allowNull: true
         },
         'nick': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'reply': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         // 'isSolved': {
@@ -61,7 +63,7 @@ module.exports = {
     },
     options: {
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true, // deletedAt 추가. delete안함.
@@ -145,6 +147,7 @@ module.exports = {
                     }).then(function (data) {
                         if (data.length > 0) {
                             reports.rows = data;
+                            delete where.createdAt;
                             return sequelize.models.Report.count({
                                 'where': where,
                                 'transaction': t

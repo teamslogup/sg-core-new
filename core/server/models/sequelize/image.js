@@ -12,6 +12,9 @@ var mixin = require('../../../../core/server/models/sequelize/mixin');
 var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
+
 module.exports = {
     fields: {
         'authorId': {
@@ -21,15 +24,15 @@ module.exports = {
             'as': 'author'
         },
         'folder': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'dateFolder': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'name': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'authorized': {
@@ -54,7 +57,7 @@ module.exports = {
         'timestamps': true,
         'createdAt': false,
         'updatedAt': false,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': true,
         'hooks': {
             'beforeCreate': mixin.options.hooks.microCreatedAt,

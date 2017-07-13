@@ -19,6 +19,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 var UAParser = require('ua-parser-js');
 
 var STD = require('../../../../bridge/metadata/standards');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     'fields': {
@@ -47,7 +49,7 @@ module.exports = {
             name: 'login_count_year_month_day'
         }],
         'timestamps': false,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'paranoid': false,
         'instanceMethods': Sequelize.Utils._.extend(mixin.options.instanceMethods, {}),
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {

@@ -23,39 +23,40 @@ const profileKey = "profile";
 var STD = require('../../../../bridge/metadata/standards');
 var ENV = require('../../../../bridge/config/env');
 var async = require('async');
-
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
         'aid': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true,
             'unique': true
         },
         'email': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true,
             'unique': true
         },
         'secret': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'salt': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'phoneNum': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true,
             'unique': true
         },
         'name': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'nick': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true,
             'unique': true
         },
@@ -71,7 +72,7 @@ module.exports = {
             'allowNull': true
         },
         'birth': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'isVerifiedEmail': {
@@ -80,11 +81,11 @@ module.exports = {
             'defaultValue': false
         },
         'country': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'language': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'isReviewed': {
@@ -113,11 +114,11 @@ module.exports = {
             'onDelete': 'cascade'
         },
         'di': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'ci': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'createdAt': {
@@ -145,7 +146,7 @@ module.exports = {
             fields: ['nick']
         }],
         'timestamps': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true, // deletedAt 추가. delete안함.

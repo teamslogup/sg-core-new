@@ -14,6 +14,7 @@ var args = require('get-gulp-args')();
 // const mocha = require('gulp-mocha');
 const mocha = require('gulp-spawn-mocha');
 var gulpsync = require('gulp-sync')(gulp);
+var regReact = new RegExp("react", "gi");
 
 var appPackage = require('./app/package.json');
 var corePackage = require('./package.json');
@@ -213,6 +214,15 @@ gulp.task('webpack', ["replace-theme-" + combinedModuleArray[combinedModuleArray
 });
 
 function callPagesBuild(page, afterInjection, url) {
+    var injectionArray = [
+        './dist/sg-' + page + '-template.js',
+        './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
+        './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
+    ];
+    if (regReact.test(fs.readFileSync(path.join(__dirname, "./" + getRootType() + "/client/pages/" + page + "/app." + page + ".js")))) {
+        injectionArray.splice(0, 1);
+    }
+
     gulp.task('template-' + page, [afterInjection], () => {
         return gulp.src(returnNgTemplatePath(page))
             .pipe(htmlmin({collapseWhitespace: true}))
@@ -227,11 +237,7 @@ function callPagesBuild(page, afterInjection, url) {
 
     gulp.task('injection-' + page, ['template-' + page], () => {
         var src = gulp.src(url);
-        var source = gulp.src([
-            './dist/sg-' + page + '-template.js',
-            './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
-            './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
-        ], {read: false});
+        var source = gulp.src(injectionArray, {read: false});
 
         return src.pipe(inject(source))
             .pipe(injectString.replace('sg-' + page + '-core.js', '/sg-' + page + '-core.js?v=' + now))

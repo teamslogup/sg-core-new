@@ -13,6 +13,8 @@ var errorHandler = require('sg-sequelize-error-handler');
 
 var STD = require('../../../../bridge/metadata/standards');
 var micro = require('microtime-nodejs');
+var config = require('../../../../bridge/config/env');
+var coreUtils = require("../../../../core/server/utils");
 
 module.exports = {
     fields: {
@@ -28,11 +30,11 @@ module.exports = {
             'allowNull': false
         },
         'title': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': true
         },
         'language': {
-            'type': Sequelize.STRING,
+            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
             'allowNull': false
         },
         'content': {
@@ -57,7 +59,7 @@ module.exports = {
         'createdAt': false,
         'updatedAt': false,
         'paranoid': true,
-        'charset': 'utf8',
+        'charset': config.db.charset,
         indexes: [{
             unique: true,
             fields: ['title', 'startDate'],
