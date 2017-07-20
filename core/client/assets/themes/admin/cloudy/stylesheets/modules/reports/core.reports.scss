@@ -41,6 +41,7 @@
             padding-bottom: 6px;
 
             .sg-report-manage-main-top {
+                margin-bottom: 12px;
                 @include after-clear();
                 .sg-report-manage-main-top-filter {
                     float: left;
@@ -66,7 +67,7 @@
 
                     position: relative;
                     background-color: white;
-                    margin-top: 12px;
+                    margin-top: 8px;
                     border-radius: 5px;
                     border: solid 1px $pale-grey;
                     cursor: pointer;
