@@ -126,6 +126,7 @@ export default function ImagesCtrl($scope, $rootScope, $filter, imagesManager, d
 
         var body = angular.copy($scope.form);
         body = parseSearchItem(body);
+        body.size = 30;
         loadingHandler.startLoading(LOADING.spinnerKey, 'findImages');
         imagesManager.findImages(body, function (status, data) {
             if (status == 200) {
