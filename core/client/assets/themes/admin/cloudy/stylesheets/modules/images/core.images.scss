@@ -59,17 +59,21 @@
                     position: relative;
                     float: left;
                     overflow: hidden;
-                    width: 233.6px;
+                    width: calc(20% - 6.4px);
                     margin-top: 8px;
-                    border: solid 1px $pale-grey;
                     margin-right: 8px;
+                    border: solid 1px $pale-grey;
                     cursor: pointer;
 
                     @include transition(border, .15s, ease-in-out, 0s);
                     @include hoverItem();
 
+                    &:nth-child(5n){
+                        margin-right: 0;
+                    }
+
                     .sg-image-manage-main-list-item-body {
-                        width: inherit;
+                        width: 100%;
                         height: 200px;
 
                         background-repeat: no-repeat;
@@ -178,10 +182,6 @@
                     //&:hover > .sg-image-manage-main-list-item-top {
                     //    transform: translate3d(0, 0, 0);
                     //}
-
-                    &:nth-child(5n){
-                        margin-right: 0px;
-                    }
 
                 }
 
