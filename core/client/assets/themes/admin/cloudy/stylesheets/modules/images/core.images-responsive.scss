@@ -5,22 +5,28 @@
         .sg-image-manage-container {
             $sg-image-manage-main-list-item-width: 233.6px;
 
-            @media screen and (min-width: $web-min-width) and (max-width: 958.4px + $g-menu-size) {
-                width: 736.8px;
-            }
+            //@media screen and (min-width: $web-min-width) and (max-width: 958.4px + $g-menu-size) {
+            //    width: 736.8px;
+            //}
 
-            @media screen and (min-width: 958.4px + $g-menu-size) and (max-width: $web-container-size + $g-menu-size) {
-                width: 958.4px;
-            }
+            //@media screen and (min-width: 958.4px + $g-menu-size) and (max-width: $web-container-size + $g-menu-size) {
+            //    width: 100%;
+            //    padding: 25px 12px;
+            //}
 
-            @media screen and (min-width: $web-container-size + $g-menu-size) {
-                width: 1200px;
-            }
-            @media screen and (max-width: 736px) {
-                padding: 25px 12px;
+            //@media screen and (min-width: $web-container-size + $g-menu-size) {
+            //    width: 1200px;
+            //}
+
+            //@media screen and (max-width: 736px) {
+            //    padding: 25px 12px;
+            //    width: 100%;
+            //}
+
+            @media screen and (max-width: $web-container-size + $g-menu-size) {
                 width: 100%;
+                padding: 25px 12px;
             }
-
 
             @media screen and (max-width: $web-min-width) {
                 .sg-image-manage-top {

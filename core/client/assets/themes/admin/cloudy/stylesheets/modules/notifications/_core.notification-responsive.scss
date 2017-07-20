@@ -1,10 +1,10 @@
 @import "../../import";
 
-@media screen and (max-width: $web-container-size) {
+@media screen and (max-width: $web-container-size + $g-menu-size) {
     .sg-core-responsive {
         &#sg-notification-manage {
             .sg-notification-manage-container {
-                max-width: none;
+                width: 100%;
                 padding: 25px 12px;
                 .sg-notification-manage-menu {
 

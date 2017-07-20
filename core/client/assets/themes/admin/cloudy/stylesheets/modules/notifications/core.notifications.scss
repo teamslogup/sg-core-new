@@ -5,6 +5,7 @@
     .sg-notification-manage-container {
         margin: auto;
         padding: 50px 12px;
+        width: $web-container-size;
 
         //@media screen and (min-width: $web-container-size) {
         //    max-width: $web-container-size;
@@ -13,10 +14,11 @@
         max-width: $web-container-size;
 
         .sg-notification-manage-title {
-            //@include title-border-bottom();
+            @include title-border-bottom();
         }
 
         .sg-notification-manage-menu {
+            @include title-border-bottom();
             //border-top: 1px solid $divider;
             padding-top: 12px;
             padding-bottom: 12px;
