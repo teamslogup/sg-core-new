@@ -1,9 +1,4 @@
-$alert-dialog-action-btn-color: #1fc9c6;
-$alert-dialog-action-btn-hover-color: #45a19f;
-$alert-dialog-cancel-btn-color: #6f8690;
-$alert-dialog-cancel-btn-hover-color: #3C535D;
-
-$mobile-max-width: 425px;
+@import "../../../../../../../client/assets/stylesheets/import";
 $sg-alert-dialog-container-top: 20px;
 
 .sg-alert-dialog {
@@ -17,10 +12,7 @@ $sg-alert-dialog-container-top: 20px;
     height: 100%;
 
     background-color: rgba(0, 0, 0, 0.5);
-
-    //display: flex;
-    //justify-content: center;
-    //align-items: center;
+    @include center();
 
     .sg-alert-dialog-container {
         position: relative;
@@ -37,34 +29,9 @@ $sg-alert-dialog-container-top: 20px;
         background: white;
         box-shadow: 0 0 29.6px 10.4px rgba(4, 0, 0, 0.1);
 
-        &.sg-alert-dialog-animation {
-            animation-name: alertDialogAnimation;
-            -webkit-animation-name: alertDialogAnimation;
-            -moz-animation-name: alertDialogAnimation;
-            -o-animation-name: alertDialogAnimation;
+        @include animation(alertDialogAnimation, .4s, ease-in-out, 0s, forwards);
 
-            animation-duration: .3s;
-            -webkit-animation-duration: .3s;
-            -moz-animation-duration: .3s;
-            -o-animation-duration: .3s;
-
-            animation-timing-function: ease-in-out;
-            -webkit-animation-timing-function: ease-in-out;
-            -moz-animation-timing-function: ease-in-out;
-            -o-animation-timing-function: ease-in-out;
-
-            animation-delay: 0s;
-            -webkit-animation-delay: 0s;
-            -moz-animation-delay: 0s;
-            -o-animation-delay: 0s;
-
-            animation-fill-mode: forwards;
-            -webkit-animation-fill-mode: forwards;
-            -moz-animation-fill-mode: forwards;
-            -o-animation-fill-mode: forwards;
-        }
-
-        @media screen and (min-width: $mobile-max-width) {
+        @media screen and (min-width: $web-min-width) {
             width: 400px;
             margin-left: auto;
             margin-right: auto;
@@ -72,7 +39,7 @@ $sg-alert-dialog-container-top: 20px;
 
         .sg-alert-dialog-top {
             padding: 16px;
-            background-color: $alert-dialog-action-btn-color;
+            background-color: color(primary, base);
 
             .sg-alert-dialog-top-text {
                 color: white;
@@ -96,9 +63,7 @@ $sg-alert-dialog-container-top: 20px;
                 display: table;
 
                 &:after {
-                    display: block;
-                    content: "";
-                    clear: both;
+                    @include after-clear();
                 }
 
                 button {
@@ -117,24 +82,24 @@ $sg-alert-dialog-container-top: 20px;
                 }
 
                 .sg-alert-dialog-bottom-container-action-btn {
-                    margin-left: 12px;
-                    background-color: $alert-dialog-action-btn-color;
+                    background-color: color(primary, base);
                     &:hover {
-                        background-color: $alert-dialog-action-btn-hover-color;
+                        background-color: color(primary, dark);
                     }
                 }
 
                 .sg-alert-dialog-bottom-container-close-btn {
-                    background-color: $alert-dialog-action-btn-color;
+                    background-color: color(primary, base);
                     &:hover {
-                        background-color: $alert-dialog-action-btn-hover-color;
+                        background-color: color(primary, dark);
                     }
                 }
 
                 .sg-alert-dialog-bottom-container-cancel-btn {
-                    background-color: $alert-dialog-cancel-btn-color;
+                    margin-right: 12px;
+                    background-color: color(grey, base);
                     &:hover {
-                        background-color: $alert-dialog-cancel-btn-hover-color;
+                        background-color: color(grey, dark);
                     }
                 }
             }
