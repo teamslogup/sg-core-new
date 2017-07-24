@@ -210,7 +210,7 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['aid', 'nick', 'name', 'phoneNum', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum'],
+                acceptable: ['aid', 'nick', 'name', 'phoneNum', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role', 'agreedEmail', 'agreedPhoneNum', 'isReviewed'],
                 essential: [],
                 resettable: ['aid', 'nick', 'name', 'phoneNum', 'gender', 'birthYear', 'birthMonth', 'birthDay', 'country', 'language', 'role'],
                 explains: {
@@ -227,7 +227,8 @@ var api = {
                     'language': '언어',
                     'role': '권한수정 (수퍼어드민이상만 가능) ' + META.std.user.enumRoles.join(", "),
                     'agreedEmail': '이메일 수신 동의',
-                    'agreedPhoneNum': '전화번호 수신 동의'
+                    'agreedPhoneNum': '전화번호 수신 동의',
+                    'isReviewed': '앱 리뷰 작성 여부'
                 },
                 defaults: {
                     'id': 1,
