@@ -93,7 +93,6 @@ post.sendSMS = function () {
                 return res.hjson(req, next, 500);
             }
         });
-        next();
     };
 };
 
