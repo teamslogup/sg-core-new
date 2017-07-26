@@ -25,7 +25,7 @@ module.exports = {
             'allowNull': false
         },
         'payload': {
-            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
+            'type': Sequelize.TEXT('long'),
             'allowNull': false
         },
         'view': {
