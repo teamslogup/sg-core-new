@@ -310,32 +310,30 @@ post.sendMassNotification = function () {
                         repeatCount = Math.ceil(total / size);
 
                         query.limit = size;
-
+                        query.offset = 0;
                         var funcs = [];
 
                         for (var i = 0; i < repeatCount; i++) {
+
                             (function (quer) {
                                 funcs.push(function (funcCallback) {
+                                    req.models.User.findAllDataForQuery(quer, function (status, data) {
+                                        console.log(status);
 
-                                    for (var i = 0; i < repeatCount; i++) {
-
-                                        req.models.User.findAllDataForQuery(quer, function (status, data) {
-
-                                            if (status == 200) {
-
-                                                funcCallback(null, data);
-
-                                                quer.where = {
-                                                    id: {
-                                                        $lt: data[data.length - 1].id
-                                                    }
-                                                };
-
-                                            } else {
-                                                funcCallback(status, data);
-                                            }
+                                        data.forEach(function (user) {
+                                            console.log(user.id);
                                         });
-                                    }
+
+                                        if (status == 200) {
+
+                                            query.offset += data.length;
+                                            funcCallback(null, data);
+
+                                        } else {
+                                            funcCallback(status, data);
+                                        }
+                                    });
+
                                 });
                             })(query);
                         }
@@ -349,38 +347,41 @@ post.sendMassNotification = function () {
 
                                 console.log('mass-notification-condition total', total);
 
+                                console.log('results',results);
                                 if (results.length > 0) {
-                                    results[0].forEach(function (user) {
-                                        (function (user) {
-                                            sendNotiFunction.push(function (func2subCallback) {
-                                                req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
-                                                    finishArray.push(user.id);
+                                    results.forEach(function (result) {
+                                        result.forEach(function (user) {
+                                            (function (user) {
+                                                sendNotiFunction.push(function (func2subCallback) {
+                                                    req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
+                                                        finishArray.push(user.id);
 
-                                                    var progress = Math.ceil(finishArray.length / total * 100);
-                                                    // console.log(finishArray.length + '/' + total + '=' + progress);
+                                                        var progress = Math.ceil(finishArray.length / total * 100);
+                                                        // console.log(finishArray.length + '/' + total + '=' + progress);
 
-                                                    if (status == 204) {
+                                                        if (status == 204) {
 
-                                                        func2subCallback(null, {
-                                                            progress: progress,
-                                                            sendCount: ++sendCount
-                                                        });
-                                                    } else if (status == 404) {
+                                                            func2subCallback(null, {
+                                                                progress: progress,
+                                                                sendCount: ++sendCount
+                                                            });
+                                                        } else if (status == 404) {
 
-                                                        func2subCallback(null, {
-                                                            progress: progress,
-                                                            wrongDestinationCount: ++wrongDestinationCount
-                                                        });
-                                                    } else {
+                                                            func2subCallback(null, {
+                                                                progress: progress,
+                                                                wrongDestinationCount: ++wrongDestinationCount
+                                                            });
+                                                        } else {
 
-                                                        func2subCallback(null, {
-                                                            progress: progress,
-                                                            failCount: ++failCount
-                                                        });
-                                                    }
+                                                            func2subCallback(null, {
+                                                                progress: progress,
+                                                                failCount: ++failCount
+                                                            });
+                                                        }
+                                                    });
                                                 });
-                                            });
-                                        })(user);
+                                            })(user);
+                                        });
                                     });
 
                                     async.series(sendNotiFunction, function (errorCode, results) {
