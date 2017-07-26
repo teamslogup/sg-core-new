@@ -340,8 +340,6 @@ post.sendMassNotification = function () {
                                 console.log('mass-notification-condition findAllDataForQuery error', errorCode);
                             } else {
 
-                                console.log('results', results.length);
-
                                 var sendNotiFunction = [];
 
                                 console.log('mass-notification-condition total', total);
