@@ -384,11 +384,13 @@ post.sendMassNotification = function () {
                                                             failCount: failCount
                                                         };
 
-                                                        sequelize.models.MassNotification.update(body, {
-                                                            where: {
-                                                                id: req.massNotification.id
-                                                            }
-                                                        });
+                                                        if (index != 0 && index % 100 == 0) {
+                                                            sequelize.models.MassNotification.update(body, {
+                                                                where: {
+                                                                    id: req.massNotification.id
+                                                                }
+                                                            });
+                                                        }
 
                                                     });
                                                 });
