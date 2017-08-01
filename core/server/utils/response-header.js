@@ -1,4 +1,5 @@
 var CONFIG = require('../../../bridge/config/env');
+var apiTesterExp = new RegExp('/' + CONFIG.app.apiName + '/tester');
 var apiExp = new RegExp('/' + CONFIG.app.apiName + '/');
 var htmlExp = new RegExp('.html');
 var isMaintenance = CONFIG.flag.isMaintenance;
@@ -6,8 +7,7 @@ var isMaintenance = CONFIG.flag.isMaintenance;
 module.exports = {
     apiConnect: function () {
         return function (req, res, next) {
-            if (apiExp.test(req.url) ||
-                apiExp.test(req.originalUrl)) {
+            if (!apiTesterExp.test(req.url) && (apiExp.test(req.url) || apiExp.test(req.originalUrl))) {
                 if (isMaintenance) {
                     return res.hjson(req, next, 503);
                 }

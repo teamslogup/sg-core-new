@@ -37,6 +37,7 @@ var PgPurchase = require('./pg-purchase');
 var BrowserCount = require('./browser-count');
 var NoSessionChatRoomUser = require('./no-session-chat-room-user');
 var NoSessionChatHistory = require('./no-session-chat-history');
+var Maintenance = require('./maintenance');
 
 var models = {
     User: User,
@@ -76,7 +77,8 @@ var models = {
     PgPurchase: PgPurchase,
     BrowserCount: BrowserCount,
     NoSessionChatRoomUser: NoSessionChatRoomUser,
-    NoSessionChatHistory: NoSessionChatHistory
+    NoSessionChatHistory: NoSessionChatHistory,
+    Maintenance: Maintenance
 };
 
 module.exports = models;
