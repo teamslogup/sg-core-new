@@ -9,13 +9,22 @@ module.exports = {
         return function (req, res, next) {
             if (!apiTesterExp.test(req.url) && (apiExp.test(req.url) || apiExp.test(req.originalUrl))) {
                 if (isMaintenance) {
-                    return res.hjson(req, next, 503);
+                    req.models.Maintenance.findMaintenanceByDomain(req.get('host'), function (status, data) {
+                        var maintenance = {};
+                        if (status == 200) {
+                            maintenance = data;
+                        }
+                        return res.hjson(req, next, 503, maintenance);
+                    });
+                } else {
+                    res.set('cache-control', 'no-cache, no-store, must-revalidate');
+                    res.set('pragma',  'no-cache');
+                    res.set('expires', 0);
+                    next();
                 }
-                res.set('cache-control', 'no-cache, no-store, must-revalidate');
-                res.set('pragma',  'no-cache');
-                res.set('expires', 0);
+            } else {
+                next();
             }
-            next();
         };
     },
     htmlConnect: function () {
