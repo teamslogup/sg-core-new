@@ -34,7 +34,8 @@ module.exports = {
         "isDuplicatedLogin": false,
         "isAutoVerifiedEmail": false,
         "isUseChat": false,
-        "isUseBrowserCount": false
+        "isUseBrowserCount": false,
+        "isMaintenance": false
     },
     "facebook": {
         "clientID": "",
