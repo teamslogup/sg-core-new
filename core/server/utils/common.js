@@ -146,8 +146,8 @@ module.exports = {
         return str;
     },
     attachZero: function (data) {
-        if (data && typeof data == "number") {
-            if (data < 10 && data > 0) {
+        if (typeof data == "number") {
+            if (data < 10 && data >= 0) {
                 return '0' + data;
             } else {
                 return data;
