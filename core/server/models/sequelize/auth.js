@@ -148,7 +148,7 @@ module.exports = {
                             if (loadedAuth.expiredAt < new Date()) {
                                 return callback(403);
                             } else {
-                                if (!config.flag.isAutoVerifiedAuthPhone || process.env.NODE_ENV != 'development' || token != '000000') {
+                                if (!config.flag.isAutoVerifiedAuthPhone || process.env.NODE_ENV != 'development' || token != '111111') {
                                     return callback(403);
                                 }
                             }

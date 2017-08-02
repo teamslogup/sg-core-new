@@ -1016,7 +1016,7 @@ module.exports = {
                                     var now = new Date();
                                     // 3. 번호 체크
                                     if (auth.token != authNum) {
-                                        if (config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && authNum == '000000') {
+                                        if (config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && authNum == '111111') {
                                             // 4. 날짜 체크
                                             if (auth.expiredAt < now) {
                                                 createdUser = null;

@@ -34,7 +34,7 @@ post.checkAuth = function () {
         if (req.body.type == USER.authPhoneAdding) {
             where.userId = req.user.id;
         } else {
-            if (req.config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && req.body.token == '000000') {
+            if (req.config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && req.body.token == '111111') {
                 where.key = req.user.phoneNum;
                 freePass = true;
             } else {
