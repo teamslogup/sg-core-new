@@ -145,7 +145,13 @@ module.exports = {
                 }).catch(errorHandler.catchCallback(callback)).done(function() {
                     if (loadedAuth) {
                         if (loadedAuth.token != token || loadedAuth.expiredAt < new Date()) {
-                            return callback(403);
+                            if (loadedAuth.expiredAt < new Date()) {
+                                return callback(403);
+                            } else {
+                                if (!config.flag.isAutoVerifiedAuthPhone || process.env.NODE_ENV != 'development' || token != '000000') {
+                                    return callback(403);
+                                }
+                            }
                         }
                         callback(200, loadedAuth);
                     } else {
