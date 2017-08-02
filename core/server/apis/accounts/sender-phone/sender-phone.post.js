@@ -84,15 +84,19 @@ post.createToken = function () {
 
 post.sendSMS = function () {
     return function (req, res, next) {
-        req.coreUtils.notification.sms.sendAuth(req, req.body.phoneNum, req.authNum, function (status, data) {
-            if (status == 204) {
-                next();
-            } else if (status == 400) {
-                return res.hjson(req, next, 400, {code: '400_7'});
-            } else {
-                return res.hjson(req, next, 500);
-            }
-        });
+        if (!req.config.flag.isAutoVerifiedAuthPhone || process.env.NODE_ENV != 'development') {
+            req.coreUtils.notification.sms.sendAuth(req, req.body.phoneNum, req.authNum, function (status, data) {
+                if (status == 204) {
+                    next();
+                } else if (status == 400) {
+                    return res.hjson(req, next, 400, {code: '400_7'});
+                } else {
+                    return res.hjson(req, next, 500);
+                }
+            });
+        } else {
+            next();
+        }
     };
 };
 

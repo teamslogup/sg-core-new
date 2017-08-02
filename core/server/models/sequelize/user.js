@@ -1013,14 +1013,25 @@ module.exports = {
                                         createdUser = null;
                                         throw new errorHandler.CustomSequelizeError(404);
                                     }
-
+                                    var now = new Date();
                                     // 3. 번호 체크
                                     if (auth.token != authNum) {
-                                        createdUser = null;
-                                        throw new errorHandler.CustomSequelizeError(403);
+                                        if (config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && authNum == '000000') {
+                                            // 4. 날짜 체크
+                                            if (auth.expiredAt < now) {
+                                                createdUser = null;
+                                                throw  new errorHandler.CustomSequelizeError(403);
+                                            } else {
+                                                return auth.destroy({transaction: t}).then(function () {
+
+                                                });
+                                            }
+                                        } else {
+                                            createdUser = null;
+                                            throw new errorHandler.CustomSequelizeError(403);
+                                        }
                                     } else {
                                         // 4. 날짜 체크
-                                        var now = new Date();
                                         if (auth.expiredAt < now) {
                                             createdUser = null;
                                             throw  new errorHandler.CustomSequelizeError(403);
