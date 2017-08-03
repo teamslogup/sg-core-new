@@ -109,7 +109,7 @@ put.sendNotifications = function () {
                                                             reeportBody = body;
                                                         }
 
-                                                        req.coreUtils.notification.all.send(user, key, title, reeportBody, badge, payload, function (status, data) {
+                                                        req.coreUtils.notification.all.send(user, key, title, reeportBody, badge, payload, undefined, undefined, function (status, data) {
                                                             console.log('reportNoti', status);
                                                         });
                                                     }
