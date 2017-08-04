@@ -604,7 +604,10 @@ module.exports = {
                         };
                     }
                 } else if (options.searchItem) {
-                    if (STD.user.enumSearchFields.length > 0) where.$or = [];
+                    if (STD.user.enumSearchFields.length > 0) {
+                        where.$or = [];
+                        countWhere.$or = [];
+                    }
                     for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
                         var body = {};
                         if (STD.user.enumSearchFields[i] == STD.common.id) {
