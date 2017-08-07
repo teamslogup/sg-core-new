@@ -283,6 +283,8 @@
   "aid": "아이디",
   "period": "기간",
   "confirm": "확인",
-  "shouldBeAdmin": "관리자 계정만 사용이 가능합니다."
+  "shouldBeAdmin": "관리자 계정만 사용이 가능합니다.",
+  "address": "주소",
+  "edit": "수정"
 }
 
