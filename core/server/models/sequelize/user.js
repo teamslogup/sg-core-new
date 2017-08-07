@@ -604,7 +604,10 @@ module.exports = {
                         };
                     }
                 } else if (options.searchItem) {
-                    if (STD.user.enumSearchFields.length > 0) where.$or = [];
+                    if (STD.user.enumSearchFields.length > 0) {
+                        where.$or = [];
+                        countWhere.$or = [];
+                    }
                     for (var i = 0; i < STD.user.enumSearchFields.length; i++) {
                         var body = {};
                         if (STD.user.enumSearchFields[i] == STD.common.id) {
@@ -1013,14 +1016,25 @@ module.exports = {
                                         createdUser = null;
                                         throw new errorHandler.CustomSequelizeError(404);
                                     }
-
+                                    var now = new Date();
                                     // 3. 번호 체크
                                     if (auth.token != authNum) {
-                                        createdUser = null;
-                                        throw new errorHandler.CustomSequelizeError(403);
+                                        if (config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && authNum == '111111') {
+                                            // 4. 날짜 체크
+                                            if (auth.expiredAt < now) {
+                                                createdUser = null;
+                                                throw  new errorHandler.CustomSequelizeError(403);
+                                            } else {
+                                                return auth.destroy({transaction: t}).then(function () {
+
+                                                });
+                                            }
+                                        } else {
+                                            createdUser = null;
+                                            throw new errorHandler.CustomSequelizeError(403);
+                                        }
                                     } else {
                                         // 4. 날짜 체크
-                                        var now = new Date();
                                         if (auth.expiredAt < now) {
                                             createdUser = null;
                                             throw  new errorHandler.CustomSequelizeError(403);

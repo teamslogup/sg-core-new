@@ -36,7 +36,7 @@ module.exports = {
             'allowNull': false
         },
         'message': {
-            'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
+            'type': Sequelize.TEXT('long'),
             'allowNull': true
         },
         'createdAt': {

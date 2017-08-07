@@ -26,6 +26,7 @@ post.checkAuth = function () {
     return function (req, res, next) {
 
         var USER = req.meta.std.user;
+        var freePass = false;
         req.loadedAuth = null;
         var where = {
             type: req.body.type
@@ -33,7 +34,12 @@ post.checkAuth = function () {
         if (req.body.type == USER.authPhoneAdding) {
             where.userId = req.user.id;
         } else {
-            where.token = req.body.token;
+            if (req.config.flag.isAutoVerifiedAuthPhone && process.env.NODE_ENV == 'development' && req.body.token == '111111') {
+                where.key = req.user.phoneNum;
+                freePass = true;
+            } else {
+                where.token = req.body.token;
+            }
         }
 
         req.authWhere = where;
@@ -42,17 +48,22 @@ post.checkAuth = function () {
         }).then(function (auth) {
             req.loadedAuth = auth;
         }).catch(req.sequeCatch(req, res, next)).done(function () {
-            if (!req.loadedAuth) return res.hjson(req, next, 400, {
-                code: '400_13'
-            });
-            else {
+            if (!req.loadedAuth) {
+                return res.hjson(req, next, 400, {
+                    code: '400_13'
+                });
+            } else {
                 if (req.loadedAuth.token == req.body.token && req.loadedAuth.expiredAt >= new Date()) {
                     next();
                 } else {
                     if (req.loadedAuth.expiredAt < new Date()) {
                         return res.hjson(req, next, 403, {code: '403_4'});
                     } else {
-                        return res.hjson(req, next, 403, {code: '403_2'});
+                        if (freePass) {
+                            next();
+                        } else {
+                            return res.hjson(req, next, 403, {code: '403_2'});
+                        }
                     }
                 }
             }

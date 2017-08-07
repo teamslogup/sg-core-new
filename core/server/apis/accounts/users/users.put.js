@@ -77,6 +77,14 @@ put.validate = function () {
             req.check('agreedEmail', '400_20').isBoolean();
             req.sanitize('agreedEmail').toBoolean();
         }
+        if (req.body.agreedPhoneNum !== undefined) {
+            req.check('agreedPhoneNum', '400_20').isBoolean();
+            req.sanitize('agreedPhoneNum').toBoolean();
+        }
+        if (req.body.isReviewed !== undefined) {
+            req.check('isReviewed', '400_20').isBoolean();
+            req.sanitize('isReviewed').toBoolean();
+        }
         if (req.body.name !== undefined && req.body.name !== MAGIC.name) {
             isEmpty = true;
             req.check('name', '400_8').len(USER.minNameLength, USER.maxNameLength);
@@ -135,6 +143,8 @@ put.dataSet = function () {
         if (req.body.website !== undefined) update.website = req.body.website;
         if (req.body.role !== undefined) update.role = req.body.role;
         if (req.body.agreedEmail !== undefined) update.agreedEmail = req.body.agreedEmail;
+        if (req.body.agreedPhoneNum !== undefined) update.agreedPhoneNum = req.body.agreedPhoneNum;
+        if (req.body.isReviewed !== undefined) update.isReviewed = req.body.isReviewed;
         if (req.body.name !== undefined) update.name = req.body.name;
         if (req.body.phoneNum !== undefined) update.phoneNum = req.body.phoneNum;
         if (req.body.nick !== undefined) update.nick = req.body.nick;

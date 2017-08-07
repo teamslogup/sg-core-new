@@ -221,6 +221,7 @@ post.sendMassNotification = function () {
     return function (req, res, next) {
         var STD = req.meta.std;
         var notificationNotice = req.meta.notifications.public.notice;
+        var coreUtils = req.coreUtils;
 
         var query = {
             distinct: 'id',
@@ -289,12 +290,12 @@ post.sendMassNotification = function () {
         var size = 2000;
         var repeatCount;
 
-        req.models.User.count(query).then(function (data) {
+        sequelize.models.User.count(query).then(function (data) {
             total = data;
 
             if (total == 0) {
 
-                req.models.MassNotification.destroyDataById(req.massNotification.id, true, function () {
+                sequelize.models.MassNotification.destroyDataById(req.massNotification.id, true, function () {
                     return res.hjson(req, next, 404, {
                         code: '404_14'
                     });
@@ -302,7 +303,7 @@ post.sendMassNotification = function () {
 
             } else {
 
-                req.models.MassNotification.updateDataById(req.massNotification.id, {
+                sequelize.models.MassNotification.updateDataById(req.massNotification.id, {
                     totalCount: total
                 }, function (status) {
 
@@ -310,32 +311,26 @@ post.sendMassNotification = function () {
                         repeatCount = Math.ceil(total / size);
 
                         query.limit = size;
-
+                        query.offset = 0;
                         var funcs = [];
 
                         for (var i = 0; i < repeatCount; i++) {
+
                             (function (quer) {
                                 funcs.push(function (funcCallback) {
+                                    sequelize.models.User.findAllDataForQuery(quer, function (status, data) {
 
-                                    for (var i = 0; i < repeatCount; i++) {
+                                        if (status == 200) {
 
-                                        req.models.User.findAllDataForQuery(quer, function (status, data) {
+                                            query.offset += data.length;
 
-                                            if (status == 200) {
+                                            funcCallback(null, data);
 
-                                                funcCallback(null, data);
+                                        } else {
+                                            funcCallback(status, data);
+                                        }
+                                    });
 
-                                                quer.where = {
-                                                    id: {
-                                                        $lt: data[data.length - 1].id
-                                                    }
-                                                };
-
-                                            } else {
-                                                funcCallback(status, data);
-                                            }
-                                        });
-                                    }
                                 });
                             })(query);
                         }
@@ -350,37 +345,55 @@ post.sendMassNotification = function () {
                                 console.log('mass-notification-condition total', total);
 
                                 if (results.length > 0) {
-                                    results[0].forEach(function (user) {
-                                        (function (user) {
-                                            sendNotiFunction.push(function (func2subCallback) {
-                                                req.coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
-                                                    finishArray.push(user.id);
+                                    results.forEach(function (result) {
+                                        result.forEach(function (user, index) {
+                                            (function (user) {
+                                                sendNotiFunction.push(function (func2subCallback) {
+                                                    coreUtils.notification.all.sendNotificationBySendType(notificationNotice, req.body.messageTitle, req.body.messageBody, req.body.sendType, user, {}, req.image, req.body.sendMethod, function (status, data) {
+                                                        finishArray.push(user.id);
 
-                                                    var progress = Math.ceil(finishArray.length / total * 100);
-                                                    // console.log(finishArray.length + '/' + total + '=' + progress);
+                                                        var progress = Math.ceil(finishArray.length / total * 100);
+                                                        // console.log(finishArray.length + '/' + total + '=' + progress);
 
-                                                    if (status == 204) {
+                                                        if (status == 204) {
 
-                                                        func2subCallback(null, {
+                                                            func2subCallback(null, {
+                                                                progress: progress,
+                                                                sendCount: ++sendCount
+                                                            });
+                                                        } else if (status == 404) {
+
+                                                            func2subCallback(null, {
+                                                                progress: progress,
+                                                                wrongDestinationCount: ++wrongDestinationCount
+                                                            });
+                                                        } else {
+
+                                                            func2subCallback(null, {
+                                                                progress: progress,
+                                                                failCount: ++failCount
+                                                            });
+                                                        }
+
+                                                        var body = {
                                                             progress: progress,
-                                                            sendCount: ++sendCount
-                                                        });
-                                                    } else if (status == 404) {
+                                                            sendCount: sendCount,
+                                                            wrongDestinationCount: wrongDestinationCount,
+                                                            failCount: failCount
+                                                        };
 
-                                                        func2subCallback(null, {
-                                                            progress: progress,
-                                                            wrongDestinationCount: ++wrongDestinationCount
-                                                        });
-                                                    } else {
+                                                        if (index != 0 && index % 100 == 0) {
+                                                            sequelize.models.MassNotification.update(body, {
+                                                                where: {
+                                                                    id: req.massNotification.id
+                                                                }
+                                                            });
+                                                        }
 
-                                                        func2subCallback(null, {
-                                                            progress: progress,
-                                                            failCount: ++failCount
-                                                        });
-                                                    }
+                                                    });
                                                 });
-                                            });
-                                        })(user);
+                                            })(user);
+                                        });
                                     });
 
                                     async.series(sendNotiFunction, function (errorCode, results) {
@@ -394,7 +407,7 @@ post.sendMassNotification = function () {
                                             body.wrongDestinationCount = wrongDestinationCount;
                                             body.failCount = failCount;
 
-                                            req.models.MassNotification.updateDataById(req.massNotification.id, body, function (status) {
+                                            sequelize.models.MassNotification.updateDataById(req.massNotification.id, body, function (status) {
 
                                                 if (status != 204) {
                                                     console.log('mass-notification-condition progress error');

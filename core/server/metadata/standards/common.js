@@ -319,7 +319,7 @@ var standards = {
     },
     "file": {
         "enumFolders": ["images", "audios", "videos", "etc"],
-        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat", "ck", "notification"],
+        "enumImageFolders": ["user", "common", "bg", "article", "attach", "chat", "ck", "notification", "maintenance"],
         "enumAudioFolders": [],
         "enumVideoFolders": [],
         "enumEtcFolders": ["notification", "message"],
@@ -336,6 +336,7 @@ var standards = {
         "folderCk": "ck",
         "folderNotification": "notification",
         "folderMessage": "message",
+        "folderMaintenance": "maintenance",
         "minCount": 1,
         "maxCount": 20,
         "enumValidCsvExtensions": ["csv", "CSV"],

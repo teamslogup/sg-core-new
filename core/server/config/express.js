@@ -318,6 +318,7 @@ module.exports.init = function (sequelize) {
 
     app.use(morgan(function (tokens, req, res) {
         return [
+            (req.get('User-Agent')),
             (req.user && req.user.id) || 'X',
             (req.user && req.user.nick) || '',
             tokens['remote-addr'](req, res),
