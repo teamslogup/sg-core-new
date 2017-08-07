@@ -31,7 +31,15 @@ export default function validator() {
     Validator.prototype.isInt = function () {
         this.validateMethod = function () {
             return function (value) {
-                return Number.isInteger(value);
+                return Number.isInteger(parseInt(value));
+            }(this.value);
+        }
+    };
+
+    Validator.prototype.isNumeric = function () {
+        this.validateMethod = function () {
+            return function (value) {
+                return !isNaN(parseFloat(value)) && isFinite(value);
             }(this.value);
         }
     };
@@ -141,6 +149,32 @@ export default function validator() {
                 return reg.test(value);
 
             }(this.value);
+        }
+
+    };
+
+    Validator.prototype.isNumberIds = function (max) {
+        this.validateMethod = function () {
+            return function (value, max) {
+
+                if (!max) max = 1;
+                if (value === '') return false;
+                var arr = value.split(',');
+                if (arr.length > max) {
+                    return false;
+                } else {
+                    for (var i = 0; i < arr.length; ++i) {
+                        //trim
+                        arr[i] = arr[i].replace(/^\s*|\s*$/g, "");
+
+                        if (!Number(arr[i])) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+
+            }(this.value, max);
         }
 
     };
