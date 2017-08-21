@@ -81,7 +81,7 @@ module.exports = {
                 //     "ORDER BY terms2.startDate DESC, terms.createdAt DESC) " +
                 //     "result GROUP BY result.title ORDER BY result.createdAt DESC";
 
-                var query = "SELECT b.id AS appliedId, b.title, b.type FROM (SELECT MAX(terms.startDate) AS startDate, terms.title, terms.language FROM Terms AS terms " +
+                var query = "SELECT b.id AS appliedId, b.title, b.type, b.startDate FROM (SELECT MAX(terms.startDate) AS startDate, terms.title, terms.language FROM Terms AS terms " +
                     "WHERE terms.startDate <= " + micro.now() + " AND terms.language = '" + options.language + "' " + " AND terms.deletedAt IS NULL " +
                     "GROUP BY terms.title) a, Terms b " +
                     "WHERE b.startDate = a.startDate " + " AND b.deletedAt IS NULL " +
