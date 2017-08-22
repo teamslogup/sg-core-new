@@ -28,6 +28,7 @@ module.exports = function(config) {
         fs.readFile(file.path, function (err, fileData) {
 
             if (err) {
+                logger.e(err);
                 return callback({code: '500_4'});
             }
 

@@ -170,6 +170,7 @@ module.exports = {
         fs.readFile(file.path, function (err, fileData) {
 
             if (err) {
+                logger.e(err);
                 return callback(500, {code: '500_4'});
             }
             var bn = path.basename(file.path);
