@@ -83,6 +83,7 @@ module.exports = {
             'createChatHistory': function (body, callback) {
 
                 var chatHistory;
+                var chatRoom;
 
                 sequelize.models.ChatHistory.create(body, {
                     'include': [{
@@ -118,6 +119,16 @@ module.exports = {
 
                     chatHistory = data;
 
+                    return sequelize.models.ChatRoom.findOne({
+                        where: {
+                            id: chatHistory.roomId
+                        }
+                    });
+
+                }).then(function (data) {
+
+                    chatRoom = data;
+
                     return sequelize.models.ChatRoom.update({
                         updatedAt: micro.now()
                     }, {
@@ -129,20 +140,24 @@ module.exports = {
 
                 }).then(function () {
 
-                    return sequelize.models.ChatRoomUser.update({
-                        noView: sequelize.literal('noView + 1')
-                    }, {
-                        'where': {
-                            roomId: body.roomId
-                        },
-                        'paranoid': false
-                    }).then(function (data) {
-                        if (data[0] > 0) {
-                            return true;
-                        } else {
-                            throw new errorHandler.CustomSequelizeError(400);
-                        }
-                    });
+                    if (chatRoom.isPrivate) {
+                        return sequelize.models.ChatRoomUser.update({
+                            noView: sequelize.literal('noView + 1')
+                        }, {
+                            'where': {
+                                roomId: body.roomId
+                            },
+                            'paranoid': false
+                        }).then(function (data) {
+                            if (data[0] > 0) {
+                                return true;
+                            } else {
+                                throw new errorHandler.CustomSequelizeError(400);
+                            }
+                        });
+                    } else {
+                        return true;
+                    }
 
                 }).then(function () {
 

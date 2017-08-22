@@ -456,8 +456,10 @@ var standards = {
     "chatHistory": {
         "minMessageLength": 1,
         "maxMessageLength": 10000,
-        "chatHistoryEnum": ["text", "image", "media"],
+        "chatHistoryEnum": ["text", "join", "leave", "image", "media"],
         "text": "text",
+        "join": "join",
+        "leave": "leave",
         "image": "image",
         "media": "media"
     },

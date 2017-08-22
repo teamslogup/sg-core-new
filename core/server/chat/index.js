@@ -37,7 +37,6 @@ module.exports.init = function (io) {
 
     io.on('connection', function (socket) {
         console.log(socket.id + ' Client connected...');
-        console.log('session', socket.request.session);
 
         socket.join(STD.chat.userRoomPrefix + socket.request.session.passport.user);
         // socket.emit('connect');
@@ -107,8 +106,11 @@ module.exports.init = function (io) {
         });
 
         socket.on('disconnect', function () {
-            console.log('disconnect', socket.request.session);
-            socket.disconnect();
+            console.log('disconnect', socket.id);
+
+            var joinBinder = new Binder(io, socket, {});
+            joinBinder.add(middles.disconnect());
+            joinBinder.bind();
         });
 
     });
