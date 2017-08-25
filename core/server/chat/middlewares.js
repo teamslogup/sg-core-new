@@ -95,8 +95,9 @@ var middles = {
                     }
 
                     socket.join(roomId);
+                    socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, data.chatHistory);
+                    delete data.chatHistory;
                     socket.emit(STD.chat.serverJoinRoom, data);
-                    socket.broadcast.to(roomId).emit(STD.chat.serverJoinUser, data);
                     // console.log('JOIN ROOM LIST', socket.adapter.rooms[roomId]);
 
                 } else {
