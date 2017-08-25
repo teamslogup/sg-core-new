@@ -40,9 +40,7 @@
                         </div>
                     </div>
 
-                    <div class="sg-report-manage-main-item-top-body">
-                        {{report.body}}
-                    </div>
+                    <div class="sg-report-manage-main-item-top-body">{{report.body}}</div>
 
                     <div class="sg-report-manage-main-item-top-bottom">
                         <div class="sg-report-manage-main-item-user-img" ng-if="report.author && report.author.userImages.length > 0" ng-style="{'background-image': 'url('+ (report.author.userImages[0].image | imageUrl)+ ')'}"></div>

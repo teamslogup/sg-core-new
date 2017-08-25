@@ -9,25 +9,24 @@ gets.validate = function () {
         var COMMON = req.meta.std.common;
         var NOTICE = req.meta.std.notice;
         var enumCountry = req.coreUtils.common.getCountryEnum(req);
-        
-        if (req.query.searchItem === undefined) req.query.searchItem = '';
-        if (req.query.searchField === undefined) req.query.searchField = '';
-        if (req.query.last === undefined) req.query.last = micro.now();
+
         if (req.query.size === undefined) req.query.size = COMMON.defaultLoadingLength;
+        if (req.query.sort === undefined) req.query.sort = COMMON.DESC;
 
         if (req.query.country !== undefined) req.check('country', '400_28').isEnum(enumCountry);
         if (req.query.type !== undefined) req.check('type', '400_28').isEnum(NOTICE.enumNoticeTypes);
         if (req.query.sort !== undefined) req.check('sort', '400_28').isEnum(COMMON.enumSortTypes);
-        if (req.body.today !== undefined) req.check('today', '400_18').isMicroTimestamp();
+        if (req.query.today !== undefined) req.check('today', '400_18').isMicroTimestamp();
+        if (req.query.last !== undefined) req.check('last', '400_18').isMicroTimestamp();
 
-        req.check('last', '400_18').isMicroTimestamp();
-        req.check('size', '400_5').isInt({min: 1, max: COMMON.loadingMaxLength});
+        req.check('size', '400_5').isInt({
+            min: 1,
+            max: COMMON.loadingMaxLength
+        });
 
-        if(req.query.offset !== undefined){
-            req.check('offset', '400_5').isInt();
-        } else {
-            req.query.offset = 0;
-        }
+        if (req.query.offset !== undefined) req.check('offset', '400_5').isInt({
+            min: 1
+        });
 
         req.utils.common.checkError(req, res, next);
     };
@@ -35,10 +34,7 @@ gets.validate = function () {
 
 gets.setParam = function () {
     return function (req, res, next) {
-        var size = req.query.size;
-        var last = req.query.last;
-
-        req.models.Notice.findAllNotices(req.query.searchItem, req.query.searchField, last, size, req.query.country, req.query.type, req.query.sort, req.query.offset, req.query.today, function (status, data) {
+        req.models.Notice.findNoticesByOptions(req.query, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();
@@ -51,9 +47,6 @@ gets.setParam = function () {
 
 gets.supplement = function () {
     return function (req, res, next) {
-        var ret = {
-            rows: req.data
-        };
         res.hjson(req, next, 200, req.data);
     };
 };
