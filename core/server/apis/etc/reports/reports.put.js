@@ -57,6 +57,32 @@ put.updateReport = function () {
     };
 };
 
+put.emailCheck = function () {
+    return function (req, res, next) {
+
+        if (req.report.email != null && req.report.authorId != null) {
+
+            req.models.User.findDataById(req.report.authorId, function (status, data) {
+                if (status == 200) {
+                    if (data.email != req.report.email) {
+                        var localLanguage = LANGUAGES['en'];
+
+                        notiHelper.sendEmail(req.report.email, localLanguage.reportTitle, req.report.reply, function (status, data) {
+                            console.log('reportNoti unauthorized', status);
+                        });
+                    }
+                    next();
+                } else {
+                    res.hjson(req, next, status, data);
+                }
+            });
+        } else {
+            next();
+        }
+
+    }
+};
+
 put.sendNotifications = function () {
     return function (req, res, next) {
 
