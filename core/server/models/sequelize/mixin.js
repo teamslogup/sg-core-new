@@ -394,10 +394,10 @@ var mixin = {
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (t) {
-                        if (loadedData) {
-                            callback(200, loadedData);
+                        if (loadedData && loadedData.length > 0) {
+                            return callback(200, loadedData);
                         } else {
-                            callback(404);
+                            return callback(404);
                         }
                     }
                 });
