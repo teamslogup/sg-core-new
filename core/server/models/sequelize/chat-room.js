@@ -118,7 +118,9 @@ module.exports = {
                             chatRoom.rows = coreUtils.objectify.convert(result, {
                                 user: {
                                     userImages: [{
-                                        image: {}
+                                        image: {
+                                            attributes: sequelize.models.Image.attributes,
+                                        }
                                     }]
                                 },
                                 chatHistories: [{}]
