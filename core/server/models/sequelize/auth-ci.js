@@ -24,8 +24,7 @@ module.exports = {
     fields: {
         'ci': {
             'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),
-            'allowNull': false,
-            'unique': true
+            'allowNull': false
         },
         'di': {
             'type': Sequelize.STRING(coreUtils.initialization.getDBStringLength()),

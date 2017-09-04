@@ -5,8 +5,6 @@ var logger = new Logger(__filename);
 post.validate = function () {
     return function (req, res, next) {
 
-        console.log('body', req.body);
-
         // if (req.refinedIP != '::ffff:' + req.config.authCi.allowedIp) {
         //     return res.hjson(req, next, 403);
         // }
