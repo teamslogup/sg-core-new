@@ -73,12 +73,14 @@ function returnNgTemplatePath (page) {
             if (ngTemplateIgnore.pages && ngTemplateIgnore.pages.indexOf(page) != -1) {
                 return '';
             }
-            if (ngTemplateIgnore.paths) {
-                ngTemplateIgnore.paths.forEach(function (path) {
-                    if (path) {
-                        returnPathArray.push('!' + path);
-                    }
-                });
+            if (ngTemplateIgnore.paths && ngTemplateIgnore.paths instanceof Object && !(ngTemplateIgnore.paths instanceof Array)) {
+                if (ngTemplateIgnore.paths[page] && ngTemplateIgnore.paths[page].length) {
+                    ngTemplateIgnore.paths[page].forEach(function (path) {
+                        if (path) {
+                            returnPathArray.push('!' + path);
+                        }
+                    });
+                }
             }
             if (returnPathArray.length > 1) {
                 return returnPathArray;
