@@ -47,8 +47,15 @@ module.exports = function () {
 
     Session.prototype.loggedInRole = function (role) {
         return function (req, res, next) {
-            if (req.user && req.user.role >= role) next();
-            else res.hjson(req, next, 401);
+            if (req.isAuthenticated()) {
+                if (req.user && req.user.role >= role) {
+                    next();
+                } else {
+                    return res.hjson(req, next, 403);
+                }
+            } else {
+                return res.hjson(req, next, 401);
+            }
         }
     };
 
