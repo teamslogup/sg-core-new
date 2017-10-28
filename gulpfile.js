@@ -77,7 +77,7 @@ function returnNgTemplatePath (page) {
                 if (ngTemplateIgnore.paths[page] && ngTemplateIgnore.paths[page].length) {
                     ngTemplateIgnore.paths[page].forEach(function (path) {
                         if (path) {
-                            returnPathArray.push('!' + path);
+                            returnPathArray.push('!' + './' + getRootType() + path);
                         }
                     });
                 }
