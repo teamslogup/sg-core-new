@@ -34,7 +34,7 @@ var api = {
                     'last': '조회 기준 마지막 데이터',
                     'size': '가져올 데이터 크기',
                     'offset': 'offset',
-                    'key': '조회할 key'
+                    'key': '조회할 key (,)로 구분'
                 },
                 response: {
                     rows: [resforms.notification]

@@ -34,6 +34,10 @@ gets.validate = function () {
 
         if (req.query.userId !== undefined) req.check('userId', '400_12').isInt();
 
+        if (req.query.key !== undefined) {
+            req.utils.common.toArray(req.query, 'key');
+        }
+
         req.utils.common.checkError(req, res, next);
     };
 };
