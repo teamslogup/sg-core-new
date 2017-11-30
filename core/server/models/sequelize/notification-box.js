@@ -65,31 +65,33 @@ module.exports = {
                     as: 'notification'
                 }]
             },
-            'findNotificationBoxesByOptions': function (options, userId, callback) {
-
+            'findNotificationBoxesByOptions': function (options, callback) {
                 var where = {};
+                var query = {
+                    'offset': parseInt(options.offset),
+                    'limit': parseInt(options.size),
+                    'where': where,
+                    'order': [[options.orderBy, options.sort]],
+                };
 
                 where.createdAt = {
                     '$lt': options.last
                 };
 
-                where.userId = userId;
+                if (options.userId !== undefined) {
+                    where.userId = options.userId;
+                }
 
-                sequelize.transaction(function (t) {
-                    return sequelize.models.NotificationBox.findAndCountAll({
-                        'offset': parseInt(options.offset),
-                        'limit': parseInt(options.size),
-                        'where': where,
-                        'order': [[options.orderBy, options.sort]],
-                        'transaction': t
-                    }).then(function (data) {
-                        if (data && data.rows.length > 0) {
-                            return data;
-                        } else {
-                            throw new errorHandler.CustomSequelizeError(404);
-                        }
+                if (options.key !== undefined) {
+                    where.key = options.key;
+                }
 
-                    });
+                sequelize.models.NotificationBox.findAndCountAll(query).then(function (data) {
+                    if (data && data.rows.length > 0) {
+                        return data;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
                 }).catch(errorHandler.catchCallback(callback)).done(function (data) {
                     if (data) {
                         callback(200, data);

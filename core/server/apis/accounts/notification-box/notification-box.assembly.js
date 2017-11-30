@@ -20,10 +20,22 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: ['userId', 'last', 'size', 'offset'],
+                acceptable: [
+                    'userId',
+                    'last',
+                    'size',
+                    'offset',
+                    'key'
+                ],
                 essential: [],
                 resettable: [],
-                explains: {'userId': '유저 id'},
+                explains: {
+                    'userId': '유저 id',
+                    'last': '조회 기준 마지막 데이터',
+                    'size': '가져올 데이터 크기',
+                    'offset': 'offset',
+                    'key': '조회할 key'
+                },
                 response: {
                     rows: [resforms.notification]
                 },

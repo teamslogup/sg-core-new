@@ -32,7 +32,7 @@ gets.validate = function () {
             req.check('sort', '400_3').isEnum(COMMON.enumSortTypes);
         }
 
-        req.check('userId', '400_12').isInt();
+        if (req.query.userId !== undefined) req.check('userId', '400_12').isInt();
 
         req.utils.common.checkError(req, res, next);
     };
@@ -41,7 +41,7 @@ gets.validate = function () {
 gets.setParam = function () {
     return function (req, res, next) {
 
-        req.models.NotificationBox.findNotificationBoxesByOptions(req.query, req.query.userId, function (status, data) {
+        req.models.NotificationBox.findNotificationBoxesByOptions(req.query, function (status, data) {
             if (status == 200) {
                 req.data = data;
                 next();
