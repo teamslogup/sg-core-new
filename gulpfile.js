@@ -14,7 +14,6 @@ var args = require('get-gulp-args')();
 // const mocha = require('gulp-mocha');
 const mocha = require('gulp-spawn-mocha');
 var gulpsync = require('gulp-sync')(gulp);
-var regAngular = new RegExp("angular", "gi");
 
 var appPackage = require('./app/package.json');
 var corePackage = require('./package.json');
@@ -220,7 +219,8 @@ function callPagesBuild(page, afterInjection, url) {
         './dist/sg-' + page + '-core.js', './dist/sg-' + page + '.js',
         './dist/sg-' + page + '-core.css', './dist/sg-' + page + '.css'
     ];
-    var ngTemplateCheck = fs.readFileSync(path.join(__dirname, "./" + getRootType() + "/client/pages/" + page + "/app." + page + ".js"));
+    var ngTemplateCheck = fs.readFileSync(path.join(__dirname, "./" + getRootType() + "/client/pages/" + page + "/app." + page + ".js"), 'utf8');
+    var regAngular = new RegExp("angular", "gi");
     if (regAngular.test(ngTemplateCheck)) {
         injectionArray.unshift('./dist/sg-' + page + '-template.js');
     }
