@@ -5,6 +5,10 @@ var logger = new Logger(__filename);
 gets.validate = function () {
     return function (req, res, next) {
 
+        if (req.query.key !== undefined) {
+            req.utils.common.toArray(req.query, 'key');
+        }
+
         req.utils.common.checkError(req, res, next);
     };
 };
@@ -14,7 +18,7 @@ gets.getNewNotificationCount = function () {
 
         req.data = {};
 
-        req.models.NotificationBox.findNewNotificationCount(req.user.id, function (status, data) {
+        req.models.NotificationBox.findNewNotificationCount(req.user.id, req.query, function (status, data) {
             if (status == 200) {
                 req.data.newNotificationCount = data;
                 next();

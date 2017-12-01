@@ -17,10 +17,13 @@ var api = {
         return function (req, res, next) {
 
             var params = {
-                acceptable: [],
+                acceptable: [
+                    'key'
+                ],
                 essential: [],
                 resettable: [],
                 explains: {
+                    'key': 'notification box key (,)로 구분 가능'
                 },
                 title: '새로운 알림/채팅 조회',
                 state: 'staging'

@@ -98,15 +98,19 @@ module.exports = {
                     }
                 });
             },
-            "findNewNotificationCount": function (userId, callback) {
-
+            "findNewNotificationCount": function (userId, options, callback) {
                 var boxCount;
+                var where = {
+                    userId: userId,
+                    view: false
+                };
+
+                if (options.key !== undefined) {
+                    where.key = options.key;
+                }
 
                 sequelize.models.NotificationBox.count({
-                    where: {
-                        userId: userId,
-                        view: false
-                    }
+                    where: where
                 }).then(function (count) {
 
                     boxCount = count;
