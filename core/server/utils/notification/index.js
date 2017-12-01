@@ -215,7 +215,7 @@ module.exports = {
 
             var result = {};
 
-            sequelize.models.NotificationBox.findNewNotificationCount(userId, function (status, data) {
+            sequelize.models.NotificationBox.findNewNotificationCount(userId, {}, function (status, data) {
                 if (status == 200) {
                     result.newNotificationCount = data;
 
