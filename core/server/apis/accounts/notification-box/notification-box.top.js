@@ -8,7 +8,7 @@ top.hasAuthorization = function () {
             return next();
         }
 
-        if (req.user.id == req.body.userId) {
+        if (req.user.id == req.body.userId || req.user.id == req.query.userId) {
             return next();
         } else {
             res.hjson(req, next, 403);

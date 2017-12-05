@@ -102,7 +102,9 @@ var api = {
     delete: function (isOnlyParams) {
         return function (req, res, next) {
             var params = {
-                acceptable: [],
+                acceptable: [
+                    'userId'
+                ],
                 essential: [],
                 resettable: [],
                 explains: {},

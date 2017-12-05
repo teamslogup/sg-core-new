@@ -5,6 +5,8 @@ var logger = new Logger(__filename);
 del.validate = function () {
     return function (req, res, next) {
         req.check('id', '400_12').isInt();
+        if (req.query.userId !== undefined) req.check('userId', '400_12').isInt();
+        if (req.body.userId !== undefined) req.check('userId', '400_12').isInt();
         req.utils.common.checkError(req, res, next);
     };
 };
