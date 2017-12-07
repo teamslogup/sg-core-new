@@ -14,7 +14,6 @@ module.exports = {
         "uploadStoreS3": "s3",
         "uploadStoreLocalBucket": "localBucket",
         "maxClusterLength": 0
-        // "sessionExpiredSeconds": 10
     },
     "db": {
         "off": false,
@@ -36,7 +35,8 @@ module.exports = {
         "isUseChat": false,
         "isUseBrowserCount": false,
         "isMaintenance": false,
-        "isAutoVerifiedAuthPhone": false
+        "isAutoVerifiedAuthPhone": false,
+        "isNotUseClusterRoundRobin": false
     },
     "facebook": {
         "clientID": "",

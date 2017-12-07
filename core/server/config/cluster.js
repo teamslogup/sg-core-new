@@ -73,7 +73,11 @@ module.exports = {
     startCluster: function (argServer) {
         var app = argServer;
         cluster.schedulingPolicy = cluster.SCHED_RR;
-        
+
+        if(config.flag.isNotUseClusterRoundRobin){
+            cluster.schedulingPolicy = cluster.SCHED_NONE;
+        }
+
         if (cluster.isMaster) {
             workers = [];
 
