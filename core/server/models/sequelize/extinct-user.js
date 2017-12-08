@@ -71,7 +71,7 @@ module.exports = {
             },
             removeAllUsersInExpireDate: function(callback) {
                 var now = MICRO.now();
-                now = now - (STD.user.deletedUserStoringDay * 24 * 360 * 1000000);
+                now = now - (STD.user.deletedUserStoringDay * 24 * 60 * 60 * 1000 * 1000);
                 sequelize.models.ExtinctUser.destroyData({
                     createdAt: {
                         $lte: now
