@@ -13,7 +13,7 @@ module.exports = {
     sendPush: function (token, title, body, badge, data, platform, callback) {
 
         if (CONFIG.sender.fcm && CONFIG.sender.fcm.key && token) {
-            sendNoti.fcm(token, title, body, badge, data, platform, STD.notification.pushSound, data.key, function (err) {
+            sendNoti.fcm(token, title, body, badge, data, platform.toLowerCase(), STD.notification.pushSound, data.key, function (err) {
                 if (err) {
                     if (callback) callback(500, err);
 
