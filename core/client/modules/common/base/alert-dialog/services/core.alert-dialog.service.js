@@ -99,7 +99,7 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
                 }
                 if (essentialKeys) {
                     for (var k in essentialKeyHash) {
-                        if (data[k] === undefined || data[k] == '' || data[k] === null) {
+                        if (data[k] === undefined || data[k] === '' || data[k] === null) {
                             var errorCode = essentialKeyHash[k];
                             if (essentialKeyHash[k] == true) {
                                 throw('400_14');
