@@ -510,6 +510,27 @@ var standards = {
         "enumStatus": ["start", "finish"],
         "statusStart": "start",
         "statusFinish": "finish"
+    },
+    "taxInvoice": {
+        "enumStates": ["taxInvoiceStandby", "taxInvoicePublished"],
+        "defaultState": "taxInvoiceStandby",
+        "taxInvoiceStandby": "taxInvoiceStandby",
+        "taxInvoicePublished": "taxInvoicePublished",
+
+        "enumChargeDirections": ["정과금", '역과금'],
+        "defaultChargeDirection": "정과금",
+
+        "enumIssueTypes": ["정발행", "역발행", "위수탁"],
+        "defaultIssueType": "정발행",
+
+        "enumPurposeTypes": ["직접발행", "승인시자동발행"],
+        "defaultPurposeType": "직접발행",
+
+        "enumTaxTypes": ["과세", "영세", "면세"],
+        "defaultTaxType": "과세",
+
+        "enumInvoiceeTypes": ["사업자", "개인", "외국인"],
+        "defaultInvoiceeType": "사업자"
     }
 };
 

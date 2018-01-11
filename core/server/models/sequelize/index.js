@@ -38,6 +38,8 @@ var BrowserCount = require('./browser-count');
 var NoSessionChatRoomUser = require('./no-session-chat-room-user');
 var NoSessionChatHistory = require('./no-session-chat-history');
 var Maintenance = require('./maintenance');
+var TaxInvoice = require('./tax-invoice');
+var TaxInvoiceItem = require('./tax-invoice-item');
 
 var models = {
     User: User,
@@ -78,7 +80,9 @@ var models = {
     BrowserCount: BrowserCount,
     NoSessionChatRoomUser: NoSessionChatRoomUser,
     NoSessionChatHistory: NoSessionChatHistory,
-    Maintenance: Maintenance
+    Maintenance: Maintenance,
+    TaxInvoice: TaxInvoice,
+    TaxInvoiceItem: TaxInvoiceItem
 };
 
 module.exports = models;
