@@ -105,5 +105,12 @@ module.exports = {
     },
     "authCi": {
         "allowedIp": ''
+    },
+    "popbill": {
+        "serviceId": 'POPBILL_TEST',
+        "linkId": '',
+        "secretKey": '',
+        "corpName": '',
+        "isTest": true
     }
 };
