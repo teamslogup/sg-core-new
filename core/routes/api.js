@@ -3,6 +3,7 @@ var packageJson = require('../../package.json');
 var appRoot = require('app-root-path');
 var express = require('express');
 var META = require('../../bridge/metadata');
+var COMMON = require('../../bridge/config/env');
 
 function getApiDirectorys(category, isCore) {
 
@@ -204,6 +205,10 @@ module.exports = function (app, apiName) {
     var coreObj = getCategoryList(app, apiName, true);
     var appObj = getCategoryList(app, apiName, false);
 
+    if(COMMON.flag && COMMON.flag.isNotUseCoreApi){
+        coreObj.catList = [];
+    }
+
     var finalObj = mixApi(appObj, coreObj);
 
     var defaultCategoryName = finalObj.defaultCategoryName || coreObj.defaultCategoryName;
@@ -217,6 +222,7 @@ module.exports = function (app, apiName) {
     apiFirstTempleteRouter.get('/' + apiName + '/tester', function (req, res) {
         res.redirect('/' + apiName + '/tester/' + defaultCategoryName + "/" + defaultResourceName);
     });
+
 
     // all category
     catList.forEach(function (catObj) {
