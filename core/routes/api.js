@@ -3,7 +3,7 @@ var packageJson = require('../../package.json');
 var appRoot = require('app-root-path');
 var express = require('express');
 var META = require('../../bridge/metadata');
-var COMMON = require('../../bridge/config/env');
+var CONFIG = require('../../bridge/config/env');
 
 function getApiDirectorys(category, isCore) {
 
@@ -205,7 +205,7 @@ module.exports = function (app, apiName) {
     var coreObj = getCategoryList(app, apiName, true);
     var appObj = getCategoryList(app, apiName, false);
 
-    if(COMMON.flag && COMMON.flag.isNotUseCoreApi){
+    if(CONFIG.flag && CONFIG.flag.isNotUseCoreApi){
         coreObj.catList = [];
     }
 
