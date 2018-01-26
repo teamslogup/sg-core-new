@@ -1,6 +1,6 @@
 "use strict";
 process.on('uncaughtException', function (err) {
-    console.error('uncaughtException');
+    console.error((new Date()).toISOString(), 'uncaughtException');
     console.error(err.stack);
 });
 
