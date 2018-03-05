@@ -124,6 +124,7 @@
     "react-dom": "15.6.*",
     "redis": "2.7.*",
     "request": "2.81.*",
+    "rimraf": "^2.6.2",
     "sequelize": "3.30.*",
     "sequelize-definer": "0.4.*",
     "serve-favicon": "2.4.*",

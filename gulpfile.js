@@ -14,6 +14,7 @@ var args = require('get-gulp-args')();
 // const mocha = require('gulp-mocha');
 const mocha = require('gulp-spawn-mocha');
 var gulpsync = require('gulp-sync')(gulp);
+var rimraf = require('rimraf');
 
 var appPackage = require('./app/package.json');
 var corePackage = require('./package.json');
@@ -21,6 +22,17 @@ var corePackage = require('./package.json');
 var fs = require('fs');
 var micro = require('microtime-nodejs');
 var now = micro.now();
+
+var versionPath = path.join(__dirname, './dist/version');
+if (fs.existsSync(versionPath)) {
+    rimraf(versionPath, function () {
+        fs.mkdirSync(versionPath);
+        fs.writeFileSync(versionPath + '/' + now, '1');
+    });
+} else {
+    fs.mkdirSync(versionPath);
+    fs.writeFileSync(versionPath + '/' + now, '1');
+}
 
 var ngTemplate = require('gulp-ng-template');
 var templatePath = require('./core/server/metadata/standards/common').templatePath;
