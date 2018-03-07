@@ -24,6 +24,7 @@ module.exports = {
             'reference': 'User',
             'referenceKey': 'id',
             'as': 'user',
+            'asReverse': 'pgPurchases',
             'allowNull': false
         },
         'pgType': {
