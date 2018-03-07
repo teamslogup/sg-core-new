@@ -39,16 +39,15 @@ module.exports = {
             }, function (err) {
                 if (process.env.NODE_ENV == 'test') return callback(204);
                 if (err) {
+                    console.error('email error', err);
                     if (callback) callback(503, emailErrorRefiner(err));
-
                 } else {
                     if (callback) callback(204);
                 }
-                console.log('email error', err);
             });
         } else {
+            console.error('email 404');
             if (callback) callback(404);
-            console.log('email 404');
         }
     },
     sendSMS: function (phoneNum, title, body, callback) {

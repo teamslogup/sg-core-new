@@ -65,13 +65,14 @@ put.emailCheck = function () {
             req.models.User.findDataById(req.report.authorId, function (status, data) {
                 if (status == 200) {
                     if (data.email != req.report.email) {
-                        var localLanguage = LANGUAGES['en'];
+                        var localLanguage = LANGUAGES[req.language];
 
                         notiHelper.sendEmail(req.report.email, localLanguage.reportTitle, req.report.reply, function (status, data) {
-                            console.log('reportNoti unauthorized', status);
+                            next();
                         });
+                    } else {
+                        next();
                     }
-                    next();
                 } else {
                     res.hjson(req, next, status, data);
                 }
@@ -135,9 +136,7 @@ put.sendNotifications = function () {
                                                             reeportBody = body;
                                                         }
 
-                                                        req.coreUtils.notification.all.send(user, key, title, reeportBody, badge, payload, undefined, undefined, function (status, data) {
-                                                            console.log('reportNoti', status);
-                                                        });
+                                                        req.coreUtils.notification.all.send(user, key, title, reeportBody, badge, payload, undefined, undefined, function (status, data) {});
                                                     }
 
                                                 });
@@ -179,11 +178,9 @@ put.sendNotifications = function () {
                 });
             } else {
                 if (req.report.email != null) {
-                    var localLanguage = LANGUAGES['en'];
+                    var localLanguage = LANGUAGES[req.language];
 
-                    notiHelper.sendEmail(req.report.email, localLanguage.reportTitle, req.report.reply, function (status, data) {
-                        console.log('reportNoti unauthorized', status);
-                    });
+                    notiHelper.sendEmail(req.report.email, localLanguage.reportTitle, req.report.reply, function (status, data) {});
                 }
             }
         }
