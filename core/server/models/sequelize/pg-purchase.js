@@ -16,7 +16,7 @@ var coreUtils = require('../../utils');
 
 var micro = require('microtime-nodejs');
 var config = require('../../../../bridge/config/env');
-var coreUtils = require("../../../../core/server/utils");
+var PG_PURCHASE = STD.pgPurchase;
 
 module.exports = {
     fields: {
@@ -91,8 +91,6 @@ module.exports = {
         'classMethods': Sequelize.Utils._.extend(mixin.options.classMethods, {
             'startPay': function (body, t) {
 
-                var PG_PURCHASE = STD.pgPurchase;
-
                 if (body.pgPurchase !== undefined) {
 
                     body.pgPurchase.status = PG_PURCHASE.statusWait;
@@ -114,8 +112,6 @@ module.exports = {
 
             },
             'finishPay': function (update, t) {
-
-                var PG_PURCHASE = STD.pgPurchase;
 
                 if (update.pgPurchase !== undefined) {
                     update.pgPurchase.status = PG_PURCHASE.statusFinish;
