@@ -80,6 +80,7 @@
     "cookie-parser": "1.4.*",
     "csvtojson": "1.1.*",
     "debug-fd-deprecated": "1.0.*",
+    "deepcopy": "^0.6.3",
     "ejs": "2.5.7",
     "ejs-locals": "1.0.*",
     "emoji-strip": "1.0.*",
