@@ -4,9 +4,9 @@ var logger = new Logger(__filename);
 
 post.validate = function () {
     return function (req, res, next) {
-        var USER = req.meta.std.user;
+        var MOBILE = req.meta.std.mobile;
 
-        req.check('type', '400_3').isEnum(USER.enumPhones);
+        req.check('type', '400_3').isEnum(MOBILE.enumOsType);
 
         req.check('majorVersion', '400_51').len(1, 2);
         req.check('minorVersion', '400_51').len(1, 2);
