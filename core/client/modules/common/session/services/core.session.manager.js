@@ -1,7 +1,8 @@
-export default function sessionManager(Session, SocialSession, usersManager, metaManager, SenderEmail, Pass) {
+export default function sessionManager($cookies, Session, SocialSession, usersManager, metaManager, SenderEmail, Pass) {
     "ngInject";
 
     var currentSession = window.session || null;
+    var COOKIE_KEY = 'CHECK_COOKIE_BLOCK';
     this.session = (currentSession.id && currentSession) || null;
     this.isLoggedIn = isLoggedIn;
     this.socialLogin = socialLogin;
@@ -15,6 +16,20 @@ export default function sessionManager(Session, SocialSession, usersManager, met
     this.sendFindPassEmail = sendFindPassEmail;
     this.changePassWithToken = changePassWithToken;
     this.deleteUser = deleteUser;
+    this.checkCookie = checkCookie;
+
+    function checkCookie (availableCallback, unavailableCallback) {
+        $cookies.put(COOKIE_KEY, COOKIE_KEY);
+        if ($cookies.get(COOKIE_KEY) == COOKIE_KEY) {
+            if (availableCallback && availableCallback instanceof Function) {
+                availableCallback();
+            }
+        } else {
+            if (unavailableCallback && unavailableCallback instanceof Function) {
+                unavailableCallback();
+            }
+        }
+    }
 
     function sendFindPassEmail(email, callback) {
         var body = {
