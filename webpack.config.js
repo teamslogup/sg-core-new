@@ -6,15 +6,22 @@ var webpack = require('webpack');
 var path = require('path');
 var fs = require('fs');
 var pagesPath = path.resolve(__dirname, "./app/client/pages");
-var pages = fs.readdirSync(pagesPath);
 var entry = {};
+if (process.env.PAGE) {
+    insertEntryPoint(process.env.PAGE);
+} else {
+    var pages = fs.readdirSync(pagesPath);
+    pages.forEach(function (page) {
+        if (page != '.DS_Store') {
+            insertEntryPoint(page);
+        }
+    });
+}
 
-pages.forEach(function (page) {
-    if (page != '.DS_Store') {
-        entry['sg-' + page] = "./app/client/pages/" + page + "/app." + page + ".js";
-        entry['sg-' + page + '-core'] = "./app/client/pages/" + page + "/app." + page + "-core.js";
-    }
-});
+function insertEntryPoint (page) {
+    entry['sg-' + page] = "./app/client/pages/" + page + "/app." + page + ".js";
+    entry['sg-' + page + '-core'] = "./app/client/pages/" + page + "/app." + page + "-core.js";
+}
 
 var ENV = process.env.NODE_ENV;
 

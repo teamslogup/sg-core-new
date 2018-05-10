@@ -216,7 +216,9 @@ for (var i = 0; i < combinedModuleArray.length; i++) {
 
 var pagesPath = path.resolve(__dirname, "./app/client/pages");
 var pages = fs.readdirSync(pagesPath);
-if (pages.indexOf(".DS_Store") != -1) {
+if (process.env.PAGE && args.env == 'development') {
+    pages = [process.env.PAGE];
+} else if (pages.indexOf(".DS_Store") != -1) {
     pages.splice(pages.indexOf(".DS_Store"), 1);
 }
 
