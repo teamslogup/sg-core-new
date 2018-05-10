@@ -7,7 +7,7 @@ var path = require('path');
 var fs = require('fs');
 var pagesPath = path.resolve(__dirname, "./app/client/pages");
 var entry = {};
-if (process.env.PAGE) {
+if (process.env.PAGE && process.env.NODE_ENV == 'development') {
     insertEntryPoint(process.env.PAGE);
 } else {
     var pages = fs.readdirSync(pagesPath);
@@ -22,8 +22,6 @@ function insertEntryPoint (page) {
     entry['sg-' + page] = "./app/client/pages/" + page + "/app." + page + ".js";
     entry['sg-' + page + '-core'] = "./app/client/pages/" + page + "/app." + page + "-core.js";
 }
-
-var ENV = process.env.NODE_ENV;
 
 var config = {};
 
@@ -75,7 +73,7 @@ config.plugins = [
     })
 ];
 
-if (ENV == 'production') {
+if (process.env.NODE_ENV == 'production') {
     config.plugins.push(
         new ngAnnotatePlugin({
             add: true
