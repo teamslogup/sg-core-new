@@ -23,6 +23,11 @@ var fs = require('fs');
 var micro = require('microtime-nodejs');
 var now = micro.now();
 
+var distPath = path.join(__dirname, './dist');
+if (!fs.existsSync(distPath)) {
+    fs.mkdirSync(distPath);
+}
+
 var versionPath = path.join(__dirname, './dist/version');
 if (fs.existsSync(versionPath)) {
     rimraf(versionPath, function () {
