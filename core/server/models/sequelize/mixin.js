@@ -287,7 +287,7 @@ var mixin = {
                     loadedData = data;
                 }).catch(errorHandler.catchCallback(callback)).done(function () {
                     if (t) {
-                        if (loadedData) {
+                        if (loadedData  && loadedData.length > 0) {
                             callback(200, loadedData);
                         } else {
                             callback(404);
