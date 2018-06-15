@@ -70,7 +70,7 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
         }
     };
 
-    this.validator = function (data, acceptableKeys, essentialKeys, resettableKeys, callback) {
+    this.validator = function (data, acceptableKeys, essentialKeys, resettableKeys, successCallback, failCallback) {
         var self = this;
         try {
             var acceptableKeyHash = makeHash(acceptableKeys, function (err) {
@@ -112,11 +112,15 @@ export default function AlertDialogService($filter, metaManager, sessionManager,
             } else {
                 throw('400');
             }
-            callback(data);
+            successCallback(data);
         } catch (err) {
-            self.alertError(400, {
-                code: err
-            });
+            if (failCallback) {
+                failCallback(400, {code: err});
+            } else {
+                self.alertError(400, {
+                    code: err
+                });
+            }
         }
     };
 
