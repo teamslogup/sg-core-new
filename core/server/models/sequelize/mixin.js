@@ -73,6 +73,36 @@ var mixin = {
             }
         },
         'classMethods': {
+            'findAndCountWithRawQuery': function (countQuery, selectQuery, callback) {
+                var count = 0;
+                var loadedData = null;
+                sequelize.query(countQuery, {
+                    type: Sequelize.QueryTypes.SELECT
+                }).then(function (data) {
+                    if (data && data.length && data[0].count) {
+                        count = data[0].count;
+                        return sequelize.query(selectQuery, {
+                            type: Sequelize.QueryTypes.SELECT
+                        });
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).then(function (data) {
+                    if (data && data.length) {
+                        loadedData = data;
+                        return true;
+                    } else {
+                        throw new errorHandler.CustomSequelizeError(404);
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
+                    if (isSuccess) {
+                        callback(200, {
+                            count: count,
+                            rows: loadedData
+                        });
+                    }
+                });
+            },
             /**
              * 생성시 include 포함해서 반환
              * @param body
