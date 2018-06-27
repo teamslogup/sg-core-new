@@ -73,6 +73,40 @@ var mixin = {
             }
         },
         'classMethods': {
+            'findAndCountWithQuery': function (countQuery, selectQuery, callback) {
+                var count = 0;
+                var loadedData = null;
+                this.count(countQuery).then(function (data) {
+                    if (data) {
+                        count = data;
+                        this.findAll(selectQuery).then(function (data) {
+                            if (data && data.length) {
+                                loadedData = data;
+                                return 200;
+                            } else {
+                                return 404;
+                            }
+                        });
+                    } else {
+                        return 404;
+                    }
+                }).catch(errorHandler.catchCallback(callback)).done(function (status) {
+                    if (status == 200) {
+                        callback(status, {
+                            count: count,
+                            rows: loadedData
+                        });
+                    } else if (status == 404) {
+                        callback(status);
+                    }
+                });
+            },
+            /**
+             * 로우쿼리로 리스트 조회
+             * @param countQuery
+             * @param selectQuery
+             * @param callback
+             */
             'findAndCountWithRawQuery': function (countQuery, selectQuery, callback) {
                 var count = 0;
                 var loadedData = null;
@@ -83,23 +117,25 @@ var mixin = {
                         count = data[0].count;
                         return sequelize.query(selectQuery, {
                             type: Sequelize.QueryTypes.SELECT
+                        }).then(function (data) {
+                            if (data && data.length) {
+                                loadedData = data;
+                                return 200;
+                            } else {
+                                return 404;
+                            }
                         });
                     } else {
-                        throw new errorHandler.CustomSequelizeError(404);
+                        return 404;
                     }
-                }).then(function (data) {
-                    if (data && data.length) {
-                        loadedData = data;
-                        return true;
-                    } else {
-                        throw new errorHandler.CustomSequelizeError(404);
-                    }
-                }).catch(errorHandler.catchCallback(callback)).done(function (isSuccess) {
-                    if (isSuccess) {
-                        callback(200, {
+                }).catch(errorHandler.catchCallback(callback)).done(function (status) {
+                    if (status == 200) {
+                        callback(status, {
                             count: count,
                             rows: loadedData
                         });
+                    } else if (status == 404) {
+                        callback(status);
                     }
                 });
             },
