@@ -5,9 +5,12 @@ export default function ckEditor(metaManager) {
 
     return {
         require: '?ngModel',
+        scope: {
+            hostUrl: '@'
+        },
         link: function (scope, elm, attr, ngModel) {
             var ck = CKEDITOR.replace(elm[0], {
-                filebrowserImageUploadUrl: HOST.url + '/api/etc/upload-ck'
+                filebrowserImageUploadUrl: (scope.hostUrl ? scope.hostUrl : location.origin) + '/api/etc/upload-ck'
             });
 
             if (!ngModel) return;
