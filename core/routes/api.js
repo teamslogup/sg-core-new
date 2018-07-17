@@ -88,7 +88,7 @@ var getCategoryList = function (app, apiName, isCore) {
             // api routing.
 
             var assembly = require(apiPath);
-            app.use('/' + apiName + '/' + category, assembly.router);
+            // app.use('/' + apiName + '/' + category, assembly.router);
 
             // api templete routing.
             var api = assembly.api;
@@ -150,6 +150,7 @@ var mixApi = function (app, core) {
 
                     if (!isResourceSearched) {
                         // 리소스가 없으면 app에 core리소스를 끼워 넣는다.
+                        coreApiList[k].isCore = true;
                         appApiList.push(coreApiList[k]);
                     }
                 }
@@ -158,6 +159,9 @@ var mixApi = function (app, core) {
 
         // 해당 카테고리가 없으면 끼워넣는다.
         if (!isSearched) {
+            coreList[i].apiList.forEach(function (api) {
+                api.isCore = true;
+            });
             appList.push(coreList[i]);
         }
     }
@@ -202,8 +206,8 @@ function refineResourceMethods(catList) {
 
 module.exports = function (app, apiName) {
 
-    var coreObj = getCategoryList(app, apiName, true);
     var appObj = getCategoryList(app, apiName, false);
+    var coreObj = getCategoryList(app, apiName, true);
 
     if(CONFIG.flag && CONFIG.flag.isNotUseCoreApi){
         coreObj.catList = [];
@@ -228,6 +232,10 @@ module.exports = function (app, apiName) {
     catList.forEach(function (catObj) {
         catObj.apiList.forEach(function (resourceObj) {
             var resourceName = resourceObj.resource;
+
+            var assembly = require(path.resolve(appRoot + "/" + (resourceObj.isCore ? 'core' : 'app') + "/server/apis/" + catObj.name + "/" + resourceObj.resource + "/" + resourceObj.resource + ".assembly"));
+            app.use('/' + apiName + '/' + catObj.name, assembly.router);
+
             var apiTempleteRouter = express.Router();
             apiTempleteRouter.get('/' + apiName + '/tester/' + catObj.name + "/" + resourceName,
                 refineResourceMethods(catList),
